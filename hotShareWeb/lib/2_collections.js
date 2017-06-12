@@ -1072,37 +1072,42 @@ if(Meteor.isServer){
                                     followby: fields.userId
                                 });
                             }
-                            Feeds.insert({
-                                owner:doc.owner,
-                                ownerName:doc.ownerName,
-                                ownerIcon:doc.ownerIcon,
-                                eventType:'SelfPosted',
-                                postId:doc._id,
-                                postTitle:doc.title,
-                                mainImage:doc.mainImage,
-                                createdAt:doc.createdAt,
-                                heart:0,
-                                retweet:0,
-                                comment:0,
-                                followby: fields.userId
-                            });
-                            if(fields.userEmail){
-                                // console.log(fields.userEmail)
-                                userEmail.push(fields.userEmail);
-                            }
+                            if(Feeds.find({followby: fields.userId,postId: doc._id,eventType:'SelfPosted'}).count() === 0){
+                                Feeds.insert({
+                                    owner:doc.owner,
+                                    ownerName:doc.ownerName,
+                                    ownerIcon:doc.ownerIcon,
+                                    eventType:'SelfPosted',
+                                    postId:doc._id,
+                                    postTitle:doc.title,
+                                    mainImage:doc.mainImage,
+                                    createdAt:doc.createdAt,
+                                    heart:0,
+                                    retweet:0,
+                                    comment:0,
+                                    followby: fields.userId
+                                });                            
+                                if(fields.userEmail){
+                                    // console.log(fields.userEmail)
+                                    if(userEmail.indexOf(fields.userEmail) < 0){
+                                        userEmail.push(fields.userEmail);
+                                    }
+                                }
 
-                            var dataUser = Meteor.users.findOne({_id:fields.userId});
-                            waitReadCount = dataUser && dataUser.profile && dataUser.profile.waitReadCount ? dataUser.profile.waitReadCount : 0;
-                            if(waitReadCount === undefined || isNaN(waitReadCount))
-                            {
-                                waitReadCount = 0;
+                                var dataUser = Meteor.users.findOne({_id:fields.userId});
+                                waitReadCount = dataUser && dataUser.profile && dataUser.profile.waitReadCount ? dataUser.profile.waitReadCount : 0;
+                                if(waitReadCount === undefined || isNaN(waitReadCount))
+                                {
+                                    waitReadCount = 0;
+                                }
+                                Meteor.users.update({_id: fields.userId}, {$set: {'profile.waitReadCount': waitReadCount+1}});
+                                pushnotification("newpost",doc,fields.userId);
                             }
-                            Meteor.users.update({_id: fields.userId}, {$set: {'profile.waitReadCount': waitReadCount+1}});
-                            pushnotification("newpost",doc,fields.userId);
                         }
                     });
 
                     if (userEmail.length > 0) {
+                        // console.log('the email lists is ===\n',JSON.stringify(userEmail))
                         sendEmailToFollower(userEmail, subject, mailText);
                     }
                 }
