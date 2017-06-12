@@ -123,7 +123,7 @@ function checkTTLAndSendNotification(id, item, callback) {
 }
 
 function cloneMsgToAssociatedUsers(toUser, message) {
-  if(!toUser || !toUser._id || !toUser.profile || !toUser.profile.usersAssociated)
+  if(!toUser || !toUser._id || !toUser.profile || !toUser.profile.associated)
     return;
 
   var msg = {};
@@ -133,7 +133,6 @@ function cloneMsgToAssociatedUsers(toUser, message) {
   if(!msg || !msg.to || !msg.to.id || !msg.to.name || !msg.to.icon || msg.ttl)
     return;
 
-  var users = db.collection('users');
   var associated = toUser.profile.associated;
   for(var i=0; i<associated.length; i++) {
     var oneUser = associated[i];
