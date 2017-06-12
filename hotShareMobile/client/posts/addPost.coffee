@@ -806,6 +806,50 @@ if Meteor.isClient
         iabHandle.addEventListener 'loadstop',handlerLoadStopEvent
         iabHandle.addEventListener 'loaderror',handlerLoadErrorEvent
 
+  @getHtmlContentByUrl = (url, callback)->
+    if iabHandle
+      iabHandle.removeEventListener 'import',getURL
+      #iabHandle.removeEventListener 'exit',handleExitBrowser
+      iabHandle.removeEventListener 'hide',handleHideBrowser
+      iabHandle.removeEventListener 'loadstart',handlerLoadStartEvent
+      iabHandle.removeEventListener 'loadstop',handlerLoadStopEvent
+      iabHandle.removeEventListener 'loaderror',handlerLoadErrorEvent
+    window.iabHandle = window.open(url, '_blank', 'hidden=yes,toolbarposition=top,mediaPlaybackRequiresUserAction=yes')
+    loadstop = (e)->
+      iabHandle.executeScript {
+        code: '
+          var returnJson = {};
+          if(document.title){
+            returnJson["title"] = document.title;
+          }
+          if(location.host){
+            returnJson["host"] = location.host;
+          }
+          if(location.host == "www.meerlive.com"){
+            returnJson["scripts"] = document.scripts[11].innerHTML;
+          }
+          if(document.body){
+            returnJson["body"] = document.body.innerHTML;
+            returnJson["bodyLength"] = document.body.innerHTML.length;
+          }
+          if(window.location.protocol){
+            returnJson["protocol"] = window.location.protocol;
+          }
+          returnJson;
+        '}
+      , (data)->
+        iabHandle.removeEventListener 'loadstop',handlerLoadStopEvent
+        iabHandle.removeEventListener 'loaderror',handlerLoadErrorEvent
+        iabHandle.close()
+        callback and callback(null, data)
+    loaderror = (e)->
+      iabHandle.removeEventListener 'loadstop',loadstop
+      iabHandle.removeEventListener 'loaderror',loaderror
+      iabHandle.close()
+      callback and callback(e)
+    iabHandle.addEventListener 'loadstop', loadstop
+    iabHandle.addEventListener 'loaderror', loaderror
+
   @handleAddedLink = (url)->
     if iabHandle
       iabHandle.removeEventListener 'import',getURL
@@ -1458,23 +1502,54 @@ if Meteor.isClient
       iabHandle.addEventListener 'loadstop',importVideo.stopEvent
       iabHandle.addEventListener 'loaderror',importVideo.errorEvent
     'click #addOther': ()->
+      options = {
+        title: '您想要添加什么，请选择？'
+        buttonLabels: ['添加链接', '导入腾讯视频', '导入优酷视频', '导入美拍']
+        addCancelButtonWithLabel: '取消'
+        androidEnableCancelButton: true
+      }
       window.footbarOppration = true
-      navigator.notification.confirm(
-        '您要添加链接还是视频，请选择？'
-        (index)->
-          if index is 1
+      window.plugins.actionsheet.show options, (index)->
+        switch index
+          when 1
             $('#show_hyperlink').show()
             $('#add_posts_content').hide()
             window.trackEvent('addPost', 'addLink')
-          else if index is 2
+          when 2, 3, 4
             window.trackEvent('addPost', 'addVideo')
             navigator.notification.prompt(
-              '请输入要导入的视频URL地址（支持：腾讯视频、优酷视频）!'
+              '请输入要导入的视频URL地址!'
               (result)->
                 if result.buttonIndex is 1 and result.input1
                   regexToken = /\b(((http|https?)+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig
                   if !regexToken.exec(result.input1)
                     return window.plugins.toast.showLongCenter("请输入正确的URL地址!")
+                  if (result.input1.indexOf('http://www.meipai.com/') >= 0)
+                    loading = $.loading('处理中，请稍候...')
+                    return getHtmlContentByUrl result.input1, (err, res)->
+                      loading.close()
+                      if (err or !res)
+                        return window.plugins.toast.showLongCenter("导入失败，请重试！")
+                      video_url = $(res.body).find('#mediaPlayer').data('poster')
+                      if (!video_url)
+                        return window.plugins.toast.showLongCenter("导入失败，请重试！")
+                      Drafts.insert {
+                        _id: new Mongo.ObjectID()._str,
+                        type: 'video',
+                        owner: Meteor.userId(),
+                        toTheEnd: true,
+                        text: '来自美拍',
+                        videoInfo: {
+                          imageUrl: video_url,
+                          # filename: video_url.replace('.jpg!thumb320', '.mp4').substr(video_url.replace('.jpg!thumb320', '.mp4').lastIndexOf('/')+1),
+                          # URI: video_url.replace('.jpg!thumb320', '.mp4')
+                          playUrl: video_url.replace('.jpg!thumb320', '.mp4')
+                        },
+                        data_row: '1',
+                        data_col: '1',
+                        data_sizex: '6',
+                        data_sizey: '4'
+                      }                
                   url = importVideo.getVideoUrlFromUrl(result.input1)
                   if (!url)
                     return window.plugins.toast.showShortCenter("导入视频失败，如有需要请重新尝试~")
@@ -1496,9 +1571,6 @@ if Meteor.isClient
               '提示'
               ['导入', '取消']
             )
-        '提示'
-        ['添加链接','添加视频', '取消']
-      )
     'click #takephoto': ()->
       if Drafts.find().count() > 0
         window.footbarOppration = true

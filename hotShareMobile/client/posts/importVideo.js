@@ -17,6 +17,8 @@ importVideo = {
         else if(uri.file.replace('.html', ''))
           return 'https://v.qq.com/iframe/player.html?vid=' + uri.file.replace('.html', '') + '&tiny=0&auto=0';
         return '';
+      case 'www.meipai.com':
+        return url;
       default:
         return '';
     }
