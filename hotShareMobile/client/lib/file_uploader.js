@@ -595,4 +595,5 @@ if (Meteor.isCordova){
 
     };
         uploadFile = uploadFileInCordova;
+        window.uploadToAliyun_new = uploadToAliyun_new;
     }

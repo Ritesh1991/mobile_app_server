@@ -2,6 +2,14 @@
   {{#if is_owner}}
     {{#if withPinImage}}
     <div class="post-pin-image"><div>pin图</div></div>
+    <div class="pinImageProgress">
+      <div class="bg">
+        <div class="pinImageProgressTip" style="margin: 20px 0;text-align: center;font-size: 16px;"></div>
+        <div style="height: 8px; margin: 10px; position: relative; border: 1px solid #fff; border-radius: 4px;">
+          <span class="pinProgress"></span>
+        </div>
+      </div>
+    </div>
     {{/if}}
   <div class="post-theme-btn"><div>模板</div></div>
   {{/if}}
