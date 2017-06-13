@@ -1686,25 +1686,27 @@ if Meteor.isClient
         if !post
           return console.log('get postContent failed!')
         # 图片上传
-        images = []
-        progress = 0
-        $('.pinImageProgress').fadeIn()
         selectMediaFromAblum(3, (cancel, result,currentCount,totalCount)->
           if cancel
             return
           if result
+            images = []
+            progress = 0
+            $('.pinImageProgress').fadeIn()
             console.log 'Local is ' + result.smallImage
-            uploadToAliyun_new(result.filename, result.URI, (status, result)->
+            uploadToAliyun_new(result.filename, result.URI, (status, data)->
+              console.log('status is==='+status)
+              console.log('result is===\n'+JSON.stringify(data))
               if status is 'uploading'
-                loaded = result.loaded
-                total  = result.total
+                loaded = data.loaded
+                total  = data.total
                 progress += (loaded * currentCount) / (total * totalCount) 
                 $('.pinImageProgressTip').text('正在上传 '+parseInt(progress*10)+'%')
                 $('.pinProgress').css('width',parseInt(progress*10)+'%')
               if status is 'done'
                 images.push({
                   isImage: true,
-                  imgUrl: result
+                  imgUrl: data
                 })
               if status is 'error'
                 PUB.toast('['+currentCount+'/'+totalCount+'] 上传失败')
@@ -1715,7 +1717,10 @@ if Meteor.isClient
                   $('.pinProgress').css('width','100%')
                   $('.pinImageProgressTip').text('上传成功')
                   Meteor.setTimeout(()->
-                    $('.pinImageProgress').fadeOut(300)
+                    $('.pinImageProgress').fadeOut(500,()->
+                      $('.pinProgress').css('width','0%')
+                      $('.pinImageProgressTip').text('正在上传')
+                    )
                     updatePinImages(post,images)
                   ,100)
             )
