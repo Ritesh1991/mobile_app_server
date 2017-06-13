@@ -98,5 +98,11 @@ if Meteor.isClient
     'click .back' :->
       history.go(-1)
     'click .contentList':(e)->
+      history = Session.get('history_view') || []
+      history.push {
+              view: 'write-letter'
+              scrollTop: document.body.scrollTop
+          }
+      Session.set('history_view',history)
       userId = e.currentTarget.id
       writeLetterTo(userId)

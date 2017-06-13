@@ -64,8 +64,9 @@ Router.route(AppConfig.path + '/user-list/:_user',{
   data: function () {
     var userId = this.params._user;
     var lists = MsgSession.find({userId: userId,sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
+    Session.set('channel','bell');
     return {
-      title: '私信',
+      title: '消息',
       isGroups: false,
       lists: lists
     };
@@ -1376,6 +1377,9 @@ Template._simpleChatListLayout.events({
     // TODO
     console.log('写私信');
     Router.go('/write-letter');
+  },
+  'click #follow': function(){
+     Router.go('/searchFollow');
   }
 });
 

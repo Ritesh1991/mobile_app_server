@@ -26,15 +26,15 @@ if Meteor.isClient
         # if Session.equals('updataFeedsWithMe',true)
         #   return 0
         # else
-        counts += Feeds.find({
-          followby: Meteor.userId(),
-          isRead:{$ne: true},
-          checked:{$ne: true},
-          eventType:{$ne:'share'},
-          createdAt: {$gt: new Date((new Date()).getTime() - 7 * 24 * 3600 * 1000)}
-        },{
-          limit: 99
-        }).count()
+        # counts += Feeds.find({
+        #   followby: Meteor.userId(),
+        #   isRead:{$ne: true},
+        #   checked:{$ne: true},
+        #   eventType:{$ne:'share'},
+        #   createdAt: {$gt: new Date((new Date()).getTime() - 7 * 24 * 3600 * 1000)}
+        # },{
+        #   limit: 99
+        # }).count()
         lists = SimpleChat.MsgSession.find({userId: Meteor.userId(),sessionType:'user'}).fetch()
         getLetterCounts = (item)->
           counts += item.count
@@ -181,7 +181,8 @@ if Meteor.isClient
           ['暂不','保存']
         )
         return
-      PUB.page('/bell')
+      # PUB.page('/bell')
+      PUB.page('/simple-chat/user-list/'+Meteor.userId())
     'click #user':(e)->
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
       if (Session.get("myHotPostsChanged"))
