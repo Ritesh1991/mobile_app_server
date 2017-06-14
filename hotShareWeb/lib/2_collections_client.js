@@ -182,6 +182,12 @@ if(Meteor.isClient){
                 if(followPostsInMemory === 0){
                     toLoadFollowPost();
                 }
+            }else{
+                // FollowPosts._collection._docs.clear();
+                FollowPosts.find({followby:Meteor.userId()}).forEach(function(item){
+                    FollowPosts._collection._docs.remove(item._id);
+                });
+                followPostsInMemory = 0;
             }
         })
         Tracker.autorun(function(){
