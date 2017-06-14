@@ -19,6 +19,60 @@ if Meteor.isClient
       if err or num <= 0
         return console.log('insert pin images error:',err)
       console.log('pin images insert ')
+  uploadPinImagesToAliyun = (images,progress,originImages,index,cb)->
+    uploadToAliyun_new(originImages[index-1].filename, originImages[index-1].URI,(status, data)->
+      if status is 'error'
+        cb('uploadFailed',null)
+      if status is 'done'
+        images.push({
+          isImage: true,
+          imgUrl: data
+        })
+        cb(null,data)
+      if status is 'uploading'
+        progress += (data.loaded * index)/ (data.total * originImages.length) 
+        $('.pinImageProgressTip').text('正在上传 '+parseInt(progress*10)+'%')
+        $('.pinProgress').css('width',parseInt(progress*10)+'%')
+    )
+  uploadPinImages = (post,originImages, isTry)->
+    images = []
+    progress = 0
+    $('.pinProgress').css('width','0%')
+    $('.pinImageProgressTip').text('正在上传')
+    $('.pinImageProgress').fadeIn()
+    async.series({
+      one: (cb)->
+        uploadPinImagesToAliyun(images,progress,originImages,1,cb)
+      two: (cb)->
+        if originImages[1]
+          uploadPinImagesToAliyun(images,progress,originImages,2,cb)
+        else
+          cb(null,null)
+      three: (cb)->
+        if originImages[2]
+          uploadPinImagesToAliyun(images,progress,originImages,3,cb)
+        else
+          cb(null,null)
+    },(err, results)->
+      console.log('uploading pinImage ==\n',JSON.stringify(results))
+      console.log('images==\n',JSON.stringify(images))
+      if err
+        console.log('upPinImages ERR='+err)
+        $('.pinImageProgress').fadeOut(500)
+        if isTry
+          return PUB.toast('图片上传失败！请检查网络或稍后再试~')
+        return navigator.notification.confirm('上传图片失败，是否需要重新上传？',(button)->
+          if button is 1
+            uploadPinImages(post, originImages, true)
+        ,'图片上传失败','重新上传,取消')
+      else
+        $('.pinProgress').css('width','100%')
+        $('.pinImageProgressTip').text('上传成功')
+        Meteor.setTimeout(()->
+          $('.pinImageProgress').fadeOut(500)
+          updatePinImages(post,images)
+        ,100)
+    )
   @isIOS = (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false)
   @isWeiXinFunc = ()->
     ua = window.navigator.userAgent.toLowerCase()
@@ -1686,61 +1740,20 @@ if Meteor.isClient
         if !post
           return console.log('get postContent failed!')
         # 图片上传
+        originImages = []
         selectMediaFromAblum(3, (cancel, result,currentCount,totalCount)->
           if cancel
             return
           if result
-            images = []
-            progress = 0
-            $('.pinImageProgress').fadeIn()
-            console.log 'Local is ' + result.smallImage
-            uploadToAliyun_new(result.filename, result.URI, (status, data)->
-              console.log('status is==='+status)
-              console.log('result is===\n'+JSON.stringify(data))
-              if status is 'uploading'
-                loaded = data.loaded
-                total  = data.total
-                progress += (loaded * currentCount) / (total * totalCount) 
-                $('.pinImageProgressTip').text('正在上传 '+parseInt(progress*10)+'%')
-                $('.pinProgress').css('width',parseInt(progress*10)+'%')
-              if status is 'done'
-                images.push({
-                  isImage: true,
-                  imgUrl: data
-                })
-              if status is 'error'
-                PUB.toast('['+currentCount+'/'+totalCount+'] 上传失败')
-              if status is 'done'
-                $('.pinImageProgressTip').text('正在上传 '+parseInt(progress*10)+'%')
-                $('.pinProgress').css('width',parseInt(progress*10)+'%')
-                if currentCount >= totalCount
-                  $('.pinProgress').css('width','100%')
-                  $('.pinImageProgressTip').text('上传成功')
-                  Meteor.setTimeout(()->
-                    $('.pinImageProgress').fadeOut(500,()->
-                      $('.pinProgress').css('width','0%')
-                      $('.pinImageProgressTip').text('正在上传')
-                    )
-                    updatePinImages(post,images)
-                  ,100)
-            )
-            # multiThreadUploadFile_new([{
-            #   type: 'image',
-            #   filename: result.filename,
-            #   URI: result.URI
-            # }],1, (err,res)->
-            #   if err or res.length <= 0
-            #     return PUB.toast('上传图片失败~')
-            #   images.push({
-            #     isImage: true,
-            #     imgUrl: res[0].imgUrl
-            #   })
-
-            #   if currentCount >= totalCount
-            #     Meteor.setTimeout(()->
-            #       updatePinImages(post,images)
-            #     ,100)
-            # )
+            originImages.push({
+              filename: result.filename,
+              URI: result.URI,
+              smallImage: result.smallImage
+            })
+            console.log('Local is:',JSON.stringify(originImages))
+            if currentCount >= totalCount
+              console.log('Local finished, start upload images')
+              uploadPinImages(post, originImages)
         )
       'click .pinthumbsUp':(e)->
         post = Session.get("postContent")
