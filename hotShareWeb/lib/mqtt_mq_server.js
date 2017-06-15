@@ -41,6 +41,18 @@ if(Meteor.isServer){
                 })
             }catch(e){}
         }
+        mqttUpdatePostHook=function(ownerId,postId,title,addonTitle,ownerName,mainImage){
+            try{
+                sendMqttMessage('updatePost',{
+                    ownerId:ownerId,
+                    postId:postId,
+                    title:title,
+                    addonTitle:addonTitle,
+                    ownerName:ownerName,
+                    mainImage:mainImage
+                })
+            }catch(e){}
+        }
         mqttRemoveNewPostHook = function(ownerId,postId,createdAt) {
             try{
                 sendMqttMessage('unPublishPost',{
@@ -53,6 +65,15 @@ if(Meteor.isServer){
         mqttUserCreateHook=function(userId,fullname,username){
             try{
                 sendMqttMessage('newUser',{
+                    userId:userId,
+                    fullname:fullname,
+                    username:username
+                })
+            }catch(e){}
+        }
+        mqttUserUpdateHook=function(userId,fullname,username){
+            try{
+                sendMqttMessage('updateUser',{
                     userId:userId,
                     fullname:fullname,
                     username:username

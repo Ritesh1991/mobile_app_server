@@ -4,6 +4,8 @@
 
 module.exports.save_user_node=save_user_node;
 module.exports.save_post_node=save_post_node;
+module.exports.update_post_node=update_post_node;
+module.exports.update_user_node=update_user_node;
 module.exports.remove_post=remove_post;
 
 var MongoClient = require('mongodb').MongoClient;
@@ -135,6 +137,61 @@ function save_user_node(doc,cb){
         });
     }
 }
+function update_user_node(doc,cb){
+    if (doc !== null) {
+        try{
+            var userInfo={
+                userId:doc._id,
+                createdAt:doc.createdAt.getTime(),
+                fullname: doc.profile.fullname,
+                device: doc.type,
+                sex: doc.profile.sex?doc.profile.sex:'',
+                lastLogonIP:doc.profile.lastLogonIP,
+                anonymous:doc.profile.anonymous?true:false,
+                browser:doc.profile.browser?true:false,
+                location:doc.profile.location
+            }
+            if(doc.services &&doc.services.weixin){
+                userInfo.wechatLogin = true
+            } else {
+                userInfo.username = doc.username
+            }
+        } catch (e){
+            if(cb)
+                return cb && cb('Cant Build userInfo')
+        }
+
+        var updatestr = 'MATCH (u1:User) WHERE u1.userId="' + userInfo.userId + \
+                        '" SET u1.createdAt="'              + userInfo.createdAt + \
+                        '" SET u1.browser="'                + userInfo.browser + \
+                        '" SET u1.sex="'                    + userInfo.sex + \
+                        '" SET u1.anonymous="'              + userInfo.anonymous + \
+                        '" SET u1.fullname="'               + userInfo.fullname + \
+                        '" SET u1.username="'               + userInfo.username + '"  RETURN u1';
+
+        console.log(updatestr);
+        dbGraph.query(updatestr, function(err1, result) {
+            if (err1){
+              console.log('update user failed');
+              return cb && cb('update user failed')
+            }
+            else {
+              if(!result || (result.length<3)) {
+                dbGraph.save(userInfo, function(err, nodeL) {
+                    if (err) {
+                        console.log(err)
+                        console.log(nodeL)
+                        return cb && cb('Cant Save userInfo')
+                    }
+                    dbGraph.label(nodeL, ['User'], function(err) {
+                        return cb && cb(null)
+                    });
+                });
+              }
+            }
+        });
+    }
+}
 function save_post_node(doc,cb){
     if (doc !== null) {
         try {
@@ -169,6 +226,59 @@ function save_post_node(doc,cb){
                 }
             });
         });
+    }
+}
+function update_post_node(doc,cb){
+    if (doc !== null) {
+        try {
+            var postInfo = {
+                postId: doc._id,
+                createdAt: doc.createdAt.getTime(),
+                name: doc.title,
+                addonTitle: doc.addontitle,
+                ownerName: doc.ownerName,
+                ownerId: doc.owner,
+                mainImage: doc.mainImage
+            }
+        } catch (e) {
+            return cb && cb('Cant update postInfo');
+        }
+
+        var updatestr = 'MATCH (p1:Post) WHERE p1.postId="' + postInfo.postId + \
+                        '" SET p1.name="' + postInfo.name + \
+                        '" SET p1.createdAt="' + postInfo.createdAt + \
+                        '" SET p1.mainImage="' + postInfo.mainImage + \
+                        '" SET p1.ownerName="' + postInfo.ownerName + \
+                        '" SET p1.addonTitle="' + postInfo.addonTitle + '"  RETURN p1';
+        console.log(updatestr);
+        dbGraph.query(updatestr, function(err1, result) {
+            if (err1){
+                console.log('update failed');
+                return cb && cb('update failed')
+            }
+            else {
+                if(!result || (result.length>1)) {
+                  dbGraph.save(postInfo, function (err, nodeL) {
+                      if (err) {
+                          console.log(err)
+                          console.log(nodeL)
+                          if(cb){
+                              cb('Cant Save it')
+                          }
+                          return
+                      }
+                      dbGraph.label(nodeL, ['Post'], function (err) {
+                          // `node` is now labelled with "Car" and "Hatchback"!
+                          if(cb){
+                              cb(null)
+                          }
+                      });
+                  });
+                } else {
+                  return cb && cb(null)
+                }
+            }
+        })
     }
 }
 function grab_userInfo_in_hotshare(db,query){

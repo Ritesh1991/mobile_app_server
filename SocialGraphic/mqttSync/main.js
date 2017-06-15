@@ -521,7 +521,7 @@ function initMqttClient() {
             reportSyncInfo.postView++;
           }
         })
-      } else if(topic === 'newUser'){
+      } else if(topic === 'newUser' || topic === 'updateUser'){
         db.collection('users').findOne({_id:json.userId},{fields:{
           username: true,
           createdAt:true,
@@ -533,15 +533,25 @@ function initMqttClient() {
           'profile.browser':true,
           'profile.location':true
         }},function(err, user) {
-          savePostUser.save_user_node(user,function(error){
-            if(!error){
-              console.log('User Info saved')
-              reportSyncInfo.succ++;
-              reportSyncInfo.newUser++;
-            }
-          })
+          if(topic === 'newUser') {
+            savePostUser.save_user_node(user,function(error){
+              if(!error){
+                console.log('User Info saved')
+                reportSyncInfo.succ++;
+                reportSyncInfo.newUser++;
+              }
+            })
+          } else {
+            savePostUser.update_user_node(user,function(error){
+              if(!error){
+                console.log('User Info updated')
+                reportSyncInfo.succ++;
+                reportSyncInfo.newUser++;
+              }
+            })
+          }
         });
-      } else if(topic === 'publishPost'){
+      } else if(topic === 'publishPost' || topic === 'updatePost'){
         if(json && json.ownerId && json.ownerId == 'ras6CfDNxX7mD6zq7') {
             console.log('this is test user')
             return;
@@ -557,13 +567,25 @@ function initMqttClient() {
           createdAt:true,
           mainImage:true
         }},function(err, post) {
-          savePostUser.save_post_node(post,function(error){
-            if(!error){
-              console.log('publishPost Info saved')
-              reportSyncInfo.succ++;
-              reportSyncInfo.publishPost++;
-            }
-          })
+          if(topic === 'publishPost') {
+            savePostUser.save_post_node(post,function(error){
+              if(!error){
+                console.log('publishPost Info saved')
+                reportSyncInfo.succ++;
+                reportSyncInfo.publishPost++;
+              }
+            })
+          } else {
+            savePostUser.update_post_node(post, function(err){
+              if(err === null) {
+                console.log('Post Info updated: pid=' + postDoc._id)
+                reportSyncInfo.succ++;
+                reportSyncInfo.publishPost++;
+              }
+              else
+                console.log('Post Info updated: error:' + err)
+            })
+          }
         });
       } else if(topic === 'unPublishPost'){
         on_post_remove(json);
