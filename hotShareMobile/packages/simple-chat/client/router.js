@@ -873,7 +873,7 @@ sendMqttMsg = function(){
       Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
   }, 1000*60*2);
 
-  if(data.type === 'group')
+  if(msg.type === 'group')
     sendMqttGroupMessage(msg.to.id, msg, callback);
   else
     sendMqttUserMessage(msg.to.id, msg, callback);
@@ -983,9 +983,18 @@ Template._simpleChatToChatLayout.events({
 
 Template._simpleChatToChatItem.onRendered(function(){
   var data = this.data;
+
+  if (data.form.id === Meteor.userId() && data.send_status === 'sending')
+    sendMqttMsg(data);
+
   touch.on('li#'+this.data._id,'hold',function(ev){
-    if (data._id === Meteor.userId() && (data.send_status === 'failed' || data.send_status === 'sending')){
-      switch(data.send_status){
+    var msg = Messages.findOne({_id: data._id});
+    console.log('hold event:', msg);
+    if (!msg)
+      return;
+
+    if (msg.form.id === Meteor.userId() && (msg.send_status === 'failed' || msg.send_status === 'sending')){
+      switch(msg.send_status){
         case 'failed':
           window.plugins.actionsheet.show({
             title: '消息发送失败，请选择？',
@@ -994,9 +1003,9 @@ Template._simpleChatToChatItem.onRendered(function(){
             androidEnableCancelButton: true
           }, function(index){
             if (index === 1)
-              sendMqttMsg(data);
+              sendMqttMsg(msg);
             else if (index === 2)
-              Messages.remove({_id: data._id});
+              Messages.remove({_id: msg._id});
           });
           break;
         case 'sending':
@@ -1007,18 +1016,18 @@ Template._simpleChatToChatItem.onRendered(function(){
             androidEnableCancelButton: true
           }, function(index){
             if (index === 1)
-              Messages.remove({_id: data._id});
+              Messages.remove({_id: msg._id});
           });
           break;
       }
     }
   });
 });
-Template._simpleChatToChatItem.onDestroyed(function(){
-  if(this.data.send_status === 'sending' && this.data.form.id === Meteor.userId())
-    Messages.update({_id: this.data._id}, {$set: {send_status: 'failed'}});
-    // sendMqttMsg(this.data);
-});
+// Template._simpleChatToChatItem.onDestroyed(function(){
+//   if(this.data.send_status === 'sending' && this.data.form.id === Meteor.userId())
+//     Messages.update({_id: this.data._id}, {$set: {send_status: 'failed'}});
+//     // sendMqttMsg(this.data);
+// });
 
 Template._simpleChatToChatItem.helpers({
   formatPIndex:function(index){
