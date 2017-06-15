@@ -161,12 +161,12 @@ function update_user_node(doc,cb){
                 return cb && cb('Cant Build userInfo')
         }
 
-        var updatestr = 'MATCH (u1:User) WHERE u1.userId="' + userInfo.userId + \
-                        '" SET u1.createdAt="'              + userInfo.createdAt + \
-                        '" SET u1.browser="'                + userInfo.browser + \
-                        '" SET u1.sex="'                    + userInfo.sex + \
-                        '" SET u1.anonymous="'              + userInfo.anonymous + \
-                        '" SET u1.fullname="'               + userInfo.fullname + \
+        var updatestr = 'MATCH (u1:User) WHERE u1.userId="' + userInfo.userId +
+                        '" SET u1.createdAt="'              + userInfo.createdAt +
+                        '" SET u1.browser="'                + userInfo.browser +
+                        '" SET u1.sex="'                    + userInfo.sex +
+                        '" SET u1.anonymous="'              + userInfo.anonymous +
+                        '" SET u1.fullname="'               + userInfo.fullname +
                         '" SET u1.username="'               + userInfo.username + '"  RETURN u1';
 
         console.log(updatestr);
@@ -176,7 +176,7 @@ function update_user_node(doc,cb){
               return cb && cb('update user failed')
             }
             else {
-              if(!result || (result.length<3)) {
+              if(!result || (result.length ===0)) {
                 dbGraph.save(userInfo, function(err, nodeL) {
                     if (err) {
                         console.log(err)
@@ -228,36 +228,36 @@ function save_post_node(doc,cb){
         });
     }
 }
-function update_post_node(doc,cb){
+function update_post_node(doc, updateDoc, cb){
     if (doc !== null) {
         try {
             var postInfo = {
                 postId: doc._id,
                 createdAt: doc.createdAt.getTime(),
-                name: doc.title,
-                addonTitle: doc.addontitle,
-                ownerName: doc.ownerName,
+                name: updateDoc.title || doc.title,
+                addonTitle: updateDoc.addonTitle || doc.addontitle,
+                ownerName: updateDoc.ownerName || doc.ownerName,
                 ownerId: doc.owner,
-                mainImage: doc.mainImage
+                mainImage: updateDoc.mainImage || doc.mainImage
             }
         } catch (e) {
             return cb && cb('Cant update postInfo');
         }
 
-        var updatestr = 'MATCH (p1:Post) WHERE p1.postId="' + postInfo.postId + \
-                        '" SET p1.name="' + postInfo.name + \
-                        '" SET p1.createdAt="' + postInfo.createdAt + \
-                        '" SET p1.mainImage="' + postInfo.mainImage + \
-                        '" SET p1.ownerName="' + postInfo.ownerName + \
+        var updatestr = 'MATCH (p1:Post) WHERE p1.postId="' + postInfo.postId +
+                        '" SET p1.name="' + postInfo.name +
+                        '" SET p1.createdAt="' + postInfo.createdAt +
+                        '" SET p1.mainImage="' + postInfo.mainImage +
+                        '" SET p1.ownerName="' + postInfo.ownerName +
                         '" SET p1.addonTitle="' + postInfo.addonTitle + '"  RETURN p1';
-        console.log(updatestr);
+        //console.log(updatestr);
         dbGraph.query(updatestr, function(err1, result) {
             if (err1){
                 console.log('update failed');
                 return cb && cb('update failed')
             }
             else {
-                if(!result || (result.length>1)) {
+                if(!result || (result.length==0)) {
                   dbGraph.save(postInfo, function (err, nodeL) {
                       if (err) {
                           console.log(err)

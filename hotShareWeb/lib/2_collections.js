@@ -3643,7 +3643,7 @@ if(Meteor.isServer){
       if(doc.owner === userId){
         postsUpdateHookDeferHandle(userId,doc,fieldNames, modifier);
         try{
-            mqttUpdatePostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+            mqttUpdatePostHook(doc.owner,doc._id,modifier.$set.title,modifier.$set.addontitle,modifier.$set.ownerName,modifier.$set.mainImage);
         }catch(err){
         }
         return true;

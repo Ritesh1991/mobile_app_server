@@ -454,6 +454,13 @@ function subscribe_topics(){
         }
         console.log('subscribe publishPost granted ' + JSON.stringify(granted))
     })
+    client.subscribe('updatePost', {qos:1}, function(err, granted){
+        if (err){
+            console.log('subscribe updatePost err');
+            return;
+        }
+        console.log('subscribe updatePost granted ' + JSON.stringify(granted))
+    })
     client.subscribe('unPublishPost', {qos:1}, function(err, granted){
         if (err){
             console.log('subscribe unPublishPost err');
@@ -467,6 +474,13 @@ function subscribe_topics(){
             return;
         }
         console.log('subscribe newUser granted ' + JSON.stringify(granted))
+    })
+    client.subscribe('updateUser', {qos:1}, function(err, granted){
+        if (err){
+            console.log('subscribe updateUser err');
+            return;
+        }
+        console.log('subscribe updateUser granted ' + JSON.stringify(granted))
     })
     client.subscribe('followUser', {qos:1}, function(err, granted){
         if (err){
@@ -487,8 +501,10 @@ function subscribe_topics(){
 function unsubscribe_topics(){
     client.unsubscribe('postView')
     client.unsubscribe('publishPost')
+    client.unsubscribe('updatePost')
     client.unsubscribe('unPublishPost')
     client.unsubscribe('newUser')
+    client.unsubscribe('updateUser')
     client.unsubscribe('followUser')
     client.unsubscribe('unFollowUser')
 }
@@ -576,9 +592,9 @@ function initMqttClient() {
               }
             })
           } else {
-            savePostUser.update_post_node(post, function(err){
+            savePostUser.update_post_node(post, json, function(err){
               if(err === null) {
-                console.log('Post Info updated: pid=' + postDoc._id)
+                console.log('Post Info updated: pid=' + post._id)
                 reportSyncInfo.succ++;
                 reportSyncInfo.publishPost++;
               }
