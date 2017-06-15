@@ -807,17 +807,16 @@ Template._simpleChatToChatLayout.onRendered(function(){
           return;
         if(result){
           var id = new Mongo.ObjectID()._str;
-          window.___message.insert(id); // result.smallImage
+          window.___message.insert(id, result.filename, result.URI); // result.smallImage
           multiThreadUploadFile_new([{
             type: 'image',
             filename: result.filename,
             URI: result.URI
           }], 1, function(err, res){
-            if(err || res.length <= 0){
-              window.___message.remove(id);
-              return PUB.toast('上传图片失败~');
-            }
-            window.___message.update(id, res[0].imgUrl);
+            if(err || res.length <= 0)
+              window.___message.update(id, null);
+            else
+              window.___message.update(id, res[0].imgUrl);
           });
         }
       });
@@ -872,6 +871,29 @@ sendMqttMsg = function(){
     if (obj && obj.send_status === 'sending')
       Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
   }, 1000*60*2);
+
+  Messages.update({_id: msg._id}, {$set: {send_status: 'sending'}});
+
+  if (msg.type === 'image'){
+    if(!msg.images[0].url){
+      return multiThreadUploadFile_new([{
+        type: 'image',
+        filename: msg.images[0].filename,
+        URI: msg.images[0].uri
+      }], 1, function(err, res){
+        if(err || res.length <= 0)
+          return callback(new Error('upload error'));
+
+        if(timeout){
+          Meteor.clearTimeout(timeout);
+          timeout = null;
+        }
+        window.___message.update(id, res[0].imgUrl);
+        msg = Messages.findOne({_id: msg.to.id});
+        sendMqttGroupMessage(msg.to.id, msg, callback);
+      });
+    }
+  }
 
   if(msg.type === 'group')
     sendMqttGroupMessage(msg.to.id, msg, callback);
@@ -987,7 +1009,7 @@ Template._simpleChatToChatItem.onRendered(function(){
   if (data.form.id === Meteor.userId() && data.send_status === 'sending')
     sendMqttMsg(data);
 
-  touch.on('li#'+this.data._id,'hold',function(ev){
+  touch.on(this.$('li'),'hold',function(ev){
     var msg = Messages.findOne({_id: data._id});
     console.log('hold event:', msg);
     if (!msg)
@@ -1141,7 +1163,7 @@ Template._simpleChatToChatItem.helpers({
 });
 
 window.___message = {
-  insert: function(id){
+  insert: function(id, filename, uri){
     var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
     var to = null;
 
@@ -1178,7 +1200,9 @@ window.___message = {
           url:null,
           label:null,
           people_his_id:id,
-          thumbnail: '/packages/feiwu_simple-chat/images/sendingBmp.gif'
+          thumbnail: '/packages/feiwu_simple-chat/images/sendingBmp.gif',
+          filename: filename,
+          uri: uri
         }
       ],
       //thumbnail: '/packages/feiwu_simple-chat/images/sendingBmp.gif',
