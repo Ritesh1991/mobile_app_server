@@ -111,7 +111,7 @@ if Meteor.isClient
     loadError:()->
       Session.equals('postfriendsCollection','error')
   Template.addNewFriends.events
-    "click .newFriends":(e)->
+    "click .touserdetail":(e)->
       currentId =  e.currentTarget.id
       if $('#' + currentId + ' .red_spot').length > 0
         $('#' + currentId + ' .red_spot').remove()
@@ -174,4 +174,9 @@ if Meteor.isClient
       }
     'click .meet_letter_btn':(e)->
       ta = e.currentTarget.id
-      console.log('add new friends.' + ta)
+      user = Meteor.user()
+      if withQRTips
+        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+          $('#bellPostDialog').fadeIn();
+        Session.set('qrtype', '联系人');
+        showQrTips('','post',Session.get('postContent')._id)

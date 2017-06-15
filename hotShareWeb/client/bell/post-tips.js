@@ -102,6 +102,7 @@ Template.bellPostTips.events({
     var user = Meteor.user();
     if(withQRTips){
       if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
+        Session.set('qrtype', '消息');
         return $('#bellPostDialog').fadeIn();
       }
       return showQrTips('','post',Session.get('postContent')._id);

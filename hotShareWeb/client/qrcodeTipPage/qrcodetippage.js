@@ -95,7 +95,15 @@ Template.qrcodeTipPage.onRendered(function () {
     }
   });
 });
-
+Template.qrcodeTipPage.helpers({
+  qrtype: function(){
+    if(Session.get('qrtype')){
+      return Session.get('qrtype');
+    }else{
+      return '消息'
+    }
+  }
+});
 Template.qrcodeTipPage.events({
   'click .close':function(){
     $('.qr-page').remove();
