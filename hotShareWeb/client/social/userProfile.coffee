@@ -347,6 +347,13 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage1.events
+    'click .chatToUser':(e)->
+      user = Meteor.user()
+      if withQRTips
+        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+          $('#bellPostDialog').fadeIn();
+        Session.set('qrtype', '联系人');
+        showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -477,6 +484,13 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage2.events
+    'click .chatToUser':(e)->
+      user = Meteor.user()
+      if withQRTips
+        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+          $('#bellPostDialog').fadeIn();
+        Session.set('qrtype', '联系人');
+        showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -608,6 +622,13 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage3.events
+    'click .chatToUser':(e)->
+      user = Meteor.user()
+      if withQRTips
+        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+          $('#bellPostDialog').fadeIn();
+        Session.set('qrtype', '联系人');
+        showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -719,6 +740,13 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage.events
+    'click .chatToUser':(e)->
+      user = Meteor.user()
+      if withQRTips
+        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+          $('#bellPostDialog').fadeIn();
+        Session.set('qrtype', '联系人');
+        showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
