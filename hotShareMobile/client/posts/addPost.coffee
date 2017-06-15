@@ -1524,32 +1524,32 @@ if Meteor.isClient
                   regexToken = /\b(((http|https?)+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig
                   if !regexToken.exec(result.input1)
                     return window.plugins.toast.showLongCenter("请输入正确的URL地址!")
-                  if (result.input1.indexOf('http://www.meipai.com/') >= 0)
-                    loading = $.loading('处理中，请稍候...')
-                    return getHtmlContentByUrl result.input1, (err, res)->
-                      loading.close()
-                      if (err or !res)
-                        return window.plugins.toast.showLongCenter("导入失败，请重试！")
-                      video_url = $(res.body).find('#mediaPlayer').data('poster')
-                      if (!video_url)
-                        return window.plugins.toast.showLongCenter("导入失败，请重试！")
-                      Drafts.insert {
-                        _id: new Mongo.ObjectID()._str,
-                        type: 'video',
-                        owner: Meteor.userId(),
-                        toTheEnd: true,
-                        text: '来自美拍',
-                        videoInfo: {
-                          imageUrl: video_url,
-                          # filename: video_url.replace('.jpg!thumb320', '.mp4').substr(video_url.replace('.jpg!thumb320', '.mp4').lastIndexOf('/')+1),
-                          # URI: video_url.replace('.jpg!thumb320', '.mp4')
-                          playUrl: video_url.replace('.jpg!thumb320', '.mp4')
-                        },
-                        data_row: '1',
-                        data_col: '1',
-                        data_sizex: '6',
-                        data_sizey: '4'
-                      }                
+                  # if (result.input1.indexOf('http://www.meipai.com/') >= 0)
+                  #   loading = $.loading('处理中，请稍候...')
+                  #   return getHtmlContentByUrl result.input1, (err, res)->
+                  #     loading.close()
+                  #     if (err or !res)
+                  #       return window.plugins.toast.showLongCenter("导入失败，请重试！")
+                  #     video_url = $(res.body).find('#mediaPlayer').data('poster')
+                  #     if (!video_url)
+                  #       return window.plugins.toast.showLongCenter("导入失败，请重试！")
+                  #     Drafts.insert {
+                  #       _id: new Mongo.ObjectID()._str,
+                  #       type: 'video',
+                  #       owner: Meteor.userId(),
+                  #       toTheEnd: true,
+                  #       text: '来自美拍',
+                  #       videoInfo: {
+                  #         imageUrl: video_url,
+                  #         # filename: video_url.replace('.jpg!thumb320', '.mp4').substr(video_url.replace('.jpg!thumb320', '.mp4').lastIndexOf('/')+1),
+                  #         # URI: video_url.replace('.jpg!thumb320', '.mp4')
+                  #         playUrl: video_url.replace('.jpg!thumb320', '.mp4')
+                  #       },
+                  #       data_row: '1',
+                  #       data_col: '1',
+                  #       data_sizex: '6',
+                  #       data_sizey: '4'
+                  #     }                
                   url = importVideo.getVideoUrlFromUrl(result.input1)
                   if (!url)
                     return window.plugins.toast.showShortCenter("导入视频失败，如有需要请重新尝试~")
@@ -1566,7 +1566,7 @@ if Meteor.isClient
                     data_row: '1',
                     data_col: '1',
                     data_sizex: '6',
-                    data_sizey: '4'
+                    data_sizey: if (result.input1.indexOf('http://www.meipai.com/') >= 0) then '8' else '4'
                   }                
               '提示'
               ['导入', '取消']
