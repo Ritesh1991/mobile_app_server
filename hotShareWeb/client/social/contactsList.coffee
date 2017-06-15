@@ -172,3 +172,6 @@ if Meteor.isClient
         followerIcon: this.userIcon
         createAt: new Date()
       }
+    'click .meet_letter_btn':(e)->
+      ta = e.currentTarget.id
+      console.log('add new friends.' + ta)
