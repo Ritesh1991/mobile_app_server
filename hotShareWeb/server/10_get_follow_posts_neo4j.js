@@ -112,6 +112,7 @@ if(Meteor.isServer){
         if(!Match.test(userId, String)){
             return;
         }
+        ensureUserInNeo4J(userId)
         // 计算Neo4J中用户Follow To的 数量和用户列表
         // count(r)计算数量，列表用 collect(u1.userId)合并到一个数组里
         // 该查询返回一个二维数组 [0][0] 是 count(r), [0][1] 是Follow To 的用户列表
@@ -155,7 +156,7 @@ if(Meteor.isServer){
                 if(toAddToNeo4j && toAddToNeo4j.length > 0){
 
                     toAddToNeo4j.forEach(function(followerId){
-                        var doc =  Follower.findOne({userId:userId,followerId:followerId},{fields:{_id:false,createAt:true}})
+                        var doc =  Follower.findOne({userId:userId,followerId:followerId},{fields:{createAt:true}})
                         if(doc){
                             var ts = new Date(doc.createAt)
                             // 在Neo4J中创建Follow To关系
@@ -171,11 +172,15 @@ if(Meteor.isServer){
                                 'WITH head(collect(f)) as v1, tail(collect(f)) as coll '+
                                 'FOREACH(x in coll | delete x) '+
                                 'RETURN v1';
-                        }
-                        try {
-                            queryResult = Neo4j.query(createstr);
-                        } catch (_error) {
-                            console.log(_error)
+                            try {
+                                console.log(createstr);
+                                queryResult = Neo4j.query(createstr);
+                                console.log(queryResult)
+                            } catch (_error) {
+                                console.log(_error)
+                            }
+                        } else {
+                            console.log('Cant find user in db for ensureInNeo4j for follow post method')
                         }
                     })
                 }

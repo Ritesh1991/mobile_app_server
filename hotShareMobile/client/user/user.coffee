@@ -28,6 +28,7 @@ if Meteor.isClient
               Session.setPersistent('myFollowToCount',json['myFollowToCount'])
               Session.setPersistent('myEmailFollowerCount',json['myEmailFollowerCount'])
               Session.setPersistent('myEmailFollowerCount-'+Meteor.userId(),json['myEmailFollowerCount-'+Meteor.userId()])
+              return
             console.log('Issue on getMyProfileData')
           )
         ,100

@@ -12,8 +12,6 @@
 if Meteor.isClient
   Template.listPosts.rendered=->
     $('.content').css 'min-height',$(window).height()
-    if FollowPosts.find({followby:Meteor.userId()}).count()<4
-      toLoadFollowPost()
     if !$('.home #wrapper #list-post').data("plugin_xpull")
       $('.home #wrapper #list-post').xpull(
         {
@@ -26,7 +24,7 @@ if Meteor.isClient
     else
       $('.home #wrapper #list-post').data("plugin_xpull").init()
     Deps.autorun (h)->
-      if FollowPosts.find({followby:Meteor.userId()}).count()>3
+      if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3
         h.stop()
         initLoadMoreForListPosts()
     #    $('.mainImage').css('height',$(window).height()*0.55)

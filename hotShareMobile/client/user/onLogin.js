@@ -6,9 +6,13 @@ if (Meteor.isClient) {
       } else {
         Session.setPersistent('persistentLoginStatus', true);
       }
-      return Meteor.setTimeout(function() {
+      if(FollowPosts.find({followby:Meteor.userId()}).count()<4){
+        toLoadFollowPost()
+      } else {
+        toLoadLatestFollowPost()
+      }
+      Meteor.setTimeout(function() {
         try{
-
           if(isUSVersion){
             Meteor.call('updateUserLanguage', Meteor.userId(), 'en');
           } else {

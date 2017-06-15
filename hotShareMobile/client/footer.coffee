@@ -136,6 +136,9 @@ if Meteor.isClient
     # ,100)
   Template.footer.events
     'click #home':(e)->
+      Meteor.setTimeout ()->
+        toLoadLatestFollowPost()
+      ,100
       if (Session.get("myHotPostsChanged"))
         Session.set("myHotPostsChanged", false)
         navigator.notification.confirm(

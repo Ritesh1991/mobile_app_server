@@ -168,7 +168,7 @@ if(Meteor.isClient){
                 }
                 followPostStatus = 'loading'
                 Session.set('followPostsCollection','loading')
-                Meteor.call('getFollowPost',currentFollowPostsInDB, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
+                Meteor.call('getFollowPost',currentFollowPostsLimit, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
                     if(err){
                         subscribeFollowPostsOnError(err)
                         return callback && callback(err)
@@ -189,20 +189,20 @@ if(Meteor.isClient){
             } else {
                 return callback && callback(null)
             }
-        }
+        }/*
         Tracker.autorun(function(){
             if(Meteor.userId()){
                 followPostsInMemory = FollowPosts.find({followby:Meteor.userId()}).count()
                 if(followPostsInMemory === 0){
                     toLoadFollowPost();
                 }
-            }/*else{
+            }else{
                 FollowPosts.find({followby:Meteor.userId()}).forEach(function(item){
                     FollowPosts.remove(item._id);
                 });
                 followPostsInMemory = 0;
-            }*/
-        })
+            }
+        })*/
         Tracker.autorun(function(){
             if (Meteor.userId()) {
                 Meteor.subscribe('followSeries', Session.get('followSeriesLimit'), {

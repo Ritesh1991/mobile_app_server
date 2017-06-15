@@ -87,6 +87,13 @@ if(Meteor.isServer){
             'RETURN v1';
         runQueryOne(createstr)
     }
+    ensureUserInNeo4J = function(userId){
+        var userInNeo4j = runQueryOne('MATCH (u:User{userId:"'+userId+'"}) RETURN u')
+        if(!userInNeo4j){
+            console.log('Need insert user')
+            insertUserToNeo4j(userId)
+        }
+    }
     /*
      * 本函数目的是保证Neo4J里记录的VIEWER数据关系和Mongodb中的数据存在且一致
      * 用户userId, 帖子 postId
@@ -102,11 +109,7 @@ if(Meteor.isServer){
             console.log('Need insert post')
             insertPostToNeo4j(postId)
         }
-        var userInNeo4j = runQueryOne('MATCH (u:User{userId:"'+userId+'"}) RETURN u')
-        if(!userInNeo4j){
-            console.log('Need insert user')
-            insertUserToNeo4j(userId)
-        }
+        ensureUserInNeo4J(userId)
         var viewInNeo4j = runQueryOne()
         if(!viewInNeo4j){
             console.log('Need insert view')
