@@ -14,7 +14,7 @@ loginFn = (id)->
         '提示', ['知道了', '重新切换']
       )
     else if err is 'NOT_LOGIN'
-      FollowPosts._collection._docs.clear()
+      #FollowPosts._collection._docs.clear()
       return navigator.notification.confirm('切换帐号时发生异常，需要重新登录您的帐号！'
         ()->
           if Meteor.userId()

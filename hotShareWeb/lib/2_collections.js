@@ -1,7 +1,6 @@
 // Mongo.setConnectionOptions({server: {reconnectTries:Infinity}});
 Posts = new Meteor.Collection('posts');
 RePosts = new Meteor.Collection('rePosts');
-FollowPosts = new Meteor.Collection('followposts');
 Feeds = new Meteor.Collection('feeds');
 Drafts = new Meteor.Collection(null);
 TempDrafts = new Meteor.Collection(null);
@@ -61,6 +60,7 @@ PostExamples = new Meteor.Collection('postExamples');
 WebWaitReadMsg = new Meteor.Collection('webwaitreadmsg');
 
 if(Meteor.isServer){
+  FollowPosts = new Meteor.Collection('followposts');
   Meteor.startup(function(){
     if (Themes.find({}).count() <= 0){
       Themes.insert({name: '标准', style: '/css/theme/default/style.css', preview: '/css/theme/default/preview.jpg', default: true});

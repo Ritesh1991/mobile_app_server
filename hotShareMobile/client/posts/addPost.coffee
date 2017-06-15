@@ -997,7 +997,7 @@ if Meteor.isClient
   @insertPostOnTheHomePage = (postId,postInfo)->
     count = FollowPosts.find({_id:postId}).count()
     if count is 0
-      FollowPosts._collection.insert({
+      FollowPosts.insert({
         _id: postId,
         postId:postId,
         title: postInfo.title,
@@ -1016,7 +1016,7 @@ if Meteor.isClient
         followby: Meteor.userId()
       })
     else
-      FollowPosts._collection.update(
+      FollowPosts.update(
         {
           _id:postId
         },

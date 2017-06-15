@@ -14,11 +14,14 @@ if(Meteor.isClient){
 
     // ClientPostFriends（groundDB）记录： 新朋友点过的，且count=1的数据
     ClientPostFriends = new Ground.Collection('ClientPostFriends', { connection: null });
+
+
+    FollowPosts = new Ground.Collection('followPosts', { connection: null });
 }
 
 
 if(Meteor.isClient){
-    FOLLOWPOSTS_ITEMS_INCREMENT = 30;
+    FOLLOWPOSTS_ITEMS_INCREMENT = 10;
     var FEEDS_ITEMS_INCREMENT = 20;
     var FOLLOWS_ITEMS_INCREMENT = 10;
     var MYPOSTS_ITEMS_INCREMENT = 15;
@@ -141,7 +144,7 @@ if(Meteor.isClient){
                     result.forEach(function(item){
                         if(item && item._id){
                             if(!FollowPosts.findOne({_id:item._id})){
-                                FollowPosts._collection.insert(item)
+                                FollowPosts.insert(item)
                             }
                         }
                     })
@@ -152,28 +155,32 @@ if(Meteor.isClient){
                 }
             });
         }
-        toLoadFollowPost = function(){
+        toLoadFollowPost = function(callback){
             if( followPostStatus === 'loaded'){
                 console.log('Called here')
                 followPostStatus = 'loading'
                 Session.set('followPostsCollection','loading')
                 Session.set("followpostsitemsLimit", FOLLOWPOSTS_ITEMS_INCREMENT+followPostsInMemory);
-                Meteor.subscribe('followposts', FOLLOWPOSTS_ITEMS_INCREMENT, followPostsInMemory,true, {
-                    onError: subscribeFollowPostsOnError,
-                    onStop:function(){
-                        if (followPostStatus === 'loading'){
-                            followPostStatus = 'loaded'
-                            Session.set('followPostsCollection','loaded')
-                            Session.set("followpostsitemsLimit",FollowPosts.find({followby:Meteor.userId()}).count())
-                        }
-                    },
-                    onReady: function () {
-                        console.log('followPostsCollection loaded');
+                Meteor.call('getFollowPost',followPostsInMemory, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
+                    if(err){
+                        subscribeFollowPostsOnError(err)
+                        return callback && callback(err)
+                    } else {
+                        result.forEach(function(item){
+                            if(item && item._id){
+                                if(!FollowPosts.findOne({_id:item._id})){
+                                    FollowPosts.insert(item)
+                                }
+                            }
+                        })
                         followPostStatus = 'loaded'
                         Session.set("followpostsitemsLimit",FollowPosts.find({followby:Meteor.userId()}).count())
                         Session.set('followPostsCollection','loaded')
+                        return callback && callback(null,{length:result.length})
                     }
                 });
+            } else {
+                return callback && callback(null)
             }
         }
         Tracker.autorun(function(){
@@ -182,13 +189,12 @@ if(Meteor.isClient){
                 if(followPostsInMemory === 0){
                     toLoadFollowPost();
                 }
-            }else{
-                // FollowPosts._collection._docs.clear();
+            }/*else{
                 FollowPosts.find({followby:Meteor.userId()}).forEach(function(item){
-                    FollowPosts._collection._docs.remove(item._id);
+                    FollowPosts.remove(item._id);
                 });
                 followPostsInMemory = 0;
-            }
+            }*/
         })
         Tracker.autorun(function(){
             if (Meteor.userId()) {

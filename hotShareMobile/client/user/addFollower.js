@@ -10,7 +10,7 @@ if(Meteor.isClient){
                 result.forEach(function(item){
                     if(item && item._id){
                         if(!FollowPosts.findOne({_id:item._id})){
-                            FollowPosts._collection.insert(item)
+                            FollowPosts.insert(item)
                         }
                     }
                 })

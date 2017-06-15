@@ -8,7 +8,7 @@ if(Meteor.isClient){
             var follower = Follower.findOne({_id:_id},{fields:{followerId:true}})
             Follower.remove(_id)
             if(follower && follower.followerId){
-                FollowPosts._collection.remove({owner:follower.followerId})
+                FollowPosts.remove({owner:follower.followerId})
             }
         } catch(e){
             console.log(e)
