@@ -853,6 +853,32 @@ Template._simpleChatToChatLayout.helpers({
   }
 });
 
+sendMqttMsg = function(){
+  var msg = _.clone(arguments[0]);
+  delete msg.send_status
+  var callback = function(err){
+    if(timeout){
+      Meteor.clearTimeout(timeout);
+      timeout = null;
+    }
+    if (err){
+      console.log('send mqtt err:', err);
+      return Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
+    }
+    Messages.update({_id: msg._id}, {$set: {send_status: 'success'}});
+  };
+  var timeout = Meteor.setTimeout(function(){
+    var obj = Messages.findOne({_id: msg._id});
+    if (obj && obj.send_status === 'sending')
+      Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
+  }, 1000*60*2);
+
+  if(data.type === 'group')
+    sendMqttGroupMessage(msg.to.id, msg, callback);
+  else
+    sendMqttUserMessage(msg.to.id, msg, callback);
+};
+
 Template._simpleChatToChatLayout.events({
   'click #addToBlacklist': function(e){
     try{
@@ -931,21 +957,11 @@ Template._simpleChatToChatLayout.events({
         type: 'text',
         text: text,
         create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-        is_read: false
+        is_read: false,
+        send_status: 'sending'
       };
       Messages.insert(msg, function(){
-        if(data.type === 'group'){
-          sendMqttGroupMessage(msg.to.id, msg);
-        }
-        else{
-          sendMqttUserMessage(msg.to.id, msg, function(err){
-            if(err){
-              console.log('Error of sending message')
-            } else {
-              console.log('Sent to server message')
-            }
-          });
-        }
+        sendMqttMsg(msg);
         Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
       });
 
@@ -963,6 +979,45 @@ Template._simpleChatToChatLayout.events({
     //PUB.page('/simpleUserProfile/'+data.id);
   }
 
+});
+
+Template._simpleChatToChatItem.onRendered(function(){
+  var data = this.data;
+  touch.on('li#'+this.data._id,'hold',function(ev){
+    if (data._id === Meteor.userId() && (data.send_status === 'failed' || data.send_status === 'sending')){
+      switch(data.send_status){
+        case 'failed':
+          window.plugins.actionsheet.show({
+            title: '消息发送失败，请选择？',
+            buttonLabels: ['重新发送', '删除'],
+            addCancelButtonWithLabel: '返回',
+            androidEnableCancelButton: true
+          }, function(index){
+            if (index === 1)
+              sendMqttMsg(data);
+            else if (index === 2)
+              Messages.remove({_id: data._id});
+          });
+          break;
+        case 'sending':
+          window.plugins.actionsheet.show({
+            title: '消息发送中，请选择？',
+            buttonLabels: ['取消发送'],
+            addCancelButtonWithLabel: '返回',
+            androidEnableCancelButton: true
+          }, function(index){
+            if (index === 1)
+              Messages.remove({_id: data._id});
+          });
+          break;
+      }
+    }
+  });
+});
+Template._simpleChatToChatItem.onDestroyed(function(){
+  if(this.data.send_status === 'sending' && this.data.form.id === Meteor.userId())
+    Messages.update({_id: this.data._id}, {$set: {send_status: 'failed'}});
+    // sendMqttMsg(this.data);
 });
 
 Template._simpleChatToChatItem.helpers({
@@ -1039,6 +1094,15 @@ Template._simpleChatToChatItem.helpers({
   ta_me: function(id){
     return id != Meteor.userId() ? 'ta' : 'me';
   },
+  is_me: function(id){
+    return id === Meteor.userId();
+  },
+  status_sending: function(val){
+    return val === 'sending';
+  },
+  status_failed: function(val){
+    return val === 'failed';
+  },
   show_images: function(images){
     var $li = $('li#' + this._id);
     var $imgs = $li.find('.text .imgs');
@@ -1113,7 +1177,8 @@ window.___message = {
       people_uuid:'',
       people_his_id:id,
       wait_lable:true,
-      is_read: false
+      is_read: false,
+      send_status: 'sending'
     }, function(err, id){
       console.log('insert id:', id);
       $('.box').scrollTop($('.box ul').height());
@@ -1130,18 +1195,19 @@ window.___message = {
     }}, function(){
       console.log('update id:', id);
       $('.box').scrollTop($('.box ul').height());
-      if (msg.to_type === 'group'){
-        sendMqttGroupMessage(msg.to.id, Messages.findOne({_id: id}));
-      }
-      else{
-        sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}),function(err){
-          if(err){
-            console.log('Cant send this message')
-          } else {
-            console.log('Sent to server')
-          }
-        });
-      }
+      sendMqttMsg(msg);
+    //   if (msg.to_type === 'group'){
+    //     sendMqttGroupMessage(msg.to.id, Messages.findOne({_id: id}));
+    //   }
+    //   else{
+    //     sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}),function(err){
+    //       if(err){
+    //         console.log('Cant send this message')
+    //       } else {
+    //         console.log('Sent to server')
+    //       }
+    //     });
+    //   }
     });
   },
   remove: function(id){

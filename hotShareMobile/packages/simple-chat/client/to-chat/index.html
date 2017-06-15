@@ -132,6 +132,14 @@
     {{else}}-->
       {{#if text}}
         <div class="text">{{text}}
+          {{#if is_me form.id}}
+            {{#if status_sending send_status}}
+            <div class="status"><img src="/loading.gif" /></div>
+            {{/if}}
+            {{#if status_failed send_status}}
+            <div class="status"><img src="/failed.png" /></div>
+            {{/if}}
+          {{/if}}
           {{#if people_id}}
           <!--标记消息 start-->
             {{#if label_complete}}
@@ -233,6 +241,14 @@
       </div>
       {{else}}
       <div class="img">
+        {{#if is_me form.id}}
+          {{#if status_sending send_status}}
+          <div class="status"><img src="/loading.gif" /></div>
+          {{/if}}
+          {{#if status_failed send_status}}
+          <div class="status"><img src="/failed.png" /></div>
+          {{/if}}
+        {{/if}}
         <div class="imgs">
           {{#each images}}
             {{#if url}}
