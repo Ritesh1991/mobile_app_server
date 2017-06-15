@@ -173,9 +173,9 @@ if(Meteor.isServer){
                                 'FOREACH(x in coll | delete x) '+
                                 'RETURN v1';
                             try {
-                                console.log(createstr);
+                                //console.log(createstr);
                                 queryResult = Neo4j.query(createstr);
-                                console.log(queryResult)
+                                //console.log(queryResult)
                             } catch (_error) {
                                 console.log(_error)
                             }
