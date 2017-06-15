@@ -56,9 +56,9 @@ if(Meteor.isClient){
                 console.log('exception onMqttMessage: ' + ex);
               }
             });
-            sendMqttMessage=function(topic,message){
+            sendMqttMessage=function(topic,message,callback){
                 console.log('sendMqttMessage:', topic, message);
-                mqtt_connection.publish(topic,JSON.stringify(message),{qos:1})
+                mqtt_connection.publish(topic,JSON.stringify(message),{qos:1},callback)
                 
             };
             subscribeMqttGroup=function(group_id) {
@@ -88,12 +88,12 @@ if(Meteor.isClient){
             //         mqtt_connection.publish(topic,JSON.stringify(message),{qos:2})
             //     })
             // };
-            sendMqttGroupMessage=function(group_id, message) {
-                sendMqttMessage("/t/msg/g/" + group_id, message);
+            sendMqttGroupMessage=function(group_id, message, callback) {
+                sendMqttMessage("/t/msg/g/" + group_id, message, callback);
             };
-            sendMqttUserMessage=function(user_id, message) {
+            sendMqttUserMessage=function(user_id, message, callback) {
                 // console.log('sendMqttUserMessage:', message);
-                sendMqttMessage("/t/msg/u/" + user_id, message);
+                sendMqttMessage("/t/msg/u/" + user_id, message, callback);
             };
         }
     }

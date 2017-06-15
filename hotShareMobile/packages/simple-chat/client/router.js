@@ -934,10 +934,18 @@ Template._simpleChatToChatLayout.events({
         is_read: false
       };
       Messages.insert(msg, function(){
-        if(data.type === 'group')
+        if(data.type === 'group'){
           sendMqttGroupMessage(msg.to.id, msg);
-        else
-          sendMqttUserMessage(msg.to.id, msg);
+        }
+        else{
+          sendMqttUserMessage(msg.to.id, msg, function(err){
+            if(err){
+              console.log('Error of sending message')
+            } else {
+              console.log('Sent to server message')
+            }
+          });
+        }
         Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
       });
 
@@ -1122,10 +1130,18 @@ window.___message = {
     }}, function(){
       console.log('update id:', id);
       $('.box').scrollTop($('.box ul').height());
-      if (msg.to_type === 'group')
+      if (msg.to_type === 'group'){
         sendMqttGroupMessage(msg.to.id, Messages.findOne({_id: id}));
-      else
-        sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}));
+      }
+      else{
+        sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}),function(err){
+          if(err){
+            console.log('Cant send this message')
+          } else {
+            console.log('Sent to server')
+          }
+        });
+      }
     });
   },
   remove: function(id){
