@@ -126,8 +126,6 @@ if(Meteor.isClient){
             if(Meteor.user()){
                 followPostStatus = 'loaded'
                 Session.set('followPostsCollection','error')
-
-                Session.set("followpostsitemsLimit",FollowPosts.find({followby:Meteor.userId()}).count())
                 Meteor.setTimeout(toLoadFollowPost,2000);
             }
         };
@@ -158,10 +156,19 @@ if(Meteor.isClient){
         toLoadFollowPost = function(callback){
             if( followPostStatus === 'loaded'){
                 console.log('Called here')
+                var currentFollowPostsLimit = Session.get("followpostsitemsLimit")
+                var currentFollowPostsInDB = FollowPosts.find({followby:Meteor.userId()}).count()
+                if(currentFollowPostsLimit+FOLLOWPOSTS_ITEMS_INCREMENT <= currentFollowPostsInDB){
+                    console.log('has enough data in db, no need to grab from server')
+                    Session.set("followpostsitemsLimit", FOLLOWPOSTS_ITEMS_INCREMENT+currentFollowPostsLimit);
+                    setTimeout(function(){
+                        return callback && callback(null,{length:FOLLOWPOSTS_ITEMS_INCREMENT})
+                    },2000)
+                    return
+                }
                 followPostStatus = 'loading'
                 Session.set('followPostsCollection','loading')
-                Session.set("followpostsitemsLimit", FOLLOWPOSTS_ITEMS_INCREMENT+followPostsInMemory);
-                Meteor.call('getFollowPost',followPostsInMemory, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
+                Meteor.call('getFollowPost',currentFollowPostsInDB, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
                     if(err){
                         subscribeFollowPostsOnError(err)
                         return callback && callback(err)
@@ -174,8 +181,8 @@ if(Meteor.isClient){
                             }
                         })
                         followPostStatus = 'loaded'
-                        Session.set("followpostsitemsLimit",FollowPosts.find({followby:Meteor.userId()}).count())
                         Session.set('followPostsCollection','loaded')
+                        Session.set("followpostsitemsLimit", FOLLOWPOSTS_ITEMS_INCREMENT+currentFollowPostsLimit);
                         return callback && callback(null,{length:result.length})
                     }
                 });

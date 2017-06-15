@@ -54,9 +54,7 @@ if Meteor.isClient
       else
         0
     myPosts:()->
-      myFollowedPosts = FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1}})
-      #Session.setPersistent('persistentMyFollowedPosts',myFollowedPosts.fetch())
-      return myFollowedPosts #Session.get('persistentMyFollowedPosts')
+      FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
     # isfollowerpost:(postId)->
     #   if FollowPosts.find({postId:postId}).count() > 1 and postId isnt null
     #     followPostsId = FollowPosts.findOne({postId: postId})._id
@@ -67,7 +65,8 @@ if Meteor.isClient
     #   else
     #     return true
     moreResults:->
-      !(FollowPosts.find().count() < Session.get("followpostsitemsLimit"))
+      false
+      #!(FollowPosts.find().count() < Session.get("followpostsitemsLimit"))
     loading:->
       Session.equals('followPostsCollection','loading')
     loadError:->
