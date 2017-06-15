@@ -841,7 +841,11 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
 
 Template._simpleChatToChatLayout.helpers({
   title: function(){
-    return page_title.get();
+    if (Session.get('msgToUserName')) {
+      return Session.get('msgToUserName')
+    }else{
+      return page_title.get();
+    }
   },
   loading: function(){
     return is_loading.get();
@@ -1506,6 +1510,8 @@ Template._groupMessageList.helpers({
 
 Template._groupMessageList.events({
   'click li': function(e){
+    console.log('this to user name is ' + this.toUserName);
+    Session.set('msgToUserName', this.toUserName);
     return Router.go(AppConfig.path+'/to/user?id='+e.currentTarget.id);
   }
 })
