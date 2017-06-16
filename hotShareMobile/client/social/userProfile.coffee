@@ -896,7 +896,10 @@ if Meteor.isClient
         !Session.equals('momentsCollection_getmore','done')) and
         Session.equals("SocialOnButton",'contactsList')
     onPostId:()->
-      Session.get("postContent")._id
+      if Session.get("postContent")
+        return Session.get("postContent")._id
+      else
+        return null
     favoritePosts:()->
       #NewDynamicMoments.find({currentPostId:Session.get("postContent")._id},{sort: {createdAt: -1}})
       postIds = []
@@ -937,7 +940,10 @@ if Meteor.isClient
         !Session.equals('favouritepostsCollection1_getmore','done')) and
         Session.equals("SocialOnButton",'contactsList')
     onPostId:()->
-      Session.get("postContent")._id
+      if Session.get("postContent")
+        return Session.get("postContent")._id
+      else
+        return null
     favoritePosts1:()->
       #NewDynamicMoments.find({currentPostId:Session.get("postContent")._id},{sort: {createdAt: -1}})
       postIds = []
@@ -981,7 +987,10 @@ if Meteor.isClient
         !Session.equals('favouritepostsCollection2_getmore','done')) and
         Session.equals("SocialOnButton",'contactsList')
     onPostId:()->
-      Session.get("postContent")._id
+      if Session.get("postContent")
+        return Session.get("postContent")._id
+      else
+        return null
     favoritePosts2:()->
       #NewDynamicMoments.find({currentPostId:Session.get("postContent")._id},{sort: {createdAt: -1}})
       postIds = []

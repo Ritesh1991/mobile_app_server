@@ -30,5 +30,6 @@ if(Meteor.isClient){
                 })
             }*/
         })
+        return sl;
     }
 }

@@ -10,6 +10,20 @@
     #  Session.set('displayUserProfileBox',true)
     
 if Meteor.isClient
+  xpull = null
+  loadMoreHandler = null
+  Template.listPosts.onDestroyed ()->
+    if xpull
+      xpull.destroy()
+      xpull = null
+    if loadMoreHandler
+      loadMoreHandler.lock()
+      loadMoreHandler.detachScrollListener()
+
+      loadMoreHandler.container.removeEventListener('touchstart', loadMoreHandler.touchStart)
+      loadMoreHandler.container.removeEventListener('touchmove', loadMoreHandler.touchMove)
+      loadMoreHandler.container.removeEventListener('touchend', loadMoreHandler.touchEnd)
+      loadMoreHandler = null
   Template.listPosts.rendered=->
     $('.content').css 'min-height',$(window).height()
     if !$('.home #wrapper #list-post').data("plugin_xpull")
@@ -21,12 +35,13 @@ if Meteor.isClient
             toLoadLatestFollowPost()
         }
       )
+      xpull = $('.home #wrapper #list-post').data("plugin_xpull")
     else
       $('.home #wrapper #list-post').data("plugin_xpull").init()
     Deps.autorun (h)->
       if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3
         h.stop()
-        initLoadMoreForListPosts()
+        loadMoreHandler = initLoadMoreForListPosts()
     #    $('.mainImage').css('height',$(window).height()*0.55)
     ###
     $(window).scroll (event)->
