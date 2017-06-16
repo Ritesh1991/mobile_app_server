@@ -983,6 +983,13 @@ Template._simpleChatToChatLayout.events({
     if(followerId) {
       Follower.remove(followerId._id);
     }
+    // 清空本地相关消息
+    Messages.remove({'to.id':Meteor.userId(), 'form.id':blackerId},function(err,num){
+      if(err){
+        console.log(err);
+      }
+      console.log(num)
+    });
     return PUB.back();
     } catch (err){
       console.log('black err=',err);
