@@ -13,19 +13,19 @@
       {{/if}}
       {{#each followers}}
         {{#if isFollowers}}
-            <div id="{{followerId}}" class="contentList">
+            <div id="{{followerId}}" class="contentList" username='{{followerName}}'>
             <!--列出偶像-->
             <img class="icon" src="{{followerIcon}}" width='30' height='30'>
             <div class="userName">{{followerName}}</div>
-              <div id="{{followerId}}" class="sendmsg">发消息</div>
+              <div id="{{followerId}}" username='{{followerName}}' class="sendmsg">发消息</div>
             <div class="desc">{{followerDesc}}</div>
             </div>
         {{else}}
-            <div  id="{{userId}}" class="contentList">
+            <div  id="{{userId}}" class="contentList" username='{{userName}}'>
             <!--列出粉丝-->
             <img class="icon" src="{{userIcon}}" width='30' height='30'>
             <div class="userName">{{userName}}</div>
-              <div id="{{userId}}" class="sendmsg">发消息</div>
+              <div id="{{userId}}" username='{{userName}}' class="sendmsg">发消息</div>
             <div class="desc">{{userDesc}}</div>
             </div>
         {{/if}}

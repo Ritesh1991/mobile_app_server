@@ -105,4 +105,7 @@ if Meteor.isClient
           }
       Session.set('history_view',history)
       userId = e.currentTarget.id
+      userName = $(e.currentTarget).attr('username')
+      console.log 'userName is ' + userName
+      Session.set('msgToUserName', userName)
       writeLetterTo(userId)

@@ -300,7 +300,7 @@ if (Meteor.isClient) {
     if(Meteor.userId()){
       Meteor.subscribe("topics");
       //Meteor.subscribe("topicposts");
-      getHotPostsData();
+      // getHotPostsData();
     }
     document.title = Session.get("DocumentTitle");
   });

@@ -841,7 +841,7 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
 
 Template._simpleChatToChatLayout.helpers({
   title: function(){
-    if (Session.get('msgToUserName')) {
+    if (Session.get('msgToUserName') && Session.get('msgToUserName') != '') {
       return Session.get('msgToUserName')
     }else{
       return page_title.get();

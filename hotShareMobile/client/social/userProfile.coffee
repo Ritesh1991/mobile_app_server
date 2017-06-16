@@ -345,6 +345,15 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+      # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
+      # console.log 'userName is ' + $(e.currentTarget).attr('username')
+      if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
+        userName = $(e.currentTarget).attr('userprofile')
+      else if $(e.currentTarget).attr('username') and $(e.currentTarget).attr('username') isnt ''
+        userName = $(e.currentTarget).attr('username')
+      else
+        userName = ''
+      Session.set('msgToUserName', userName)
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         # Router.go('/simple-chat/to/user?id='+ta)
@@ -498,6 +507,15 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+      # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
+      # console.log 'userName is ' + $(e.currentTarget).attr('username')
+      if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
+        userName = $(e.currentTarget).attr('userprofile')
+      else if $(e.currentTarget).attr('username') and $(e.currentTarget).attr('username') isnt ''
+        userName = $(e.currentTarget).attr('username')
+      else
+        userName = ''
+      Session.set('msgToUserName', userName)
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         # Router.go('/simple-chat/to/user?id='+ta)
@@ -650,6 +668,15 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+      # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
+      # console.log 'userName is ' + $(e.currentTarget).attr('username')
+      if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
+        userName = $(e.currentTarget).attr('userprofile')
+      else if $(e.currentTarget).attr('username') and $(e.currentTarget).attr('username') isnt ''
+        userName = $(e.currentTarget).attr('username')
+      else
+        userName = ''
+      Session.set('msgToUserName', userName)
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         # Router.go('/simple-chat/to/user?id='+ta)
@@ -805,6 +832,15 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+      # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
+      # console.log 'userName is ' + $(e.currentTarget).attr('username')
+      if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
+        userName = $(e.currentTarget).attr('userprofile')
+      else if $(e.currentTarget).attr('username') and $(e.currentTarget).attr('username') isnt ''
+        userName = $(e.currentTarget).attr('username')
+      else
+        userName = ''
+      Session.set('msgToUserName', userName)
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         # Router.go('/simple-chat/to/user?id='+ta)
