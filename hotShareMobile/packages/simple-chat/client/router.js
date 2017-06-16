@@ -14,6 +14,8 @@ Router.route(AppConfig.path + '/to/:type', {
     var to = slef.params.query['id'];
     var type = slef.params.type
     var where = null;
+    var name = slef.params.query['name'] ? decodeURIComponent(slef.params.query['name']) : '';
+    var icon = slef.params.query['icon'] ? decodeURIComponent(slef.params.query['icon']) : '';
 
     if(type === 'group')
       where = {'to.id': to, to_type: type}; // 没有判断是否在群的处理。自动加群
@@ -28,6 +30,8 @@ Router.route(AppConfig.path + '/to/:type', {
     console.log('where:', where);
     return {
       id: slef.params.query['id'],
+      name: name,
+      icon: icon,
       title: function(){
         return page_title.get();
       },
@@ -75,7 +79,7 @@ Router.route(AppConfig.path + '/user-list/:_user',{
 
 Template._simpleChatToChatLayout.onRendered(function(){
   page_data = this.data;
-  if(Meteor.isCordova && device.platform === 'iOS'){
+  if(Meteor.isCordova && device && device.platform === 'iOS'){
     try{
       Keyboard.shrinkView(true);
       Keyboard.disableScrollingInShrinkView(true);
@@ -86,7 +90,7 @@ Template._simpleChatToChatLayout.onRendered(function(){
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   page_data = null;
-  if(Meteor.isCordova && device.platform === 'iOS'){
+  if(Meteor.isCordova && device && device.platform === 'iOS'){
     try{
       Keyboard.shrinkView(false);
       Keyboard.disableScrollingInShrinkView(false);
@@ -253,6 +257,31 @@ var setMsgList = function(where, action){
   if(action === 'insert' || action === 'remove'){Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);}
 };
 
+var toUsers = {};
+if (localStorage.getItem('_simple_chat_to_users'))
+  toUsers = JSON.parse(localStorage.getItem('_simple_chat_to_users'));
+var setToUsers = function(){
+  if (page_data.type != 'user'){
+    toUsers[page_data.type+'.'+page_data.id] ={
+      name: page_data.name || '聊天室',
+      icon: page_data.icon || '/userPicture.png'
+    };
+  } else {
+    var user = Meteor.users.findOne({_id: page_data.id});
+    if (user)
+      toUsers[page_data.type+'.'+page_data.id] = {
+        name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+        icon: user.profile && user.profile.icon ? user.profile && user.profile.icon : '/userPicture.png'
+      };
+    else if (page_data.name)
+      toUsers[page_data.type+'.'+page_data.id] = {
+        name: page_data.name,
+        icon: page_data.icon || '/userPicture.png'
+      };
+  }
+  localStorage.setItem('_simple_chat_to_users', JSON.stringify(toUsers));
+};
+
 Template._simpleChatToChat.onRendered(function(){
   is_loading.set(true);
   list_limit.set(list_limit_val);
@@ -306,6 +335,7 @@ Template._simpleChatToChat.onRendered(function(){
       var user = Meteor.users.findOne({_id: slef.data.id});
       page_title.set(AppConfig.get_user_name(user));
     }
+    setToUsers();
 
     init_page = true;
     $('.box').scrollTop($('.box ul').height());
@@ -979,27 +1009,32 @@ Template._simpleChatToChatLayout.events({
     try{
       var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
       var text = $('.input-text').val();
-      var to = null;
+      var to = toUsers[page_data.type+'.'+page_data.id];
+      if (!to || !to.name){
+        PUB.toast('正在加载数据，请稍后发送！');
+        return false;
+      }
+      to.id = page_data.id;
 
       if(!text){
         $('.box').scrollTop($('.box ul').height());
         return false;
       }
-      if(data.type === 'group'){
-        var obj = Groups.findOne({_id: data.id});
-        to = {
-          id: data.id,
-          name: obj.name,
-          icon: obj.icon
-        };
-      }else{
-        var obj = Meteor.users.findOne({_id: data.id});
-        to = {
-          id: t.data.id,
-          name: AppConfig.get_user_name(obj),
-          icon: AppConfig.get_user_icon(obj)
-        };
-      }
+      // if(data.type === 'group'){
+      //   var obj = Groups.findOne({_id: data.id});
+      //   to = {
+      //     id: data.id,
+      //     name: obj.name,
+      //     icon: obj.icon
+      //   };
+      // }else{
+      //   var obj = Meteor.users.findOne({_id: data.id});
+      //   to = {
+      //     id: t.data.id,
+      //     name: AppConfig.get_user_name(obj),
+      //     icon: AppConfig.get_user_icon(obj)
+      //   };
+      // }
 
       var msg = {
         _id: new Mongo.ObjectID()._str,
@@ -1199,23 +1234,28 @@ Template._simpleChatToChatItem.helpers({
 window.___message = {
   insert: function(id, filename, uri){
     var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
-    var to = null;
-
-    if(data.type === 'group'){
-      var obj = Groups.findOne({_id: data.id});
-      to = {
-        id: data.id,
-        name: obj.name,
-        icon: obj.icon
-      };
-    }else{
-      var obj = Meteor.users.findOne({_id: data.id});
-      to = {
-        id: data.id,
-        name: AppConfig.get_user_name(obj),
-        icon: AppConfig.get_user_icon(obj)
-      };
+    var to = toUsers[page_data.type+'.'+page_data.id];
+    if (!to || !to.name){
+      PUB.toast('正在加载数据，请稍后发送！');
+      return false;
     }
+    to.id = page_data.id;
+
+    // if(data.type === 'group'){
+    //   var obj = Groups.findOne({_id: data.id});
+    //   to = {
+    //     id: data.id,
+    //     name: obj.name,
+    //     icon: obj.icon
+    //   };
+    // }else{
+    //   var obj = Meteor.users.findOne({_id: data.id});
+    //   to = {
+    //     id: data.id,
+    //     name: AppConfig.get_user_name(obj),
+    //     icon: AppConfig.get_user_icon(obj)
+    //   };
+    // }
 
     Messages.insert({
       _id: id,
@@ -1517,9 +1557,9 @@ Template._simpleChatListLayout.events({
 
     Session.set("history_view", history);
     if(this.isGroups){
-      Router.go(AppConfig.path + '/to/group?id='+_id);
+      Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
     } else {
-      Router.go(AppConfig.path + '/to/user?id='+_id);
+      Router.go(AppConfig.path + '/to/user?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
     }
   },
   'click .writeMeaaage': function(e,t){
