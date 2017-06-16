@@ -9,6 +9,7 @@ var async = require('async');
 var mqtt = require('mqtt');
 var http= require('http');
 var debug_on = process.env.DEBUG || false;
+var request_timer = null;
 
 var Datastore = require('nedb')
     , db = new Datastore({ filename: 'wechatbot.db', autoload: true });
@@ -300,23 +301,37 @@ function testImportPost(callback){
                 text += chunk;
             });
             res.on('end', function(){
-                var result = text.trim().split('\r\n');
-                var json = JSON.parse(result[result.length-1]).json;
-                var id = json.substr(json.lastIndexOf('/')+1);
-                console.log('http res:', result);
-                console.log('import post id:', id);
+                if(request_timer) {
+                    clearTimeout(request_timer);
+                    request_timer = null;
+                }
+                try {
+                    var result = text.trim().split('\r\n');
+                    var json = JSON.parse(result[result.length-1]).json;
+                    var id = json.substr(json.lastIndexOf('/')+1);
+                    console.log('http res:', result);
+                    console.log('import post id:', id);
 
-                postId = id;
+                    postId = id;
 
-                var timeDiff = new Date() - begin;
-                http.get('http://host1.tiegushi.com/import-cancel/' + id);
-                ddpClient.call('/posts/remove', [{_id: id}]);
+                    var timeDiff = new Date() - begin;
+                    http.get('http://host1.tiegushi.com/import-cancel/' + id);
+                    ddpClient.call('/posts/remove', [{_id: id}]);
+                } catch(e){};
                 postId = null;
                 debug_on && console.log('快速导入('+timeDiff+'ms)')
                 callback && callback(null,'快速导入('+timeDiff+'ms)');
             });
         });
+        request_timer = setTimeout(function() {
+            req.abort();
+            console.log('import 20s time out')
+        }, 20*1000);
         req.on('error', function(err){
+            if(request_timer) {
+                clearTimeout(request_timer);
+                request_timer = null;
+            }
             try{ddpClient.close()}catch(e){}
             console.log('http err:', err);
             console.log('快速导入失败')
