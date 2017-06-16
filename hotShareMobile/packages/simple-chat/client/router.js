@@ -1010,8 +1010,8 @@ Template._simpleChatToChatLayout.events({
 Template._simpleChatToChatItem.onRendered(function(){
   var data = this.data;
 
-  if (data.form.id === Meteor.userId() && data.send_status === 'sending')
-    sendMqttMsg(data);
+  // if (data.form.id === Meteor.userId() && data.send_status === 'sending')
+  //   sendMqttMsg(data);
 
   touch.on(this.$('li'),'hold',function(ev){
     var msg = Messages.findOne({_id: data._id});
