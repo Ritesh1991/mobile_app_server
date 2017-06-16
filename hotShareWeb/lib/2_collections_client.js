@@ -121,12 +121,14 @@ if(Meteor.isClient){
         PostsSearch = new SearchSource('posts', postsfields, options);
 
         followPostStatus = 'loaded'
-        subscribeFollowPostsOnError = function(err){
+        pullFollowPostsOnError = function(err,callback){
             console.log('followPostsCollection ' + err);
             if(Meteor.user()){
                 followPostStatus = 'loaded'
                 Session.set('followPostsCollection','error')
-                Meteor.setTimeout(toLoadFollowPost,2000);
+                Meteor.setTimeout(function(){
+                    toLoadFollowPost(callback)
+                },2000);
             }
         };
         toLoadLatestFollowPost = function(callback){
@@ -170,8 +172,7 @@ if(Meteor.isClient){
                 Session.set('followPostsCollection','loading')
                 Meteor.call('getFollowPost',currentFollowPostsLimit, FOLLOWPOSTS_ITEMS_INCREMENT, function(err,result){
                     if(err){
-                        subscribeFollowPostsOnError(err)
-                        return callback && callback(err)
+                        pullFollowPostsOnError(err,callback)
                     } else {
                         result.forEach(function(item){
                             if(item && item._id){
@@ -187,7 +188,9 @@ if(Meteor.isClient){
                     }
                 });
             } else {
-                return callback && callback(null)
+                Meteor.setTimeout(function(){
+                    return callback && callback(null)
+                },1000)
             }
         }/*
         Tracker.autorun(function(){

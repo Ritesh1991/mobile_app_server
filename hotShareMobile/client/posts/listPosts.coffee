@@ -17,6 +17,7 @@ if Meteor.isClient
       xpull.destroy()
       xpull = null
     if loadMoreHandler
+      loadMoreHandler.loadMore = null
       loadMoreHandler.lock()
       loadMoreHandler.detachScrollListener()
 
