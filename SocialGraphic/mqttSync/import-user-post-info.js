@@ -162,8 +162,8 @@ function update_user_node(doc,cb){
         }
 
         var updatestr = 'MATCH (u1:User) WHERE u1.userId="' + userInfo.userId +
-                        '" SET u1.createdAt="'              + userInfo.createdAt +
-                        '" SET u1.browser="'                + userInfo.browser +
+                        '" SET u1.createdAt='               + userInfo.createdAt +
+                        '  SET u1.browser="'                + userInfo.browser +
                         '" SET u1.sex="'                    + userInfo.sex +
                         '" SET u1.anonymous="'              + userInfo.anonymous +
                         '" SET u1.fullname="'               + userInfo.fullname +
@@ -246,8 +246,8 @@ function update_post_node(doc, updateDoc, cb){
 
         var updatestr = 'MATCH (p1:Post) WHERE p1.postId="' + postInfo.postId +
                         '" SET p1.name="' + postInfo.name +
-                        '" SET p1.createdAt="' + postInfo.createdAt +
-                        '" SET p1.mainImage="' + postInfo.mainImage +
+                        '" SET p1.createdAt=' + postInfo.createdAt +
+                        '  SET p1.mainImage="' + postInfo.mainImage +
                         '" SET p1.ownerName="' + postInfo.ownerName +
                         '" SET p1.addonTitle="' + postInfo.addonTitle + '"  RETURN p1';
         //console.log(updatestr);

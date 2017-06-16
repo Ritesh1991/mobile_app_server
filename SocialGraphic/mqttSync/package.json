@@ -1,6 +1,6 @@
 {
   "name": "socialSync",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "author": "RAID CDN Team",
   "main":"main.js",
   "scripts":{
