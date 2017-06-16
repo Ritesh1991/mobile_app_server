@@ -853,6 +853,10 @@ Template._simpleChatToChatLayout.helpers({
   isGroups:function(){
     var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
     return data.is_group();
+  },
+  isSubScribeUser: function(){
+    var followerId = location.search.replace('?id=', '');
+    return  Follower.find({followerId: followerId, userId: Meteor.userId()}).count()>0
   }
 });
 
@@ -906,6 +910,32 @@ sendMqttMsg = function(){
 };
 
 Template._simpleChatToChatLayout.events({
+  'click .ta': function(e){
+    console.log('i clicked a chat userICON');
+    Session.set("ProfileUserId1", this.form.id);
+    Session.set("currentPageIndex",-1);
+    Meteor.subscribe("usersById", this.form.id);
+    Meteor.subscribe("recentPostsViewByUser", this.form.id);
+    Session.set('pageToProfile',AppConfig.path + '/to/user?id='+this.form.id);
+    Session.set('pageScrollTop',$(window).scrollTop());
+    onUserProfile()
+  },
+  'click #subscribeUser': function(e){
+    var user  = Meteor.user();
+    var toUserId = location.search.replace('?id=', '');
+    var toUser = Meteor.users.findOne({_id: toUserId});
+    return addFollower({
+      userId: Meteor.userId(),
+      userName: AppConfig.get_user_name(user),
+      userIcon: AppConfig.get_user_icon(user),
+      userDesc: Meteor.user().profile.desc,
+      followerId: toUserId,
+      followerName: AppConfig.get_user_name(toUser),
+      followerIcon: AppConfig.get_user_icon(toUser),
+      followerDesc: toUser.profile.desc,
+      createAt: new Date()
+    });
+  },
   'click #addToBlacklist': function(e){
     try{
     var blackerId = location.search.replace('?id=', '');
@@ -995,15 +1025,15 @@ Template._simpleChatToChatLayout.events({
       return false;
     }catch(ex){console.log(ex); return false;}
   },
-  'click .groupsProfile':function(e,t){
-    var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
-    Router.go('/groupsProfile/'+data.type+'/'+data.id);
-  },
-  'click .userProfile':function(e,t){
-    var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
-    Router.go('/groupsProfile/'+data.type+'/'+data.id);
-    //PUB.page('/simpleUserProfile/'+data.id);
-  }
+  // 'click .groupsProfile':function(e,t){
+  //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
+  //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
+  // },
+  // 'click .userProfile':function(e,t){
+  //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
+  //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
+  //   //PUB.page('/simpleUserProfile/'+data.id);
+  // }
 
 });
 
