@@ -1587,6 +1587,8 @@ Template._groupMessageList.helpers({
 
 Template._groupMessageList.events({
   'click li': function(e){
+    msgid = $(e.currentTarget).attr('msgid')
+    MsgSession.update({'_id':msgid},{$set:{count:0}})
     console.log('this to user name is ' + this.toUserName);
     Session.set('msgToUserName', this.toUserName);
     return Router.go(AppConfig.path+'/to/user?id='+e.currentTarget.id);

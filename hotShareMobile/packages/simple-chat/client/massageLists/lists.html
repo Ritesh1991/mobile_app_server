@@ -43,7 +43,7 @@
 <template name="_groupMessageList">
   <ul class="simple-chat-medialist">
     {{#each lists}}
-    <li id="{{toUserId}}">
+    <li id="{{toUserId}}" msgid='{{_id}}'>
       <div class="left">
         <img src="{{toUserIcon}}">
         {{#if count}}
