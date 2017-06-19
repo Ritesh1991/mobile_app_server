@@ -430,6 +430,7 @@ if Meteor.isClient
         , 280
   Template.showPosts.onRendered ->
     # getHotPostsData()
+    $('.popUpBox, .b-modal').hide()
     Session.set 'showDraft', false
     Session.setDefault "displayPostContent",true
     Session.setDefault "toasted",false
