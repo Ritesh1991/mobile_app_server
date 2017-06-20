@@ -13,7 +13,8 @@
       </div>
     <div id="list">
       {{#if loading}}
-        <div>{{_ "isLoading"}}</div>
+        <!--<div>{{_ "isLoading"}}</div>-->
+        <div class="post-loading"><div></div></div>
       {{/if}}
       {{#if loadError}}
           <div>{{_ "loadFailNotification"}}</div>

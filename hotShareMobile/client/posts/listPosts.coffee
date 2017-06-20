@@ -31,6 +31,8 @@ if Meteor.isClient
       $('.home #wrapper #list-post').xpull(
         {
           onPullStart: ()->
+            console.log('xpull start')
+            Session.set('followPostsCollection','loaded')
           callback: ()->
             console.log('pull to refresh follow posts')
             toLoadLatestFollowPost()
