@@ -92,7 +92,7 @@ if Meteor.isClient
   getFollowerArr = ()->
     userId = Meteor.userId()
     followerData = Follower.find().fetch()
-    followpostData = FollowPosts.find().fetch()
+    followpostData = FollowPosts.find({followby:Meteor.userId()}).fetch()
     notShowArrId = []
     notShowArrId.push(userId)
     for item in followerData
