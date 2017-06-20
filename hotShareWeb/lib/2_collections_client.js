@@ -132,7 +132,7 @@ if(Meteor.isClient){
             }
         };
         toLoadLatestFollowPost = function(callback){
-            latestPost = FollowPosts.findOne({},{sort:{createdAt:-1}})
+            latestPost = FollowPosts.findOne({followby:Meteor.userId()},{sort:{createdAt:-1}})
             since = 0
             if(latestPost){
                 since = latestPost.createdAt
