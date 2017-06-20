@@ -65,6 +65,7 @@ specialClassNameForPopularMobileSite = [
   '.yaow > p'  #news.ifeng.com
   #'.pulse-article'    #Linkedin
   '.page-wrap'  # businessinsider.com
+  '.play_show' # kg.qq.com
 ]
 
 specialClassNameExcludeMobileSites = [

@@ -157,7 +157,53 @@ if Meteor.isClient
       cleanUp:(node)->
         $(node).html()
     }
+    {
+      nodeSelector: '.kg_audio' # kg.qq.com
+      parentSelector: ''
+      getMusicInfo:(node, body)->
+        return {
+          playUrl: $(node).attr('src')
+          image: $(node).attr('data-image')
+          songName: $(node).attr('data-songName')
+          singerName: $(node).attr('data-singerName')
+        }
+      cleanUp:(node)->
+        $(node).html()
+    }
   ]
+  formatDocement = (data)->
+    if data.host is 'kg.qq.com'
+      try
+        kg_avideo = data.body.substr(data.body.indexOf('window.__DATA__ = {')+'window.__DATA__ = {'.length-1)
+        kg_avideo = kg_avideo.substring(0, kg_avideo.indexOf('};')+1)
+        kg_avideo = JSON.parse(kg_avideo)
+        documentBody = document.createElement('body')
+        documentBody.innerHTML = data.body
+        console.log('==1', documentBody)
+        # =======music========
+        if (documentBody.getElementsByTagName('audio').length > 0)
+          audioElement = documentBody.getElementsByTagName('audio')[0]
+          audioElement.setAttribute('class', 'kg_audio')
+          audioElement.setAttribute('src', kg_avideo.detail.playurl)
+          audioElement.setAttribute('data-image', kg_avideo.detail.cover)
+          audioElement.setAttribute('data-songName', kg_avideo.detail.song_name)
+          audioElement.setAttribute('data-singerName', kg_avideo.detail.singer_name)
+          console.log('==2', audioElement)
+        # =======video========
+        else if (documentBody.getElementsByTagName('video').length > 0)
+          videoElement = documentBody.getElementsByTagName('video')[0]
+          videoElement.setAttribute('class', 'kg_video')
+          videoElement.setAttribute('src', kg_avideo.detail.playurl_video)
+          videoElement.setAttribute('data-image', kg_avideo.detail.cover)
+          videoElement.setAttribute('data-songName', kg_avideo.detail.song_name)
+          videoElement.setAttribute('data-singerName', kg_avideo.detail.singer_name)
+          console.log('==2', videoElement)
+        data.body = documentBody.innerHTML
+        data.bodyLength = documentBody.innerHTML.length
+        console.log('==3', data.body)
+      catch e
+        console.log('formatDocement kb.qq.com err:', e)
+      return
   @getMusicFromNode = (node, body) ->
     for s in musicExtactorMappingV2
       isExist = false
@@ -260,6 +306,13 @@ if Meteor.isClient
       videoUrlAttr: 'src',
       videoImgSelector: '.live-bg',
       videoImgAttr: 'src'
+    },
+    {
+      videoClass: '#player',
+      videoUrlSelector: '#player',
+      videoUrlAttr: 'src',
+      videoImgSelector: '#player',
+      videoImgAttr: 'data-image'
     }
   ]
   getPossibleVideo = (elem,data)->
@@ -1150,11 +1203,12 @@ if Meteor.isClient
         data.host = a.hostname
 
       if data.body
+        formatDocement(data)
         data.body = data.body.replace(/(<video.*?)autoplay\s*=.*?(\w+\s*=|\s*>)/gim, '$1$2')
         data.bodyLength = data.body.length
       
       console.log 'getContentListsFromUrl _html2data2 data is '
-      console.log data
+      console.log data.body
       console.log "scripts is " + data.scripts
       _html2data2(url, data, callback)
   @_getContentListsFromUrl_test = (url, callback)->
