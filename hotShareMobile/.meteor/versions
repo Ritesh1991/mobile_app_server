@@ -25,7 +25,7 @@ ccorcos:utils@0.0.2
 cfs:http-methods@0.0.32
 check@1.2.3
 coffeescript@1.2.4_2
-crosswalk@1.7.0
+crosswalk@1.7.1
 dburles:mongo-collection-instances@0.3.4
 ddp@1.2.5
 ddp-client@1.2.9
@@ -97,7 +97,7 @@ meteorspark:util@0.2.0
 minifier-css@1.2.14_1
 minifier-js@1.2.14_1
 minimongo@1.0.17
-mkarliner:mqtt@0.4.0
+mkarliner:mqtt@2.9.0
 mobile-experience@1.0.4
 mobile-status-bar@1.0.12
 modules@0.7.6_1
