@@ -4,9 +4,9 @@
 
 if(Meteor.isServer){
     /*
-     * 本函数的目的是从Neo4J中查询从since开始的30条新FollowPost数据
+     * 本函数的目的是从Neo4J中查询从since开始的limit条新FollowPost数据
      */
-    getLatestFollowPostFromNeo4J = function(userId,since){
+    getLatestFollowPostFromNeo4J = function(userId,since,limit){
 
         /*
          * 逐行解释
@@ -30,7 +30,7 @@ if(Meteor.isServer){
             'WHERE p1.createdAt > ' + since + ' ' +
             'WITH COLLECT(p1)+pc AS pAll ' +
             'UNWIND pAll AS all ' +
-            'RETURN all ORDER BY all.createdAt DESC LIMIT '+ 30
+            'RETURN all ORDER BY all.createdAt DESC LIMIT '+ limit
         var e, queryResult;
 
         try {

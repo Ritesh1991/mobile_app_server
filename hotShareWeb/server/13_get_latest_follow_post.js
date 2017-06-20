@@ -9,9 +9,13 @@ if(Meteor.isServer){
                     return false;
                 }
                 this.unblock();
+                var queryLimit = limit
+                if(!limit){
+                    queryLimit = 10
+                }
                 userId = this.userId;
                 ensureFollowInNeo4j(userId)
-                var queryResult = getLatestFollowPostFromNeo4J(userId,since)
+                var queryResult = getLatestFollowPostFromNeo4J(userId,since,queryLimit)
                 var returnResult = []
                 try{
                     if(queryResult && queryResult.length > 0){
