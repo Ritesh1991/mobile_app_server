@@ -141,13 +141,27 @@ if(Meteor.isClient){
                 console.log(err)
                 console.log(result)
                 if(!err && result && result.length > 0){
+                    if(result.length >= 10){
+                        console.log('There is chance that more data to be load for the followPost. Remove all data will allow load more function work')
+                        FollowPosts.remove({followby:Meteor.userId()})
+                    }
+                    var count = 0;
                     result.forEach(function(item){
                         if(item && item._id){
-                            if(!FollowPosts.findOne({_id:item._id})){
+                            count++;
+                            var post = FollowPosts.findOne({_id:item._id})
+                            if(!post){
+                                FollowPosts.insert(item)
+                            } else {
+                                FollowPosts.remove({_id:post._id})
                                 FollowPosts.insert(item)
                             }
                         }
                     })
+
+                    if(result.length >= 10){
+                        Session.set("followpostsitemsLimit",count)
+                    }
                     $('.home #wrapper #list-post').data("plugin_xpull").init()
                     return callback && callback(result)
                 } else {
@@ -176,7 +190,11 @@ if(Meteor.isClient){
                     } else {
                         result.forEach(function(item){
                             if(item && item._id){
-                                if(!FollowPosts.findOne({_id:item._id})){
+                                var post = FollowPosts.findOne({_id:item._id})
+                                if(!post){
+                                    FollowPosts.insert(item)
+                                } else {
+                                    FollowPosts.remove({_id:post._id})
                                     FollowPosts.insert(item)
                                 }
                             }
