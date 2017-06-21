@@ -9,7 +9,11 @@ if(Meteor.isClient){
             if(!err && result && result.length > 0){
                 result.forEach(function(item){
                     if(item && item._id){
-                        if(!FollowPosts.findOne({_id:item._id})){
+                        var post = FollowPosts.findOne({_id:item._id})
+                        if(!post){
+                            FollowPosts.insert(item)
+                        } else {
+                            FollowPosts.remove({_id:item._id})
                             FollowPosts.insert(item)
                         }
                     }
