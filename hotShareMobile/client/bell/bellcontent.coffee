@@ -105,7 +105,7 @@ if Meteor.isClient
   Template.bellcontent.events
   	'click #back': (e)->
       updateUserFeedsByType()
-      Router.go '/bell'
+      PUB.page('/simple-chat/user-list/'+Meteor.userId())
     'click .bell-line': (e)->
       currentType = e.currentTarget.id
       Session.set 'bellType', currentType

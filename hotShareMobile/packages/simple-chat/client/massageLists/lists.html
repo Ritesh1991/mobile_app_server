@@ -42,6 +42,14 @@
 </template>
 <template name="_groupMessageList">
   <ul class="simple-chat-medialist">
+    <div id="up-and-pcomment" class="bell-line"><img class="before-title" src="/img/bellicon2.png" alt=""><span class="title">赞和评论</span>
+      {{#if is_wait_read_count notReadCountPcomment}}
+        {{#if limit_top_read_count notReadCountPcomment}}
+        <div class="msg_count">99+</div>
+        {{else}}
+        <div class="msg_count">{{notReadCountPcomment}}</div>
+        {{/if}}
+      {{/if}}<i class="fa fa-angle-right after-title" aria-hidden="true"></i></div>
     {{#each lists}}
     <li id="{{toUserId}}" msgid='{{_id}}'>
       <div class="left">

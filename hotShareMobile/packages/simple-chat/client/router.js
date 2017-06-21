@@ -1580,12 +1580,45 @@ Template._simpleChatListLayout.events({
 });
 
 Template._groupMessageList.helpers({
+  limit_top_read_count: function(count) {
+    return count >= 99;
+  },
+  notReadCountPcomment: function() {
+    var typeArr;
+    typeArr = ["pcomment", "pcommentReply", "pfavourite", "pcommentowner", "getrequest", "sendrequest", "recommand", "recomment", "comment"];
+    return Feeds.find({
+      followby: Meteor.userId(),
+      isRead: {
+        $ne: true
+      },
+      checked: {
+        $ne: true
+      },
+      eventType: {
+        "$in": typeArr
+      },
+      createdAt: {
+        $gt: new Date((new Date()).getTime() - 7 * 24 * 3600 * 1000)
+      }
+    }, {
+      limit: 99
+    }).count();
+  },
+  is_wait_read_count: function(count){
+    return count > 0;
+  },
   formatTime: function(val){
     return get_diff_time(val);
   }
 });
 
 Template._groupMessageList.events({
+  'click .bell-line': function(e) {
+    var currentType;
+    currentType = e.currentTarget.id;
+    Session.set('bellType', currentType);
+    return Router.go('/bellcontent');
+  },
   'click li': function(e){
     msgid = $(e.currentTarget).attr('msgid')
     MsgSession.update({'_id':msgid},{$set:{count:0}})
