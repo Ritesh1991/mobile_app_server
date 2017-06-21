@@ -137,7 +137,7 @@ if(Meteor.isServer){
                     }
                 })
                 console.log('Count of follower('+inDBCount+') is not same as in NEO4j('+ count +')')
-                console.log(inDBFollowToIDs)
+                //console.log(inDBFollowToIDs)
                 var toRemoveInNeo4j = inNeo4jFollowToIDs.diff(inDBFollowToIDs)
                 var toAddToNeo4j = inDBFollowToIDs.diff(inNeo4jFollowToIDs)
                 console.log('To Remove in Neo4J:'+toRemoveInNeo4j)

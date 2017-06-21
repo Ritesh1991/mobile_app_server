@@ -142,7 +142,7 @@ if(Meteor.isServer){
                     }
                 })
                 console.log('Count of userId('+inDBCount+') is not same as in NEO4j('+ count +')')
-                console.log(inDBViewerIDs)
+                //console.log(inDBViewerIDs)
                 var toRemoveInNeo4j = inNeo4jViewerIDs.diff(inDBViewerIDs)
                 var toAddToNeo4j = inDBViewerIDs.diff(inNeo4jViewerIDs)
                 console.log('To Remove in Neo4J:'+toRemoveInNeo4j)
