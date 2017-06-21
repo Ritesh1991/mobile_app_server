@@ -1243,6 +1243,7 @@ if Meteor.isServer
               ownerIcon: if user.profile and user.profile.icon then user.profile.icon else '/userPicture.png',
               ownerName: if user.profile and user.profile.fullname then user.profile.fullname else user.username
             }})
+            syncPostInfoInNeo4j(postId);
             FollowPosts.update({postId: postId, followby: post.owner}, {$set: {
               followby: userId
             }})

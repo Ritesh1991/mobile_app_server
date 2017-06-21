@@ -87,6 +87,29 @@ if(Meteor.isServer){
             'RETURN v1';
         runQueryOne(createstr)
     }
+    syncPostInfoInNeo4j = function(postId){
+        var doc = Posts.findOne({_id:postId},{fields:{
+            createdAt:1,
+            title:1,
+            addontitle:1,
+            ownerName:1,
+            owner:1,
+            mainImage:1
+        }})
+        if(!doc){
+            console.log('syncPostInfoInNeo4j Error, cant find the post in DB')
+            return
+        }
+        var syncString = 'MERGE (p:Post{postId:"'+doc._id+'"}) '+
+            'SET p.createdAt = '+doc.createdAt.getTime()+' ' +
+            'SET p.name = "'+doc.title+'" '+
+            'SET p.addonTitle = "'+doc.addontitle+'" '+
+            'SET p.ownerName = "'+doc.ownerName+'" '+
+            'SET p.ownerId = "'+doc.owner+'" '+
+            'SET p.mainImage = "'+doc.mainImage+'" ' +
+            'RETURN p'
+        runQueryOne(syncString)
+    }
     ensureUserInNeo4J = function(userId){
         var userInNeo4j = runQueryOne('MATCH (u:User{userId:"'+userId+'"}) RETURN u')
         if(!userInNeo4j){
