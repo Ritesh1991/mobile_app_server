@@ -709,7 +709,10 @@ if Meteor.isServer
           FavouritePosts.remove({postId:postId})
           refreshPostsCDNCaches(postId)
           try
-            mqttRemoveNewPostHook(userId,postId,null)
+            if syncToNeo4jWithMqtt
+              mqttRemoveNewPostHook(userId,postId,null)
+            else
+              removePostToNeo4j(postId)
           catch error
       "unpublishPosts":(postId,userId,drafts)->
         Meteor.defer ()->

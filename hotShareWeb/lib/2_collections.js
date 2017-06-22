@@ -278,7 +278,11 @@ if(Meteor.isServer){
                     }catch(err){
                     }
                     try{
-                        mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                        console.log('>>>>>> insertPostToNeo4j2')
+                        if(syncToNeo4jWithMqtt)
+                            mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                        else
+                            insertPostToNeo4j2(doc);
                     }catch(err){
                     }
                 }
@@ -1221,7 +1225,10 @@ if(Meteor.isServer){
             }
             catch(error){}
             try{
-                mqttRemoveNewPostHook(userId, doc._id, doc.createdAt)
+                if(syncToNeo4jWithMqtt)
+                    mqttRemoveNewPostHook(userId, doc._id, doc.createdAt)
+                else
+                    removePostToNeo4j(doc._id);
             }
             catch(error){}
         });

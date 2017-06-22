@@ -23,7 +23,10 @@ if Meteor.isServer
         if user.profile.name
           user.profile.fullname = user.profile.name
       Meteor.defer ()->
-        mqttUserCreateHook(user._id,user.profile.fullname,user.username)
+        if syncToNeo4jWithMqtt
+          mqttUserCreateHook(user._id,user.profile.fullname,user.username)
+        else
+          insertUserToNeo4j2(user)
 
       return user
     # 禁止相关设备创建用户

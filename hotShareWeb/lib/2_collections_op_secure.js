@@ -176,6 +176,14 @@ if(Meteor.isServer){
                 }
             }
 
+            try{
+                console.log('>>>>>> insertPostToNeo4j2')
+                if(syncToNeo4jWithMqtt)
+                    mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                else
+                    insertPostToNeo4j2(doc);
+            }catch(err){}
+
             if(!postSafe){
                 doc.isReview = false;
 
@@ -235,9 +243,6 @@ if(Meteor.isServer){
              postsInsertHookPostToBaiduDeferHandle(doc._id);
              }catch(err){
              }*/
-            try{
-                mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
-            }catch(err){}
             return true;
             //}
             //return true;
@@ -294,7 +299,11 @@ if(Meteor.isServer){
                 //postsInsertHookDeferHandle(userId,doc);
                 postsInsertHookDeferHandle(doc.owner,doc);
                 try{
-                    mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                    console.log('>>>>>> insertPostToNeo4j2')
+                    if(syncToNeo4jWithMqtt)
+                        mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                    else
+                        insertPostToNeo4j2(doc);
                 }catch(err){}
                 //}
 
@@ -313,7 +322,11 @@ if(Meteor.isServer){
 
                     postsInsertHookDeferHandle(doc.owner,doc);
                     try{
-                        mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                        console.log('>>>>>> insertPostToNeo4j2')
+                        if(syncToNeo4jWithMqtt)
+                            mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                        else
+                            insertPostToNeo4j2(doc);
                     }catch(err){}
                 }
                 return true;
@@ -356,7 +369,22 @@ if(Meteor.isServer){
             if(doc.owner === userId){
                 postsUpdateHookDeferHandle(userId,doc,fieldNames, modifier);
                 try{
-                    mqttUpdatePostHook(doc.owner,doc._id,modifier.$set.title,modifier.$set.addontitle,modifier.$set.ownerName,modifier.$set.mainImage);
+                    if(syncToNeo4jWithMqtt)
+                        mqttUpdatePostHook(doc.owner,doc._id,modifier.$set.title,modifier.$set.addontitle,modifier.$set.ownerName,modifier.$set.mainImage);
+                    else {
+                        var ts1 = new Date(modifier.$set.createdAt);
+                        var ts = ts1.getTime();
+
+                        updatePostToNeo4j({
+                            'ownerName'  : modifier.$set.ownerName || doc.ownerName,
+                            'ownerId'    : doc.owner,
+                            'postId'     : doc._id,
+                            'name'       : modifier.$set.title || doc.title,
+                            'addonTitle' : modifier.$set.addontitle || doc.addontitle,
+                            'mainImage'  : modifier.$set.mainImage || doc.mainImage,
+                            'createdAt'  : ts
+                        });
+                    }
                 }catch(err){
                 }
                 return true;

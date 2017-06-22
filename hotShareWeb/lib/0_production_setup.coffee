@@ -39,3 +39,4 @@
 @withFromExample = false #故事贴从样例创建
 @withPinImage = true #pin图
 @withQRTips = true
+@syncToNeo4jWithMqtt = false  #false->直接操作Neo4j true->mqttsync

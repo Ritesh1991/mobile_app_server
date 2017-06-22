@@ -21,6 +21,8 @@ if(Meteor.isServer){
                 'createdAt':1, 'type':1,'profile.sex':1,'profile.lastLogonIP':1,'profile.anonymous':1,
                 'profile.browser':1,'profile.location':1, 'services.weixin':1,'username':1,
                 'profile.fullname' : 1}})
+        if(!doc)
+            return;
         var userInfo={
             userId:doc._id,
             createdAt:doc.createdAt.getTime(),
@@ -43,6 +45,33 @@ if(Meteor.isServer){
         var queryString = 'CREATE (u:User'+userInfoString+')'
         runQueryOne(queryString)
     }
+    insertUserToNeo4j2 = function (userDoc){
+        var doc = userDoc;
+        if(!doc || !doc._id)
+            return;
+        var userInfo={
+            userId:doc._id,
+            createdAt:doc.createdAt.getTime(),
+            fullname: doc.profile.fullname,
+            device: doc.type,
+            sex: doc.profile.sex?doc.profile.sex:'',
+            lastLogonIP:doc.profile.lastLogonIP,
+            anonymous:doc.profile.anonymous?true:false,
+            browser:doc.profile.browser?true:false,
+            location:doc.profile.location
+        }
+        if(doc.services &&doc.services.weixin){
+            userInfo.wechatLogin = true
+        } else {
+            userInfo.username = doc.username
+        }
+        var userInfoString = JSON.stringify(userInfo)
+        userInfoString = userInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
+
+        var queryString = 'CREATE (u:User'+userInfoString+')'
+        //console.log(queryString);
+        runQueryOne(queryString)
+    }
     function insertPostToNeo4j(postId){
         var doc = Posts.findOne({_id:postId},{fields:{
             createdAt:1,
@@ -52,6 +81,8 @@ if(Meteor.isServer){
             owner:1,
             mainImage:1
         }})
+        if(!doc)
+            return;
         var postInfo = {
             postId: doc._id,
             createdAt: doc.createdAt.getTime(),
@@ -65,6 +96,55 @@ if(Meteor.isServer){
         postInfoString = postInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
 
         var queryString = 'CREATE (u:Post'+postInfoString+')'
+        runQueryOne(queryString)
+    }
+    insertPostToNeo4j2 = function (postDoc){
+        var doc = postDoc;
+        if(!doc)
+            return;
+
+        var postInfo = {
+            postId: doc._id,
+            createdAt: doc.createdAt.getTime(),
+            name: doc.title,
+            addonTitle: doc.addontitle,
+            ownerName: doc.ownerName,
+            ownerId: doc.owner,
+            mainImage: doc.mainImage
+        }
+        var postInfoString = JSON.stringify(postInfo)
+        postInfoString = postInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
+
+        var queryString = 'CREATE (u:Post'+postInfoString+')'
+        console.log('>>> ' + queryString)
+        runQueryOne(queryString)
+    }
+    updatePostToNeo4j = function (postInfo){
+        if(!postInfo)
+            return;
+
+        var updatestr = 'MATCH (p1:Post) WHERE p1.postId="' + postInfo.postId +
+                        '" SET p1.ownerId="' + postInfo.ownerId +
+                        '" SET p1.name="' + postInfo.name +
+                        '" SET p1.createdAt=' + postInfo.createdAt +
+                        '  SET p1.mainImage="' + postInfo.mainImage +
+                        '" SET p1.ownerName="' + postInfo.ownerName +
+                        '" SET p1.addonTitle="' + postInfo.addonTitle + '"  RETURN p1';
+
+        var queryString = updatestr.replace(/\"([^(\")"]+)\":/g,"$1:")
+
+        console.log('>>> ' + queryString)
+        runQueryOne(queryString)
+    }
+    removePostToNeo4j = function (postId){
+        if(!postId)
+            return;
+
+        var removestr = 'MATCH (p:Post {postId: "' + postId + '"}) DETACH DELETE p;';
+
+        var queryString = removestr.replace(/\"([^(\")"]+)\":/g,"$1:")
+
+        console.log('>>> ' + queryString)
         runQueryOne(queryString)
     }
     function insertViewerToNeo4j(userId,postId){
@@ -129,11 +209,18 @@ if(Meteor.isServer){
     ensureUserViewPostInNeo4j = function(userId,postId){
         var postInNeo4j = runQueryOne('MATCH (p:Post{postId:"'+postId+'"}) RETURN p')
         if(!postInNeo4j){
+
+            //删除了帖子，其他用户首页没有刷新，点开看不需要更新viewer
+            var postPublished = Posts.findOne({_id:postId},{fields:{publish:1}});
+            if(!postPublished)
+                return;
             console.log('Need insert post')
             insertPostToNeo4j(postId)
         }
         ensureUserInNeo4J(userId)
-        var viewInNeo4j = runQueryOne()
+
+        var viewstr = 'MATCH (u:User {userId:"' + userId + '"})-[v:VIEWER]->(p:Post {postId:"' + postId + '"}) RETURN v';
+        var viewInNeo4j = runQueryOne(viewstr)
         if(!viewInNeo4j){
             console.log('Need insert view')
             insertViewerToNeo4j(userId,postId)
