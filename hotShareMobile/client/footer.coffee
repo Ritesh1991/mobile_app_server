@@ -35,6 +35,16 @@ if Meteor.isClient
         # },{
         #   limit: 99
         # }).count()
+        typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"]
+        counts += Feeds.find({
+          followby: Meteor.userId(),
+          isRead:{$ne: true},
+          checked:{$ne: true},
+          eventType:{"$in": typeArr},
+          createdAt: {$gt: new Date((new Date()).getTime() - 7 * 24 * 3600 * 1000)}
+        },{
+          limit: 99
+        }).count()
         lists = SimpleChat.MsgSession.find({userId: Meteor.userId(),sessionType:'user'}).fetch()
         getLetterCounts = (item)->
           counts += item.count
