@@ -3,6 +3,22 @@
  */
 
 if(Meteor.isServer){
+    var Fiber = Meteor.npmRequire('fibers');
+    function deferSetImmediate(func) {
+        var runFunction = function() {
+                return func.apply(null);
+        }
+        if(typeof setImmediate == 'function') {
+            setImmediate(function(){
+                Fiber(runFunction).run();
+            });
+        } else {
+            setTimeout(function(){
+                Fiber(runFunction).run();
+            }, 0);
+        }
+    }
+    
     PeopleHis.allow({
         update: function (userId, doc, fields, modifier) {
             var user = Meteor.users.findOne({_id: userId})
