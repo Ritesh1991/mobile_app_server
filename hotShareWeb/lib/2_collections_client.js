@@ -162,7 +162,10 @@ if(Meteor.isClient){
                     if(result.length >= 10){
                         Session.set("followpostsitemsLimit",count)
                     }
-                    $('.home #wrapper #list-post').data("plugin_xpull").init()
+                    var xpullData = $('.home #wrapper #list-post').data("plugin_xpull")
+                    if(xpullData){
+                        xpullData.init()
+                    }
                     return callback && callback(result)
                 } else {
                     return callback && callback(null)
