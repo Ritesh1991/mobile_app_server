@@ -37,6 +37,6 @@
 # @withLoginTokenMax = 10
 @CHECK_UPDATE = true # 强制更新和推荐更新启用标志
 @withFromExample = false #故事贴从样例创建
-@withPinImage = true #pin图
+@withPinImage = false #pin图
 @withQRTips = true
 @syncToNeo4jWithMqtt = false  #false->直接操作Neo4j true->mqttsync
