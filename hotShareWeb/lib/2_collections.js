@@ -802,7 +802,7 @@ if(Meteor.isServer){
         })
     }
 
-  sendEmailToSubscriber = function(ptype, pindex, postId, fromUserId, toUserId) {
+    sendEmailToSubscriber = function(ptype, pindex, postId, fromUserId, toUserId) {
         deferSetImmediate(function() {
             var content, i, item, len, post, ref, text;
             post = Posts.findOne({
@@ -938,7 +938,7 @@ if(Meteor.isServer){
     };
     var countB = 0;
     var countC = 0;
-    var postsInsertHookDeferHandle = function(userId,doc){
+    postsInsertHookDeferHandle = function(userId,doc){
         deferSetImmediate(function(){
             try{
                 var postInfo = {
@@ -1174,7 +1174,7 @@ if(Meteor.isServer){
             catch(error) {}
         });
     };
-    var postsRemoveHookDeferHandle = function(userId,doc){
+    postsRemoveHookDeferHandle = function(userId,doc){
         deferSetImmediate(function(){
             try{
                 Moments.remove({$or:[{currentPostId:doc._id},{readPostId:doc._id}]});
@@ -1226,7 +1226,7 @@ if(Meteor.isServer){
             catch(error){}
         });
     };
-    var postsUpdateHookDeferHandle = function(userId,doc,fieldNames, modifier){
+    postsUpdateHookDeferHandle = function(userId,doc,fieldNames, modifier){
         deferSetImmediate(function(){
             try {
                 var postOwner = modifier.$set.owner;
@@ -1381,7 +1381,7 @@ if(Meteor.isServer){
     };
 
     // web端关注作者, 发送第一封email
-    var followerHookForWeb = function(userId, doc, action, modifier) {
+    followerHookForWeb = function(userId, doc, action, modifier) {
       deferSetImmediate(function(){
         action = action || 'insert';
         if(action === 'insert')
@@ -1429,7 +1429,7 @@ if(Meteor.isServer){
             }
         });
     }
-    var followerInsertHookDeferHook=function(userId,doc){
+    followerInsertHookDeferHook=function(userId,doc){
         deferSetImmediate(function(){
             try{
                 Meets.update({me:doc.userId,ta:doc.followerId},{$set:{isFriend:true}});
@@ -1561,7 +1561,7 @@ if(Meteor.isServer){
             catch(error){}
         });
     };
-    var followerRemoveHookDeferHook=function(userId,doc){
+    followerRemoveHookDeferHook=function(userId,doc){
         deferSetImmediate(function(){
             try{
                 Meets.update({me:doc.userId,ta:doc.followerId},{$set:{isFriend:false}});
@@ -1701,7 +1701,7 @@ if(Meteor.isServer){
             }
         });
     };
-    var  seriesInsertHookDeferHandle = function(userId,doc){
+    seriesInsertHookDeferHandle = function(userId,doc){
       deferSetImmediate(function(){
         if(doc && doc._id && doc.title && doc.mainImage){
             // 1. 将合辑添加到自己的followSeries
@@ -1758,7 +1758,7 @@ if(Meteor.isServer){
         }
       });
     };
-    var  seriesUpdateHookDeferHandle = function(userId,doc,fieldNames, modifier){
+    seriesUpdateHookDeferHandle = function(userId,doc,fieldNames, modifier){
       deferSetImmediate(function(){
         try {
             // 发送邮件通知
@@ -1796,7 +1796,7 @@ if(Meteor.isServer){
         }
       });
     };
-    var  seriesRemoveHookDeferHandle = function(userId,doc){
+    seriesRemoveHookDeferHandle = function(userId,doc){
       deferSetImmediate(function(){
         try {
             SeriesFollow.remove({seriesId: doc._id});
