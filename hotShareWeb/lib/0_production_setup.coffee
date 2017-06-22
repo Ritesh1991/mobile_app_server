@@ -36,6 +36,6 @@
 @MQTT_TIME_DIFF = 0
 # @withLoginTokenMax = 10
 @CHECK_UPDATE = true # 强制更新和推荐更新启用标志
-@withFromExample = true #故事贴样张
+@withFromExample = false #故事贴从样例创建
 @withPinImage = true #pin图
 @withQRTips = true
