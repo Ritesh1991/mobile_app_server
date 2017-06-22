@@ -1234,23 +1234,35 @@ if Meteor.isServer
         Meteor.setTimeout(
           ()->
             user = Meteor.users.findOne({_id: userId})
-            post = Posts.findOne({_id: postId})
+            post = Posts.findOne({_id: postId},{fields:{
+              createdAt:1,
+              title:1,
+              addontitle:1,
+              ownerName:1,
+              owner:1,
+              mainImage:1
+            }})
             if(!user or !post)
               return
+            newOwnerIcon = if user.profile and user.profile.icon then user.profile.icon else '/userPicture.png'
+            newOwnerName = if user.profile and user.profile.fullname then user.profile.fullname else user.username
             Posts.update({_id: postId}, {$set: {
               ownerId: userId,
               owner: userId,
-              ownerIcon: if user.profile and user.profile.icon then user.profile.icon else '/userPicture.png',
-              ownerName: if user.profile and user.profile.fullname then user.profile.fullname else user.username
+              ownerIcon: newOwnerIcon,
+              ownerName: newOwnerName
             }})
-            syncPostInfoInNeo4j(postId);
+
+            syncPostInfoInNeo4j(postId)
+            mqttUpdatePostHook(userId,postId,post.title,post.addontitle,newOwnerName,post.mainImage,newOwnerIcon)
+
             FollowPosts.update({postId: postId, followby: post.owner}, {$set: {
               followby: userId
             }})
             FollowPosts.update({postId: postId}, {$set: {
               owner: userId,
-              ownerIcon: if user.profile and user.profile.icon then user.profile.icon else '/userPicture.png',
-              ownerName: if user.profile and user.profile.fullname then user.profile.fullname else user.username
+              ownerIcon: newOwnerIcon,
+              ownerName: newOwnerName
             }}, {multi: true})
           1000
         )

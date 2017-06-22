@@ -41,7 +41,7 @@ if(Meteor.isServer){
                 })
             }catch(e){}
         }
-        mqttUpdatePostHook=function(ownerId,postId,title,addonTitle,ownerName,mainImage){
+        mqttUpdatePostHook=function(ownerId,postId,title,addonTitle,ownerName,mainImage,ownerIcon){
             try{
                 sendMqttMessage('updatePost',{
                     ownerId:ownerId,
@@ -49,7 +49,8 @@ if(Meteor.isServer){
                     title:title,
                     addonTitle:addonTitle,
                     ownerName:ownerName,
-                    mainImage:mainImage
+                    mainImage:mainImage,
+                    ownerIcon: ownerIcon || '',
                 })
             }catch(e){}
         }
