@@ -177,7 +177,6 @@ if(Meteor.isServer){
             }
 
             try{
-                console.log('>>>>>> insertPostToNeo4j2')
                 if(syncToNeo4jWithMqtt)
                     mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
                 else
@@ -299,7 +298,6 @@ if(Meteor.isServer){
                 //postsInsertHookDeferHandle(userId,doc);
                 postsInsertHookDeferHandle(doc.owner,doc);
                 try{
-                    console.log('>>>>>> insertPostToNeo4j2')
                     if(syncToNeo4jWithMqtt)
                         mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
                     else
@@ -322,7 +320,6 @@ if(Meteor.isServer){
 
                     postsInsertHookDeferHandle(doc.owner,doc);
                     try{
-                        console.log('>>>>>> insertPostToNeo4j2')
                         if(syncToNeo4jWithMqtt)
                             mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
                         else

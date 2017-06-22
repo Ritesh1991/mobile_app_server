@@ -278,7 +278,6 @@ if(Meteor.isServer){
                     }catch(err){
                     }
                     try{
-                        console.log('>>>>>> insertPostToNeo4j2')
                         if(syncToNeo4jWithMqtt)
                             mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
                         else
@@ -2089,7 +2088,7 @@ if(Meteor.isServer){
                 //console.log(self._session._namedSubs[self._subscriptionId])
                 this.unblock();
                 deferSetImmediate(function() {
-                    ensureUserViewPostInNeo4j(userId,postId)
+                    //ensureUserViewPostInNeo4j(userId,postId, true)
                     var queryResult = getSuggestPostsFromNeo4J(userId,postId,self._session.momentSkip[postId],queryLimit)
                     self._session.momentSkip[postId] += queryLimit;
                     queryResult.forEach(function(item){
@@ -2288,7 +2287,7 @@ if(Meteor.isServer){
                     if(self._session.skipPostFriend[postId+'_newfriends'] === 0){
                         try{self.added("postfriendsCount", userId+'_'+postId, {count: self._session.skipPostFriend[postId+'_newfriends']});}catch(e){}
                     }
-                    ensureUserViewPostInNeo4j(userId,postId)
+                    //ensureUserViewPostInNeo4j(userId,postId,true)
                     // var queryResult = getPostNewFriends( userId /*Test_userId*/,postId,self._session.skipPostFriend[postId],queryLimit);
                     var queryResult = getPostNewFriends( userId,postId,0,100);
                     self._session.skipPostFriend[postId] += queryLimit;
@@ -2864,7 +2863,11 @@ if(Meteor.isServer){
           self.meeterIds=[];
         publicPostsPublisherDeferHandle(userId,postId,self);
         updateMomentsDeferHandle(self,postId);
-        mqttPostViewHook(self.userId,postId);
+
+        if(syncToNeo4jWithMqtt)
+            mqttPostViewHook(self.userId,postId);
+        else
+            ensureUserViewPostInNeo4j(self.userId, postId, false);
 
         return [
           Posts.find({_id: postId}),
@@ -2885,7 +2888,10 @@ if(Meteor.isServer){
       self.meeterIds=[];
       publicPostsPublisherDeferHandle(this.userId,postId,self);
       updateMomentsDeferHandle(self,postId);
-      mqttPostViewHook(self.userId,postId);
+      if(syncToNeo4jWithMqtt)
+          mqttPostViewHook(self.userId,postId);
+      else
+          ensureUserViewPostInNeo4j(self.userId, postId, false);
       return this.ready();
   });
   /*Meteor.publish("drafts", function() {

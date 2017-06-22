@@ -116,7 +116,6 @@ if(Meteor.isServer){
         postInfoString = postInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
 
         var queryString = 'CREATE (u:Post'+postInfoString+')'
-        console.log('>>> ' + queryString)
         runQueryOne(queryString)
     }
     updatePostToNeo4j = function (postInfo){
@@ -133,7 +132,6 @@ if(Meteor.isServer){
 
         var queryString = updatestr.replace(/\"([^(\")"]+)\":/g,"$1:")
 
-        console.log('>>> ' + queryString)
         runQueryOne(queryString)
     }
     removePostToNeo4j = function (postId){
@@ -144,7 +142,6 @@ if(Meteor.isServer){
 
         var queryString = removestr.replace(/\"([^(\")"]+)\":/g,"$1:")
 
-        console.log('>>> ' + queryString)
         runQueryOne(queryString)
     }
     function insertViewerToNeo4j(userId,postId){
@@ -206,7 +203,7 @@ if(Meteor.isServer){
      * 3. 用户看了帖子，[:USER{userId:userId}]-[v:VIEWER]->[:POST{postId:postId}],v是否存在，不存在则建立
      * 4. 看同一个帖子的用户数在 Neo4J和Mongodb中是否一致，多了的删除，少了的增加
      */
-    ensureUserViewPostInNeo4j = function(userId,postId){
+    ensureUserViewPostInNeo4j = function(userId,postId, ensure){
         var postInNeo4j = runQueryOne('MATCH (p:Post{postId:"'+postId+'"}) RETURN p')
         if(!postInNeo4j){
 
@@ -226,6 +223,8 @@ if(Meteor.isServer){
             insertViewerToNeo4j(userId,postId)
         }
 
+        if(!ensure)
+            return;
 
         /* 计算Neo4J中看了帖子的用户列表
          * count(v)计算数量，列表用 collect(u.userId)合并到一个数组里
