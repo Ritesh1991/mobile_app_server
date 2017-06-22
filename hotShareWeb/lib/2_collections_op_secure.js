@@ -18,6 +18,11 @@ if(Meteor.isServer){
             }, 0);
         }
     }
+    var insertRePost = function(doc){
+        deferSetImmediate(function(){
+          RePosts.insert(doc);
+        });
+    }
     
     PeopleHis.allow({
         update: function (userId, doc, fields, modifier) {
