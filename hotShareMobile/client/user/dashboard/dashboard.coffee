@@ -36,6 +36,8 @@ if Meteor.isClient
         return false
     newVersion: ->
       version = Versions.findOne({})
+      unless version
+        return ''
       if device.platform is 'iOS'
         return version.ios
       else
