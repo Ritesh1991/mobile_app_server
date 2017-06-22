@@ -1562,7 +1562,10 @@ if(Meteor.isServer){
             }
             catch(error){}
             try{
-                mqttFollowerInsertHook(doc);
+                if(syncToNeo4jWithMqtt)
+                    mqttFollowerInsertHook(doc);
+                else
+                    insertFollowerInNeo4j(doc.userId, doc.followerId);
             }
             catch(error){}
         });
@@ -1582,7 +1585,10 @@ if(Meteor.isServer){
             }
             catch(error){}
             try{
-                mqttFollowerRemoveHook(doc.userId, doc.followerId);
+                if(syncToNeo4jWithMqtt)
+                    mqttFollowerRemoveHook(doc.userId, doc.followerId);
+                else
+                    removeFollowerInNeo4j(doc.userId, doc.followerId);
             }
             catch(error){}
         });

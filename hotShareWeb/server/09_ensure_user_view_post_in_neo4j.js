@@ -164,6 +164,26 @@ if(Meteor.isServer){
             'RETURN v1';
         runQueryOne(createstr)
     }
+    insertFollowerInNeo4j = function(userId, followerId) {
+        if(!userId || !followerId)
+            return;
+
+        var ts = new Date();
+
+        var createstr = 'MATCH (u:User {userId:"'+ userId +'"}),(u1:User {userId:"'+ followerId +'"}) '+
+        'MERGE  (u)-[f:FOLLOW]->(u1) '+
+        'SET f.by = '+ts.getTime()+' ' +
+        'WITH head(collect(f)) as v1, tail(collect(f)) as coll '+
+        'FOREACH(x in coll | delete x) '+
+        'RETURN v1';
+        runQueryOne(createstr);
+    }
+    removeFollowerInNeo4j = function(userId, followerId) {
+        if(!userId || !followerId)
+            return;
+        var removestr = 'MATCH (:User{userId:"'+ userId +'"})-[f:FOLLOW]->(:User{userId:"'+ followerId +'"}) DELETE f';
+        runQueryOne(removestr);
+    }
     syncPostInfoInNeo4j = function(postId){
         var doc = Posts.findOne({_id:postId},{fields:{
             createdAt:1,
