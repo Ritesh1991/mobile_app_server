@@ -933,7 +933,7 @@ sendMqttMsg = function(){
     }
   }
 
-  if(msg.type === 'group')
+  if(msg.to_type === 'group')
     sendMqttGroupMessage(msg.to.id, msg, callback);
   else
     sendMqttUserMessage(msg.to.id, msg, callback);
