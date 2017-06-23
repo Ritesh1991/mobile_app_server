@@ -34,6 +34,7 @@ if(Meteor.isServer){
                 if (this.userId === null) {
                     return false;
                 }
+                var myUserId = this.userId
                 this.unblock();
                 var queryResult = getUserPostFromNeo4J(userId,skip,limit)
                 var returnResult = []
@@ -43,7 +44,7 @@ if(Meteor.isServer){
                             if(item){
                                 var fields = formatFollowPost(userId, item);
                                 fields['_id'] = item.postId;
-                                fields['followby'] = this.userId;
+                                fields['followby'] = myUserId;
                                 returnResult.push(fields);
                             }
                         });
