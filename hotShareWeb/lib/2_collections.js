@@ -2094,7 +2094,7 @@ if(Meteor.isServer){
                 //console.log(self._session._namedSubs[self._subscriptionId])
                 this.unblock();
                 deferSetImmediate(function() {
-                    //ensureUserViewPostInNeo4j(userId,postId, true)
+                    ensureUserViewPostInNeo4j(userId,postId, true)
                     var queryResult = getSuggestPostsFromNeo4J(userId,postId,self._session.momentSkip[postId],queryLimit)
                     self._session.momentSkip[postId] += queryLimit;
                     queryResult.forEach(function(item){
@@ -2293,7 +2293,7 @@ if(Meteor.isServer){
                     if(self._session.skipPostFriend[postId+'_newfriends'] === 0){
                         try{self.added("postfriendsCount", userId+'_'+postId, {count: self._session.skipPostFriend[postId+'_newfriends']});}catch(e){}
                     }
-                    //ensureUserViewPostInNeo4j(userId,postId,true)
+                    ensureUserViewPostInNeo4j(userId,postId,true)
                     // var queryResult = getPostNewFriends( userId /*Test_userId*/,postId,self._session.skipPostFriend[postId],queryLimit);
                     var queryResult = getPostNewFriends( userId,postId,0,100);
                     self._session.skipPostFriend[postId] += queryLimit;
