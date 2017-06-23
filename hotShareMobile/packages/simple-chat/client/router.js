@@ -406,6 +406,9 @@ Template._simpleChatToChatItem.events({
       });
     }
   },
+  'click .sendfailed':function(e){
+    sendMqttMsg(this);
+  },
   'click li div.showmore':function(e){
     console.log(e.currentTarget.id);
     id = e.currentTarget.id;
