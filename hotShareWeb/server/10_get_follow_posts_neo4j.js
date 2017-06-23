@@ -7,7 +7,10 @@ if(Meteor.isServer){
      * 本函数的目的是从Neo4J中查询从since开始的limit条新FollowPost数据
      */
     getLatestFollowPostFromNeo4J = function(userId,since,limit){
-
+        var queryLimit = limit
+        if(typeof limit === 'undefined'){
+            queryLimit = 10
+        }
         /*
          * 逐行解释
          * 1. 获得u1，用户Follow的用户
@@ -30,7 +33,7 @@ if(Meteor.isServer){
             'WHERE p1.createdAt > ' + since + ' ' +
             'WITH COLLECT(p1)+pc AS pAll ' +
             'UNWIND pAll AS all ' +
-            'RETURN all ORDER BY all.createdAt DESC LIMIT '+ limit
+            'RETURN all ORDER BY all.createdAt DESC LIMIT '+ queryLimit
         var e, queryResult;
 
         try {
@@ -56,6 +59,10 @@ if(Meteor.isServer){
      * 本函数的目的是从Neo4J中查询指定数目的FollowPost数据
      */
     getFollowPostFromNeo4J = function(userId,skip,limit){
+        var queryLimit = limit
+        if(typeof limit === 'undefined'){
+            queryLimit = 10
+        }
         /*
          * 逐行解释
          * 1. 获得u1，用户Follow的用户
@@ -74,7 +81,7 @@ if(Meteor.isServer){
             'OPTIONAL MATCH (p1:Post{ownerId:"'+userId+'"}) ' +
             'WITH COLLECT(p1)+pc AS pAll ' +
             'UNWIND pAll AS all ' +
-            'RETURN all ORDER BY all.createdAt DESC SKIP '+skip+' LIMIT '+limit
+            'RETURN all ORDER BY all.createdAt DESC SKIP '+skip+' LIMIT '+queryLimit
         var e, queryResult;
 
         try {
