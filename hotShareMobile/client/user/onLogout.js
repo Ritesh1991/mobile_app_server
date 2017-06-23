@@ -4,10 +4,10 @@
 
 if (Meteor.isClient) {
     Meteor.startup(function() {
-        Accounts.onLogout(function(user,connection) {
-            console.log('onLogout '+user._id)
+        Accounts.onLogout(function() {
+            console.log('onLogout '+Meteor.userId())
             Session.setPersistent('persistentLoginStatus', false);
-            FollowPosts.remove({followby:user._id})
+            FollowPosts.remove({followby:Meteor.userId()})
         });
     });
 }
