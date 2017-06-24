@@ -225,10 +225,11 @@ if(Meteor.isServer){
      */
     ensureUserViewPostInNeo4j = function(userId,postId, ensure){
         var postInNeo4j = runQueryOne('MATCH (p:Post{postId:"'+postId+'"}) RETURN p')
+        var post = null
         if(!postInNeo4j){
 
             //删除了帖子，其他用户首页没有刷新，点开看不需要更新viewer
-            var post = Posts.findOne({_id:postId},{fields:{publish:1,browse:1}});
+            post = Posts.findOne({_id:postId},{fields:{publish:1,browse:1}});
 
             var postPublished = post.publish;
             if(!postPublished)
@@ -248,8 +249,11 @@ if(Meteor.isServer){
         if(!ensure)
             return;
 
+        if(!post){
+            post = Posts.findOne({_id:postId},{fields:{browse:1}});
+        }
         // 当浏览量超过200的时候不再进行数据保全
-        if(post.browse && post.browse > 200){
+        if(post && post.browse && post.browse > 200){
             return
         }
         /* 计算Neo4J中看了帖子的用户列表
