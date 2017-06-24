@@ -230,10 +230,13 @@ if(Meteor.isServer){
 
             //删除了帖子，其他用户首页没有刷新，点开看不需要更新viewer
             post = Posts.findOne({_id:postId},{fields:{publish:1,browse:1}});
-
-            var postPublished = post.publish;
-            if(!postPublished)
+            if(!post){
+                //no post in db, strange.
+                return
+            }
+            if(post && !post.publish){
                 return;
+            }
             console.log('Need insert post')
             insertPostToNeo4j(postId)
         }
