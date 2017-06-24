@@ -961,6 +961,7 @@ var httpget = function(url) {
 
 var httppost = function(url, data, callback){
   var uri = URL.parse(url);
+  var receiveData = '';
   var req = http.request({
     hostname: uri.hostname,
     port: uri.port,
@@ -970,9 +971,13 @@ var httppost = function(url, data, callback){
   }, function(res){
     res.setEncoding('utf8');
     res.on('data', function(result){
-      callback && callback(null, result);
+      //callback && callback(null, result);
+      receiveData += result;
       showDebug && console.log('httppost suc: url='+url+', data:', result);
       showDebug && console.log('------- End --------');
+    });
+    res.on('end', () => {
+      callback && callback(null, receiveData);
     });
   });
   req.on('error',function(e){
