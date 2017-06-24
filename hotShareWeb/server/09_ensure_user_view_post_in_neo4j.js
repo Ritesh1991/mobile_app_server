@@ -228,7 +228,9 @@ if(Meteor.isServer){
         if(!postInNeo4j){
 
             //删除了帖子，其他用户首页没有刷新，点开看不需要更新viewer
-            var postPublished = Posts.findOne({_id:postId},{fields:{publish:1}});
+            var post = Posts.findOne({_id:postId},{fields:{publish:1,browse:1}});
+
+            var postPublished = post.publish;
             if(!postPublished)
                 return;
             console.log('Need insert post')
@@ -246,6 +248,10 @@ if(Meteor.isServer){
         if(!ensure)
             return;
 
+        // 当浏览量超过200的时候不再进行数据保全
+        if(post.browse && post.browse > 200){
+            return
+        }
         /* 计算Neo4J中看了帖子的用户列表
          * count(v)计算数量，列表用 collect(u.userId)合并到一个数组里
          * 该查询返回一个二维数组 [0][0] 是 count(v), [0][1] 是看了帖子的用户列表
