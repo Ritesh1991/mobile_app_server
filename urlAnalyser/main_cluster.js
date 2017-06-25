@@ -976,7 +976,7 @@ var httppost = function(url, data, callback){
       showDebug && console.log('httppost suc: url='+url+', data:', result);
       showDebug && console.log('------- End --------');
     });
-    res.on('end', () => {
+    res.on('end', function(){
       callback && callback(null, receiveData);
     });
   });
