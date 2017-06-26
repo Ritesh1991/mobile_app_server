@@ -106,6 +106,12 @@ if Meteor.isClient
     'click .top-series-btn': (event)->
        Router.go '/seriesList'
     'click #follow': (event)->
+       history = Session.get('history_view') || [];
+       history.push {
+        view: 'home',
+        scrollTop: document.body.scrollTop
+       }
+       Session.set('history_view',history);
        Router.go '/searchFollow'
     'click .clickHelp':(event)->
       PUB.page '/help'

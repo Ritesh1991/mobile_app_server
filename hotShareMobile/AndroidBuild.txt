@@ -56,6 +56,6 @@ gradle wrapper
 最后，　用这个命令来ｂｕｉｌｄ　ａｐｋ
 ANDROID_HOME=~/.meteor/android_bundle/android-sdk ./gradlew assembleRelease -Pandroid.injected.signing.store.file=/home/roger/workspace/hotShare/hotShareMobile/keystore -Pandroid.injected.signing.store.password=actiontec -Pandroid.injected.signing.key.alias="wifi whiteboard" -Pandroid.injected.signing.key.password=actiontec
 
-生成的ａｐｋ在　./build/outputs/apk/project-armv7-release.apk
+生成的ａｐｋ在　./build/outputs/apk/project-release.apk
 
 上面有些路径要改成自己的，　基本过程就是这样

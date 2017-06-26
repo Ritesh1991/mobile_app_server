@@ -1562,10 +1562,22 @@ Template._simpleChatListLayout.events({
   'click .writeMeaaage': function(e,t){
     // TODO
     console.log('写私信');
+    history = Session.get('history_view') || [];
+    history.push({
+      view: 'simple-chat/user-list/'+Meteor.userId(),
+      scrollTop: document.body.scrollTop
+    });
+    Session.set('history_view',history);
     Router.go('/write-letter');
   },
   'click #follow': function(){
-     Router.go('/searchFollow');
+    history = Session.get('history_view') || [];
+    history.push({
+      view: 'simple-chat/user-list/'+Meteor.userId(),
+      scrollTop: document.body.scrollTop
+    });
+    Session.set('history_view',history);
+    Router.go('/searchFollow');
   }
 });
 
