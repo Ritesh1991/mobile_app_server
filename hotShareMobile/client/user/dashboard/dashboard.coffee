@@ -1,5 +1,47 @@
 #space 2
 if Meteor.isClient
+  @addIntoBlackList = (blackerId)->
+    FollowerId = Follower.findOne({userId: Meteor.userId(),followerId: blackerId})
+    if BlackList.find({blackBy: Meteor.userId()}).count() is 0
+      BlackList.insert({blacker: [blackerId],blackBy: Meteor.userId()})
+    else
+      id = BlackList.findOne({blackBy: Meteor.userId()})._id
+      BlackList.update({_id: id}, {$addToSet: {blacker: blackerId}})
+    if FollowerId
+      removeFollower(FollowerId._id)
+    MsgSessionId = SimpleChat.MsgSession.findOne({userId: Meteor.userId(),toUserId: blackerId})
+    if MsgSessionId
+      SimpleChat.MsgSession.remove(MsgSessionId._id)
+    where = {
+        $or: [
+          {'form.id': Meteor.userId(), 'to.id': blackerId},
+          {'form.id': blackerId, 'to.id': Meteor.userId()}
+        ]
+      };
+    SimpleChat.Messages.remove(where);
+    Session.set('fromeaddblacllist', true)
+    Router.go '/my_blacklist'
+
+  @removeFromeBlackList = (blackerId)->
+    blacklist = BlackList.findOne({blackBy: Meteor.userId()})
+    if blacklist
+      id = blacklist._id
+      BlackList.update({_id: id}, {$pull: {blacker: blackerId}})
+      blacker = Meteor.users.findOne({_id: blackerId})
+      blackerName = if blacker.profile.fullname then blacker.profile.fullname else blacker.username
+      addFollower {
+        userId: Meteor.userId()
+        userName: Meteor.user().profile.fullname || Meteor.user().username
+        userIcon: Meteor.user().profile.icon || '/userPicture.png'
+        userDesc: Meteor.user().profile.desc
+
+        followerId: blacker._id
+        followerName: blackerName
+        followerIcon: blacker.profile.icon || '/userPicture.png'
+        followerDesc: blacker.profile.desc
+
+        createAt: new Date()
+      }
   Template.dashboard.rendered=->
     if Session.get('dashboardHeight') is undefined
       Session.set('dashboardHeight', $(window).height())
@@ -289,28 +331,12 @@ if Meteor.isClient
         return username = Meteor.users.findOne({_id: id}).username
   Template.my_blacklist_item.events
     'click .remove' :(e)->
-      id = this.toString()
-      blackId = BlackList.findOne({blackBy: Meteor.userId()})._id
+      blackerId = this.toString()
       menus = ['从黑名单中移除']
       menuTitle = ''
       callback = (buttonIndex)->
         if buttonIndex is 1
-          BlackList.update({_id: blackId}, {$pull: {blacker: id}})
-          blacker = Meteor.users.findOne({_id: id})
-          blackerName = if blacker.profile.fullname then blacker.profile.fullname else blacker.username
-          addFollower {
-            userId: Meteor.userId()
-            userName: Meteor.user().profile.fullname || Meteor.user().username
-            userIcon: Meteor.user().profile.icon || '/userPicture.png'
-            userDesc: Meteor.user().profile.desc
-
-            followerId: blacker._id
-            followerName: blackerName
-            followerIcon: blacker.profile.icon || '/userPicture.png'
-            followerDesc: blacker.profile.desc
-
-            createAt: new Date()
-          }
+          removeFromeBlackList(blackerId)
       PUB.actionSheet(menus, menuTitle, callback)
       e.preventDefault()
       e.stopPropagation()

@@ -1063,8 +1063,8 @@ if Meteor.isClient
     'click #report': (e)->
       # Router.go('reportPost')
       blackerId = Session.get("postContent").owner
-      FollowerId = Follower.findOne({userId: Meteor.userId(),followerId: blackerId})
       if BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [blackerId]}}).count() > 0
+        hasInBlackList = true
         menus = ['举报','从黑名单中移除']
       else
         menus = ['举报','拉黑']
@@ -1073,24 +1073,10 @@ if Meteor.isClient
         if buttonIndex is 1
           Router.go('reportPost')
         else if buttonIndex is 2
-          if BlackList.find({blackBy: Meteor.userId()}).count() is 0
-            if BlackList.find({blackBy: Meteor.userId()}).count() is 0
-              #Meteor.call('addBlackList', blackerId, Meteor.userId())
-              BlackList.insert({blacker: [blackerId],blackBy: Meteor.userId()})
-              if FollowerId
-                removeFollower(FollowerId._id)
-              Session.set('fromeaddblacllist', true)
-              Router.go '/my_blacklist'
-            else
-              id = BlackList.findOne({blackBy: Meteor.userId()})._id
-              BlackList.update({_id: id}, {$addToSet: {blacker: blackerId}})
-              if FollowerId
-                removeFollower(FollowerId._id)
-              Session.set('fromeaddblacllist', true)
-              Router.go '/my_blacklist'
+          if hasInBlackList
+            removeFromeBlackList(blackerId)
           else
-            id = BlackList.findOne({blackBy: Meteor.userId(), blacker:{$in: [blackerId]}})._id
-            BlackList.update({_id: id}, {$pull: {blacker: blackerId}})
+            addIntoBlackList(blackerId)
       PUB.actionSheet(menus, menuTitle, callback)
     'click .postImageItem, click .pinImage': (e)->
       swipedata = []

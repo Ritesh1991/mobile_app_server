@@ -888,7 +888,7 @@ Template._simpleChatToChatLayout.helpers({
     return data.is_group();
   },
   isSubScribeUser: function(){
-    var followerId = location.search.replace('?id=', '');
+    var followerId = location.search.split("&")[0].replace('?id=', '');
     return  Follower.find({followerId: followerId, userId: Meteor.userId()}).count()>0
   }
 });
@@ -955,7 +955,7 @@ Template._simpleChatToChatLayout.events({
   },
   'click #subscribeUser': function(e){
     var user  = Meteor.user();
-    var toUserId = location.search.replace('?id=', '');
+    var toUserId = location.search.split("&")[0].replace('?id=', '');
     var toUser = Meteor.users.findOne({_id: toUserId});
     return addFollower({
       userId: Meteor.userId(),
@@ -971,29 +971,8 @@ Template._simpleChatToChatLayout.events({
   },
   'click #addToBlacklist': function(e){
     try{
-    var blackerId = location.search.replace('?id=', '');
-    var followerId = Follower.findOne({userId: Meteor.userId(), followerId: blackerId})
-    var MsgSessionId = MsgSession.findOne({userId: Meteor.userId(), toUserId: blackerId})
-    if(MsgSessionId){
-      MsgSession.remove(MsgSessionId._id);
-    }
-    if(BlackList.find({blackBy: Meteor.userId()}).count() === 0){
-      BlackList.insert({blacker: [blackerId], blackBy: Meteor.userId()});
-    } else {
-      var blackDocId = BlackList.findOne({blackBy: Meteor.userId()})._id;
-      BlackList.update({_id: blackDocId},{$addToSet:{blacker: blackerId}});
-    }
-    if(followerId) {
-      Follower.remove(followerId._id);
-    }
-    // 清空本地相关消息
-    Messages.remove({'to.id':Meteor.userId(), 'form.id':blackerId},function(err,num){
-      if(err){
-        console.log(err);
-      }
-      console.log(num)
-    });
-    return PUB.back();
+      var blackerId = location.search.split("&")[0].replace('?id=', '');
+      addIntoBlackList(blackerId);
     } catch (err){
       console.log('black err=',err);
     }
@@ -1001,7 +980,7 @@ Template._simpleChatToChatLayout.events({
   'click #reporterUser': function(){
     // TODO
     console.log('reporterUser')
-    userId = location.search.replace('?id=', '');
+    userId = location.search.split("&")[0].replace('?id=', '');
     Session.set('reportUser',{
       userId:userId,
       userName: page_title.get()
@@ -1359,6 +1338,14 @@ SimpleChat.onMqttMessage = function(topic, msg) {
     create_time: {$gte: whereTime},
     type: 'text'
   };
+
+  if (msgObj.to_type === 'user' && msgObj.to.id == Meteor.userId()) {
+    //ta 被我拉黑
+    if(BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [msgObj.form.id]}}).count() > 0){
+      console.log(msgObj.to.id+'被我拉黑');
+      return;
+    }
+  }
 
   msgObj.create_time = msgObj.create_time ? new Date(msgObj.create_time) : new Date();
   if (msgObj.images && msgObj.length > 0 && msgObj.is_people && msgObj.people_id){
