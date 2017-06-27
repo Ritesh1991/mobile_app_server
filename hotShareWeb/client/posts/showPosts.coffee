@@ -210,13 +210,36 @@ if Meteor.isClient
     Meteor.call 'getHottestPosts', (err,res)->
       unless err
         Session.set('hottestPosts', res)
-  Template.showPosts.onRendered ->
+  getAuthorReadPopularPosts = ()->
     owner = Session.get('postContent').owner
     _id = Session.get('postContent')._id
     if owner and _id
-      Meteor.subscribe "authorReadPopularPosts",owner,_id,3,()->
-        authorHotPosts = Posts.find({owner: owner, publish: {$ne: false}},{sort: {browse: -1},limit: 3}).fetch()
-        Session.set("authorHotPosts", authorHotPosts)
+      myHotPosts = Meteor.users.findOne({_id: owner}).myHotPosts
+      if (myHotPosts && myHotPosts.length >= 3)
+        Session.set("authorHotPosts", myHotPosts)
+        return
+      else
+        Meteor.subscribe "authorReadPopularPosts",owner,_id,3,()->
+          mostReadPosts = Posts.find({owner: owner, publish: {$ne: false}},{sort: {browse: -1},limit: 3}).fetch()
+          if (myHotPosts == undefined || myHotPosts == null)
+            myHotPosts = []
+          if (mostReadPosts == undefined || mostReadPosts == null)
+            mostReadPosts = []
+          size = myHotPosts.length
+          idx = 0
+          while (size < 3 && idx < mostReadPosts.length)
+            inHotPosts = false
+            for itemPost in myHotPosts
+              itemId = itemPost.postId or itemPost._id
+              if itemId and itemId is mostReadPosts[idx]._id
+                inHotPosts = true
+            unless inHotPosts
+              myHotPosts.push(mostReadPosts[idx])
+            idx++
+            size = myHotPosts.length
+          Session.set("authorHotPosts", myHotPosts)
+  Template.showPosts.onRendered ->
+    getAuthorReadPopularPosts()
     Meteor.setTimeout(
       ()->
         if location.search.indexOf('pub_pcom') != -1
@@ -428,27 +451,6 @@ if Meteor.isClient
     oldMail: ->
       Template.SubscribeAuthor.__helpers.get('oldMail')()
     authorReadPopularPosts: ()->
-      # myHotPosts = Meteor.users.findOne({_id: @owner}).myHotPosts
-      # if (myHotPosts && myHotPosts.length >= 3)
-      #   return myHotPosts
-      # else
-      #   Meteor.subscribe "authorReadPopularPosts",@owner,@_id,3
-      #   mostReadPosts = Posts.find({_id: {$ne: @_id},owner: @owner, publish: {$ne: false}},{sort: {browse: -1},limit: 3}).fetch()
-      #   if (myHotPosts == undefined || myHotPosts == null)
-      #     myHotPosts = []
-      #   if (mostReadPosts == undefined || mostReadPosts == null)
-      #     mostReadPosts = []
-      #   size = myHotPosts.length
-      #   idx = 0
-      #   while (size < 3 && idx < mostReadPosts.length)
-      #     inHotPosts = false
-      #     for itemPost in myHotPosts
-      #       if itemPost.postId and itemPost.postId is mostReadPosts[idx]._id
-      #         inHotPosts = true
-      #     unless inHotPosts
-      #       myHotPosts.push(mostReadPosts[idx])
-      #     idx++
-      #     size = myHotPosts.length
       myHotPosts = Session.get("authorHotPosts")
       return myHotPosts
     readerIsOwner: ()->
