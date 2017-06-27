@@ -5,7 +5,7 @@ if Meteor.isClient
       Session.set('dashboardHeight', $(window).height())
     $('.dashboard').css 'min-height', Session.get('dashboardHeight')
     $('body').css('height', 'auto')
-  Template.editprofile.onDestroyed = ()->
+  Template.editprofile.onDestroyed ()->
     $('body').css('height', '100%')
   Template.editprofile.helpers
     myProfileIcon:->
