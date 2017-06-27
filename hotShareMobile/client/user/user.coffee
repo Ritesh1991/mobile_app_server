@@ -312,6 +312,8 @@ if Meteor.isClient
           e.currentTarget.innerHTML = val
         return
       return
+    'click .editProfile':()->
+      Router.go('/editProfile')
     'click #setting' :->
       $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->

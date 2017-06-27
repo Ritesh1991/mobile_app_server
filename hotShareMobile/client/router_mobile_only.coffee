@@ -571,3 +571,9 @@ if Meteor.isClient
     Router.route 'recommendStory',()->
       this.render 'recommendStory'
       return
+    Router.route 'editprofile',()->
+      this.render 'editprofile'
+      return
+    Router.route 'setSex',()->
+      this.render 'setSex'
+      return

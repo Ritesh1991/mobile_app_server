@@ -3,6 +3,9 @@ if Meteor.isClient
     $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
     Session.set('isInformationEditing', false)
     document.body.scrollTop = $(".showPostsBox").height()
+    if Session.get('fromEditProfile') is true
+      Session.set('fromEditProfile',false)
+      Router.go('/editProfile')
   hasMoreFavouritePosts = ()->
     #if FavouritePosts.find({userId: Meteor.userId()}).count() > 0
     #  !(FavouritePosts.find({userId: Meteor.userId()}).count() < Session.get("favouritepostsLimit"))
@@ -133,6 +136,10 @@ if Meteor.isClient
     document.ontouchmove = (e) ->
       e.preventDefault()
       return
+    Meteor.setTimeout(()->
+      if Session.get('fromEditProfile') is true
+        $('ul.set-up').css({'padding-top':'44px'})
+    ,100)
   Template.setSex.destroyed=->
     document.ontouchmove = (e) ->
       true

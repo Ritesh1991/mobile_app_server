@@ -1,0 +1,28 @@
+<template name="editprofile">
+  <div class="editprofile dashboard">
+    <div class="head">
+      <div>个人资料</div>
+      <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+    </div>
+    <div class="content">
+      <div class="userInfo box">
+        <div class='user-icon bottomBorder boxTitle ripple-label' style="height: 80px;">头像
+          <span>
+            <div class="icon">
+              {{#if myProfileIcon}}
+                <img src="{{myProfileIcon}}" width='60' height='60'>
+              {{else}}
+                <i class="fa fa-camera"></i>{{_ "uploadFigure"}}
+              {{/if}}
+            </div>
+          <i class="fa fa-angle-right fa-fw"></i>
+          </span>
+        </div>
+        <div class="user-nick-name bottomBorder boxTitle ripple-label">昵称<span>{{nickname}}<i class="fa fa-angle-right fa-fw"></i></span></div>
+        <div class="user-sex boxTitle ripple-label">性别<span>{{sex}}<i class="fa fa-angle-right fa-fw"></i></span></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
