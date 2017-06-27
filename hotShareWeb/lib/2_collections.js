@@ -1532,8 +1532,8 @@ if(Meteor.isServer){
             catch(error){}
             try{
                 FollowPosts.remove({owner:doc.followerId,followby:userId});
-            }*/
-            catch(error){}
+            }
+            catch(error){}*/
             try{
                 SeriesFollow.remove({creatorId: doc.followerId, owner: userId});
             }
