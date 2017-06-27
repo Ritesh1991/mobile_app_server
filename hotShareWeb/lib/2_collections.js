@@ -1937,8 +1937,9 @@ if(Meteor.isServer){
         if(this.userId === null || !Match.test(limit, Number))
           return this.ready();
         else
-          notshowArrId = ['3uFSntcg8j2XXRbSG','jJN2frttsQJG8vPtE', 'zR2Y5Ar9k9LZQS9vS',this.userId]
-          return Posts.find({'owner':{$nin:notshowArrId}, 'isReview':true,'publish':true}, {sort: {createdAt: -1}, limit:limit});
+          notshowArrId = ['3uFSntcg8j2XXRbSG','jJN2frttsQJG8vPtE', 'zR2Y5Ar9k9LZQS9vS']
+          return Posts.find({'owner':{$nin:notshowArrId}, 'isReview':true,'publish':true}, {sort: {createdAt: -1}, limit:limit, fields:
+          {isReview:1,mainImage:1,title:1,addontitle:1,publish:1,owner:1,ownerName:1,createdAt:1,ownerIcon:1,browse:1,_id:1}});
     });
 
     Meteor.publish("mySeries", function(limit) {
