@@ -786,11 +786,13 @@ if Meteor.isServer
             Meteor.defer ()->
               Posts.update({_id:postId},{$set:{browse:browseTimes}})
               Viewers.update({postId: postId, userId: userId}, {$inc: {count: 1}, $set: {owner: post.owner}}); 
-              if owner_user
-                waitReadCount = owner_user.profile.waitReadCount
-              if waitReadCount is undefined or isNaN(waitReadCount)
-                waitReadCount = 0
-              Meteor.users.update({_id:post.owner}, {$set: {'profile.waitReadCount': waitReadCount+1}});
+
+              #do not increase waitReadCount for post browsing
+              #if owner_user
+              #  waitReadCount = owner_user.profile.waitReadCount
+              #if waitReadCount is undefined or isNaN(waitReadCount)
+              #  waitReadCount = 0
+              #Meteor.users.update({_id:post.owner}, {$set: {'profile.waitReadCount': waitReadCount+1}});
               console.log  'read waitReadCount' 
               pushnotification("read",post,userId)
               ###
