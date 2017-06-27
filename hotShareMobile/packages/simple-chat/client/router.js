@@ -870,6 +870,7 @@ Template._simpleChatToChatLayout.onRendered(function(){
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
+  Session.set('msgToUserName', null);
 });
 
 Template._simpleChatToChatLayout.helpers({
@@ -949,7 +950,14 @@ Template._simpleChatToChatLayout.events({
     Session.set("currentPageIndex",-1);
     Meteor.subscribe("usersById", this.form.id);
     Meteor.subscribe("recentPostsViewByUser", this.form.id);
-    Session.set('pageToProfile',AppConfig.path + '/to/user?id='+this.form.id);
+    var to_id = '';
+    if (this.to_type === 'user') {
+      to_id = this.form.id
+    }
+    else{
+      to_id = this.to.id
+    }
+    Session.set('pageToProfile',AppConfig.path + '/to/'+this.to_type+'?id='+to_id);
     Session.set('pageScrollTop',$(window).scrollTop());
     onUserProfile()
   },
