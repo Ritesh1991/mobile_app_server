@@ -157,9 +157,9 @@ if Meteor.isClient
       else
         return true
     newPosts:()->
-      getFollowerArr()
-      notShowArrId = Session.get('notShowPostUserIdArr')
-      return Posts.find({'owner':{$nin:notShowArrId},'isReview':true,'publish':true}, {sort: {createdAt: -1}})
+      #getFollowerArr()
+      #notShowArrId = Session.get('notShowPostUserIdArr')
+      return Posts.find({'isReview':true,'publish':true}, {sort: {createdAt: -1}})
     moreResults:->
       if Session.equals('newpostsCollection','loaded')
           false
