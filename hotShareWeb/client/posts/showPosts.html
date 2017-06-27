@@ -49,7 +49,7 @@
           <div id="SubscribeAuthor" class="ripple" ><i class="fa fa-plus"></i> 关注</div>
           {{/if}}
         {{/unless}}
-        <div class="user">
+        <div class="user" onclick="showUserProfile()">
           {{#if isMobile}}
             <img class="icon" src="{{ownerIcon}}" width='25' height='25'>
           {{/if}}
@@ -343,6 +343,14 @@
   <script>
        function hideAuthorEmail(){
          $('.sendAuthorEmail,.authorEmailAlertBackground').hide();
+       }
+       function showUserProfile(){
+          console.log 'click user dashboard'
+          Session.set("ProfileUserId1", this.owner)
+          Session.set("currentPageIndex",-1)
+          Meteor.subscribe("userinfo", this.owner)
+          Meteor.subscribe("recentPostsViewByUser", this.owner)
+          onUserProfile()
        }
        function hideShareReaderClub(){
          $('.shareReaderClub,.shareReaderClubBackground').hide();
