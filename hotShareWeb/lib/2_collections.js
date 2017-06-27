@@ -642,6 +642,82 @@ if(Meteor.isServer){
             }
         });
     }
+    var updateMeetsWhenReadingPost = function(userId,postId,self) {
+        console.log('updateMeetsWhenReadingPost...');
+        deferSetImmediate(function() {
+            try {
+                var views = Viewers.find({postId: postId}, {limit: 100});
+                if (views.count() > 0) {
+                    // console.log('----- publicPostsPublisherDeferHandle 1------');
+                    views.observeChanges({
+                        added: function (id, fields) {
+                            // console.log('----- publicPostsPublisherDeferHandle 2------');
+                            var meetItemOne = Meets.findOne({me: userId, ta: fields.userId});
+                            if (meetItemOne) {
+                                var meetCount = meetItemOne.count;
+                                if (meetCount === undefined || isNaN(meetCount))
+                                    meetCount = 0;
+                                if (needUpdateMeetCount) {
+                                    meetCount = meetCount + 1;
+                                }
+                                if (fields.userId === userId)
+                                    Meets.remove({_id: meetItemOne._id});
+                                else
+                                    Meets.update({me: userId, ta: fields.userId}, {
+                                        $set: {
+                                            count: meetCount,
+                                            meetOnPostId: postId
+                                        }
+                                    });
+                            } else {
+                                if (userId !== fields.userId) {
+                                    Meets.insert({
+                                        me: userId,
+                                        ta: fields.userId,
+                                        count: 1,
+                                        meetOnPostId: postId,
+                                        createdAt: new Date()
+                                    });
+                                }
+                            }
+
+                            var meetItemTwo = Meets.findOne({me: fields.userId, ta: userId});
+                            if (meetItemTwo) {
+                                var meetCount = meetItemTwo.count;
+                                if (meetCount === undefined || isNaN(meetCount))
+                                    meetCount = 0;
+                                if (needUpdateMeetCount) {
+                                    meetCount = meetCount + 1;
+                                    if (fields.userId === userId)
+                                        Meets.remove({_id: meetItemTwo._id});
+                                    else
+                                        Meets.update({me: fields.userId, ta: userId}, {
+                                            $set: {
+                                                count: meetCount,
+                                                meetOnPostId: postId,
+                                                createdAt: new Date()
+                                            }
+                                        });
+                                }
+                            } else {
+                                if (userId !== fields.userId) {
+                                    Meets.insert({
+                                        me: fields.userId,
+                                        ta: userId,
+                                        count: 1,
+                                        meetOnPostId: postId,
+                                        createdAt: new Date()
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            catch (error) {
+            }
+        });
+    }
     var publicPostsPublisherDeferHandle = function(userId,postId,self) {
         console.log('publicPostsPublisherDeferHandle...');
         deferSetImmediate(function(){
@@ -681,116 +757,6 @@ if(Meteor.isServer){
                 }
             } catch (error){
             }
-            try{
-                var views=Viewers.find({postId:postId},{limit:100});
-                if(views.count()>0){
-                    // console.log('----- publicPostsPublisherDeferHandle 1------');
-                    views.observeChanges({
-                    added: function (id, fields) {
-                        // console.log('----- publicPostsPublisherDeferHandle 2------');
-                        var meetItemOne = Meets.findOne({me:userId,ta:fields.userId});
-                        if(meetItemOne){
-                            var meetCount = meetItemOne.count;
-                            if(meetCount === undefined || isNaN(meetCount))
-                                meetCount = 0;
-                            if ( needUpdateMeetCount ){
-                                meetCount = meetCount+1;
-                            }
-                            if(fields.userId === userId)
-                                Meets.remove({_id:meetItemOne._id});
-                            else
-                                Meets.update({me:userId,ta:fields.userId},{$set:{count:meetCount,meetOnPostId:postId}});
-                        }else{
-                            if(userId !== fields.userId)
-                            {
-                                Meets.insert({
-                                    me:userId,
-                                    ta:fields.userId,
-                                    count:1,
-                                    meetOnPostId:postId,
-                                    createdAt: new Date()
-                                });
-                            }
-                        }
-
-                        var meetItemTwo = Meets.findOne({me:fields.userId,ta:userId});
-                        if(meetItemTwo){
-                            var meetCount = meetItemTwo.count;
-                            if(meetCount === undefined || isNaN(meetCount))
-                                meetCount = 0;
-                            if ( needUpdateMeetCount ){
-                                meetCount = meetCount+1;
-                                if(fields.userId === userId)
-                                    Meets.remove({_id:meetItemTwo._id});
-                                else
-                                    Meets.update({me:fields.userId,ta:userId},{$set:{count:meetCount,meetOnPostId:postId,createdAt: new Date()}});
-                            }
-                        }else{
-                            if(userId !== fields.userId) {
-                                Meets.insert({
-                                    me: fields.userId,
-                                    ta: userId,
-                                    count: 1,
-                                    meetOnPostId: postId,
-                                    createdAt: new Date()
-                                });
-                            }
-                        }
-                    }
-                    });
-                    // views.forEach(function(data){
-                    //     var meetItemOne = Meets.findOne({me:userId,ta:data.userId});
-                    //     if(meetItemOne){
-                    //         var meetCount = meetItemOne.count;
-                    //         if(meetCount === undefined || isNaN(meetCount))
-                    //             meetCount = 0;
-                    //         if ( needUpdateMeetCount ){
-                    //             meetCount = meetCount+1;
-                    //         }
-                    //         if(data.userId === userId)
-                    //             Meets.remove({_id:meetItemOne._id});
-                    //         else
-                    //             Meets.update({me:userId,ta:data.userId},{$set:{count:meetCount,meetOnPostId:postId}});
-                    //     }else{
-                    //         if(userId !== data.userId)
-                    //         {
-                    //             Meets.insert({
-                    //                 me:userId,
-                    //                 ta:data.userId,
-                    //                 count:1,
-                    //                 meetOnPostId:postId,
-                    //                 createdAt: new Date()
-                    //             });
-                    //         }
-                    //     }
-
-                    //     var meetItemTwo = Meets.findOne({me:data.userId,ta:userId});
-                    //     if(meetItemTwo){
-                    //         var meetCount = meetItemTwo.count;
-                    //         if(meetCount === undefined || isNaN(meetCount))
-                    //             meetCount = 0;
-                    //         if ( needUpdateMeetCount ){
-                    //             meetCount = meetCount+1;
-                    //             if(data.userId === userId)
-                    //                 Meets.remove({_id:meetItemTwo._id});
-                    //             else
-                    //                 Meets.update({me:data.userId,ta:userId},{$set:{count:meetCount,meetOnPostId:postId,createdAt: new Date()}});
-                    //         }
-                    //     }else{
-                    //         if(userId !== data.userId) {
-                    //             Meets.insert({
-                    //                 me: data.userId,
-                    //                 ta: userId,
-                    //                 count: 1,
-                    //                 meetOnPostId: postId,
-                    //                 createdAt: new Date()
-                    //             });
-                    //         }
-                    //     }
-                    // });
-                }
-            }
-            catch(error){}
         });
     };
     var postsInsertHookPostToBaiduDeferHandle = function(postid) {
@@ -1017,6 +983,7 @@ if(Meteor.isServer){
                             //     countB += 1;
                             // }
                             // console.log('countB is ' + countB)
+                            // FollowPosts的数据插入，只需要给 suggestPostUserId了
                             if(fields.userId === suggestPostsUserId){
                                 // console.log('=======    suggestPostsUserId   =======')
                                 FollowPosts.insert({
@@ -1038,6 +1005,10 @@ if(Meteor.isServer){
                                     followby: fields.userId
                                 });
                             }
+                            /*
+                            在 FollowPosts改用Neo4J查询之后，不需要插入FollowPosts静态记录
+                            由于推荐帖子（当动态里没有数据的时候）采用的是一个固定用户FollowPosts数据
+                            上面暂时保留，以后再考虑替换方法
                             else
                             {
                                 // console.log('=======    suggestPostsUserId  else   =======')
@@ -1058,7 +1029,7 @@ if(Meteor.isServer){
                                     createdAt: doc.createdAt,
                                     followby: fields.userId
                                 });
-                            }
+                            }*/
                             if(Feeds.find({followby: fields.userId,postId: doc._id,eventType:'SelfPosted'}).count() === 0){
                                 Feeds.insert({
                                     owner:doc.owner,
@@ -1098,6 +1069,8 @@ if(Meteor.isServer){
                         sendEmailToFollower(userEmail, subject, mailText);
                     }
                 }
+                /*
+                这部分代码是为了确保插入成功的，现在不需要了
                 var isInserted = FollowPosts.findOne({followby: userId,postId:doc._id}) ? true : false;
                 if (!isInserted)  {
                     if(userId === suggestPostsUserId)
@@ -1121,6 +1094,9 @@ if(Meteor.isServer){
                             followby: userId
                         });
                     }
+                     在 FollowPosts改用Neo4J查询之后，不需要插入FollowPosts静态记录
+                     由于推荐帖子（当动态里没有数据的时候）采用的是一个固定用户FollowPosts数据
+                     上面暂时保留，以后再考虑替换方法
                     else
                     {
                         FollowPosts.insert({
@@ -1145,16 +1121,19 @@ if(Meteor.isServer){
                         });
                     }
                 }
+                     */
             }
             catch(error){
                 console.log("Exception: postsInsertHookDeferHandle: err=", error);
             }
+            /*
+            我们现在不再部署Pulling Server了
             try {
                 var pullingConn = Cluster.discoverConnection("pulling");
                 pullingConn.call("pullFromServer", doc._id);
             }
             catch(error){}
-
+            */
             try {
                 var recommendUserIds = [];
                 // console.log('----- Recommends 1------');
@@ -1180,7 +1159,9 @@ if(Meteor.isServer){
     postsRemoveHookDeferHandle = function(userId,doc){
         deferSetImmediate(function(){
             try{
+                /*
                 Moments.remove({$or:[{currentPostId:doc._id},{readPostId:doc._id}]});
+                 */
                 FollowPosts.remove({
                     postId:doc._id
                 });
@@ -1437,10 +1418,14 @@ if(Meteor.isServer){
     }
     followerInsertHookDeferHook=function(userId,doc){
         deferSetImmediate(function(){
+            /*
             try{
                 Meets.update({me:doc.userId,ta:doc.followerId},{$set:{isFriend:true}});
             }
             catch(error){}
+            在这里FollowPosts 不需要再做处理，原因是只要同步到Neo4J
+            Neo4J的关系运算提供FollowPosts的数据，而不是通过这个Collection
+
             try{
                 var posts=Posts.find({owner: doc.followerId});
                 if(posts.count()>0){
@@ -1469,6 +1454,9 @@ if(Meteor.isServer){
                                 followby: doc.userId
                             });
                         }
+                         在 FollowPosts改用Neo4J查询之后，不需要插入FollowPosts静态记录
+                         由于推荐帖子（当动态里没有数据的时候）采用的是一个固定用户FollowPosts数据
+                         上面暂时保留，以后再考虑替换方法
                         else
                         {
                             FollowPosts.insert({
@@ -1487,44 +1475,10 @@ if(Meteor.isServer){
                         }
                     }
                     });
-                    // posts.forEach(function(data){
-                    //     if(doc.userId === suggestPostsUserId)
-                    //     {
-                    //         FollowPosts.insert({
-                    //             _id:data._id,
-                    //             postId:data._id,
-                    //             title:data.title,
-                    //             addontitle:data.addontitle,
-                    //             mainImage: data.mainImage,
-                    //             mainImageStyle: data.mainImageStyle,
-                    //             publish: data.publish,
-                    //             owner:data.owner,
-                    //             ownerName:data.ownerName,
-                    //             ownerIcon:data.ownerIcon,
-                    //             createdAt: data.createdAt,
-                    //             followby: doc.userId
-                    //         });
-                    //     }
-                    //     else
-                    //     {
-                    //         FollowPosts.insert({
-                    //             postId:data._id,
-                    //             title:data.title,
-                    //             addontitle:data.addontitle,
-                    //             mainImage: data.mainImage,
-                    //             mainImageStyle:data.mainImageStyle,
-                    //             owner: data.owner,
-                    //             publish: data.publish,
-                    //             ownerName:data.ownerName,
-                    //             ownerIcon:data.ownerIcon,
-                    //             createdAt: data.createdAt,
-                    //             followby: doc.userId
-                    //         });
-                    //     }
-                    // });
                 }
             }
             catch(error){}
+            */
             try{
                 var series = Series.find({owner: doc.followerId});
                 if(series.count() > 0){
@@ -1572,13 +1526,13 @@ if(Meteor.isServer){
     };
     followerRemoveHookDeferHook=function(userId,doc){
         deferSetImmediate(function(){
-            try{
+            /*try{
                 Meets.update({me:doc.userId,ta:doc.followerId},{$set:{isFriend:false}});
             }
             catch(error){}
             try{
                 FollowPosts.remove({owner:doc.followerId,followby:userId});
-            }
+            }*/
             catch(error){}
             try{
                 SeriesFollow.remove({creatorId: doc.followerId, owner: userId});
@@ -2149,27 +2103,6 @@ if(Meteor.isServer){
             }
         });
     }
-  Meteor.publish("dynamicMoments", function (postId,limit) {
-      if(this.userId === null || !Match.test(postId, String) ){
-          return this.ready();
-      }
-      else{
-          var self = this;
-          self.count = 0;
-          var handle = Moments.find({currentPostId: postId,userId:{$ne:self.userId}},{sort: {createdAt: -1},limit:limit}).observeChanges({
-              added: function (id,fields) {
-                  momentsAddForDynamicMomentsDeferHandle(self,id,fields,self.userId);
-              },
-              changed:function (id,fields){
-                  momentsChangeForDynamicMomentsDeferHandle(self,id,fields,self.userId);
-              }
-          });
-          self.ready();
-          self.onStop(function () {
-              handle.stop();
-          });
-      }
-  });
   Meteor.publish("viewlists", function (userId, viewerId) {
     if(this.userId === null || !Match.test(viewerId, String))
       return this.ready();
@@ -2225,40 +2158,7 @@ if(Meteor.isServer){
           });
       }*/
   });
-  Meteor.publish("postFriends", function (userId,postId,limit) {
-        if(this.userId === null || !Match.test(postId, String) ){
-            return this.ready();
-        }
-        else{
-            var self = this;
-            self.count = 0;
-            self.meeterIds=[];
-            //publicPostsPublisherDeferHandle(userId,postId,self);
-            var handle = Meets.find({me: userId,meetOnPostId:postId},{sort: {createdAt: -1},limit:limit}).observeChanges({
-                added: function (id,fields) {
-                    var taId = fields.ta;
-                    //Call defered function here:
-                    if (taId !== userId){
-                        if(!~self.meeterIds.indexOf(taId)){
-                            self.meeterIds.push(taId);
-                            newMeetsAddedForPostFriendsDeferHandle(self,taId,userId,id,fields);
-                        }
-                    }
-                },
-                changed: function (id,fields) {
-                    self.changed("postfriends", id, fields);
-                }/*,
-                removed:function (id,fields) {
-                    self.removed("postfriends", id, fields);
-                }*/
-            });
-            self.ready();
-            self.onStop(function () {
-                handle.stop();
-                delete self.meeterIds
-            });
-        }
-  });
+
     if(withNeo4JInDynamicPostFriend){
         Meteor.publish("postFriendsV2", function (userId,postId,limit) {
             if(this.userId === null || !Match.test(postId, String) || limit > 10){
@@ -2342,6 +2242,7 @@ if(Meteor.isServer){
                 //此处为了修复再次打开帖子时新朋友消失的问题，需要publicPostsPublisherDeferHandle重新计算相遇次数
                 if(limit <= 10){
                     publicPostsPublisherDeferHandle(userId,postId,self);
+                    updateMeetsWhenReadingPost(userId,postId,self)
                 }
                 var handle = Meets.find({me: userId,meetOnPostId:postId},{sort: {createdAt: -1},limit:limit}).observeChanges({
                     added: function (id,fields) {
@@ -2382,63 +2283,6 @@ if(Meteor.isServer){
         });
     }
 
-  Meteor.publish("newfriends", function (userId,postId) {
-    if(this.userId === null || !Match.test(postId, String)){
-        return this.ready();
-    }
-    else{
-      var self = this;
-      this.count = 0;
-      var handle = Meets.find({me: userId},{sort:{createdAt:-1},limit:40}).observeChanges({
-        added: function (id,fields) {
-          if (self.count<20)
-          {
-            var taId = fields.ta;
-            if(taId !== userId && postId === fields.meetOnPostId){
-                //Call defered function here:
-                newMeetsAddedForNewFriendsDeferHandle(self,taId,userId,id,fields);
-            }
-          }
-        },
-        changed: function (id,fields) {
-           if(fields.isFriend === true)
-           {
-             try{
-               self.removed("newfriends", id);
-               self.count--;
-             }catch(error){
-             }
-           }
-            //Call defered function here:
-            newMeetsChangedForNewFriendsDeferHandle(id,self,fields,userId,postId);
-        },
-        removed: function (id) {
-          try {
-              self.removed("newfriends", id);
-              self.count--;
-          } catch (error){
-          }
-        }
-      });
-
-      self.ready();
-      self.onStop(function () {
-        handle.stop();
-      });
-    }
-  });
-  Meteor.publish('meetscountwithlimit', function(limit) {
-    if(this.userId === null || !Match.test(limit, Number)){
-        return this.ready();
-    }
-    return Meets.find({me:this.userId},{sort:{count:-1},limit:limit});
-  });
-  Meteor.publish('meetscount', function() {
-    if(!this.userId){
-        return this.ready()
-    }
-    return Meets.find({me:this.userId});
-  });
   Meteor.publish('waitreadcount', function() {
     if(!this.userId){
         return this.ready();
@@ -2498,12 +2342,6 @@ if(Meteor.isServer){
         return this.ready();
       else
         return ShareURLs.find({userId:this.userId});
-  });
-  Meteor.publish("posts", function() {
-    if(this.userId === null)
-      return this.ready();
-    else
-      return Posts.find({owner: this.userId},{sort: {createdAt: -1}});
   });
   Meteor.publish("staticPost", function(postId) {
     return Posts.find({_id: postId},{sort: {createdAt: -1}});
@@ -2567,16 +2405,6 @@ if(Meteor.isServer){
       }
   });
 
-  /*
-  Meteor.publish("mypostedposts", function(postId) {
-      if(this.userId === null) {
-          return this.ready();
-      }
-      else{
-          return Posts.find({_id: postId},{sort: {createdAt: -1}});
-      }
-  });
-*/
   Meteor.publish("savedDraftsWithLimit", function(limit) {
       if(this.userId === null|| !Match.test(limit, Number)){
           return this.ready();
@@ -2607,14 +2435,6 @@ if(Meteor.isServer){
       }
       else {
           return Follower.find({userId:this.userId},{sort: {createAt: -1},limit:limit});
-      }
-  });
-  Meteor.publish("momentsWithLimit", function(postId,limit) {
-      if(this.userId === null|| !Match.test(limit, Number)) {
-          return this.ready();
-      }
-      else{
-          return Moments.find({currentPostId: postId},{sort: {createdAt: -1},limit:limit});
       }
   });
     formatFollowPost = function(userId,postInfo){
@@ -2862,14 +2682,13 @@ if(Meteor.isServer){
       }else{
         var self = this;
         var userId = this.userId;
-        //publicPostsPublisherDeferHandle(self.userId,postId);
 
           var self = this;
           self.count = 0;
           self.meeterIds=[];
         publicPostsPublisherDeferHandle(userId,postId,self);
-        updateMomentsDeferHandle(self,postId);
-
+        //updateMeetsWhenReadingPost(userId,postId,self);
+        //updateMomentsDeferHandle(self,postId);
         if(syncToNeo4jWithMqtt)
             mqttPostViewHook(self.userId,postId);
         else
@@ -2893,7 +2712,8 @@ if(Meteor.isServer){
       self.count = 0;
       self.meeterIds=[];
       publicPostsPublisherDeferHandle(this.userId,postId,self);
-      updateMomentsDeferHandle(self,postId);
+      //updateMeetsWhenReadingPost(userId,postId,self);
+      //updateMomentsDeferHandle(self,postId);
       if(syncToNeo4jWithMqtt)
           mqttPostViewHook(self.userId,postId);
       else

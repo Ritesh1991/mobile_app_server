@@ -1,14 +1,6 @@
 if Meteor.isClient
   Meteor.startup ()->
     Session.setDefault 'newfriends_data',[]
-    ###
-    Deps.autorun ()->
-      console.log('In newfriends ' + Meteor.userId())
-      if Session.get("postContent") and  Meteor.userId()
-        Meteor.subscribe("userDetail",Meteor.userId())
-        Meteor.subscribe "newfriends", Meteor.userId(),Session.get("postContent")._id
-        Meteor.subscribe 'followToWithLimit', 9999
-    ###
   onUserProfile = ->
     #Router.go '/userProfilePage'
     Session.set("momentsitemsLimit", 10)
