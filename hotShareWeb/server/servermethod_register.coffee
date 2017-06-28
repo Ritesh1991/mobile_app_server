@@ -100,6 +100,10 @@ if Meteor.isServer
       FavouritePosts.insert({postId: postId, userId: userId, createdAt: new Date(), updateAt: new Date()})
   Meteor.startup ()->
     Meteor.methods
+      'getPostandDraftsCounts':(userId)->
+        postCounts = Posts.find({owner: userId}).count()
+        draftsCounts = SavedDrafts.find({owner: userId}).count()
+        return (postCounts + draftsCounts)
       'updateFollowSeriesInfo':(userId,options)->
         Meteor.defer ()->
           try 
