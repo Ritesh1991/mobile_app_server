@@ -77,6 +77,39 @@ Router.route(AppConfig.path + '/user-list/:_user',{
   }
 });
 
+var sendHaveReadMsg = function(to){
+  var msg = {
+      _id: new Mongo.ObjectID()._str,
+      form:{
+          id: Meteor.userId(),
+          name: AppConfig.get_user_name(Meteor.user()),
+          icon: AppConfig.get_user_icon(Meteor.user())
+      },
+      to: to,
+      to_type: 'user',
+      type: 'haveReadMsg',
+      create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+      send_status: 'sending'
+    };
+  var callback = function(err){
+    if(timeout){
+      Meteor.clearTimeout(timeout);
+      timeout = null;
+    }
+    if (err){
+      console.log('send mqtt err:', err);
+      //return Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
+      sendMqttUserMessage(msg.to.id, msg, arguments.callee);
+    }
+    //Messages.update({_id: msg._id}, {$set: {send_status: 'success'}});
+  };
+  var timeout = Meteor.setTimeout(function(){
+    if (msg && msg.send_status === 'sending');
+      sendMqttUserMessage(msg.to.id, msg, callback);
+  }, 1000*60*2);
+  sendMqttUserMessage(msg.to.id, msg, callback);
+}
+
 Template._simpleChatToChatLayout.onRendered(function(){
   page_data = this.data;
   if(Meteor.isCordova && device && device.platform === 'iOS'){
@@ -85,6 +118,16 @@ Template._simpleChatToChatLayout.onRendered(function(){
       Keyboard.disableScrollingInShrinkView(true);
     } catch (err){
       console.log(err)
+    }
+  }
+  //开启已读消息模式
+  if (withEnableHaveReadMsg && page_data.type === 'user') {
+    var lastMsg =  Messages.findOne({'form.id': page_data.id, 'to.id': Meteor.userId(), to_type: page_data.type},{ sort: {create_time: -1}});
+    if (lastMsg && lastMsg.is_read === false) {
+      var to = {
+        id:page_data.id
+      }
+      sendHaveReadMsg(to);
     }
   }
 });
@@ -298,6 +341,10 @@ Template._simpleChatToChat.onRendered(function(){
       if (doc.to_type === page_data.type && doc.to.id === page_data.id){
         console.log('message insert');
         setMsgList(page_data.where, 'insert');
+      }
+      if (withEnableHaveReadMsg && doc.to_type === 'user' && doc.form.id === page_data.id) {
+        console.log('receive other message')
+        sendHaveReadMsg({id:doc.form.id});
       }
     });
     Messages.after.update(function (userId, doc, fieldNames, modifier, options) {
@@ -1348,6 +1395,12 @@ SimpleChat.onMqttMessage = function(topic, msg) {
   };
 
   if (msgObj.to_type === 'user' && msgObj.to.id == Meteor.userId()) {
+    if (msgObj.type === 'haveReadMsg') {
+      Messages.find({'form.id':Meteor.userId(),'to.id':msgObj.form.id,is_read:false}).forEach(function(item){
+          Messages.update({_id:item._id},{$set:{is_read:true}});
+      })
+      return;
+    }
     //ta 被我拉黑
     if(BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [msgObj.form.id]}}).count() > 0){
       console.log(msgObj.to.id+'被我拉黑');

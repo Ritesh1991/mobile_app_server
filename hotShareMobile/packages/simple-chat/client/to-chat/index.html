@@ -147,6 +147,9 @@
             {{#if status_failed send_status}}
             <div class="status sendfailed"><img src="/failed.png" /></div>
             {{/if}}
+            {{#if is_read}}
+            <span class="status haveRead">已读</span>
+            {{/if}}
           {{/if}}
           {{#if people_id}}
           <!--标记消息 start-->
@@ -255,6 +258,9 @@
           {{/if}}
           {{#if status_failed send_status}}
           <div class="status sendfailed"><img src="/failed.png" /></div>
+          {{/if}}
+          {{#if is_read}}
+            <span class="status haveRead">已读</span>
           {{/if}}
         {{/if}}
         <div class="imgs">

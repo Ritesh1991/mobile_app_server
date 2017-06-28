@@ -40,3 +40,5 @@
 @withPinImage = false #pin图
 @withQRTips = true
 @syncToNeo4jWithMqtt = false  #false->直接操作Neo4j true->mqttsync
+@withEnableHaveReadMsg = true #已读消息
+
