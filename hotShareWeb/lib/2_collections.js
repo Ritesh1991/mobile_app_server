@@ -72,7 +72,11 @@ if(Meteor.isServer){
     return Themes.find({}, {limit: 40});
   });
   Meteor.publish('post-example', function(){
-    return Posts.find({_id: 'zwmXLe5tuWDKCZQM8'}, {limit: 1});
+    if(withFromExample){
+      return Posts.find({_id: 'zwmXLe5tuWDKCZQM8'}, {limit: 1});
+    } else {
+        return this.ready()
+    }
   });
   Meteor.publish('post-examples', function(){
     return [

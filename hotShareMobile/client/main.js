@@ -12,7 +12,9 @@ Template.registerHelper('isAndroid',function(){
 Deps.autorun(function(){
   if(Meteor.userId()){
     Meteor.subscribe('themes');
-    Meteor.subscribe('post-example');
+    if(withFromExample){
+        Meteor.subscribe('post-example');
+    }
   }
 });
 
