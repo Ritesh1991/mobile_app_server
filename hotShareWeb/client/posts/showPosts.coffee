@@ -214,7 +214,10 @@ if Meteor.isClient
     owner = Session.get('postContent').owner
     _id = Session.get('postContent')._id
     if owner and _id
-      myHotPosts = Meteor.users.findOne({_id: owner}).myHotPosts
+      userInfo = Meteor.users.findOne({_id: owner})
+      myHotPosts = null
+      if userInfo
+        myHotPosts = userInfo.myHotPosts
       if (myHotPosts && myHotPosts.length >= 3)
         Session.set("authorHotPosts", myHotPosts)
         return
