@@ -249,7 +249,7 @@ if(Meteor.isCordova){
     }
 
     sendMqttMessage=function(topic,message,callback){
-        Meteor.call('sendMQTTMsg',topic,message,function(err,result){
+        Meteor.call('Msg',topic,message,function(err,result){
             return callback && callback(err,result)
         })
     };
