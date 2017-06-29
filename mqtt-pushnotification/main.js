@@ -61,7 +61,11 @@ function mqttPushNotificationInit() {
                   sendGroupNotification(db,msgObj,'groupmessage');
           }
           if(topic.match('/msg/u/')){
-              sendNotification(msgObj, msgObj.to.id,'usermessage');
+              //sendNotification(msgObj, msgObj.to.id,'usermessage');
+              if (msgObj.type === 'haveReadMsg') {
+                return;
+              }
+              sendUserNotification(db, msgObj, 'usermessage');
           }
         });
         client.on('reconnect', function () {
