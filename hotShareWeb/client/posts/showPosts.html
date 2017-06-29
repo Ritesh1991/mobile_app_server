@@ -611,6 +611,7 @@
           if(to.id != Meteor.userId()){
             sendMqttMessageToUser(type,to,postData);
           }
+          trackEvent("socialBar","personalletter")
           $('.show-or-hidden').show();
           $('#pcommitReport').val('');
           Session.set('pcommentsValue', '');

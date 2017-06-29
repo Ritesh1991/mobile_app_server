@@ -1099,7 +1099,7 @@ Template._simpleChatToChatLayout.events({
         sendMqttMsg(msg);
         Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
       });
-
+      trackEvent("socialBar","AuthorReply")
       $('.input-text').val('');
       return false;
     }catch(ex){console.log(ex); return false;}

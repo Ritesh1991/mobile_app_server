@@ -150,6 +150,7 @@ if Meteor.isClient
         pcommentIndexNum: i,
         pcomment: Session.get("postContent").pub[i].text
       }
+      trackEvent("socialBar","personalletter")
       likeUserId = postData.pub[i].likeUserId
       userId = Meteor.userId()
       if to.id isnt Meteor.userId()
@@ -169,6 +170,7 @@ if Meteor.isClient
         pcommentIndexNum: i,
         pcomment: Session.get("postContent").pub[i].text
       }
+      trackEvent("socialBar","personalletter")
       dislikeUserId = postData.pub[i].dislikeUserId
       userId = Meteor.userId()
       if to.id isnt Meteor.userId()
