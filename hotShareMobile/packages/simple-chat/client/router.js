@@ -991,7 +991,7 @@ sendMqttMsg = function(){
 };
 
 Template._simpleChatToChatLayout.events({
-  'click .ta': function(e){
+  'click .ta div.icon': function(e){
     console.log('i clicked a chat userICON');
     Session.set("ProfileUserId1", this.form.id);
     Session.set("currentPageIndex",-1);
