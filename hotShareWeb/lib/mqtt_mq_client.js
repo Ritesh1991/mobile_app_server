@@ -1,7 +1,7 @@
 /**
  * Created by simba on 5/12/16.
  */
-if(Meteor.isClient){
+if(Meteor.isCordova){
     var myMqtt = Paho.MQTT;
     var undeliveredMessages = [];
     mqtt_connection = null;
@@ -243,4 +243,39 @@ if(Meteor.isClient){
             uninitMQTT()
         }
     });
+} else if (Meteor.isClient){
+
+    initMQTT = function(clientId){
+    }
+
+    sendMqttMessage=function(topic,message,callback){
+        Meteor.call('sendMQTTMsg',topic,message,function(err,result){
+            return callback && callback(err,result)
+        })
+    };
+    sendMqttGroupMessage=function(group_id, message, callback) {
+        sendMqttMessage("/t/msg/g/" + group_id, message, callback);
+    };
+    sendMqttUserMessage=function(user_id, message, callback) {
+        // console.log('sendMqttUserMessage:', message);
+        sendMqttMessage("/t/msg/u/" + user_id, message, callback);
+    };
+
+    subscribeMqttGroup=function(group_id) {};
+    unsubscribeMqttGroup=function(group_id) {};
+    subscribeMqttUser=function(user_id){};
+    unsubscribeMqttUser=function(user_id){};
+    uninitMQTT = function() {}
+    subscribeMyChatGroups = function() {}
+    getMqttClientID = function() {
+        var client_id = window.localStorage.getItem('mqtt_client_id');
+        if (!client_id) {
+            client_id = 'WorkAIC_' + (new Mongo.ObjectID())._str;
+            window.localStorage.setItem('mqtt_client_id', client_id);
+        }
+        console.log("##RDBG getMqttClientID: " + client_id);
+        return client_id;
+    };
+    mqttEventResume = function() {};
+    mqttEventPause = function() {};
 }

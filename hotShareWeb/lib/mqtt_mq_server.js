@@ -108,5 +108,10 @@ if(Meteor.isServer){
 
     Meteor.startup(function(){
         initMQTT(null);
+        Meteor.methods({
+            sendMQTTMsg:function(topic,message){
+                sendMqttMessage(topic,message)
+            }
+        })
     })
 }
