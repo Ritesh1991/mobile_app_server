@@ -184,7 +184,8 @@ if(Meteor.isCordova){
                   sendMqttMessage("/t/msg/u/" + user_id, message, callback);
                 };
                 if (!toUser || !toUser.profile)
-                  return Meteor.subscribe('get-user-web-browser-info', user_id, function(){
+                  //get-user-web-browser-info
+                  return Meteor.subscribe('uWebInfo', user_id, function(){
                     toUser = Meteor.users.findOne({_id: user_id});
                     sendMsg();
                   });
@@ -256,7 +257,23 @@ if(Meteor.isCordova){
         }
     });
   
+    Deps.autorun(function(){
+      if (Meteor.user() && Meteor.user().profile && Meteor.user().profile.associated){
+          var associated_ids = _.pluck(Meteor.user().profile.associated || [], 'id') || [];
+          if (associated_ids.length > 0){
+            Meteor.setTimeout(function(){
+              associated_ids.forEach(function(theid){
+                console.log('=== 拉取关联的 web 用户的私信消息 ===');
+                Meteor.subscribe('wMsg', theid);
+              })
+            }, 5000);
+          }
+      }
+    });
+  
     // 拉取关联的 web 用户的私信消息
+    // 这个处理过于复杂，上面是简单一些的实现
+    /*
     Deps.autorun(function(){
       if (Meteor.userId()){
         Meteor.setTimeout(function(){
@@ -265,6 +282,7 @@ if(Meteor.isCordova){
         }, 5000);
       }
     });
+    */
     WebUserMessages.find({}, {create_time: -1}).observeChanges({
       added: function(id, fields){
         // 模拟 mqtt 消息，以便按原流程处理
@@ -272,6 +290,7 @@ if(Meteor.isCordova){
           destinationName: '/t/msg/' + (fields.to_type === 'user' ? 'u' : 'g') + '/' + fields.to.id,
           payloadString: fields
         });
+        Meteor.call('wMsgRead',id)
       }
     });
 } else if (Meteor.isClient){

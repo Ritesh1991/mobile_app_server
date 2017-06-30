@@ -109,29 +109,41 @@ if(Meteor.isServer){
     Meteor.startup(function(){
         initMQTT(null);
         Meteor.methods({
-            Msg:function(topic,message){
-              this.unblock();
-              if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
-                var user = message.to.id;
-                var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
-                if (userInfo && userInfo.profile && userInfo.profile.browser){
-                  console.log(message)
-                  WebUserMessages.insert(message);
-                  Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
-                } else {
-                  sendMqttMessage(topic,message);
-                }
+          Msg:function(topic,message){
+            this.unblock();
+            if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
+              var user = message.to.id;
+              var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
+              if (userInfo && userInfo.profile && userInfo.profile.browser){
+                console.log(message)
+                WebUserMessages.insert(message);
+                Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
               } else {
                 sendMqttMessage(topic,message);
               }
+            } else {
               sendMqttMessage(topic,message);
             }
+            sendMqttMessage(topic,message);
+          },
+          wMsgRead:function(id){
+            // 暂时没做校验/检查
+            WebUserMessages.remove({_id:id})
+          }
         });
     })
 
-    Meteor.publish('get-user-web-browser-info', function(id){
+    //get-user-web-browser-info
+    Meteor.publish('uWebInfo', function(id){
       return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'token': 1}, limit: 1});
     });
+    // 这是个简单的处理，之前的过于复杂
+    Meteor.publish('wMsg', function(id){
+      // 暂没做格式检查
+      return WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}})
+    })
+
+    // 下面的处理有些复杂了，我另外做一个简单的
     Meteor.publish('get-web-user-wait-messages', function(id){
       var self = this;
       var ids = [];
