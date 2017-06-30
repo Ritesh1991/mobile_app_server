@@ -174,22 +174,27 @@ if(Meteor.isCordova){
             sendMqttGroupMessage=function(group_id, message, callback) {
                 sendMqttMessage("/t/msg/g/" + group_id, message, callback);
             };
+
+            function sendMsg(user_id,message,toBrowser,callback){
+              if (){
+                Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
+                  return callback && callback(err,result);
+                });
+              } else {
+                sendMqttMessage("/t/msg/u/" + user_id, message, callback);
+              }
+            };
             sendMqttUserMessage=function(user_id, message, callback) {
                 var toUser = Meteor.users.findOne({_id: user_id});
-                var sendMsg = function(){
-                  if (toUser.profile.browser && !toUser.token)
-                    return Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
-                      callback && callback(err,result);
-                    });
-                  sendMqttMessage("/t/msg/u/" + user_id, message, callback);
-                };
-                if (!toUser || !toUser.profile)
+                if (!toUser || !toUser.profile){
                   //get-user-web-browser-info
-                  return Meteor.subscribe('uWebInfo', user_id, function(){
+                  Meteor.subscribe('uWebInfo', user_id, function(){
                     toUser = Meteor.users.findOne({_id: user_id});
-                    sendMsg();
+                    sendMsg(user_id, message, toUser.profile.browser, callback);
                   });
-                sendMsg();
+                } else {
+                    sendMsg(user_id, message, toUser.profile.browser, callback);
+                }
             };
         }
     }
