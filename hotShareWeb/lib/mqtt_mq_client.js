@@ -258,7 +258,7 @@ if(Meteor.isCordova){
   
     // 拉取关联的 web 用户的私信消息
     Deps.autorun(function(){
-      if (Metor.userId()){
+      if (Meteor.userId()){
         Meteor.setTimeout(function(){
           Meteor.subscribe('get-web-user-wait-messages', Meteor.userId());
           console.log('=== 拉取关联的 web 用户的私信消息 ===');
