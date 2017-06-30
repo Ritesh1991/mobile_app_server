@@ -176,7 +176,7 @@ if(Meteor.isCordova){
             };
 
             function sendMsg(user_id,message,toBrowser,callback){
-              if (){
+              if (toBrowser){
                 Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
                   return callback && callback(err,result);
                 });
