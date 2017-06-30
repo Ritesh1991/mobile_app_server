@@ -128,7 +128,7 @@ if(Meteor.isServer){
     })
 
     Meteor.publish('get-user-web-browser-info', function(id){
-      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'profile.token': 1}, limit: 1});
+      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'token': 1}, limit: 1});
     });
     Meteor.publish('get-web-user-wait-messages', function(id){
       var self = this;
