@@ -110,7 +110,16 @@ if(Meteor.isServer){
         initMQTT(null);
         Meteor.methods({
             Msg:function(topic,message){
-                sendMqttMessage(topic,message)
+                // 更新 web 用户的未读消息(私信)数
+                Meteor.defer(function(){
+                  if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
+                    var user = message.to.id;
+                    if (user && user.profile && user.profile.browser){
+                      Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+                    }
+                  }
+                });
+                sendMqttMessage(topic,message);
             }
         })
     })

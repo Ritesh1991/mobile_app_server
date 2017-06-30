@@ -69,7 +69,8 @@ Template.bellPostTips.helpers({
   feedsCount: function(){
 
     // return Feeds.find({followby: Meteor.userId(), isRead:{$ne: true}, checked:{$ne: true}}).count();
-    return SimpleChat.Messages.find({'to.id':Meteor.userId(),is_read:false}).count();
+    // return SimpleChat.Messages.find({'to.id':Meteor.userId(),is_read:false}).count();
+    return Meteor.user().profile && Meteor.user().profile.waitReadMsgCount ? Meteor.user().profile.waitReadMsgCount : 0;
   },
   lsatFeed: function(){
     return Feeds.findOne({followby: Meteor.userId(), isRead:{$ne: true}, checked:{$ne: true}}, {sort: {createdAt: -1}});
