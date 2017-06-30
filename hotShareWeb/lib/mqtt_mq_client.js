@@ -260,7 +260,7 @@ if(Meteor.isCordova){
     Deps.autorun(function(){
       if (Metor.userId()){
         Meteor.setTimeout(function(){
-          Meteor.subscribe('get-web-user-wait-messages', Metor.userId());
+          Meteor.subscribe('get-web-user-wait-messages', Meteor.userId());
           console.log('=== 拉取关联的 web 用户的私信消息 ===');
         }, 5000);
       }
