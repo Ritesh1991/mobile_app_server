@@ -110,21 +110,23 @@ if(Meteor.isServer){
         initMQTT(null);
         Meteor.methods({
             Msg:function(topic,message){
-                // 更新 web 用户的未读消息(私信)数
-                Meteor.defer(function(){
-                  if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
-                    var user = message.to.id;
-                    if (user && user.profile && user.profile.browser){
-                      Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
-                    }
-                  }
-                });
+              if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
+                var user = message.to.id;
+                if (user && user.profile && user.profile.browser){
+                  WebUserMessages.insert(msg);
+                  Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+                } else {
+                  sendMqttMessage(topic,message);
+                }
+              } else {
                 sendMqttMessage(topic,message);
+              }
+              sendMqttMessage(topic,message);
             }
-        })
+        });
     })
 
     Meteor.publish('get-user-web-browser-info', function(id){
-        return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1}, limit: 1});
+      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1}, limit: 1});
     });
 }
