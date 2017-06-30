@@ -177,7 +177,7 @@ if(Meteor.isCordova){
             sendMqttUserMessage=function(user_id, message, callback) {
                 var toUser = Meteor.users.findOne({_id: user_id});
                 var sendMsg = function(){
-                  if (toUser.profile.browser)
+                  if (toUser.profile.browser && !toUser.profile.token)
                     return Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
                       callback && callback(err,result);
                     });

@@ -113,7 +113,7 @@ if(Meteor.isServer){
               this.unblock();
               if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
                 var user = message.to.id;
-                if (user && user.profile && user.profile.browser){
+                if (user && user.profile && user.profile.browser && !user.profile.token){
                   WebUserMessages.insert(msg);
                   Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
                 } else {
@@ -128,7 +128,7 @@ if(Meteor.isServer){
     })
 
     Meteor.publish('get-user-web-browser-info', function(id){
-      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1}, limit: 1});
+      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'profile.token': 1}, limit: 1});
     });
     Meteor.publish('get-web-user-wait-messages', function(id){
       var self = this;
@@ -169,9 +169,18 @@ if(Meteor.isServer){
             // console.log('add msg', fields);
             self.added("webUserMessages", id, fields);
             WebUserMessages.remove({_id: id});
-            Meteor.users.find({_id: id}, {fields: {'profile.browser': -1}, limit: 1});
           }
         });
+
+        if (ids.length > 0){
+          var idsTemp = _.clone(ids);
+          Meteor.defer(function(){
+            idsTemp.map(function(item){
+              Meteor.users.update({_id: item}, {$set: {'profile.waitReadMsgCount': 0}});
+            });
+            idsTemp = null;
+          });
+        }
       };
 
       self._session.timeInterval = Meteor.setInterval(function(){
