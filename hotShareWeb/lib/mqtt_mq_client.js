@@ -175,8 +175,20 @@ if(Meteor.isCordova){
                 sendMqttMessage("/t/msg/g/" + group_id, message, callback);
             };
             sendMqttUserMessage=function(user_id, message, callback) {
-                // console.log('sendMqttUserMessage:', message);
-                sendMqttMessage("/t/msg/u/" + user_id, message, callback);
+                var toUser = Meteor.users.findOne({_id: user_id});
+                var sendMsg = function(){
+                  if (toUser.profile.browser)
+                    return Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
+                      callback && callback(err,result);
+                    });
+                  sendMqttMessage("/t/msg/u/" + user_id, message, callback);
+                };
+                if (!toUser || !toUser.profile)
+                  return Meteor.subscribe('get-user-web-browser-info', user_id, function(){
+                    toUser = Meteor.users.findOne({_id: user_id});
+                    sendMsg();
+                  });
+                sendMsg();
             };
         }
     }

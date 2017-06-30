@@ -123,4 +123,8 @@ if(Meteor.isServer){
             }
         })
     })
+
+    Meteor.publish('get-user-web-browser-info', function(id){
+        return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1}, limit: 1});
+    });
 }
