@@ -1,14 +1,45 @@
 if(Meteor.isClient){
   window.showQrTips = function(touserId,dashboard,postId){
-    if($('.wr-page')){
-      $('.wr-page').remove();
-    }
-    return Blaze.renderWithData(Template.qrcodeTipPage, {
+    var data = {
       touserId: touserId,
       dashboard:dashboard,
       postId:postId
-    },document.body);
+    }
+    Session.set('QrTipData',data);
+    Router.go('/qrcodeTipPage');
+    //Router.go('/qrcodeTipPage?touserId='+touserId+'&dashboard='+dashboard+'&postId='+postId);
+    // if($('.wr-page')){
+    //   $('.wr-page').remove();
+    // }
+    // return Blaze.renderWithData(Template.qrcodeTipPage, {
+    //   touserId: touserId,
+    //   dashboard:dashboard,
+    //   postId:postId
+    // },document.body);
   };
+  //已成功用App接受消息后删除本地消息
+  var removeLocalMessage = function (){
+    if(withQRTips){
+        user = Meteor.user();
+        if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
+          Meteor.subscribe('webwaitreadmsg',Meteor.userId(),function(){
+            waitReadMsg = WebWaitReadMsg.findOne({_id: Meteor.userId()});
+            if(waitReadMsg && waitReadMsg.messages && waitReadMsg.messages.length > 0){
+              return
+            }
+            SimpleChat.Messages.remove({is_read:false,'to.id': Meteor.userId()},function(err,num){
+              if(err){
+                 console.log(err);
+              }
+            });
+          });
+        }
+      }
+  };
+  Tracker.autorun(function(){
+    if(Meteor.userId())
+      removeLocalMessage();
+  });
   // 从 canvas 提取图片 image  
   var convertCanvasToImage = function(canvas) {  
     var image = document.getElementById('qrcodeImg');
@@ -63,11 +94,14 @@ if(Meteor.isClient){
 }
 
 Template.qrcodeTipPage.onRendered(function () {
-  window.qrCodeUrl = null;
-  var canvas = document.getElementById('qrCanvas');
-  var data = this.data;
-  drawQr2Canvas(canvas,data.touserId,data.dashboard,data.postId);
-
+  //window.qrCodeUrl = null;
+  //var canvas = document.getElementById('qrCanvas');
+  //var data = this.data;
+  var data = Session.get('QrTipData');
+  //drawQr2Canvas(canvas,data.touserId,data.dashboard,data.postId);
+  var image = document.getElementById('qrcodeImg');
+  var qrCodeUrl = 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId='+data.touserId+'&p='+data.dashboard+'&postId='+data.postId;
+  image.src = qrCodeUrl;
   // 消息转存
   var msgs = SimpleChat.Messages.find({is_read:false, 'to.id': Meteor.userId()}).fetch();
   Meteor.subscribe('webwaitreadmsg',Meteor.userId(),function(){
@@ -89,11 +123,11 @@ Template.qrcodeTipPage.onRendered(function () {
   });
 
   // 移除未读消息
-  SimpleChat.Messages.remove({is_read:false,'to.id': Meteor.userId()},function(err,num){
-    if(err){
-      console.log(err)
-    }
-  });
+  // SimpleChat.Messages.remove({is_read:false,'to.id': Meteor.userId()},function(err,num){
+  //   if(err){
+  //     console.log(err)
+  //   }
+  // });
 });
 Template.qrcodeTipPage.helpers({
   qrtype: function(){
@@ -106,8 +140,17 @@ Template.qrcodeTipPage.helpers({
 });
 Template.qrcodeTipPage.events({
   'click .close':function(){
-    $('.qr-page').remove();
-    qrCodeUrl = null;
+    // $('.qr-page').remove();
+    // qrCodeUrl = null;
+    var data = Session.get('QrTipData');
+    if (data) {
+      Router.go('/posts/'+data.postId);
+    }
+  },
+  'click .nextStep':function(){
+    // $('.qr-page').remove();
+    // qrCodeUrl = null;
+    Router.go('/downLoadTipPage');
   },
   'click #qrDownloadAPP':function(){
     if(isIOS){
@@ -122,5 +165,5 @@ Template.qrcodeTipPage.events({
 });
 
 Template.qrcodeTipPage.onDestroyed(function () {
-  qrCodeUrl = null;
+  //qrCodeUrl = null;
 });

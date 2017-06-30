@@ -138,19 +138,30 @@ function cloneMsgToAssociatedUsers(toUser, message) {
     return;
 
   var associated = toUser.profile.associated;
+  var users = db.collection('users');
   for(var i=0; i<associated.length; i++) {
     var oneUser = associated[i];
     if (!oneUser || !oneUser.id || !oneUser.name || !oneUser.icon)
       return console.log('user not found: ' + associated[i]);
 
-    msg.to.id   = oneUser.id;
-    msg.to.name = oneUser.name;
-    msg.to.icon = oneUser.icon;
-    msg.ttl = 1;
-    try {
-      client.publish('/t/msg/u/'+oneUser.id, JSON.stringify(msg), {qos:1});
-      debug_on && console.log('>>> send ' + JSON.stringify(msg))
-    } catch(e){};
+    users.findOne({ _id: oneUser.id }, {fields: {
+      type: true,
+      token: true,
+      profile: true
+    }}, function (err, _toUser) {
+      // 不在转发 mqtt 的消息给 web 用户
+      if (!err && _toUser && _toUser.profile && _toUser.profile.waitReadMsgCount)
+        return;
+      
+      msg.to.id   = oneUser.id;
+      msg.to.name = oneUser.name;
+      msg.to.icon = oneUser.icon;
+      msg.ttl = 1;
+      try {
+        client.publish('/t/msg/u/'+oneUser.id, JSON.stringify(msg), {qos:1});
+        debug_on && console.log('>>> send ' + JSON.stringify(msg))
+      } catch(e){};
+    });
   }
 }
 

@@ -198,3 +198,15 @@ if Meteor.isClient
   Router.route 'recommendStory',()->
     this.render 'recommendStory'
     return
+  Router.route '/qrcodeTipPage',()->
+    this.render 'qrcodeTipPage'
+    return
+  Router.route '/downLoadTipPage',()->
+    this.render 'downLoadTipPage'
+    return
+  Router.route '/downLoadTipPage1',()->
+    this.render 'downLoadTipPage1'
+    return
+  Router.route '/appBindWebTipPage',()->
+    this.render 'appBindWebTipPage'
+    return
