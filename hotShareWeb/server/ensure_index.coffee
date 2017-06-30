@@ -75,3 +75,4 @@ if Meteor.isServer
     SeriesFollow._ensureIndex({seriesId: 1})
     SeriesFollow._ensureIndex({owner: 1})
     SeriesFollow._ensureIndex({creatorId: 1, owner: 1})
+    WebUserMessages._ensureIndex({'to.id': 1})

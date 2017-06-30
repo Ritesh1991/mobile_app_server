@@ -58,11 +58,9 @@ Themes = new Meteor.Collection('themes');
 PostExamples = new Meteor.Collection('postExamples');
 
 WebWaitReadMsg = new Meteor.Collection('webwaitreadmsg');
+WebUserMessages = new Meteor.Collection('webUserMessages');
 
 if(Meteor.isServer){
-  WebUserMessages = new Meteor.Collection('webUserMessages');
-  WebUserMessages._ensureIndex({'to.id': 1});
-
   FollowPosts = new Meteor.Collection('followposts');
   Meteor.startup(function(){
     if (Themes.find({}).count() <= 0){
