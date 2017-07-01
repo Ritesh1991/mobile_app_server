@@ -135,7 +135,7 @@ if(Meteor.isServer){
 
     //get-user-web-browser-info
     Meteor.publish('uWebInfo', function(id){
-      return Meteor.users.findOne({_id: id}, {fields: {'profile.browser': 1, 'token': 1}});
+      return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'token': 1}, limit:1});
     });
     // 这是个简单的处理，之前的过于复杂
     Meteor.publish('wMsg', function(id){
@@ -210,3 +210,4 @@ if(Meteor.isServer){
       self.ready();
     });
 }
+
