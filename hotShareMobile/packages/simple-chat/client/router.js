@@ -534,7 +534,7 @@ Template._simpleChatToChatItem.events({
     //         });
     //         sendMqttMessage('trainset', {url: img.url, person_id: res.id ? res.id : '', device_id: data.people_uuid, face_id: res ? res.faceId : data.people_id, drop: false});
     //       });
-          
+
     //       onFixName(data.people_id, data.people_uuid, data.people_his_id, data.images, data.to, name, 'label');
     //       PUB.toast('标记成功~');
     //     });
@@ -599,7 +599,7 @@ Template._simpleChatToChatItem.events({
     //       });
     //       sendMqttMessage('trainset', {url: img.url, person_id: res.id ? res.id : '', device_id: data.people_uuid, face_id: res ? res.faceId : data.people_id, drop: false});
     //     });
-        
+
     //     onFixName(data.people_id, data.people_uuid, data.people_his_id, data.images, data.to, name, 'label');
     //     PUB.toast('标记成功~');
     //   });
@@ -1045,7 +1045,7 @@ Template._simpleChatToChatLayout.events({
   'focus .input-text': function(){
     $('.box').animate({scrollTop:'999999px'},800)
     // Meteor.setTimeout(function(){
-    //   $('body').scrollTop(999999);     
+    //   $('body').scrollTop(999999);
     // }, 500);
   },
   'submit .input-form': function(e, t){
@@ -1177,6 +1177,9 @@ Template._simpleChatToChatItem.helpers({
     }
     if(to.isThumbsDown){
       return 'schat_post_abstract_down'
+    }
+    if(to.isLinkText){
+      return 'schat_post_abstract_link_text'
     }
     return ''
   },
@@ -1496,7 +1499,7 @@ last_msg = null;
 //     //msgObj._id = new Mongo.ObjectID()._str;
 //     return
 //   }
-  
+
 //   try{
 //     console.log('last_msg:', last_msg);
 //     msgObj.create_time = msgObj.create_time ? new Date(msgObj.create_time) : new Date();

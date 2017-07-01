@@ -57,18 +57,21 @@ if Meteor.isClient
                     'onMenuShareWeibo',
                     'onMenuShareQZone']
       }
-    wechatReady = ()->
-      unless window.networkType
-        wx.getNetworkType({
-          success:  (res)->
-            # networkType = res.networkType; Returns network type, including 2g, 3g, 4g and wifi
-            if res?.networkType?
-              window.networkType = res.networkType
-              if window.networkType is 'wifi'
-                Session.set('isWeChatWifi',true)
-              else
-                Session.set('isWeChatWifi',false)
-        })
+    wechatReady = (testing)->
+      try
+        unless window.networkType
+          wx.getNetworkType({
+            success:  (res)->
+              # networkType = res.networkType; Returns network type, including 2g, 3g, 4g and wifi
+              if res?.networkType?
+                window.networkType = res.networkType
+                if window.networkType is 'wifi'
+                  Session.set('isWeChatWifi',true)
+                else
+                  Session.set('isWeChatWifi',false)
+          })
+      catch e
+        console.log('wx err')
       # isWechatapi()
       # Session.set('turnOnRandom',false)
       if Session.get('focusedIndex') isnt undefined
@@ -88,6 +91,8 @@ if Meteor.isClient
             trackEvent("Share","Section to Wechat Timeline")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'timeline',section:section}})
             addToFavouriteAfterShare(Session.get('postContent'))
+            
+            messageBasedOnPost('timeline',description,Session.get('postContent'))
             # if Session.get('inWechatBrowser') is true
             #   Session.set('shareToWechatType','WXSession')
             #   $('.shareTheReadingRoom,.shareAlertBackground').fadeIn(300)
@@ -103,7 +108,7 @@ if Meteor.isClient
           success: () ->
             trackEvent("Share","Section to Wechat Chat")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'chat',section:section}})
-            addToFavouriteAfterShare(Session.get('postContent'))
+            addToFavouriteAfterShare(Session.get('postContent'))         messageBasedOnPost('chat',description,Session.get('postContent'))
             # if Session.get('inWechatBrowser') is true
             #   Session.set('shareToWechatType','WXTimeLine')
             #   $('.shareTheReadingRoom,.shareAlertBackground').fadeIn(300)
@@ -140,7 +145,9 @@ if Meteor.isClient
             trackEvent("Share","Post to Wechat Timeline")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'timeline'}})
             addToFavouriteAfterShare(Session.get('postContent'))
-            
+
+            messageBasedOnPost('timeline',descriptionFirstParagraph,Session.get('postContent'))
+
             hotPosts = _.filter Session.get('hottestPosts') || [], (value)->
               return !value.hasPush
             if hotPosts.length > 0 or (Meteor.user().profile and Meteor.user().profile.web_follower_count and Meteor.user().profile.web_follower_count > 0)
@@ -161,7 +168,9 @@ if Meteor.isClient
             trackEvent("Share","Post to Wechat Chat")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'chat'}})
             addToFavouriteAfterShare(Session.get('postContent'))
-            
+
+            messageBasedOnPost('chat',descriptionFirstParagraph,Session.get('postContent'))
+
             hotPosts = _.filter Session.get('hottestPosts') || [], (value)->
               return !value.hasPush
             if hotPosts.length > 0 or (Meteor.user().profile and Meteor.user().profile.web_follower_count and Meteor.user().profile.web_follower_count > 0)
@@ -173,12 +182,19 @@ if Meteor.isClient
           cancel: ()->
             console.log('Share cancled');
         }
-      wx.onMenuShareTimeline(timelineData);
-      wx.onMenuShareQQ(chatShareData);
-      wx.onMenuShareWeibo(chatShareData);
-      wx.onMenuShareAppMessage(chatShareData);
-      wx.onMenuShareQZone(chatShareData);
-
+      try
+        wx.onMenuShareTimeline(timelineData);
+        wx.onMenuShareQQ(chatShareData);
+        wx.onMenuShareWeibo(chatShareData);
+        wx.onMenuShareAppMessage(chatShareData);
+        wx.onMenuShareQZone(chatShareData);
+      catch e
+        console.log('wx err 2')
+      if testing
+        chatShareData.success()
+        timelineData.success()
+    @globalATestFunc = ()->
+      wechatReady(true)
     setupWeichat = (url)->
       #Meteor.call 'getSignatureFromServer',url,(error,result)->
       if !Session.get('sign_status_'+url)

@@ -5,7 +5,7 @@
   width: 100%; height: 100%;
   > .msg-box{
     width: 100%; height: 100%; position: relative; -webkit-overflow-scrolling: touch;
-    > .header{ 
+    > .header{
       color: @master_color; font-weight: bold; height: 40px; line-height: 40px; position: absolute; left: 0; top: 0; right: 0; background-color: #fff; color: @master_color; border-bottom: 1px solid rgb(228, 228, 229); text-align: center; font-size: 16px;
       .left{width: 60px; height: 40px; position: absolute; left: 0; top: 0;}
       .right{width: 60px; height: 40px; position: absolute; right: 0; top: 0;}
@@ -346,6 +346,10 @@ div.schat_post_abstract_down:before{
   border-top: 25px solid deepskyblue;
   border-right: 25px solid deepskyblue;
 }
+div.schat_post_abstract_link_text:before{
+  border-top: 0px;
+  border-right: 0px;
+}
 div.schat_post_abstract_up:after{
   content: "赞";
   top: 4px;
@@ -355,6 +359,11 @@ div.schat_post_abstract_down:after{
   content: "踩";
   top: 4px;
   right: 8px;
+}
+div.schat_post_abstract_link_text:after{
+  content: "";
+  top: 0px;
+  right: 0px;
 }
 .schat_post_abstract:after {
     content: "评论";
