@@ -372,7 +372,7 @@ Paho.MQTT = (function (global) {
 					break;
 			}
 			var connectFlags = 0;
-			if (this.cleanSession) 
+			//if (this.cleanSession) 
 				connectFlags = 0x02;
 			if (this.willMessage != undefined ) {
 				connectFlags |= 0x04;
