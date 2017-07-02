@@ -117,7 +117,7 @@ if(Meteor.isServer){
               if (userInfo && userInfo.profile && userInfo.profile.browser){
                 console.log(message)
                 WebUserMessages.insert(message);
-                Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+                Meteor.users.update({_id: user}, {$inc: {'profile.waitReadMsgCount': 1}});
               } else {
                 sendMqttMessage(topic,message);
               }
