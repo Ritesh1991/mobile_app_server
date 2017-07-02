@@ -116,8 +116,14 @@ if(Meteor.isServer){
               var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
               if (userInfo && userInfo.profile && userInfo.profile.browser){
                 console.log(message)
+                if(userInfo.profile.waitReadMsgCount){
+                  userWaitReadMsgCount = userInfo.profile.waitReadMsgCount + 1;
+                }else{
+                  userWaitReadMsgCount = 1;
+                }
+                Meteor.users.update({_id: user._id}, {$set: {'profile.waitReadMsgCount': userWaitReadMsgCount}});
                 WebUserMessages.insert(message);
-                Meteor.users.update({_id: user._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+                
               } else {
                 sendMqttMessage(topic,message);
               }
