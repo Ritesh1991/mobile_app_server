@@ -1448,8 +1448,8 @@ if Meteor.isClient
         postData = Session.get('postContent')
         pcommentContent = content
         to = {
-          id: postData.owner,
-          name: postData.ownerName,
+          id: toUserId,
+          name: toUsername,
           icon: postData.ownerIcon,
           pcommentContent: pcommentContent,
           pcommentIndexNum: Session.get("pcommentIndexNum"),

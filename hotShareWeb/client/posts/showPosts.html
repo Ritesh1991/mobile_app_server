@@ -601,8 +601,8 @@
           var postData = Session.get('postContent');
           var pcommentContent = content;
           var to = {
-            id: postData.owner,
-            name: postData.ownerName,
+            id: toUserId,
+            name: toUsername,
             icon: postData.ownerIcon,
             pcommentContent: pcommentContent,
             pcommentIndexNum: Session.get("pcommentIndexNum"),
