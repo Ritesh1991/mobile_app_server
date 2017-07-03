@@ -210,6 +210,25 @@ if Meteor.isClient
         Session.get(mImg)
       else
         this.mainImage
+
+  @bindWebUserFun = (userId, toUserId, p, postId)->
+    loading = $.loading('绑定用户中...')
+    Meteor.call 'bind_web_user', Meteor.userId(), userId, toUserId, p, postId, (err, r)->
+      loading.close()
+      if err || !r || !r.result
+        return navigator.notification.alert (r.message || "绑定web用户失败，请重试~"), `function(){}`, '提示', '知道了'
+      switch p
+        when 'message' # 私信消息
+          Router.go('/simple-chat/user-list/'+Meteor.userId())
+          navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
+        when 'post'    # 浏览贴子
+          Router.go('/posts/'+postId)
+          Template.bindWebUserPost.open(r.msg || [])
+        else
+          console.log('绑定web用户发现未知的场景类型:', p)
+          navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
+
+
   Template.user.events
     'focus #search-box': (event)->
        PostsSearch.cleanHistory()
@@ -238,21 +257,22 @@ if Meteor.isClient
             loading.close()
             return navigator.notification.alert '无效的二维码~', `function(){}`, '提示', '知道了'
           
-          loading = $.loading('绑定用户中...')
-          Meteor.call 'bind_web_user', Meteor.userId(), query['userId'], query['touserId'], query['p'], query['postId'], (err, r)->
-            loading.close()
-            if err || !r || !r.result
-              return navigator.notification.alert (r.message || "绑定web用户失败，请重试~"), `function(){}`, '提示', '知道了'
-            switch query['p']
-              when 'message' # 私信消息
-                Router.go('/simple-chat/user-list/'+Meteor.userId())
-                navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
-              when 'post'    # 浏览贴子
-                Router.go('/posts/'+query['postId'])
-                Template.bindWebUserPost.open(r.msg || [])
-              else
-                console.log('绑定web用户发现未知的场景类型:', query['p'])
-                navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
+          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId'])
+          # loading = $.loading('绑定用户中...')
+          # Meteor.call 'bind_web_user', Meteor.userId(), query['userId'], query['touserId'], query['p'], query['postId'], (err, r)->
+          #   loading.close()
+          #   if err || !r || !r.result
+          #     return navigator.notification.alert (r.message || "绑定web用户失败，请重试~"), `function(){}`, '提示', '知道了'
+          #   switch query['p']
+          #     when 'message' # 私信消息
+          #       Router.go('/simple-chat/user-list/'+Meteor.userId())
+          #       navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
+          #     when 'post'    # 浏览贴子
+          #       Router.go('/posts/'+query['postId'])
+          #       Template.bindWebUserPost.open(r.msg || [])
+          #     else
+          #       console.log('绑定web用户发现未知的场景类型:', query['p'])
+          #       navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
         else if res.indexOf('http://') >= 0
           callback = (index)->
             if index is 2

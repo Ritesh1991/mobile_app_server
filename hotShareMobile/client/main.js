@@ -303,6 +303,33 @@ if (Meteor.isClient) {
       Meteor.subscribe("topics");
       //Meteor.subscribe("topicposts");
       // getHotPostsData();
+
+      withQRTips && Meteor.isCordova && cordova.plugins.clipboard.paste(function (text) {
+        console.log('clipboard text:', text);
+        try{
+          if (!text.startsWith('http://') || !text.startsWith('https://'))
+            return;
+
+          var uri = new URL(text);
+          if (uri.pathname.toLowerCase() != '/restapi/webuser-qrcode')
+            return;
+          
+          var queryStr = (uri.search && uri.search.length > 0 ? uri.search.substr(1) : '').split('&');
+          var query = [];
+          for(var i=0;i<queryStr.length;i++)
+            query[queryStr[i].split('=')[0]] = decodeURIComponent(queryStr[i].split('=')[1]);
+          if (!query['userId'] || !query['p'])
+            return;
+
+          // 替换剪贴板内容
+          cordova.plugins.clipboard.copy('');
+
+          navigator.notification.confirm('检测到可以绑定的浏览器用户，绑定之后可以方便的查看您浏览器上的用户消息，以及与贴友进行互动。', function(index){
+            if (index === 2)
+              bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
+          }, '提示', ['取消', '绑定']);
+        }catch(e){}
+      });
     }
     document.title = Session.get("DocumentTitle");
   });
