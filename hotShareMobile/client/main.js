@@ -304,10 +304,11 @@ if (Meteor.isClient) {
       //Meteor.subscribe("topicposts");
       // getHotPostsData();
 
+      console.log('clipboard check...');
       withQRTips && Meteor.isCordova && cordova.plugins.clipboard.paste(function (text) {
         console.log('clipboard text:', text);
         try{
-          if (!text.startsWith('http://') || !text.startsWith('https://'))
+          if (!(text.startsWith('http://') || text.startsWith('https://')))
             return;
 
           var uri = new URL(text);
@@ -324,11 +325,11 @@ if (Meteor.isClient) {
           // 替换剪贴板内容
           cordova.plugins.clipboard.copy('');
 
-          navigator.notification.confirm('检测到可以绑定的浏览器用户，绑定之后可以方便的查看您浏览器上的用户消息，以及与贴友进行互动。', function(index){
+          navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
             if (index === 2)
               bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
           }, '提示', ['取消', '绑定']);
-        }catch(e){}
+        }catch(e){console.log('cordova.plugins.clipboard.paste err:', e)}
       });
     }
     document.title = Session.get("DocumentTitle");
