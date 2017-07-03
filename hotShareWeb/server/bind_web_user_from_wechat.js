@@ -86,6 +86,13 @@ if (Meteor.isServer) {
             }
           }
 
+          // 新的 web 用户的消息
+          msg.messages = msg.messages || [];
+          WebUserMessages.find({'to.id': webUser._id}, {limit: 10, sort: {create_time: -1}}).forEach(function(item){
+            msg.messages.push(item);
+          });
+          Meteor.users.update({_id: webUser._id}, {$set: {'profile.waitReadMsgCount': 0}});
+
           if(msg && msg._id)
             WebWaitReadMsg.remove({_id: webUser._id});
 
