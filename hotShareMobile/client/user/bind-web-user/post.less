@@ -5,13 +5,13 @@
     padding-bottom: 48px; padding-top: 20px;
     ._title{
       text-align: center; font-size: 12px;
-      span{display: block; font-size: 16px; color: #2196f3; font-weight: bold;}
+      span{display: block; font-size: 14px; /*color: #2196f3; */font-weight: 500;}
     }
     ._msgs{
-      position: absolute;top: 70px;bottom: 55px;padding: 0px;margin: 0px;right: 20px;left: 20px;overflow: auto;
+      position: absolute;top: 130px;bottom: 55px;padding: 0px;margin: 0px;right: 20px;left: 20px;overflow: auto;
       li{
         position: relative;padding: 10px;padding-left: 50px; border-top: 1px dotted #999;
-        ._icon{width: 40px;height: 40px;position: absolute;left: 0px;top: 10px;border-radius: 50%;}
+        ._icon{width: 40px;height: 40px;position: absolute;left: 0px;top: 10px;border-radius: 5px;object-fit:cover;}
         ._text{font-size: 12px; padding-top: 2px;}
         ._imgs{
           padding-top: 5px;
@@ -22,6 +22,29 @@
           strong{
             font-size: 12px; float: right; color: #999; font-weight: normal; margin-top: 3px;
             i{padding-right: 5px; font-size: 14px;}
+            .bind_user_icon{
+              width: 35px;
+              height: 35px;
+              display: inline-block;
+              position: relative;
+              img{
+                width: 100%;
+                border-radius: 5px;
+                object-fit:cover;
+              }
+              span{
+                width: 100%;
+                background: rgba(97, 97, 97, 0.54);
+                color: #fff;
+                position: absolute;
+                right: 0px;
+                bottom: 0px;
+                font-size: 10px;
+                text-align: center;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+              }
+            }
           }
         }
       }
@@ -32,5 +55,19 @@
       ._btn{width: 50%; float: left; border-left: 1px solid #ccc; text-align: center; height: 48px; line-height: 48px; color: #999; font-size: 16px;}
       ._btn:first-child{border-left: none; color: #2196f3; font-weight: bold;}
     }
+    .btn-close{
+      position: absolute;
+      bottom: 10px;
+      background: #2196f3;
+      color: #fff;
+      text-align: center;
+      left: 20%;
+      right: 20%;
+      height: 40px;
+      padding-top: 8px;
+      font-size: 18px;
+      font-weight: 400;
+      border-radius: 10px;
+      }
   }
 }

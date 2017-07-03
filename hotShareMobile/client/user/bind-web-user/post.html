@@ -3,13 +3,24 @@
     <div class="_mask"></div>
     <div class="_box">
       <div class="_title">
-        <span>绑定web用户成功~</span>此用户的私信消息：
+        <img src="/bind_web_user_success" style="width: 60px;">
+        <span>已经成功保存了消息，可点击查看</span>
+        <span>以后会显示在‘消息’中，会以关联用户名义发送</span>
       </div>
       <ul class="_msgs">
         {{#each msgs}}
         <li>
           <img class="_icon" src="{{form.icon}}" />
-          <div class="_time">{{form.name}}<strong><i class="fa fa-clock-o" aria-hidden="true"></i>{{time_diff_str create_time}}</strong></div>
+          <div class="_time">{{form.name}}
+            <strong><i class="fa fa-clock-o" aria-hidden="true"></i>{{time_diff_str create_time}}
+            <div style="text-align: right;">
+              <div class="bind_user_icon">
+                <img src="{{to.icon}}">
+                <span>关联</span>
+              </div>
+            </div>
+            </strong>
+          </div>
           {{#if images}}
           <div class="_imgs">
             {{#each images}}
@@ -22,10 +33,11 @@
         </li>
         {{/each}}
       </ul>
-      <div class="_btns">
+      <div class="btn-close">知道了</div>
+      <!-- <div class="_btns">
         <div class="_btn btn-post">继续阅读</div>
         <div class="_btn btn-msg">更多消息</div>
       </div>
-    </div>
+ -->    </div>
   </div>
 </template>

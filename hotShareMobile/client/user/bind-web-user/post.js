@@ -11,6 +11,9 @@ Template.bindWebUserPost.open = function(msg){
   $html.find('.btn-post').click(function(){
     Template.bindWebUserPost.close();
   });
+  $html.find('.btn-close').click(function(){
+    Template.bindWebUserPost.close();
+  });
   $html.find('.btn-msg').click(function(){
     Template.bindWebUserPost.close();
     Router.go('/bell');
