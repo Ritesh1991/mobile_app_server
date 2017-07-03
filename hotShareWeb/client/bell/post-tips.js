@@ -92,11 +92,15 @@ Template.bellPostTips.helpers({
       return user.profile.associated[0].name;
     }
     return '';
+  },
+  msgBoxClipboard: function(){
+    return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId=&p=post&postId='+Session.get('postContent')._id;
   }
 });
 
-Template.bellPostTips.events({
-  'click .msg-box': function(){
+Template.bellPostTips.onRendered(function(){
+  var clipboard = new Clipboard('.msg-box');
+  var onMsgBoxClient = function(){
     trackEvent("blkMsgBox", "clickBlkMsgBox");
     Session.set('showBellPostTips',false);
     Meteor.call('updataFeedsWithMe', Meteor.userId());
@@ -110,7 +114,43 @@ Template.bellPostTips.events({
     }else{
       Router.go('/bell');
     }
-  },
+  };
+
+  clipboard.on('success', function(e) {
+    console.info('Action:', e.action);
+    console.info('Text:', e.text);
+    console.info('Trigger:', e.trigger);
+    e.clearSelection();
+
+    if (withQRTips){
+      // TODO: 处理 copy 成功的流程
+      onMsgBoxClient();
+    }
+  });
+
+  clipboard.on('error', function(e) {
+    console.error('Action:', e.action);
+    console.error('Trigger:', e.trigger);
+    onMsgBoxClient();
+  });
+});
+
+Template.bellPostTips.events({
+  // 'click .msg-box': function(){
+  //   trackEvent("blkMsgBox", "clickBlkMsgBox");
+  //   Session.set('showBellPostTips',false);
+  //   Meteor.call('updataFeedsWithMe', Meteor.userId());
+  //   var user = Meteor.user();
+  //   if(withQRTips){
+  //     if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
+  //       Session.set('qrtype', '消息');
+  //       return $('#bellPostDialog').fadeIn();
+  //     }
+  //     return showQrTips('','post',Session.get('postContent')._id);
+  //   }else{
+  //     Router.go('/bell');
+  //   }
+  // },
   'click #closeBellPostDialog': function(){
     // 移除未读消息
     SimpleChat.Messages.remove({is_read:false,'to.id': Meteor.userId()},function(err,num){
