@@ -137,75 +137,22 @@ if(Meteor.isServer){
     Meteor.publish('uWebInfo', function(id){
       return Meteor.users.find({_id: id}, {fields: {'profile.browser': 1, 'token': 1}, limit:1});
     });
-    // 这是个简单的处理，之前的过于复杂
     Meteor.publish('wMsg', function(id){
-      // 暂没做格式检查
-      return WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}})
-    })
-
-    // 下面的处理有些复杂了，我另外做一个简单的
-    Meteor.publish('get-web-user-wait-messages', function(id){
+      // 直接返回的话，如果有collection.remove，也会向client发ddp的remove
+      // return WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}})
       var self = this;
-      var ids = [];
-      var cursor = null;
-      var handle = null;
-
-      self._session.timeInterval && Meteor.clearInterval(self._session.timeInterval);
-      self._session.timeInterval = null;
-
-      var getCursot = function(){
-        handle && handle.stop();
-        cursor = null;
-
-        var user = Meteor.users.findOne({_id: id || self.userId});
-        if (!user)
-          return;
-        
-        if (user.profile && user.profile.browser){
-          cursor = WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}});
-        } else {
-          ids = _.pluck(user.profile.associated || [], 'id') || [];
-          if (ids.length > 0)
-            cursor = WebUserMessages.find({'to.id': {$in: ids}}, {limit: 40, sort: {create_time: -1}});
+      var handle = WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}}).observeChanges({
+        added: function(id, fields){
+          self.added("webUserMessages", id, fields);
+        },
+        changed: function(id, fields){
+          self.changed("webUserMessages", id, fields);
         }
-      }
-
-      var observeChanges = function(){
-        getCursot();
-        if(!cursor){
-          self._session.timeInterval && Meteor.clearInterval(self._session.timeInterval);
-          self._session.timeInterval = null;
-        }
-
-        handle && handle.stop();
-        handle = cursor.observeChanges({
-          added: function(id, fields){
-            // console.log('add msg', fields);
-            self.added("webUserMessages", id, fields);
-            WebUserMessages.remove({_id: id});
-          }
-        });
-
-        if (ids.length > 0){
-          var idsTemp = _.clone(ids);
-          Meteor.defer(function(){
-            idsTemp.map(function(item){
-              Meteor.users.update({_id: item}, {$set: {'profile.waitReadMsgCount': 0}});
-            });
-            idsTemp = null;
-          });
-        }
-      };
-
-      self._session.timeInterval = Meteor.setInterval(function(){
-        observeChanges();
-      }, 1000*30);
-      observeChanges();
+      });
 
       self.onStop(function(){
-        self._session.timeInterval && Meteor.clearInterval(self._session.timeInterval);
-        self._session.timeInterval = null;
         handle && handle.stop();
+        handle = null;
       });
       self.ready();
     });
