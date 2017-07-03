@@ -150,6 +150,7 @@ Template.qrcodeTipPage.events({
   'click .nextStep':function(){
     // $('.qr-page').remove();
     // qrCodeUrl = null;
+    trackEvent('SavedQrcode','long press saved qrcode');
     Router.go('/downLoadTipPage');
   },
   'click #qrDownloadAPP':function(){

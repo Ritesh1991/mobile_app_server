@@ -1,12 +1,14 @@
 
 Template.downLoadTipPage.events({
   'click .preStep':function(){
+    trackEvent('ReOpenQrcodeTip','from downLoadTipPage');
     var data = Session.get('QrTipData');
     if (data) {
       Router.go('/qrcodeTipPage');
     }
   },
   'click .nextStep':function(){
+    trackEvent('InstalledApp','from downLoadTipPage');
     Router.go('/appBindWebTipPage');
   },
   'click #qrDownloadAPP':function(){
@@ -18,6 +20,11 @@ Template.downLoadTipPage.events({
       trackEvent('Download','from Post Tail, Outside Wechat')
     }
     return window.open('http://a.app.qq.com/o/simple.jsp?pkgname=org.hotshare.everywhere', '_system');
+    // Meteor.setTimeout(function(){
+    //   console.log('need To Down Load');
+    //   window.open('http://a.app.qq.com/o/simple.jsp?pkgname=org.hotshare.everywhere', '_system');
+    // },2500);
+    // Router.go('/appBindWebTipPage');
   }
 });
 

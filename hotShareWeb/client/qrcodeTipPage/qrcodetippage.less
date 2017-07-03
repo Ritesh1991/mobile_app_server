@@ -7,6 +7,17 @@
     i{display: inline-block;font-size: 26px;line-height: 40px;width: 26px;height: 40px;text-align: center;vertical-align: bottom;}
   }
   .qr-body{top: 40px; bottom: 0;overflow-x: hidden;overflow-y: auto; -webkit-overflow-scrolling: touch;}
+  .qr-body {
+    .body-top{
+      font-size: 20px;
+      font-weight: 400;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+    .body-text{
+      font-weight: 400;
+    }
+  }
   .step-index{
     padding: 0px 40px;
     margin-top: 40px;
@@ -20,14 +31,22 @@
   }
   .qr-foot{bottom: 0; z-index: 9;background-size: contain; background-position: bottom;padding-bottom: 10px;background-repeat: no-repeat;background: #fff;}
   .qr-btn-Div {
-    text-align: right;margin-bottom:40px;
+    text-align: center;margin-bottom:40px;
   }
   .qr-btn{
-    cursor:pointer;padding:6px 20px; border-radius:20px;font-size: 16px;border-style: solid; border-width: 1px;
+    cursor:pointer;
+    padding:8px 10px;
+    border-radius:10px;
+    font-size: 14px;
+  }
+  .preStep{
+    border-style: solid; 
+    border-width: 1px;
+    color: deepskyblue;
   }
   .nextStep{
-    margin-right: 40px;
-    margin-left: 10px;
+    background: deepskyblue;
+    color: #fff;
   }
   // .qr-foot:after{content:"长按二维码保存消息"; position: absolute; top: 0;left: 0;right: 0;text-align: center; font-size: 16px; font-weight: bold;}
   .saveQrCode {width: 200px;height: 40px;color: #fff;background: deepskyblue;line-height: 40px;text-align: center;margin: 0 auto;border-radius: 20px; cursor: pointer;}

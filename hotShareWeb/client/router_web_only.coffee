@@ -210,3 +210,6 @@ if Meteor.isClient
   Router.route '/appBindWebTipPage',()->
     this.render 'appBindWebTipPage'
     return
+  Router.route '/joinWechatGroup',()->
+    this.render 'joinWechatGroup'
+    return
