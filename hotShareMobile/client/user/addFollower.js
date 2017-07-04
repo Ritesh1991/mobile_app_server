@@ -38,6 +38,13 @@ if(Meteor.isClient){
             if(followerId !== Meteor.userId()){
                 getUserPostFromServer(followerId,0,10)
             }
+            var type = 'follow';
+            var to = {
+                id: data.followerId,
+                name: data.followerName,
+                icon: data.followerIcon
+            }
+            sendMqttMessageToFollower(type,to,'刚刚关注了你')
         };
         if (BlackList.find({blackBy: Meteor.userId(),blacker: { $in: [followerId]}}).count() > 0) {
             return navigator.notification.confirm('你已将对方加入黑名单，是否解除？', function(index) {
@@ -50,6 +57,13 @@ if(Meteor.isClient){
             if(followerId !== Meteor.userId()){
                 getUserPostFromServer(followerId,0,10)
             }
+            var type = 'follow';
+            var to = {
+                id: data.followerId,
+                name: data.followerName,
+                icon: data.followerIcon
+            }
+            sendMqttMessageToFollower(type,to,'刚刚关注了你')
         }
     };
 }

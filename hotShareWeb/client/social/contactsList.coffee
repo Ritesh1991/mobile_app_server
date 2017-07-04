@@ -164,6 +164,13 @@ if Meteor.isClient
         followerIcon: this.userIcon
         createAt: new Date()
       }
+      type = 'follow'
+      to = {
+        id: this.userId,
+        name: this.username,
+        icon: this.userIcon
+      }
+      sendMqttMessageToFollower(type, to, '刚刚关注了你')
     'click .meet_letter_btn':(e)->
       ta = e.currentTarget.id
       user = Meteor.user()

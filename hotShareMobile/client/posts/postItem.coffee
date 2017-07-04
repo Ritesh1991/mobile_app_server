@@ -1,5 +1,28 @@
 
 if Meteor.isClient
+  @sendMqttMessageToFollower=(type, to, text)->
+    username = Meteor.user().profile.fullname || Meteor.user().username
+    if type is 'follow'
+      to.isFollow = true
+      text = '刚刚关注了你'
+    msg = {
+      _id: new Mongo.ObjectID()._str,
+      form:{
+        id: Meteor.userId(),
+        name: username,
+        icon: Meteor.user().profile.icon || '/userPicture.png'
+      },
+      to: to,
+      to_type: 'user',
+      type: 'text',
+      text: text,
+      create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+      is_read: false
+    }
+    SimpleChat.Messages.insert msg, ()->
+      console.log 'Messages insert.'
+      sendMqttUserMessage(msg.to.id, msg)
+    checkMqttMsgSessionToUser(to,text)
   @checkMqttMsgSessionToUser=(to,text)->
     count = SimpleChat.MsgSession.find({'userId':to.id,'toUserId':Meteor.userId()}).count()
     if count is 0
