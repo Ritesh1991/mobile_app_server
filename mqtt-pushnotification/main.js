@@ -150,8 +150,8 @@ function cloneMsgToAssociatedUsers(toUser, message) {
       profile: true
     }}, function (err, _toUser) {
       // 不在转发 mqtt 的消息给 web 用户
-      if (!err && _toUser && _toUser.profile && _toUser.profile.waitReadMsgCount)
-        return;
+      // if (!err && _toUser && _toUser.profile && _toUser.profile.browser && !_toUser.token)
+      //   return console.log('mqtt msg by web-user', _toUser._id);
       
       msg.to.id   = oneUser.id;
       msg.to.name = oneUser.name;
@@ -172,6 +172,7 @@ function sendNotification(message, toUserId ,type, cb) {
   var users = db.collection('users');
   var pushTokens = db.collection('pushTokens');
   var PushMessages = db.collection('pushmessages');
+  var webUserMessages = db.collection('webUserMessages');
 
   users.findOne({ _id: toUserId }, {fields: {
     type: true,
@@ -257,6 +258,15 @@ function sendNotification(message, toUserId ,type, cb) {
       });
     }
     else {
+      // web 用户
+      if (toUser && toUser.profile && toUser.profile.browser && !toUser.token)
+        webUserMessages.insert(message, function(err,result){
+          if (err)
+            return console.log('mqtt to web-user msg err:', err);
+          users.update({_id: toUser._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+          console.log('web用户的mqtt消息写入数据库成功', toUser._id);
+        });
+      
       return cb && cb('toUser/type/token not found');
     }
   });
