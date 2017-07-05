@@ -172,10 +172,16 @@ if Meteor.isClient
       }
       sendMqttMessageToFollower(type, to, '刚刚关注了你')
     'click .meet_letter_btn':(e)->
+      console.log(this);
       ta = e.currentTarget.id
       user = Meteor.user()
       if withQRTips
-        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
-          $('#bellPostDialog').fadeIn();
-        Session.set('qrtype', '联系人');
-        showQrTips('','post',Session.get('postContent')._id)
+        Template._sendMsg.open({
+          id: this.ta,
+          name: this.displayName,
+          icon: this.profile.icon
+        })
+        # if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+        #   $('#bellPostDialog').fadeIn();
+        # Session.set('qrtype', '联系人');
+        # showQrTips('','post',Session.get('postContent')._id)
