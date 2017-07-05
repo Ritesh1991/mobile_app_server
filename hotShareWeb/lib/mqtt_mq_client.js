@@ -7,6 +7,18 @@ if(Meteor.isCordova){
     var unsendMessages = [];
     mqtt_connection = null;
     //mqtt_connected = false;
+    var onMessageArrived = function(message) {
+        console.log("onMessageArrived:"+message.payloadString);
+        console.log('message.destinationName= '+message.destinationName);
+        console.log('message= '+JSON.stringify(message));
+        try {
+            var topic = message.destinationName;
+            console.log('on mqtt message topic: ' + topic + ', message: ' + message.payloadString);
+            SimpleChat.onMqttMessage(topic, message.payloadString);
+        } catch (ex) {
+            console.log('exception onMqttMessage: ' + ex);
+        }
+    };
     initMQTT = function(clientId){
         if(!mqtt_connection){
             var pahoMqttOptions = {
@@ -115,18 +127,6 @@ if(Meteor.isCordova){
                     console.log('JSON parse failed. Message should be a JSON string.');
                 }
             }
-            function onMessageArrived(message) {
-                console.log("onMessageArrived:"+message.payloadString);
-                console.log('message.destinationName= '+message.destinationName);
-                console.log('message= '+JSON.stringify(message));
-                try {
-                    var topic = message.destinationName;
-                    console.log('on mqtt message topic: ' + topic + ', message: ' + message.payloadString);
-                    SimpleChat.onMqttMessage(topic, message.payloadString);
-                } catch (ex) {
-                    console.log('exception onMqttMessage: ' + ex);
-                }
-            };
 
             function addToUnsendMessaages(topic,message,callback, timeout) {
                 var id;
@@ -359,7 +359,7 @@ if(Meteor.isCordova){
         // 模拟 mqtt 消息，以便按原流程处理
         onMessageArrived({
           destinationName: '/t/msg/' + (fields.to_type === 'user' ? 'u' : 'g') + '/' + fields.to.id,
-          payloadString: fields
+          payloadString: JSON.stringify(fields)
         });
         Meteor.call('wMsgRead',id)
       }

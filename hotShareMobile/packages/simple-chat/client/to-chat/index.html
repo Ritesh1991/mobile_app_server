@@ -16,7 +16,12 @@
         <div class="left back"><i class="fa fa-angle-left fa-fw"></i></div>
         <script type="text/javascript">
         $('.header .back').click(function(){
-          SimpleChat.MsgSession.update({userId: Meteor.userId(), toUserId: location.search.split("&")[0].replace('?id=', '')}, {$set: {count: 0}});
+          var sender = Session.get('msgFormUser');
+          var userId = Meteor.userId();
+          if (sender && sender.id) {
+            userId = sender.id;
+          }
+          SimpleChat.MsgSession.update({userId: userId, toUserId: location.search.split("&")[0].replace('?id=', '')}, {$set: {count: 0}});
           var currentPage = location.pathname;
           if(Session.get('simpleChatFormPage') && Session.get('simpleChatFormPage').match('posts')){
             if(currentPage.match('/to/user')){
@@ -132,7 +137,12 @@
   </li>
   {{else}}
   <li id="{{_id}}" class="{{ta_me form.id}}">
-    <div class="icon"><img src="{{form.icon}}" /></div>
+    <div class="icon">
+      <img src="{{form.icon}}" />
+      {{#if is_associated form.id}}
+      <span>关联</span>
+      {{/if}}
+    </div>
     <div class="name">{{form.name}}</div>
     <!--{{#if to.pcommentContent}}
       <div class="post_abstract" style="background-color: #fff;margin:0;" id="{{postId}}">

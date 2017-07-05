@@ -63,6 +63,12 @@
        <p>{{#if count}}[{{count}}条]{{/if}} {{lastText}}</p>
       </div>
       <span class="time">{{formatTime updateAt}}</span>
+      {{#if is_associated userId}}
+      <div class="associated_icon">
+        <img src="{{userIcon}}">
+        <span>关联</span>
+      </div>
+      {{/if}}
     </li>
     {{/each}}
     <!--<li>

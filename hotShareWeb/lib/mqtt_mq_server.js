@@ -124,7 +124,7 @@ if(Meteor.isServer){
             } else {
               sendMqttMessage(topic,message);
             }
-            sendMqttMessage(topic,message);
+            //sendMqttMessage(topic,message);
           },
           wMsgRead:function(id){
             // 暂时没做校验/检查

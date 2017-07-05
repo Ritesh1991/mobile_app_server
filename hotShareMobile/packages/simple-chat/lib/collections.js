@@ -36,7 +36,7 @@ if(Meteor.isServer){
   var updateMsgSession = function(doc){
     if (!Meteor.userId())
       return;
-    
+    var associatedUser = {};
     var msgObj = null;
     switch(doc.to_type){
       case 'group':
@@ -48,6 +48,25 @@ if(Meteor.isServer){
           msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user', count: -1};
         else if (doc.to.id == Meteor.userId()) // ta - me
           msgObj = {toUserId: doc.form.id, toUserName: doc.form.name, toUserIcon: doc.form.icon, sessionType: 'user'};
+        else{
+          var user = Meteor.user();
+          if (user && user.profile && user.profile.associated) {
+            var associated = user.profile.associated
+            for (var i = 0; i < associated.length; i++) {
+              var id = associated[i].id;
+              if (doc.form.id === id) { //associated ->ta
+                associatedUser = associated[i];
+                msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user', count: -1};
+                break;
+              }
+              else if(doc.to.id === id){//ta ->associated
+                associatedUser = associated[i];
+                msgObj = {toUserId: doc.form.id, toUserName: doc.form.name, toUserIcon: doc.form.icon, sessionType: 'user'};
+                break;
+              }
+            }
+          }
+        }
         break;
     }
 
@@ -61,13 +80,21 @@ if(Meteor.isServer){
       }
     }
 
-    msgObj.userId = Meteor.userId();
-    msgObj.userName = AppConfig.get_user_name(Meteor.user());
-    msgObj.userIcon = AppConfig.get_user_icon(Meteor.user()); 
+    //发给关联用户的消息
+    if (associatedUser.id) {
+      msgObj.userId = associatedUser.id;
+      msgObj.userName = associatedUser.name;
+      msgObj.userIcon = associatedUser.icon;
+    }
+    else{
+      msgObj.userId = Meteor.userId();
+      msgObj.userName = AppConfig.get_user_name(Meteor.user());
+      msgObj.userIcon = AppConfig.get_user_icon(Meteor.user()); 
+    }
     msgObj.lastText = doc.type === 'text' ? doc.text : '[图片]';
     msgObj.updateAt = new Date(Date.now() + MQTT_TIME_DIFF);
 
-    var msgSession = MsgSession.findOne({userId: Meteor.userId(), toUserId: msgObj.toUserId});
+    var msgSession = MsgSession.findOne({userId: msgObj.userId, toUserId: msgObj.toUserId});
     if (msgSession){
       msgObj.createAt = msgSession.createAt;
       MsgSession.update({_id: msgSession._id}, {$set: msgObj, $inc: {count: 1}});

@@ -17,21 +17,35 @@ Router.route(AppConfig.path + '/to/:type', {
     var name = slef.params.query['name'] ? decodeURIComponent(slef.params.query['name']) : '';
     var icon = slef.params.query['icon'] ? decodeURIComponent(slef.params.query['icon']) : '';
 
+    var sender = Session.get('msgFormUser');
+    if (sender && sender.id) {
+      console.log('sender.name:'+sender.name);
+    }
+    else{
+      sender = {
+        id: Meteor.userId(),
+        name: AppConfig.get_user_name(Meteor.user()),
+        icon: AppConfig.get_user_icon(Meteor.user())
+      }
+    }
+
     if(type === 'group')
       where = {'to.id': to, to_type: type}; // 没有判断是否在群的处理。自动加群
     else
       where = {
         $or: [
-          {'form.id': Meteor.userId(), 'to.id': to, to_type: type}, // me -> ta
-          {'form.id': to, 'to.id': Meteor.userId(), to_type: type}  // ta -> me
+          {'form.id': sender.id, 'to.id': to, to_type: type}, // me -> ta
+          {'form.id': to, 'to.id': sender.id, to_type: type}  // ta -> me
         ]
       };
+
 
     console.log('where:', where);
     return {
       id: slef.params.query['id'],
       name: name,
       icon: icon,
+      sender:sender,
       title: function(){
         return page_title.get();
       },
@@ -66,8 +80,14 @@ Router.route(AppConfig.path + '/user-list/:_user',{
   layoutTemplate: '_simpleChatListLayout',
   template: '_groupMessageList',
   data: function () {
-    var userId = this.params._user;
-    var lists = MsgSession.find({userId: userId,sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
+    //var userId = this.params._user;
+    var user = Meteor.user();
+    var ids =  [];
+    if (user && user.profile && user.profile.associated) {
+      ids = _.pluck(user.profile.associated, 'id');
+    }
+    ids.push(Meteor.userId());
+    var lists = MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
     Session.set('channel','bell');
     return {
       title: '消息',
@@ -77,15 +97,11 @@ Router.route(AppConfig.path + '/user-list/:_user',{
   }
 });
 
-var sendHaveReadMsg = function(to){
+var sendHaveReadMsg = function(page_data){
   var msg = {
       _id: new Mongo.ObjectID()._str,
-      form:{
-          id: Meteor.userId(),
-          name: AppConfig.get_user_name(Meteor.user()),
-          icon: AppConfig.get_user_icon(Meteor.user())
-      },
-      to: to,
+      form:page_data.sender,
+      to: {id:page_data.id},
       to_type: 'user',
       type: 'haveReadMsg',
       create_time: new Date(Date.now() + MQTT_TIME_DIFF),
@@ -122,12 +138,9 @@ Template._simpleChatToChatLayout.onRendered(function(){
   }
   //开启已读消息模式
   if (withEnableHaveReadMsg && page_data.type === 'user') {
-    var lastMsg =  Messages.findOne({'form.id': page_data.id, 'to.id': Meteor.userId(), to_type: page_data.type},{ sort: {create_time: -1}});
+    var lastMsg =  Messages.findOne({'form.id': page_data.id, 'to.id': page_data.sender.id, to_type: page_data.type},{ sort: {create_time: -1}});
     if (lastMsg && lastMsg.is_read === false) {
-      var to = {
-        id:page_data.id
-      }
-      sendHaveReadMsg(to);
+      sendHaveReadMsg(page_data);
     }
   }
 });
@@ -344,7 +357,7 @@ Template._simpleChatToChat.onRendered(function(){
       }
       if (withEnableHaveReadMsg && doc.to_type === 'user' && doc.form.id === page_data.id) {
         console.log('receive other message')
-        sendHaveReadMsg({id:doc.form.id});
+        sendHaveReadMsg(page_data);
       }
     });
     Messages.after.update(function (userId, doc, fieldNames, modifier, options) {
@@ -918,6 +931,7 @@ Template._simpleChatToChatLayout.onRendered(function(){
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
   Session.set('msgToUserName', null);
+  Session.set('msgFormUser', null);
 });
 
 Template._simpleChatToChatLayout.helpers({
@@ -1082,11 +1096,7 @@ Template._simpleChatToChatLayout.events({
 
       var msg = {
         _id: new Mongo.ObjectID()._str,
-        form:{
-          id: Meteor.userId(),
-          name: AppConfig.get_user_name(Meteor.user()),
-          icon: AppConfig.get_user_icon(Meteor.user())
-        },
+        form:page_data.sender,
         to: to,
         to_type: data.type,
         type: 'text',
@@ -1128,7 +1138,7 @@ Template._simpleChatToChatItem.onRendered(function(){
     if (!msg)
       return;
 
-    if (msg.form.id === Meteor.userId() && (msg.send_status === 'failed' || msg.send_status === 'sending')){
+    if (msg.form.id === page_data.sender.id && (msg.send_status === 'failed' || msg.send_status === 'sending')){
       switch(msg.send_status){
         case 'failed':
           window.plugins.actionsheet.show({
@@ -1239,10 +1249,27 @@ Template._simpleChatToChatItem.helpers({
     return !item.remove && !item.label && !item.error;
   },
   ta_me: function(id){
+    var sender = Session.get('msgFormUser');
+    if (sender && sender.id ) {
+      return id != sender.id ? 'ta' : 'me';
+    }
     return id != Meteor.userId() ? 'ta' : 'me';
   },
   is_me: function(id){
+    var sender = Session.get('msgFormUser');
+    if (sender && sender.id ) {
+      return id === sender.id;
+    }
     return id === Meteor.userId();
+  },
+  is_associated:function(id){
+    var sender = Session.get('msgFormUser');
+    if (sender && sender.id ) {
+      if (id === sender.id && id !== Meteor.userId()) {
+        return true;
+      }
+    }
+    return false;
   },
   status_sending: function(val){
     return val === 'sending';
@@ -1306,11 +1333,7 @@ window.___message = {
 
     Messages.insert({
       _id: id,
-      form:{
-          id: Meteor.userId(),
-          name: AppConfig.get_user_name(Meteor.user()),
-          icon: AppConfig.get_user_icon(Meteor.user())
-      },
+      form:page_data.sender,
       to: to,
       to_type: data.type,
       type: 'image',
@@ -1397,16 +1420,16 @@ SimpleChat.onMqttMessage = function(topic, msg) {
     type: 'text'
   };
 
-  if (msgObj.to_type === 'user' && msgObj.to.id == Meteor.userId()) {
+  if (msgObj.to_type === 'user') {
     if (msgObj.type === 'haveReadMsg') {
-      Messages.find({'form.id':Meteor.userId(),'to.id':msgObj.form.id,is_read:false}).forEach(function(item){
+      Messages.find({'form.id':msgObj.to.id,'to.id':msgObj.form.id,is_read:false}).forEach(function(item){
           Messages.update({_id:item._id},{$set:{is_read:true}});
       })
       return;
     }
     //ta 被我拉黑
-    if(BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [msgObj.form.id]}}).count() > 0){
-      console.log(msgObj.to.id+'被我拉黑');
+    if(BlackList.find({blackBy: msgObj.to.id, blacker:{$in: [msgObj.form.id]}}).count() > 0){
+      console.log(msgObj.to.id+'被'+msgObj.to.id+'拉黑');
       return;
     }
   }
@@ -1675,6 +1698,12 @@ Template._groupMessageList.helpers({
   },
   formatTime: function(val){
     return get_diff_time(val);
+  },
+  is_associated:function(userId){
+    if (userId === Meteor.userId()) {
+      return false;
+    }
+    return true;
   }
 });
 
@@ -1690,6 +1719,12 @@ Template._groupMessageList.events({
     MsgSession.update({'_id':msgid},{$set:{count:0}})
     console.log('this to user name is ' + this.toUserName);
     Session.set('msgToUserName', this.toUserName);
+    var from = {
+      id:this.userId,
+      name:this.userName,
+      icon:this.userIcon
+    }
+    Session.set('msgFormUser',from);
     return Router.go(AppConfig.path+'/to/user?id='+e.currentTarget.id);
   }
 })
