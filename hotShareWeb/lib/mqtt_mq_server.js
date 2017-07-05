@@ -117,7 +117,14 @@ if(Meteor.isServer){
               if (userInfo && userInfo.profile && userInfo.profile.browser){
                 console.log(message)
                 WebUserMessages.insert(message);
-                Meteor.users.update({_id: user}, {$inc: {'profile.waitReadMsgCount': 1}});
+                var userInfo = Meteor.users.findOne({_id:user});
+                var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
+                if(waitReadMsgCount === undefined || isNaN(waitReadMsgCount))
+                {
+                    waitReadMsgCount = 0;
+                }
+                console.log('waitReadMsgCount--->'+waitReadMsgCount);
+                Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': waitReadMsgCount+1}});
               } else {
                 sendMqttMessage(topic,message);
               }
