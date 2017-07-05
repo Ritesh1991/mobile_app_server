@@ -1466,19 +1466,19 @@ if Meteor.isClient
       if url is ''
         return PUB.toast('请输入跳转网址')
       console.log 'isUrl is ' + PUB.isUrl(url)
-      if PUB.isUrl(url) is false
+      #if PUB.isUrl(url) is false
+      #  return PUB.toast('输入网址格式不匹配')
+      #else
+      if url.toLowerCase().indexOf("http://") > 0 or url.toLowerCase().indexOf("https://") > 0
         return PUB.toast('输入网址格式不匹配')
-      else
-        if url.toLowerCase().indexOf("http://") > 0 or url.toLowerCase().indexOf("https://") > 0
-          return PUB.toast('输入网址格式不匹配')
-        if url.toLowerCase().indexOf("http://") is -1 and url.toLowerCase().indexOf("https://") is -1
-          url = 'http://' + url
-        newtext = '<a href="' + url + '" target="_blank" class="_post_item_a">' + describe + '</a>'
-        Drafts.insert {type:'text', isImage:false, owner: Meteor.userId(), text: newtext,hyperlinkText: describe, isHyperlink: true, style:'', data_row:'1', data_col:'3',  data_sizex:'6', data_sizey:'1'}
-        $('#add_posts_content').show()
-        $('#show_hyperlink').hide()
-        $('#hyperlink-text').val('')
-        $('#hyperlink-url').val('')
+      if url.toLowerCase().indexOf("http://") is -1 and url.toLowerCase().indexOf("https://") is -1
+        url = 'http://' + url
+      newtext = '<a href="' + url + '" target="_blank" class="_post_item_a">' + describe + '</a>'
+      Drafts.insert {type:'text', isImage:false, owner: Meteor.userId(), text: newtext,hyperlinkText: describe, isHyperlink: true, style:'', data_row:'1', data_col:'3',  data_sizex:'6', data_sizey:'1'}
+      $('#add_posts_content').show()
+      $('#show_hyperlink').hide()
+      $('#hyperlink-text').val('')
+      $('#hyperlink-url').val('')
     'click #addVideo': ()->
       trackEvent("addPost","MobileAddVideo")
       url = prompt("请输入要导入的视频URL地址（支持：腾讯视频、优酷视频）!","")
