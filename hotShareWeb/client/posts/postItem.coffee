@@ -1,6 +1,6 @@
 
 if Meteor.isClient
-    @sendMqttMessageToFollower=(type, to, text)->
+  @sendMqttMessageToFollower = (type,to,text)->
     username = Meteor.user().profile.fullname || Meteor.user().username
     if type is 'follow'
       to.isFollow = true
