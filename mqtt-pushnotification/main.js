@@ -263,7 +263,10 @@ function sendNotification(message, toUserId ,type, cb) {
         webUserMessages.insert(message, function(err,result){
           if (err)
             return console.log('mqtt to web-user msg err:', err);
-          users.update({_id: toUser._id}, {$inc: {'profile.waitReadMsgCount': 1}});
+          users.update({_id: toUser._id}, {$inc: {'profile.waitReadMsgCount': 1}}, function(error){
+            if(error)
+              users.update({_id: toUser._id}, {$set: {'profile.waitReadMsgCount': 1}});
+          });
           console.log('web用户的mqtt消息写入数据库成功', toUser._id);
         });
       
