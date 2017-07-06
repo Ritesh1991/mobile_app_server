@@ -1,5 +1,6 @@
 var mqtt = require('mqtt')
 var MongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectId;
 var redisClient = require('./lib/redis.js')
 var f = require('./lib/foreach.js')
 var workQueue = require('./lib/work_queue.js')
@@ -259,16 +260,24 @@ function sendNotification(message, toUserId ,type, cb) {
     }
     else {
       // web 用户
-      if (toUser && toUser.profile && toUser.profile.browser && !toUser.token)
+      if (projectName && projectName == 't' && toUser && toUser.profile && toUser.profile.browser && !toUser.token){
+        try{
+        message._id = new ObjectId().toString();
         webUserMessages.insert(message, function(err,result){
+          try{
           if (err)
             return console.log('mqtt to web-user msg err:', err);
           users.update({_id: toUser._id}, {$inc: {'profile.waitReadMsgCount': 1}}, function(error){
+            try{
             if(error)
               users.update({_id: toUser._id}, {$set: {'profile.waitReadMsgCount': 1}});
+            }catch(e){}
           });
           console.log('web用户的mqtt消息写入数据库成功', toUser._id);
+          }catch(e){}
         });
+        }catch(e){}
+      }
       
       return cb && cb('toUser/type/token not found');
     }
