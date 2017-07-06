@@ -213,3 +213,14 @@ if Meteor.isClient
   Router.route '/joinWechatGroup',()->
     this.render 'joinWechatGroup'
     return
+  Router.route '/web-rw-message', {
+      action: ->
+        #Session.set('web-rw-message-query',this.params.query)
+        this.render 'downLoadTipPage1'
+      fastRender:true
+    }
+  Router.route '/open-in-browser', {
+      action: ->
+        this.render 'installappTips'
+      fastRender:true
+    }

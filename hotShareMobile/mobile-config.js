@@ -86,6 +86,17 @@ App.configurePlugin('phonegap-plugin-push', {
   SENDER_ID: 'NOTUSEDFORNOW'
 });
 
+App.appendToConfig(`
+  <universal-links>
+    <ios-team-id value="D5Q4CA2T7C" />
+    <host name="tsdfg.tiegushi.com" scheme="https" >
+      <path url="/web-rw-message" event="onWebReadOrWriteMessage" />
+    </host>
+    <host name="tsdfg.tiegushi.com" scheme="http" >
+      <path url="/web-rw-message" event="onWebReadOrWriteMessage" />
+    </host>
+  </universal-links>
+`);
 
 
 /* *********storeboard app config********** */

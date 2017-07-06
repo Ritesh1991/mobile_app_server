@@ -1,5 +1,16 @@
 <template name="bellPostTips">
   {{#if hasNew}}
+  {{#if isIOS_UniversalLink}}
+  <a class="show-post-new-message bell_a">
+    <div class="msg-box" data-clipboard-text="{{msgBoxClipboard}}">
+      <!--<div class="icon"><img src="{{lsatFeed.ownerIcon}}" /></div>
+      <div class="tips">您有新的消息</div>-->
+      <div class="icon"><img src="{{lastIcon}}" style="object-fit: cover;"/></div>
+      <div class="tips">您有新的私信</div>
+      <div class="_count">{{feedsCount}}</div>
+    </div>
+  </a>
+  {{else}}
   <div class="show-post-new-message">
     <div class="msg-box" data-clipboard-text="{{msgBoxClipboard}}">
       <!--<div class="icon"><img src="{{lsatFeed.ownerIcon}}" /></div>
@@ -9,6 +20,7 @@
       <div class="_count">{{feedsCount}}</div>
     </div>
   </div>
+  {{/if}}
 
   <div id="bellPostDialog">
     <div class="bg">

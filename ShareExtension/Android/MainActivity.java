@@ -43,7 +43,18 @@ public class MainActivity extends CordovaActivity
 {
     private void handleIntent(Intent intent) {
       Log.i("##RDBG", "action: " + intent.getAction());
-      if (Intent.ACTION_SEND.equals(intent.getAction()))
+      if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+        Uri uri = intent.getData();
+        if (uri != null) {
+          String linkAddr = uri.toString();
+          SharedPreferences settings = getSharedPreferences("org.hotshare.everywhere.deeplink", 0);
+          SharedPreferences.Editor editor = settings.edit();
+          editor.putString("deeplink", linkAddr);
+          editor.commit();
+          Log.i("##RDBG", "deeplink: " + linkAddr);
+        }
+      }
+      else if (Intent.ACTION_SEND.equals(intent.getAction()))
       {
         String type = intent.getType();
         Log.i("##RDBG", "type: " + intent.getType());

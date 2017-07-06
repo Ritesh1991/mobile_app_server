@@ -215,7 +215,11 @@ if Meteor.isClient
     loading = $.loading('绑定用户中...')
     Meteor.call 'bind_web_user', Meteor.userId(), userId, toUserId, p, postId, (err, r)->
       loading.close()
+      fromUniversalLink = Session.get('fromUniversalLink');
+      Session.set('fromUniversalLink',false);
       if err || !r || !r.result
+        if fromUniversalLink is true
+          return Router.go('/simple-chat/user-list/'+Meteor.userId())
         return navigator.notification.alert (r.message || "绑定web用户失败，请重试~"), `function(){}`, '提示', '知道了'
       switch p
         when 'message' # 私信消息

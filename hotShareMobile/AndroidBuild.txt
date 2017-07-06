@@ -18,6 +18,16 @@ vim ./AndroidManifest.xml
                <category android:name="android.intent.category.DEFAULT" />
                <data android:mimeType="image/*" />
              </intent-filter>
+             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://host1.tiegushi.com” -->
+                <data android:scheme="https"
+                    android:host="tsdfg.tiegushi.com"
+                    android:pathPrefix="/" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+             </intent-filter>
 
 加完后，　ｍａｉｎａｃｔｉｖｉｔｙ像下面这样
           <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:label="@string/activity_name" android:launchMode="singleTop" android:name="MainActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Black.NoTitleBar" android:windowSoftInputMode="adjustResize">

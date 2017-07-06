@@ -32,7 +32,18 @@ Template.downLoadTipPage1.events({
   'click .close':function(){
     var post = Session.get('postContent');
     if (post && post._id) {
-      Router.go('/posts/'+post._id);
+       return Router.go('/posts/'+post._id);
+    }
+    var quary = location.search.split("&");
+    var postId = null;
+    for (var i = 0; i < quary.length; i++) {
+      if (quary[i].indexOf('postId') >= 0) {
+        postId = quary[i].replace('postId=', '');
+        break;
+      }
+    }
+    if (postId) {
+      Router.go('/posts/'+postId);
     }
   },
   'click #qrDownloadAPP':function(){

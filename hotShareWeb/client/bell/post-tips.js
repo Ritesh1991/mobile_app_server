@@ -95,16 +95,32 @@ Template.bellPostTips.helpers({
   },
   msgBoxClipboard: function(){
     return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId=&p=post&postId='+Session.get('postContent')._id;
+  },
+  isIOS_UniversalLink:function(){
+    return isIOS && withEnableUniversalLink;
   }
 });
 
 Template.bellPostTips.onRendered(function(){
   var clipboard = new Clipboard('.msg-box');
-  var onMsgBoxClient = function(){
+  var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
+  $('.bell_a').attr('href',link);
+  var onMsgBoxClient = function(isSuccess){
     trackEvent("blkMsgBox", "clickBlkMsgBox");
     Session.set('showBellPostTips',false);
     Meteor.call('updataFeedsWithMe', Meteor.userId());
     var user = Meteor.user();
+    if (isSuccess && withEnableUniversalLink) {
+      if(isIOS){
+        //var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
+        //return window.open(link,'_system');
+        return;
+      }else if(isAndroidFunc()){
+        //var link = 'https://tsdfg.tiegushi.com/open-in-browser?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
+        Router.go('/downLoadTipPage1');
+        return;
+      }
+    }
     if(withQRTips){
       if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
         Session.set('qrtype', '消息');
@@ -124,14 +140,14 @@ Template.bellPostTips.onRendered(function(){
 
     if (withQRTips){
       // TODO: 处理 copy 成功的流程
-      onMsgBoxClient();
+      onMsgBoxClient(true);
     }
   });
 
   clipboard.on('error', function(e) {
     console.log('Action:', e.action);
     console.log('Trigger:', e.trigger);
-    onMsgBoxClient();
+    onMsgBoxClient(false);
   });
 });
 
