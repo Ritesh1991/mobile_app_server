@@ -101,36 +101,38 @@ Template.bellPostTips.helpers({
   }
 });
 
+onMsgBoxClient = function(isSuccess, touserId, p, postid){
+  trackEvent("blkMsgBox", "clickBlkMsgBox");
+  Session.set('showBellPostTips',false);
+  Meteor.call('updataFeedsWithMe', Meteor.userId());
+  var user = Meteor.user();
+  if (isSuccess && withEnableUniversalLink) {
+    console.log('==打开APP==');
+    if(isIOS){
+      //var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId='+touserId+'&p='+p+'&postId='+postid;
+      //return window.open(link,'_system');
+      return;
+    }else if(isAndroidFunc()){
+      //var link = 'https://tsdfg.tiegushi.com/open-in-browser?userId='+Meteor.userId()+'&touserId='+touserId+'&p='+p+'&postId='+postid;
+      Router.go('/downLoadTipPage1');
+      return;
+    }
+  }
+  if(withQRTips){
+    if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
+      Session.set('qrtype', '消息');
+      return $('#bellPostDialog').fadeIn();
+    }
+    return showQrTips(touserId,p,postid);
+  }else{
+    Router.go('/bell');
+  }
+};
+
 Template.bellPostTips.onRendered(function(){
   var clipboard = new Clipboard('.msg-box');
   var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
   $('.bell_a').attr('href',link);
-  var onMsgBoxClient = function(isSuccess){
-    trackEvent("blkMsgBox", "clickBlkMsgBox");
-    Session.set('showBellPostTips',false);
-    Meteor.call('updataFeedsWithMe', Meteor.userId());
-    var user = Meteor.user();
-    if (isSuccess && withEnableUniversalLink) {
-      if(isIOS){
-        //var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
-        //return window.open(link,'_system');
-        return;
-      }else if(isAndroidFunc()){
-        //var link = 'https://tsdfg.tiegushi.com/open-in-browser?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
-        Router.go('/downLoadTipPage1');
-        return;
-      }
-    }
-    if(withQRTips){
-      if(user && user.profile && user.profile.associated && user.profile.associated.length > 0){
-        Session.set('qrtype', '消息');
-        return $('#bellPostDialog').fadeIn();
-      }
-      return showQrTips('','post',Session.get('postContent')._id);
-    }else{
-      Router.go('/bell');
-    }
-  };
 
   clipboard.on('success', function(e) {
     console.log('Action:', e.action);
@@ -140,14 +142,14 @@ Template.bellPostTips.onRendered(function(){
 
     if (withQRTips){
       // TODO: 处理 copy 成功的流程
-      onMsgBoxClient(true);
+      onMsgBoxClient(true, '', 'post', Session.get('postContent')._id);
     }
   });
 
   clipboard.on('error', function(e) {
     console.log('Action:', e.action);
     console.log('Trigger:', e.trigger);
-    onMsgBoxClient(false);
+    onMsgBoxClient(false, '', 'post', Session.get('postContent')._id);
   });
 });
 
