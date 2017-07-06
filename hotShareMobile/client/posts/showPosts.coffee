@@ -999,8 +999,16 @@ if Meteor.isClient
       ,animatePageTrasitionTimeout
     'click #edit': (event)->
       if this.import_status
-        unless this.import_status is 'imported' or this.import_status is 'done'
+        # unless this.import_status is 'imported' or this.import_status is 'done'
+        if this.import_status is 'imported' or this.import_status is 'done'
+          if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
+            return Router.go('/newEditor?type=edit&id='+this._id)
+        else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
+        
+      editorVersion = this.editorVersion || 'fullEditor'
+      if (editorVersion is 'simpleEditor')
+        return Router.go('/newEditor?type=edit&id='+this._id)
 
       #Clear draft first
       Drafts.remove({})
@@ -1047,10 +1055,11 @@ if Meteor.isClient
         mainText: self.mainText,
         owner:userId,
         createdAt: new Date(),
+        editorVersion: self.editorVersion
       }
       Meteor.call 'unpublish',postId,userId,drafts, (err, res)->
         #Meteor.subscribe 'myCounter'
-        myHotPosts = Meteor.user().myHotPosts
+        myHotPosts = Meteor.user().myHotPosts || []
         if myHotPosts and myHotPosts.length > 0
           newArray = []
           for item in myHotPosts

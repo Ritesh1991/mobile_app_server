@@ -21,6 +21,10 @@ if Meteor.isClient
           console.log topic
           Meteor.call('updateTopicPostsAfterComment', topicPostId, topic, topicPostObj)
   editDraft = (savedDraftData)->
+      editorVersion = savedDraftData.editorVersion || 'fullEditor'
+      if (editorVersion is 'simpleEditor')
+        return Router.go('/newEditor?type=draft&id='+savedDraftData._id)
+
       TempDrafts.insert {
         _id:savedDraftData._id,
         pub:savedDraftData.pub,
@@ -182,6 +186,7 @@ if Meteor.isClient
         mainImageStyle = savedDraftData.mainImageStyle
         mainText = savedDraftData.mainText
         fromUrl = savedDraftData.fromUrl
+        editorVersion = savedDraftData.editorVersion
 
         modalUserId = $('#chooseAssociatedUser .modal-body dt.active').attr('userId')
         ownerUser = null
@@ -319,7 +324,8 @@ if Meteor.isClient
                     owner:ownerUser._id,
                     ownerName:ownerName,
                     ownerIcon:ownerIcon,
-                    createdAt: new Date()
+                    createdAt: new Date(),
+                    editorVersion: editorVersion
                   }
                 }
               )
@@ -342,7 +348,8 @@ if Meteor.isClient
                 owner:ownerUser._id,
                 ownerName:ownerName,
                 ownerIcon:ownerIcon,
-                createdAt: new Date()
+                createdAt: new Date(),
+                editorVersion: editorVersion
               })
             topicPostObj = {
               postId:postId,
@@ -383,7 +390,8 @@ if Meteor.isClient
               ownerName:ownerName,
               ownerIcon:ownerIcon,
               isReview: true,
-              createdAt: new Date()
+              createdAt: new Date(),
+              editorVersion: editorVersion
             }
             Session.set('newpostsdata', newPostData)
             Router.go('/newposts/'+postId)
@@ -421,7 +429,8 @@ if Meteor.isClient
                   owner:ownerUser._id,
                   ownerName:ownerName,
                   ownerIcon:ownerIcon,
-                  createdAt: new Date()
+                  createdAt: new Date(),
+                  editorVersion: editorVersion
                 }
               }
             )
@@ -444,7 +453,8 @@ if Meteor.isClient
               owner:ownerUser._id,
               ownerName:ownerName,
               ownerIcon:ownerIcon,
-              createdAt: new Date()
+              createdAt: new Date(),
+              editorVersion: editorVersion
             })
           topicPostObj = {
             postId:postId,
@@ -457,7 +467,8 @@ if Meteor.isClient
             owner:ownerUser._id,
             ownerName:ownerName,
             ownerIcon:ownerIcon,
-            createdAt: new Date()
+            createdAt: new Date(),
+            editorVersion: editorVersion
           }
           updateTopicPost(topicPostObj)
           #Delete from SavedDrafts if it is a saved draft.
@@ -485,7 +496,8 @@ if Meteor.isClient
               ownerName:ownerName,
               ownerIcon:ownerIcon,
               isReview: true,
-              createdAt: new Date()
+              createdAt: new Date(),
+              editorVersion: editorVersion
           }
           insertPostOnTheHomePage(postId,newPostData)
           Session.set('newpostsdata', newPostData)

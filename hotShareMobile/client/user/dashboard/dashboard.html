@@ -25,6 +25,27 @@
             {{/if}}
           </span>
         </div>
+        
+        <!-- Editor Settings START-->
+        {{#if enableSimpleEditor}}
+        <div class="editorSettings bottomBorder boxTitle ripple-label">编辑模式
+          {{#if isSimpleEditor}}
+          <span class="right" style="margin-right: 28px; color: #37a7fe;">
+            {{#if showEditorTip}}
+            <i style="font: italic bold 12px/20px arial,sans-serif; background: red; margin-right: 5px;padding: 0 5px;border-radius: 10px;color: #fff;">new</i>
+            {{/if}}
+            简易模式</span>
+          {{else}}
+          <span class="right" style="margin-right: 28px; color: #37a7fe;">
+            {{#if showEditorTip}}
+            <i style="font: italic bold 12px/20px arial,sans-serif; background: red; margin-right: 5px;padding: 0 5px;border-radius: 10px;color: #fff;">new</i>
+            {{/if}}
+            经典模式</span>
+          {{/if}}
+          <span ><i class="fa fa-angle-right fa-fw"></i></span>
+        </div>
+        {{/if}}
+        <!-- Editor Settings END -->
 
         <!--
         <div class='info bottomBorder boxTitle'>编辑个人资料<span><i class="fa fa-angle-right fa-fw"></i></span></div>
@@ -262,6 +283,42 @@
           <div class="subscribeAutorPage_btn subscribeAutorPage_cannelBtn">取消</div>
           <div class="subscribeAutorPage_btn subscribeAutorPage_okBtn">关注作者</div>
         </div>
+    </div>
+  </div>
+</template>
+
+<template name="editorSettingHelp">
+  <div class="dashboard">
+    <div class="head">
+      <div>编辑模式</div>
+      <div id="editor_helper_back" class="leftButton"><i class="fa fa-angle-left fa-fw"></i></div>
+    </div>
+    <div class="content">
+      <h4 class="textpadding">故事贴推荐使用简易模式</h4>
+
+      <div class="box">
+          {{#if isSimpleEditor}}
+          <div class="boxTitle bottomBorder" id="simpleEditor" >简易模式<span class="value"><i class="fa fa-check"></i></span></div>
+          <div class="boxTitle" id="fullEditor">经典模式<span class="value"></span></div>
+          {{else}}
+          <div class="boxTitle bottomBorder" id="simpleEditor" >简易模式<span class="value"></span></div>
+          <div class="boxTitle" id="fullEditor">经典模式<span class="value"><i class="fa fa-check"></i></span></div>
+          {{/if}}
+      </div>
+      <div class="editorModal">
+        <img  src="/helpImgs/editor-diff.png" style="width: 100%;"/>
+      </div>
+      <!--<div class="editorModal">
+        <h4>简易模式</h4>
+        <p>简单、更易于使用</p>
+        <img  src="/helpImgs/simple-editor.png" style="width: 100%;"/>
+      </div>
+
+      <div class="editorModal">
+        <h4>经典模式</h4>
+        <p>提供更加专业的图文排版模式</p>
+        <img src="/helpImgs/full-editor.png" style="width: 100%;"/>
+      </div>-->
     </div>
   </div>
 </template>

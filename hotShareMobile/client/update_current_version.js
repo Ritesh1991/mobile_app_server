@@ -5,6 +5,17 @@ window.updateMyCurrentVersion = function (){
 }
 Accounts.onLogin(function(){
   Meteor.setTimeout(function(){
+    Meteor.call('getPostandDraftsCounts', Meteor.userId(), function(error, result){
+      if(result){
+        if(result > 0){
+          Session.set('showEditorTip', 'true')
+        } else {
+          Session.set('showEditorTip', 'false')
+        }
+      } 
+    })
+  },50);
+  Meteor.setTimeout(function(){
     console.log("Accounts.onLogin will update my own current version")
     window.updateMyCurrentVersion()
   },3000)

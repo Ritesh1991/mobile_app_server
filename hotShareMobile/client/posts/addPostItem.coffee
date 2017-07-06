@@ -34,6 +34,13 @@ if Meteor.isClient
                           console.log('got small image ');
                           $(".image_"+id).each(function(){
                             var $img = $(this);
+                            if($img.hasClass('mainImagesListItem')){
+                              $img.attr('data-imgurl',smallImage);
+                              $img.css('background-image','url('+smallImage+')');
+                            }
+                            if($img.hasClass('selectMainImage')){
+                              $img.attr('data-imgurl',smallImage);
+                            }
                             if($img.attr('data-type') === 'mainImage'){
                               if(!$img.attr('src'))
                                 $img.attr('src',smallImage);

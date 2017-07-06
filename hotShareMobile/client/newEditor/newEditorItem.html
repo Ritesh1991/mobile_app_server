@@ -1,0 +1,69 @@
+<template name="newEditorItem">
+  {{#if isImage}}
+    {{#if inIframe}}
+    <li id="{{pid}}" class="item-frame" data-iframe="{{iframe}}" data-imgurl="{{imgUrl}}">
+      <div class="remove"><i class="fa fa-close fa-fw"></i></div>
+      <div class="img">
+        <img src="{{imgUrl}}"/>
+        <div class="imgplaceholder"><img src="/video-placeholder.png"/></div>
+      </div>
+      {{> newEditorSortTools}}
+    </li>
+    {{else}}
+    <li id="{{pid}}" class="item-image" data-type="{{type}}" data-imgurl="{{imgUrl}}" data-filename="{{filename}}" data-uri="{{URI}}" data-id={{_id}}>
+      <div class="remove"><i class="fa fa-close fa-fw"></i></div>
+      <div class="img">
+        <img id="image_{{_id}}" src="{{getImagePath imgUrl URI _id}}" class="editAbleImage image_{{_id}}"/>
+      </div>
+      {{> newEditorSortTools}}
+    </li>
+    {{/if}}
+  {{else}}
+    {{#if musicInfo}}
+    <li id="{{pid}}" class="item-audio" data-imgurl="{{musicInfo.image}}" data-song-name="{{musicInfo.songName}}" data-singer-name="{{musicInfo.singerName}}" data-uri="{{musicInfo.URI}}" data-filename="{{musicInfo.filename}}" data-type="{{type}}" data-playurl="{{musicInfo.playUrl}}">
+      <div class="remove"><i class="fa fa-close fa-fw"></i></div>
+      <div class="img">
+        <img src="{{musicInfo.image}}"/>
+        <div class="imgplaceholder"><img src="/music-placeholder.png"/></div>
+      </div>
+      {{> newEditorSortTools}}
+    </li>
+    {{else}}
+      {{#if hasVideoInfo videoInfo}}
+      <li id="{{pid}}" class="video-audio">
+        <div class="remove"><i class="fa fa-close fa-fw"></i></div>
+        <div class="img">
+          <img src="{{imgUrl}}"/>
+          <div class="imgplaceholder"><img src="/video-placeholder.png"/></div>
+        </div>
+        {{> newEditorSortTools}}
+      </li>
+      {{else}}
+      <li id="{{pid}}" class="item-text" data-type="{{type}}">
+        <div class="remove"><i class="fa fa-close fa-fw"></i></div>
+        <div class="img">
+          <img src="/text-placeholder.png"/>
+        </div>
+        {{> newEditorSortTools}}
+      </li>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+</template>
+
+<template name="newEditorSortTools">
+<div class="sortTools">
+  <div class="moveUp"><i class="fa fa-angle-up fa-fw"></i></div>
+  <div class="moveDown"><i class="fa fa-angle-down fa-fw"></i></div>
+</div>
+<div class="text" placeholder="点击添加文字" data-type="{{type}}">{{{html}}}</div>
+<div class="addTools" data-index="0">
+  <span class="addNewBtn"><i class="fa fa-plus fa-fw"></i></span>
+  <div class="addElements" style="display: none;">
+    <span id="addText" class="item"> <i class="fa fa-file-text-o fa-fw"></i></span>
+    <span id="addImage" class="item"><i class="fa fa-image fa-fw"></i></span>
+    <span id="addAudio" class="item"><i class="fa fa-music fa-fw"></i></span>
+    <span id="addVideo" class="item"><i class="fa fa-youtube-play fa-fw"></i></span>
+  </div>
+</div>
+</template>

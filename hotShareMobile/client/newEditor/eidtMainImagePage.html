@@ -1,0 +1,27 @@
+<template name="eidtMainImagePage">
+<div class="mainImagesList" style="position: absolute;z-index: 9999; top: 0; width: 100%;height: 100%; overflow:hidden; display: block;">
+    <div class="head">
+    <div class="leftButton mainImagesListback"><span style="bottom:auto; font-size:16px;">取消</span></div>
+    <div class="rightButton mainImagesListImport"><span>完成</span></div>
+    </div>
+    <div class="content">
+
+      <div id="clipArea" style="height: 260px; margin-top: 40px; background:url('/opacity-bg.png');"></div>
+      <ul class="mainImageListUl" style="position: absolute; top:305px; left:1%; bottom: 5px;overflow-y: auto; -webkit-overflow-scrolling: touch;">
+        <li id="image_{{selectMainImage._id}}" class="selectMainImage image_{{selectMainImage._id}}" style="background-image:url('/device-camera.png');background-color: #8a8a8a;background-size: 100%; background-position: center;" data-imgurl="{{getImagePath selectMainImage.imgUrl selectMainImage.URI selectMainImage._id}}"></li>
+        {{#each officialImages}}
+        <li style="background-image:url('http://data.tiegushi.com/ocmainimages/mainimage{{num}}.jpg');" data-imgurl="http://data.tiegushi.com/ocmainimages/mainimage{{num}}.jpg">
+          <input id="" uri="" class="mainImageListInput" type="checkbox" name="mainimage{{num}}.jpg" value="http://data.tiegushi.com/ocmainimages/mainimage{{num}}.jpg" />
+        </li>
+        {{/each}}
+        {{#each images}}
+        <li class="mainImagesListItem" style="background-image:url('{{getImagePath imgUrl URI imageId}}');" data-imgurl="{{getImagePath imgUrl URI imageId}}" >
+          <input id="image_{{imageId}}" class="mainImageListInput image_{{imageId}}" uri="{{URI}}" type="checkbox" name="{{filename}}" value="{{imgUrl}}" />
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="contentList">
+    </div>
+  </div>
+</template>

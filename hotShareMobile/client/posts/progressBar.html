@@ -7,10 +7,14 @@
       </div>
       <div class="btnDelayPublish">
         <center>
+           {{#if is_cancel}}
+           <button id="cancel-btn" class="btn btn-primary">取消</button> 
+           {{else}}
            {{#if isDelayPublish}}
             <button id="delayPublish" class="btn btn-primary">{{_ "publishLater"}}</button>    
            {{else}}
             <button id="delayPublish" class="btn btn-primary">{{_ "saveLater"}}</button>
+           {{/if}}
            {{/if}}
           </center>
       </div>

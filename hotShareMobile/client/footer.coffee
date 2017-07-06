@@ -13,6 +13,15 @@ if Meteor.isClient
     alert 'show'
     return
   Template.footer.helpers
+    enableSimpleEditor: ->
+      if enableSimpleEditor
+        return true
+      else
+        return false
+    showEditorTip: ->
+      if localStorage.getItem('hideEditorTip') isnt 'true' and Session.get('showEditorTip') is 'true'
+        return true
+      return false
     display_select_import_way: ()->
       Session.equals 'display_select_import_way',true
     is_wait_read_count: (count)->
@@ -212,6 +221,7 @@ if Meteor.isClient
         return
       PUB.page('/user')
     'click #add': (e)->
+      # return Router.go('/newEditor')
       if (Session.get("myHotPostsChanged"))
         Session.set("myHotPostsChanged", false)
         navigator.notification.confirm(
@@ -234,8 +244,11 @@ if Meteor.isClient
     'click #album-select':(e)->
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
-      prepareToEditorMode()
-      PUB.page '/add'
+      if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        PUB.page '/newEditor'
+      else
+        prepareToEditorMode()
+        PUB.page '/add'
       Meteor.defer ()->
           selectMediaFromAblum(20, (cancel, result,currentCount,totalCount)->
             if cancel
@@ -244,11 +257,24 @@ if Meteor.isClient
               return
             if result
               console.log 'Local is ' + result.smallImage
-              Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              if currentCount is 1
+                Session.set('newEditorMainImage',{
+                  _id: new Mongo.ObjectID()._str,
+                  imgUrl: result.smallImage,
+                  filename: result.filename,
+                  URI: result.URI
+                })
+              if (enableSimpleEditor and enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              else
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
               if currentCount >= totalCount
-                Meteor.setTimeout(()->
-                  Template.addPost.__helpers.get('saveDraft')()
-                ,100)
+                if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                  return
+                else
+                  Meteor.setTimeout(()->
+                    Template.addPost.__helpers.get('saveDraft')()
+                  ,100)
           )
     'click #web-import':(e)->
       $('#level2-popup-menu').modal('hide')
@@ -294,17 +320,29 @@ if Meteor.isClient
     'click #photo-select':(e)->
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
-      prepareToEditorMode()
-      PUB.page '/add'
+      if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        prepareToEditorMode()
+        PUB.page '/newEditor'
+      else
+        PUB.page '/add'
       Meteor.defer ()->
         if window.takePhoto
           window.takePhoto (result)->
             console.log 'result from camera is ' + JSON.stringify(result)
             if result
-              Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
-              Meteor.setTimeout(()->
-                Template.addPost.__helpers.get('saveDraft')()
-              ,100)
+              Session.set('newEditorMainImage',{
+                _id: new Mongo.ObjectID()._str,
+                imgUrl: result.smallImage,
+                filename: result.filename,
+                URI: result.URI
+              })
+              if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              else
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+                Meteor.setTimeout(()->
+                  Template.addPost.__helpers.get('saveDraft')()
+                ,100)
             else
               PUB.back()
     'click #from-example': (e)->

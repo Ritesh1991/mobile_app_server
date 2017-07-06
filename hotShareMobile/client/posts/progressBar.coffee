@@ -10,7 +10,10 @@ if Meteor.isClient
             Session.get("isDelayPublish")
         progressBarWidth:->
             Session.get("progressBarWidth")
-        show: ()->
+        is_cancel: ()->
+            return Session.get('progressBarCancel')
+        show: (cancel)->
+            Session.set('progressBarCancel', cancel || false)
             if progressBar_blaze is null
                 Session.set('progressBarWidth', 1);
                 progressBar_blaze = Blaze.render Template.progressBar, document.body
@@ -24,6 +27,9 @@ if Meteor.isClient
                 progressBar_blaze = null
 
     Template.progressBar.events
+        'click #cancel-btn': ->
+            PUB.back()
+            Template.progressBar.__helpers.get('close')()
         'click #delayPublish':->
             Session.set('terminateUpload', true);
             Template.progressBar.__helpers.get('close')()

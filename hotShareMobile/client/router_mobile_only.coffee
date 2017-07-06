@@ -571,6 +571,21 @@ if Meteor.isClient
     Router.route 'recommendStory',()->
       this.render 'recommendStory'
       return
+    Router.route '/newEditor', {
+      data: ()->
+        return {
+          type: if this.params.query['type'] then this.params.query['type'] else 'new'
+          id: this.params.query['id']
+        }
+      action: ->
+        this.render 'newEditor'
+        return
+    }
+    Router.route 'eidtMainImagePage', ()->
+      this.render 'eidtMainImagePage'
+      return
+    Router.route 'editor_setting_help', ()->
+      this.render 'editorSettingHelp'
     Router.route 'editprofile',()->
       this.render 'editprofile'
       return

@@ -309,6 +309,36 @@ if Meteor.isClient
   processTitleOfPost=(data)->
     if data.title
       console.log 'Title is ' + data.title
+
+      # new editor
+      if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        mainImage = Drafts.findOne({type:'image'});
+        Drafts.remove({_id: mainImage._id});
+        pub = Drafts.find({}).fetch()
+        Router.go('/')
+        # PUB.page '/newEditor'
+        Session.set('importProcedure',99)
+        try
+          Session.set('newEditorMainImage',{
+            _id: new Mongo.ObjectID()._str
+            imgUrl: mainImage.imgUrl
+            filename: mainImage.filename
+            URI: mainImage.URI
+            title: data.title
+          })
+          newEditorImportPUB = []
+          pub.map (item)->
+            console.log('')
+            if (item.text)
+              item.html = item.text
+            newEditorImportPUB.push(item)
+          Session.set('newEditorImportPUB',newEditorImportPUB)
+          Session.set('importProcedure',100)
+          PUB.page '/newEditor'
+        catch error
+          console.log('error simpleEditor  import== '+error)
+        return
+
       Session.set('importProcedure',100)
       setTimeout ()->
         unless ($('#title').val() and $('#title').val() isnt '')

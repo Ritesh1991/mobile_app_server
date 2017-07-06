@@ -50,6 +50,20 @@ if Meteor.isClient
   Template.dashboard.onDestroyed ()->
     $('body').css('height', '100%')
   Template.dashboard.helpers
+    enableSimpleEditor: ->
+      if enableSimpleEditor
+        return true
+      else
+        return false
+    showEditorTip: ->
+      if localStorage.getItem('hideEditorTip') isnt 'true' and Session.get('showEditorTip') is 'true'
+        return true
+      return false
+    isSimpleEditor: ->
+      if (Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        return true
+      else
+        return false
     showFollowTips: ->
       if Meteor.user() and Meteor.user().profile and Meteor.user().profile.followTips
           return Meteor.user().profile.followTips isnt false
@@ -98,6 +112,9 @@ if Meteor.isClient
     }
     Session.set "history_view", history
   Template.dashboard.events
+    'click .editorSettings': ->
+      localStorage.setItem('hideEditorTip','true')
+      Router.go '/editor_setting_help'
     'click .readFollowTips': ->
       Meteor.users.update(
         {_id: Meteor.userId()}
@@ -137,6 +154,7 @@ if Meteor.isClient
       addDashboardIntoHistory()
       Router.go '/my_about'
     'click .back' :->
+      localStorage.setItem('hideEditorTip','true')
       Router.go '/user'
     'click .logout':(e)->
       e.target.innerText="正在退出登录..."
@@ -390,3 +408,23 @@ if Meteor.isClient
       TAPi18n.setLanguage("zh")
       Meteor.call 'updateUserLanguage', Meteor.userId(), 'zh'
       Router.go '/dashboard'
+  Template.editorSettingHelp.rendered=->
+    $('.dashboard').css 'min-height', $(window).height()
+    return
+  Template.editorSettingHelp.helpers
+    isSimpleEditor: ->
+      if (Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        return true
+      else
+        return false
+  Template.editorSettingHelp.events
+    'click #editor_helper_back': ->
+      Router.go '/dashboard'
+    'click #simpleEditor':->
+      Meteor.users.update(Meteor.userId(),{$set:{'profile.defaultEditor':'simpleEditor'}})
+      navigator.notification.alert('切换后仅对新建文章生效，此前创建的文章将保持原有模式。',()->
+      '已切换到 简易模式','我知道了')
+    'click #fullEditor':->
+      Meteor.users.update(Meteor.userId(),{$set:{'profile.defaultEditor':'fullEditor'}})
+      navigator.notification.alert('切换后仅对新建文章生效，此前创建的文章将保持原有模式。',()->
+      '已切换到 经典模式','我知道了')

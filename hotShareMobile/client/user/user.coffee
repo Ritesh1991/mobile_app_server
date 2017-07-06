@@ -62,6 +62,15 @@ if Meteor.isClient
             Session.set('myCounterCollection','loaded')
         })
   Template.user.helpers
+    enableSimpleEditor: ->
+      if enableSimpleEditor
+        return true
+      else
+        return false
+    showEditorTip:->
+      if localStorage.getItem('hideEditorTip') isnt 'true' and Session.get('showEditorTip') is 'true'
+        return true
+      return false
     withQRTips:->
       return withQRTips
     isLoading:->
