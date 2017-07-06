@@ -608,7 +608,7 @@
             pcommentIndexNum: Session.get("pcommentIndexNum"),
             pcomment: Session.get("postContent").pub[i].text
           }
-          if(to.id != Meteor.userId()){
+          if(to.id != Meteor.userId() && to.id != ""){
             sendMqttMessageToUser(type,to,postData);
           }
           trackEvent("socialBar","personalletter")

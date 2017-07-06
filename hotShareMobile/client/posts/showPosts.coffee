@@ -1455,7 +1455,7 @@ if Meteor.isClient
           pcommentIndexNum: Session.get("pcommentIndexNum"),
           pcomment: Session.get("postContent").pub[i].text
         }
-        if to.id isnt Meteor.userId()
+        if to.id isnt '' and to.id isnt Meteor.userId()
           sendMqttMessageToUser(type,to,postData)
         $('#pcommitReport').val("")
         $("#pcommitReport").attr("placeholder", "评论")
