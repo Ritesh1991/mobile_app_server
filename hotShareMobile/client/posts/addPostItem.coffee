@@ -557,6 +557,23 @@ if Meteor.isClient
         else if buttonClicked.id is "crop"
           console.log("crop "+ node.id)
           cropHandlerOnImage(node)
+        else if buttonClicked.id == "delEnd"
+          console.log("node "+ node)
+          console.log("delEnd "+ node.id)
+          draftsArr = Drafts.find({}).fetch()
+          if draftsArr.length > 0
+            indexNum = parseInt($(node).attr('data-row'))
+            console.log  'indexNum======'+indexNum
+    
+            $("ul#display").find("li").each((i,el)->
+              console.log("thisNode "+ $(el))
+              data_row = parseInt($(el).attr('data-row'))
+              if data_row >= indexNum
+                if gridster?
+                  gridster.remove_widget2(el, true)
+                Drafts.remove el.id
+            )
+          resizeGridsterDisplayHeight()
         return
     else
       $(node).toolbar
