@@ -356,6 +356,7 @@ if(Meteor.isCordova){
     */
     WebUserMessages.find({}, {create_time: -1}).observeChanges({
       added: function(id, fields){
+        fields._id = id;
         // 模拟 mqtt 消息，以便按原流程处理
         onMessageArrived({
           destinationName: '/t/msg/' + (fields.to_type === 'user' ? 'u' : 'g') + '/' + fields.to.id,
