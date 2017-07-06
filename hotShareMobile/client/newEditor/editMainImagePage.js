@@ -1,4 +1,14 @@
-
+function base64ToGallerycallback (imageURI){
+  var timestamp = new Date().getTime();
+  var retVal = {filename:'', URI:'', smallImage:''};
+  retVal.filename = Meteor.userId()+'_'+timestamp+ '_'+imageURI.replace(/^.*[\\\/]/, '');
+  retVal.URI = imageURI;
+  console.log('image uri is ' + imageURI);
+  retVal.smallImage = 'cdvfile://localhost/temporary/' + imageURI.replace(/^.*[\\\/]/, '');
+  $('.mainImage').attr('data-imgurl',retVal.smallImage);
+  $('.mainImage').attr('data-filename',retVal.filename);
+  $('.mainImage').attr('data-uri',retVal.URI);
+}
 Template.eidtMainImagePage.onRendered(function(){
 
   // $('.mainImagesList').css('min-height',$(window).height());
@@ -119,6 +129,25 @@ Template.eidtMainImagePage.events({
         $('.mainImage').attr('data-uri',URI);
         $('.mainImagesList').remove()
         document.body.style = "";
+        
+        // Meteor.setTimeout(function(){
+        window.imageSaver.saveBase64Image({
+          data: mainImgUrl,
+          prefix: 'tiegushi_',
+          format: 'JPG',
+          quality: 80,
+          mediaScanner: false
+        }, function(filePath){
+          console.log('saved base64 path:'+ filePath);
+          base64ToGallerycallback(filePath);
+          var saveedBase64Images = Session.get('saveedBase64Images') || [];
+          saveedBase64Images.push({URI:filePath,imgUrl:''});
+          Session.set('saveedBase64Images',saveedBase64Images);
+        },function(msg){
+          console.log('saved base64 error:'+ msg);
+        });
+        
+        // },500);
     },
     'click .mainImageListInput' : function(e){
         

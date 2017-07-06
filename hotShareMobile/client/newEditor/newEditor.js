@@ -423,6 +423,11 @@ Template.newEditor.events({
           }
         });
         removeImagesFromCache(draftImageData);
+        if(Session.get('saveedBase64Images') && Session.get('saveedBase64Images').length > 0){
+          var imgPreRemoveLists = Session.get('saveedBase64Images');
+          removeImagesFromCache(imgPreRemoveLists);
+          Session.set('saveedBase64Images',null);
+        }
         publishPost();
       });
     }
