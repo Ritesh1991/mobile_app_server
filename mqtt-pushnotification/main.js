@@ -260,9 +260,9 @@ function sendNotification(message, toUserId ,type, cb) {
     }
     else {
       // web 用户
-      if (projectName && projectName == 't' && toUser && toUser.profile && toUser.profile.browser && !toUser.token){
+      if (projectName && projectName == 't' && !message.ttl && toUser && toUser.profile && toUser.profile.browser && !toUser.token){
         try{
-        message._id = new ObjectId().toString();
+        // message._id = new ObjectId().toString();
         webUserMessages.insert(message, function(err,result){
           try{
           if (err)
