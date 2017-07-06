@@ -1,5 +1,6 @@
 postPageArr = []
-pages = ['/user', '/bell', '/search']
+newBell = '/simple-chat/user-list/'+Meteor.userId()
+pages = ['/user', newBell, '/search']
 
 #公共函数
 @PUB =
@@ -32,7 +33,7 @@ pages = ['/user', '/bell', '/search']
         if history is undefined or history is ""
             history = new Array()
         #footerPages = ['/home', '/search', '/addPost', '/bell', '/user']
-        footerPages = ['home', 'search', 'addPost', 'bell', 'user']
+        footerPages = ['home', 'search', 'addPost', newBell, 'user']
         #if current view is one of footer pages, and record the position of these pages
         for page in footerPages
             if view is page                
