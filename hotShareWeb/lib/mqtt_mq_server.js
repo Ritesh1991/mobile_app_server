@@ -135,8 +135,13 @@ if(Meteor.isServer){
           },
           wMsgRead:function(id){
             // 暂时没做校验/检查
-            WebUserMessages.remove({_id:id})
-          }
+            var msg = WebUserMessages.findOne({_id:id});
+            if (msg) {
+                var user = msg.to.id;
+                Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': 0}});
+                WebUserMessages.remove({_id:id});
+            }
+        }
         });
     })
 

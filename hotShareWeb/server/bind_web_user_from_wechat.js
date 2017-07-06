@@ -28,7 +28,8 @@ if (Meteor.isServer) {
           //clone message to associated appuser
           var msg = WebWaitReadMsg.findOne({_id: webUser._id});
           if(!msg)
-            return {result: false, message: '此二维码已经绑定过了！'};
+            msg = {};
+            // return {result: false, message: '此二维码已经绑定过了！'};
 
           //check relationship
           var pre_webAssociated = (webUser.profile.associated) ? webUser.profile.associated : [];
