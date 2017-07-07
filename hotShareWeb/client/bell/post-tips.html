@@ -1,7 +1,7 @@
 <template name="bellPostTips">
   {{#if hasNew}}
   {{#if isIOS_UniversalLink}}
-  <a class="show-post-new-message bell_a">
+  <a class="show-post-new-message bell_a" href="{{universalLink}}">
     <div class="msg-box" data-clipboard-text="{{msgBoxClipboard}}">
       <!--<div class="icon"><img src="{{lsatFeed.ownerIcon}}" /></div>
       <div class="tips">您有新的消息</div>-->

@@ -98,6 +98,10 @@ Template.bellPostTips.helpers({
   },
   isIOS_UniversalLink:function(){
     return isIOS && withEnableUniversalLink;
+  },
+  universalLink:function(){
+    var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
+    return link;
   }
 });
 
@@ -131,8 +135,8 @@ onMsgBoxClient = function(isSuccess, touserId, p, postid){
 
 Template.bellPostTips.onRendered(function(){
   var clipboard = new Clipboard('.msg-box');
-  var link = 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
-  $('.bell_a').attr('href',link);
+  //$('.bell_a').attr('href',link);
+
 
   clipboard.on('success', function(e) {
     console.log('Action:', e.action);
