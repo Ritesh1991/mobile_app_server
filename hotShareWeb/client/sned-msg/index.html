@@ -6,7 +6,11 @@
     </div>
     <div class="input-box">
       <textarea rows="6" placeholder="请输入要发送给对方的内容"></textarea>
+      {{#if isIOS_UniversalLink}}
+      <a href="{{openAppUrl id}}"><div class="send-btn" data-clipboard-text="{{msgBoxClipboard id}}">发送</div></a>
+      {{else}}
       <div class="send-btn" data-clipboard-text="{{msgBoxClipboard id}}">发送</div>
+      {{/if}}
     </div>
   </div>
 </template>
