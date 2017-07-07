@@ -1,3 +1,37 @@
+var checkoutQRCode = function(){
+  console.log('clipboard check...');
+  withQRTips && Meteor.isCordova && cordova.plugins.clipboard.paste(function (text) {
+    console.log('clipboard text:', text);
+    try{
+      if (!(text.startsWith('http://') || text.startsWith('https://')))
+        return;
+
+      var uri = new URL(text);
+      if (uri.pathname.toLowerCase() != '/restapi/webuser-qrcode')
+        return;
+      
+      var queryStr = (uri.search && uri.search.length > 0 ? uri.search.substr(1) : '').split('&');
+      var query = [];
+      for(var i=0;i<queryStr.length;i++)
+        query[queryStr[i].split('=')[0]] = decodeURIComponent(queryStr[i].split('=')[1]);
+      if (!query['userId'] || !query['p'])
+        return;
+
+      // 替换剪贴板内容
+      cordova.plugins.clipboard.copy('');
+
+      if (Session.get('fromUniversalLink') === true){
+        return;
+      }
+
+      navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
+        if (index === 2)
+          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
+      }, '提示', ['取消', '绑定']);
+    }catch(e){console.log('cordova.plugins.clipboard.paste err:', e)}
+  });
+};
+
 Template.registerHelper('isIOS',function(){
   return ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 });
@@ -211,6 +245,8 @@ if (Meteor.isCordova) {
                   }, function() {});
                   window.plugins.shareExtension.emptyData(function(result) {}, function(err) {});
                 }
+
+                checkoutQRCode();
             }
         }
 
@@ -333,43 +369,14 @@ if (Meteor.isCordova) {
 
 if (Meteor.isClient) {
   Session.set("DocumentTitle",'故事贴');
+
   Deps.autorun(function(){
     if(Meteor.userId()){
       Meteor.subscribe("topics");
       //Meteor.subscribe("topicposts");
       // getHotPostsData();
 
-      console.log('clipboard check...');
-      withQRTips && Meteor.isCordova && cordova.plugins.clipboard.paste(function (text) {
-        console.log('clipboard text:', text);
-        try{
-          if (!(text.startsWith('http://') || text.startsWith('https://')))
-            return;
-
-          var uri = new URL(text);
-          if (uri.pathname.toLowerCase() != '/restapi/webuser-qrcode')
-            return;
-          
-          var queryStr = (uri.search && uri.search.length > 0 ? uri.search.substr(1) : '').split('&');
-          var query = [];
-          for(var i=0;i<queryStr.length;i++)
-            query[queryStr[i].split('=')[0]] = decodeURIComponent(queryStr[i].split('=')[1]);
-          if (!query['userId'] || !query['p'])
-            return;
-
-          // 替换剪贴板内容
-          cordova.plugins.clipboard.copy('');
-
-          if (Session.get('fromUniversalLink') === true){
-            return;
-          }
-
-          navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
-            if (index === 2)
-              bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
-          }, '提示', ['取消', '绑定']);
-        }catch(e){console.log('cordova.plugins.clipboard.paste err:', e)}
-      });
+      checkoutQRCode();
     }
     document.title = Session.get("DocumentTitle");
   });

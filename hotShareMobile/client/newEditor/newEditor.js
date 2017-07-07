@@ -48,6 +48,7 @@ Template.newEditor.onRendered(function(){
     }
 
     Template.progressBar.__helpers.get('show')();
+    Session.set('newEditorFormURL',post.fromUrl);
     Session.set('newEditorMainImage', {
       _id: new Mongo.ObjectID()._str,
       imgUrl: post.mainImage,
@@ -260,10 +261,16 @@ Template.newEditor.events({
         commentsCount: 0,
         publish: true,
         isReview: false,
-        fromUrl: titleImg,
+        // fromUrl: titleImg,
         pub: pub,
         editorVersion: 'simpleEditor'
       };
+
+      var fromUrl = Session.get('newEditorFormURL');
+      if(fromUrl){
+        post.fromUrl = fromUrl;
+      }
+      Session.set('newEditorFormURL',null);
       console.log('post:', post);
 
       var updatePost = function(){

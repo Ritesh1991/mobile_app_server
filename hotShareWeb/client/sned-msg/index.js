@@ -79,6 +79,12 @@ Template._sendMsg.events({
 
 Template._sendMsg.helpers({
   msgBoxClipboard: function(to){
-    return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId=';
+    return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId='+Session.get('postContent')._id;
+  },
+  openAppUrl: function(to){
+    return 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId='+Session.get('postContent')._id;
+  },
+  isIOS_UniversalLink:function(){
+    return isIOS && withEnableUniversalLink;
   }
 });

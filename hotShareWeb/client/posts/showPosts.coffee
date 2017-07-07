@@ -1,5 +1,6 @@
 if Meteor.isClient
-  @isIOS = (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false)
+  @isIOS = if navigator.userAgent.match(/(iPad|iPhone|iPod)/g) then true else false
+
   @isWeiXinFunc = ()->
     ua = window.navigator.userAgent.toLowerCase()
     M = ua.match(/MicroMessenger/i)

@@ -244,6 +244,7 @@ if Meteor.isClient
     'click #album-select':(e)->
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
+      Session.set('newEditorFormURL',null)
       if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
         PUB.page '/newEditor'
       else
@@ -320,6 +321,7 @@ if Meteor.isClient
     'click #photo-select':(e)->
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
+      Session.set('newEditorFormURL',inputUrl)
       if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
         prepareToEditorMode()
         PUB.page '/newEditor'
@@ -398,6 +400,7 @@ if Meteor.isClient
         if matchArray[0].indexOf('http') is -1
           importLink = "http://"+matchArray[0]
         Meteor.setTimeout(()->
+          Session.set('newEditorFormURL',importLink)
           if e.currentTarget.id is 'serverImport'
             Session.set 'isServerImport', true
             handleDirectLinkImport(importLink)
