@@ -62,13 +62,13 @@ Sortable._create = function(el, options){
         var $elm = $(elm);
         data = Blaze.getData(elm);
         
-        var text = $elm.find('.text').text();
-        var html = $elm.find('.text').html();
+        //var text = $elm.find('.text').text();
+        //var html = $elm.find('.text').html();
+        var text = $elm.find('.text').html();
 
         switch(data.type){
           case 'text':
             data.text = text;
-            data.html = html;
             result.push(data);
             break;
           case 'image':
@@ -94,14 +94,13 @@ Sortable._create = function(el, options){
             break;
         }
 
-        if(data.type != 'text' && html && text){
+        if(data.type != 'text' && text){
           result.push({
             _id: new Mongo.ObjectID()._str,
             pid: data.pid,
             type: "text",
             isImage: false,
-            text: text,
-            html: html
+            text: text
           });
         }
       }

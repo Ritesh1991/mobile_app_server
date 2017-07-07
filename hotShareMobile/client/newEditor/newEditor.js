@@ -82,10 +82,12 @@ Template.newEditor.onRendered(function(){
       var next = i+1 < post.pub.length ? post.pub[i+1] : null;
       if (next && next.pid === post.pub[i].pid && post.pub[i].pid){
         post.pub[i].html = next.html || next.text;
+        post.pub[i].text = next.text;
         sortable.add(post.pub[i]);
         i += 2;
       } else {
         post.pub[i].html = post.pub[i].html || post.pub[i].text
+        post.pub[i].text = post.pub[i].text
         sortable.add(post.pub[i]);
         i += 1;
       }
