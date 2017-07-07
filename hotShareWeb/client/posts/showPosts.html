@@ -345,7 +345,7 @@
          $('.sendAuthorEmail,.authorEmailAlertBackground').hide();
        }
        function showUserProfile(){
-          console.log 'click user dashboard'
+          console.log('click user dashboard')
           Session.set("ProfileUserId1", this.owner)
           Session.set("currentPageIndex",-1)
           Meteor.subscribe("userinfo", this.owner)
