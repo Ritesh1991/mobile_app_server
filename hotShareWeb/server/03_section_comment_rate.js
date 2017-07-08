@@ -169,7 +169,7 @@ if (Meteor.isServer){
                             pushnotification("palsocommentReply", doc, data.commentUserId);
                         }
                     }
-                    return  
+                    return
                 }
                 if(needRemove){
                     //console.log('need remove '+needRemove)
@@ -201,65 +201,50 @@ if (Meteor.isServer){
                                 set_notifiedUsersId.push(data.commentUserId);
                                 sendEmailToSubscriber(ptype, pindex, doc._id, userId, data.commentUserId);
                             }
-                            /*var pfeeds = Feeds.findOne({
-                                owner: userId,
-                                followby: data.commentUserId,
-                                checked: false,
-                                postId: data.postId,
-                                pindex: pindex
-                            });
-                            if (pfeeds || needRemove) {
-                                console.log("==================already have feed==========");
-                                if (pfeeds && needRemove)
-                                    Feeds.remove(pfeeds);
-                            } else {*/
-                                if (userinfo) {
-                                    Feeds.insert({
-                                        owner: userId,
-                                        ownerName: userinfo.profile.fullname ? userinfo.profile.fullname : userinfo.username,
-                                        ownerIcon: userinfo.profile.icon,
-                                        eventType: 'pcomment',
-                                        subType: ptype,
-                                        commentMsg: commentMsg?commentMsg:'',
-                                        postId: data.postId,
-                                        postTitle: doc.title,
-                                        addontitle: doc.addontitle,
-                                        pindex: pindex,
-                                        pindexText: pindex && pindex >= 0 ? doc.pub[pindex].text : '',
-                                        meComment: PComments.find({commentUserId:data.commentUserId,postId:doc._id,pindex:pindex}).count() > 0,//我是否点评过此段落
-                                        mainImage: doc.mainImage,
-                                        createdAt: new Date(),
-                                        heart: 0,
-                                        retweet: 0,
-                                        comment: 0,
-                                        followby: data.commentUserId,
-                                        checked: false
-                                    });
-                                    var notifyUser = Meteor.users.findOne({_id: data.commentUserId})
-                                    var waitReadCount = notifyUser.profile.waitReadCount;
-                                    var broswerUser = notifyUser.profile.browser;
-                                    if(broswerUser === undefined || isNaN(broswerUser)){
-                                        broswerUser = false;
-                                    }
-                                    if (waitReadCount === undefined || isNaN(waitReadCount)) {
-                                        waitReadCount = 0;
-                                    }
-                                    if(broswerUser === false)
-                                    {
-                                        Meteor.users.update({_id: data.commentUserId}, {$set: {'profile.waitReadCount': waitReadCount + 1}});
-                                        pushnotification("palsocomment", doc, data.commentUserId);
-                                    }
+                            if (userinfo) {
+                                Feeds.insert({
+                                    owner: userId,
+                                    ownerName: userinfo.profile.fullname ? userinfo.profile.fullname : userinfo.username,
+                                    ownerIcon: userinfo.profile.icon,
+                                    eventType: 'pcomment',
+                                    subType: ptype,
+                                    commentMsg: commentMsg?commentMsg:'',
+                                    postId: data.postId,
+                                    postTitle: doc.title,
+                                    addontitle: doc.addontitle,
+                                    pindex: pindex,
+                                    pindexText: pindex && pindex >= 0 ? doc.pub[pindex].text : '',
+                                    meComment: PComments.find({commentUserId:data.commentUserId,postId:doc._id,pindex:pindex}).count() > 0,//我是否点评过此段落
+                                    mainImage: doc.mainImage,
+                                    createdAt: new Date(),
+                                    heart: 0,
+                                    retweet: 0,
+                                    comment: 0,
+                                    followby: data.commentUserId,
+                                    checked: false
+                                });
+                                var notifyUser = Meteor.users.findOne({_id: data.commentUserId})
+                                var waitReadCount = notifyUser.profile.waitReadCount;
+                                var broswerUser = notifyUser.profile.browser;
+                                if(broswerUser === undefined || isNaN(broswerUser)){
+                                    broswerUser = false;
                                 }
-                            //}
+                                if (waitReadCount === undefined || isNaN(waitReadCount)) {
+                                    waitReadCount = 0;
+                                }
+                                if(broswerUser === false)
+                                {
+                                    Meteor.users.update({_id: data.commentUserId}, {$set: {'profile.waitReadCount': waitReadCount + 1}});
+                                    pushnotification("palsocomment", doc, data.commentUserId);
+                                }
+                            }
                         }
                         //别人赞了你评论的帖子
                         if(doc.pub[pindex].likeUserId && (Object.keys(doc.pub[pindex].likeUserId)).length > 0) {
                             (Object.keys(doc.pub[pindex].likeUserId)).forEach(function(likeUserId) {
-                                //if(doc.pub[pindex].likeUserId !== userId && doc.pub[pindex].likeUserId !== doc.owner) {
                                 if(likeUserId !== userId && likeUserId !== doc.owner) {
                                     var pfeeds = Feeds.findOne({
                                         owner: userId,
-                                        //followby: doc.pub[pindex].likeUserId,
                                         followby: likeUserId,
                                         checked: false,
                                         postId: data.postId,
@@ -291,7 +276,6 @@ if (Meteor.isServer){
                                                 followby: likeUserId,
                                                 checked: false
                                             });
-                                            //var notifyThumbhandUpUser = Meteor.users.findOne({_id: doc.pub[pindex].likeUserId})
                                             var notifyThumbhandUpUser = Meteor.users.findOne({_id: likeUserId})
                                             var waitThumbhandUpReadCount = notifyThumbhandUpUser.profile.waitReadCount;
                                             var broswerThumbhandUpUser = notifyThumbhandUpUser.profile.browser;
@@ -303,7 +287,6 @@ if (Meteor.isServer){
                                             }
                                             if(notifyThumbhandUpUser === false)
                                             {
-                                                //Meteor.users.update({_id: doc.pub[pindex].likeUserId}, {$set: {'profile.waitReadCount': waitReadCount + 1}});
                                                 Meteor.users.update({_id: likeUserId}, {$set: {'profile.waitReadCount': waitReadCount + 1}});
                                                 pushnotification("palsofavourite", doc, likeUserId);
                                             }
