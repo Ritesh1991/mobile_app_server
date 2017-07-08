@@ -109,7 +109,7 @@ if Meteor.isClient
             toUsername = pcomments[selectedIndex].username
             placeHolderText = '回复'+toUsername+':'
      return placeHolderText
-  
+
   # Template.postItem.onRendered ()->
   #   if this.data.type is 'music' and !window._music
   #     window._music = this.data.musicInfo.playUrl
@@ -185,7 +185,7 @@ if Meteor.isClient
         name: postData.ownerName,
         icon: postData.ownerIcon,
         pcommentIndexNum: i,
-        pcomment: Session.get("postContent").pub[i].text
+        pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
       }
       trackEvent("socialBar","personalletter")
       likeUserId = postData.pub[i].likeUserId
@@ -205,7 +205,7 @@ if Meteor.isClient
         name: postData.ownerName,
         icon: postData.ownerIcon,
         pcommentIndexNum: i,
-        pcomment: Session.get("postContent").pub[i].text
+        pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
       }
       trackEvent("socialBar","personalletter")
       dislikeUserId = postData.pub[i].dislikeUserId
@@ -469,7 +469,7 @@ if Meteor.isClient
         return true
       else
         return false
-      
+
     pdislike:->
       if this.dislikeSum is undefined
         0

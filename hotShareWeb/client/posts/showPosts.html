@@ -87,7 +87,7 @@
                   </div>
               </div>
           {{/if}}
-        
+
         {{#if showImporting}}
         <div class="importing">故事贴中的图片正在处理中，完成后此消息会消失...</div>
         {{/if}}
@@ -108,7 +108,7 @@
         </div>
 
         {{> bellPostTips}}
-        
+
         <!--{{#if has_msgs msgs_count}}
         <div class="show-post-new-message">
           <div class="msg-box">
@@ -119,7 +119,7 @@
         {{/if}}-->
         {{#if pinImages}}
         <div class="pinImagesContent">
-          <ul class="clearfix"> 
+          <ul class="clearfix">
             {{#each pinImages.images}}
             <li style="{{pinImageStyle pinImages.images}}"><img class="pinImage" src="{{imgUrl}}" width="100%"/></li>
             {{/each}}
@@ -129,12 +129,12 @@
             <i class="fa fa-thumbs-up pinthumbsUp" style="color:red;font-size: larger;">{{pinImglike}}&nbsp;&nbsp;</i>
             {{else}}
             <i class="fa fa-thumbs-o-up pinthumbsUp" style="font-size: small;">{{pinImglike}}&nbsp;&nbsp;</i>
-            {{/if}} 
+            {{/if}}
             {{#if pinImgselfClickedDown}}
             <i class="fa fa-thumbs-down pinthumbsDown" style="color:blue;font-size: small;">{{pinImgdislike}}&nbsp;&nbsp;</i>
             {{else}}
               <i class="fa fa-thumbs-o-down pinthumbsDown" style="font-size: small;">{{pinImgdislike}}&nbsp;&nbsp;</i>
-            {{/if}} 
+            {{/if}}
             <!--<i class="fa fa-commenting-o pcomments" style="font-size: larger; padding: 0 4px;"></i>-->
           </div>
         </div>
@@ -297,7 +297,7 @@
   {{#if hiddenChatLoad}}
     <iframe src='{{chatUrl}}' style="width:0;height:0;border:0; border:none;"></iframe>
   {{/if}}-->
-  
+
   <div class="shareReaderClubBackground"></div>
   <div class="shareReaderClub">
     <div class="reader-club-head">
@@ -498,7 +498,7 @@
          $(window).scrollTop(0-Session.get('backgroundTop'));
          $('.pcommentInput,.newalertBackground').remove();
          Session.set('backgroundTop','');
-         
+
          var postItem = $('.post-pcomment-current-pub-item');
          console.log(postItem);
          postItem.removeClass('post-pcomment-current-pub-item');
@@ -593,7 +593,7 @@
                 }catch (ex){}
               });
               postItem.removeClass('post-pcomment-current-pub-item');
-          
+
               return console.log("success");
             }
           });
@@ -601,12 +601,12 @@
           var postData = Session.get('postContent');
           var pcommentContent = content;
           var to = {
-            id: toUserId,
-            name: toUsername,
+            id: toUserId || postData.owner,
+            name: toUsername || postData.ownerName,
             icon: postData.ownerIcon,
             pcommentContent: pcommentContent,
             pcommentIndexNum: Session.get("pcommentIndexNum"),
-            pcomment: Session.get("postContent").pub[i].text
+            pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
           }
           if(to.id != Meteor.userId() && to.id != ""){
             sendMqttMessageToUser(type,to,postData);

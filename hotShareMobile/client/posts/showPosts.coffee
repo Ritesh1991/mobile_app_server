@@ -1368,7 +1368,7 @@ if Meteor.isClient
         postId = Session.get("postContent")._id
         post = Session.get("postContent").pub
         ###
-        mqtt_msg = {"type": "postcomment", "message": " 评论了此段 \"" + Session.get("postContent").pub[i].text + '": ' + content, "postid": Session.get('postContent')._id}
+        mqtt_msg = {"type": "postcomment", "message": " 评论了此段 \"" + Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '') + '": ' + content, "postid": Session.get('postContent')._id}
         mqtt_msg.message = Meteor.user().profile.fullname + mqtt_msg.message
         mqtt_connection=mqtt.connect('ws://rpcserver.raidcdn.com:80')
         mqtt_connection.on('connect',()->
@@ -1457,12 +1457,12 @@ if Meteor.isClient
         postData = Session.get('postContent')
         pcommentContent = content
         to = {
-          id: toUserId,
-          name: toUsername,
+          id: toUserId || postData.owner,
+          name: toUsername || postData.ownerName,
           icon: postData.ownerIcon,
           pcommentContent: pcommentContent,
           pcommentIndexNum: Session.get("pcommentIndexNum"),
-          pcomment: Session.get("postContent").pub[i].text
+          pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
         }
         if to.id isnt '' and to.id isnt Meteor.userId()
           sendMqttMessageToUser(type,to,postData)
@@ -1574,7 +1574,7 @@ if Meteor.isClient
           if pub[i].isHyperlink
             text = pub[i].hyperlinkText
           else
-            text = pub[i].text
+            text = pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
         if text? and text isnt ''
           break
       return text

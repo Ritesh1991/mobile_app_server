@@ -417,7 +417,7 @@ if Meteor.isClient
       latestSeries = post.latestSeries
       if latestSeries.seriesImage
         return latestSeries.seriesImage
-      else 
+      else
         return post.mainImage
     showPostGroupChatIntro:->
       return !localStorage.getItem('postGroupChatIntro')
@@ -1022,7 +1022,7 @@ if Meteor.isClient
         x = parseInt($(image).css('left'))
         y = parseInt($(image).css('top'))
         href = $(image).children('img').attr('data-original')
-        swipedataSort.push 
+        swipedataSort.push
           x: x
           y: y
           href: href
@@ -1549,7 +1549,7 @@ if Meteor.isClient
             if pub[i].isHyperlink
               text = pub[i].hyperlinkText
             else
-              text = pub[i].text
+              text = pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
           if text? and text isnt ''
             break
         return text
@@ -1694,22 +1694,22 @@ if Meteor.isClient
         postId = post._id
         pinImages = post.pinImages
         userId = Meteor.userId()
-        
+
         if pinImages.likeUserId[userId] and pinImages.likeUserId[userId] is true
           pinImages.likeUserId[userId] = false
           if pinImages.likeSum > 0
-            pinImages.likeSum -= 1 
+            pinImages.likeSum -= 1
             e.target.className="fa fa-thumbs-o-up pinthumbsUp"
             e.target.style = ""
         else
           if pinImages.dislikeUserId[userId] and pinImages.dislikeUserId[userId] is true
             pinImages.dislikeUserId[userId] = false
             if pinImages.dislikeSum > 0
-              pinImages.dislikeSum -= 1 
+              pinImages.dislikeSum -= 1
               $('.pinthumbsDown')[0].className = "fa fa-thumbs-o-down pinthumbsDown"
               $('.pinthumbsDown')[0].style = ""
           pinImages.likeUserId[userId] = true
-          pinImages.likeSum += 1 
+          pinImages.likeSum += 1
           e.target.className="fa fa-thumbs-up pinthumbsUp"
           e.target.style.color="rgb(243,11,68)"
           e.target.style.fontSize="larger"
@@ -1735,7 +1735,7 @@ if Meteor.isClient
           if (favp = FavouritePosts.findOne({postId: postId, userId: userId}))
             FavouritePosts.update({_id: favp._id}, {$set: {updateAt: new Date()}})
           else
-            FavouritePosts.insert({postId: postId, userId: userId, createdAt: new Date(), updateAt: new Date()}) 
+            FavouritePosts.insert({postId: postId, userId: userId, createdAt: new Date(), updateAt: new Date()})
       'click .pinthumbsDown':(e)->
         post = Session.get("postContent")
         postId = post._id
@@ -1745,18 +1745,18 @@ if Meteor.isClient
         if pinImages.dislikeUserId[userId] and pinImages.dislikeUserId[userId] is true
           pinImages.dislikeUserId[userId] = false
           if pinImages.dislikeSum > 0
-            pinImages.dislikeSum -= 1 
+            pinImages.dislikeSum -= 1
             e.target.className="fa fa-thumbs-o-down pinthumbsDown"
             e.target.style = ""
         else
           if pinImages.likeUserId[userId] and pinImages.likeUserId[userId] is true
             pinImages.likeUserId[userId] = false
             if pinImages.likeSum > 0
-              pinImages.likeSum -= 1 
+              pinImages.likeSum -= 1
               $('.pinthumbsUp')[0].className = "fa fa-thumbs-o-up pinthumbsUp"
               $('.pinthumbsUp')[0].style = ""
           pinImages.dislikeUserId[userId] = true
-          pinImages.dislikeSum += 1 
+          pinImages.dislikeSum += 1
           e.target.className="fa fa-thumbs-down pinthumbsDown"
           e.target.style.color="rgb(0,0,255)"
 

@@ -221,7 +221,7 @@ if Meteor.isClient
         name: postData.ownerName,
         icon: postData.ownerIcon,
         pcommentIndexNum: i,
-        pcomment: postData.pub[i].text
+        pcomment: postData.pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
       }
       likeUserId = postData.pub[i].likeUserId
       userId = Meteor.userId()
@@ -239,7 +239,7 @@ if Meteor.isClient
         name: postData.ownerName,
         icon: postData.ownerIcon,
         pcommentIndexNum: i,
-        pcomment: Session.get("postContent").pub[i].text
+        pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
       }
       dislikeUserId = postData.pub[i].dislikeUserId
       userId = Meteor.userId()
