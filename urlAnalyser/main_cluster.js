@@ -869,7 +869,7 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
           var new_post = {import_status: 'imported', publish: true};
 
           // 用户没有修改标题图片
-          if (post.mainImage && old_post.mainImage === 'http://data.tiegushi.com/res/defaultMainImage1.jpg')
+          if (post.mainImage && ((old_post.mainImage && old_post.mainImage.startsWith('http://data.tiegushi.com/res/defaultMainImage')) || !old_post.mainImage))
             new_post.mainImage = post.mainImage;
           if (post.createdAt)
             new_post.createdAt = new Date(post.createdAt);
@@ -1382,6 +1382,7 @@ function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVe
                             }
 
                             var postObj = draftsObj.getPubObject(result);
+                            // todo:
                             updatePosts3(postId, postObj, unique_id, function(err3, number){
                                 if (Task.isCancel(unique_id, true)) {
                                     console.log("importUrl: cancel - 5.");

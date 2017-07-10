@@ -252,7 +252,7 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
                 return res.end(JSON.stringify({result: 'failed'}));
 
               // 用户没有修改标题图片
-              if (req_data.mainImage && post.mainImage === 'http://data.tiegushi.com/res/defaultMainImage1.jpg')
+              if (req_data.mainImage && ((post.mainImage && post.mainImage.startsWith('http://data.tiegushi.com/res/defaultMainImage')) || !post.mainImage))
                 new_post.mainImage = req_data.mainImage;
               if (req_data.createdAt)
                 new_post.createdAt = new Date(req_data.createdAt);
