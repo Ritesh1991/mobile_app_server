@@ -13,7 +13,7 @@ if (Meteor.isServer) {
         try {
           console.log('bind_web_user: userId=' + userId + ' touserId=' + touserId + ' p=' + p +' postId=' + postId + ' this.userId=' + this_userId)
           if ((!this_userId) || (!userId) || (!p) || (!postId)) {
-              return {result: false, message: '无效的二维码！'};
+              return {result: false, message: '无法完成关联用户代收消息操作,可能是二维码信息丢失引起的,请稍后再试试,如果需要,请联系故事贴小秘'};
           }
 
           var webUser = Meteor.users.findOne({_id: userId}, {fields:{profile:1, username: 1}});
@@ -22,7 +22,7 @@ if (Meteor.isServer) {
           //console.log('appUser=' + JSON.stringify(appUser))
           if(!(webUser && webUser.profile && appUser && appUser.profile)) {
               console.log('webUser or appUser not found')
-              return {result: false, message: '无效的二维码！'};
+              return {result: false, message: '无法完成关联用户代收消息操作,可能是二维码信息丢失引起的,请稍后再试试,如果需要,请联系故事贴小秘'};
           }
 
           //clone message to associated appuser
@@ -94,17 +94,22 @@ if (Meteor.isServer) {
           });
           Meteor.users.update({_id: webUser._id}, {$set: {'profile.waitReadMsgCount': 0}});
 
-          if(msg && msg._id)
-            WebWaitReadMsg.remove({_id: webUser._id});
+          try{
+            if(msg && msg._id){
+              WebWaitReadMsg.remove({_id: msg._id});
+            }
+          } catch(e){
+            console.log('WebWaitReadMsg.remove exception')
+          }
 
           if(alreadyAssociated)
-            return {result: false, message: '已经绑定过该用户！'};
+            return {result: false, message: '您曾经执行过相同操作,为了保护您的隐私,无法再次执行操作,若有需要,请联系故事贴小秘'};
 
           return {result: true, msg: msg.messages || []};
 
         } catch (error) {
           console.log('addTopicsAtReview ERR=', error)
-          return {result: false, message: '绑定失败！'};
+          return {result: false, message: '关联用户代收消息出了问题,请稍后再试或者联系故事贴小秘'};
         }
       }
     });
