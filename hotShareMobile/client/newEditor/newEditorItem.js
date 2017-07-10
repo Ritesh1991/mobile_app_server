@@ -82,6 +82,7 @@ Template.newEditorItem.events({
       html: html
     },
     function(content){
+      $(e.currentTarget).data('text',content.html)
       $(e.currentTarget).data('html',content.html)
       $(e.currentTarget).html(content.html);
     },function(error){
