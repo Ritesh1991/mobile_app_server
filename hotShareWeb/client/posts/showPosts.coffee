@@ -498,7 +498,10 @@ if Meteor.isClient
       window.screen.height * 0.5
     getAbstractSentence:->
       if Session.get('focusedIndex') isnt undefined
-        Session.get('postContent').pub[Session.get('focusedIndex')].text
+        if Session.get('postContent').pub[Session.get('focusedIndex')].html
+          Session.get('postContent').pub[Session.get('focusedIndex')].html
+        else
+          Session.get('postContent').pub[Session.get('focusedIndex')].text
       else
         null
     getAbstractSentenceIndex:->
