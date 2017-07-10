@@ -1302,6 +1302,9 @@ Template._simpleChatToChatItem.helpers({
   get_time: function(id){
     var data = list_data.get();
     return data[_.pluck(data, '_id').indexOf(id)].show_time_str;
+  },
+  withEnableHaveReadMsg: function(){
+    return withEnableHaveReadMsg;
   }
 });
 
