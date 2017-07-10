@@ -630,7 +630,8 @@ Template.newEditor.events({
     console.log('index;', pIndex);
     var options = {
         title: '您想要添加什么，请选择？',
-        buttonLabels: ['添加链接', '导入腾讯视频', '导入优酷视频', '导入美拍'],
+        // buttonLabels: ['添加链接', '导入腾讯视频', '导入优酷视频', '导入美拍'],
+        buttonLabels: ['导入腾讯视频', '导入优酷视频', '导入美拍'],
         addCancelButtonWithLabel: '取消',
         androidEnableCancelButton: true,
     }
@@ -638,14 +639,15 @@ Template.newEditor.events({
 
     window.plugins.actionsheet.show(options, function(index) {
       switch(index) {
+        // case 1:
+        //   console.log('addLink');
+        //   $('#show_hyperlink').attr('data-index',pIndex);
+        //   $('#show_hyperlink').show();
+        //   break;
         case 1:
-          console.log('addLink');
-          $('#show_hyperlink').attr('data-index',pIndex);
-          $('#show_hyperlink').show();
-          break;
         case 2:
         case 3:
-        case 4:
+        // case 4:
           navigator.notification.prompt('请输入要导入的视频URL地址!', function(result) {
             if(result.buttonIndex === 1 && result.input1){
               var regexToken = /\b(((http|https?)+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
