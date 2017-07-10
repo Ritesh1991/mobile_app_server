@@ -134,6 +134,11 @@ if (Meteor.isCordova) {
     document.addEventListener("deviceready", onDeviceReady, false);
     // PhoneGap加载完毕
     function onDeviceReady() {
+        Deps.autorun(function(){
+          if(Meteor.userId())
+            checkoutQRCode();
+        });
+
         // 按钮事件
         // console.log('<------- onDeviceReady ----->');
         checkShareExtension();
@@ -375,8 +380,6 @@ if (Meteor.isClient) {
       Meteor.subscribe("topics");
       //Meteor.subscribe("topicposts");
       // getHotPostsData();
-
-      checkoutQRCode();
     }
     document.title = Session.get("DocumentTitle");
   });
