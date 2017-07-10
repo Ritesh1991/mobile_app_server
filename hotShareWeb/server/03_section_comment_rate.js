@@ -392,7 +392,7 @@ if (Meteor.isServer){
                         //console.log("==================already have feed==========");
                         if(pfeeds && needRemove)
                             Feeds.remove(pfeeds);
-                    }else {
+                    }else if(withSectionRateToOwner){
                         if (userinfo) {
                             Feeds.insert({
                                 owner: userId,

@@ -43,3 +43,4 @@
 @enableSimpleEditor = true # true 启用新编辑器 false 不启用
 @withEnableHaveReadMsg = false #已读消息
 @withEnableUniversalLink = true #深度链接唤醒App
+@withSectionRateToOwner = true #点评消息更新到Feed里
