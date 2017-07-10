@@ -41,5 +41,5 @@
 @withQRTips = true
 @syncToNeo4jWithMqtt = false  #false->直接操作Neo4j true->mqttsync
 @enableSimpleEditor = true # true 启用新编辑器 false 不启用
-@withEnableHaveReadMsg = true #已读消息
+@withEnableHaveReadMsg = false #已读消息
 @withEnableUniversalLink = true #深度链接唤醒App
