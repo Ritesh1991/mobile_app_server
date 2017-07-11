@@ -54,7 +54,15 @@ if Meteor.isClient
         },{
           limit: 99
         }).count()
-        lists = SimpleChat.MsgSession.find({userId: Meteor.userId(),sessionType:'user'}).fetch()
+
+        user = Meteor.user()
+        ids =  []
+        if (user and user.profile and user.profile.associated)
+          ids = _.pluck(user.profile.associated, 'id')
+        ids.push(Meteor.userId())
+        lists = SimpleChat.MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}}).fetch()
+
+        # lists = SimpleChat.MsgSession.find({userId: Meteor.userId(),sessionType:'user'}).fetch()
         getLetterCounts = (item)->
           counts += item.count
         getLetterCounts item for item in lists
