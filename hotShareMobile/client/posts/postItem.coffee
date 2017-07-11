@@ -41,6 +41,15 @@ if Meteor.isClient
         userName: to.name
       }
       SimpleChat.MsgSession.insert doc
+  
+  @messageBasedOnPost = (type,desc,postData)->
+      to = {
+        id: postData.owner,
+        name: postData.ownerName,
+        icon: postData.ownerIcon,
+        pcomment: desc
+      }
+      sendMqttMessageToUser(type,to,postData)
   @sendMqttMessageToUser=(type,to,postData)->
     username = Meteor.user().profile.fullname || Meteor.user().username
     if type is 'thumbsUp'
@@ -49,11 +58,20 @@ if Meteor.isClient
     else if type is 'thumbsDown'
       to.isThumbsDown = true
       text = '我踩了你的文章《' + postData.title + '》哦~'
-    else
+    else if type is 'pcomments'
       to.isPcomments = true
       text = '我评论了你的文章《' + postData.title + '》中的段落'
       if to.pcommentContent
         text = '“' + to.pcommentContent + '”' + '\n' + "---- " + '我评论了你的文章《' + postData.title + '》中的段落'
+    else if type is 'timeline'
+      to.isLinkText = true
+      text = '文章不错,已转发到微信朋友圈 -- ' + postData.title
+    else if type is 'chat'
+      to.isLinkText = true
+      text = '文章不错,已转发到微信群聊 -- ' + postData.title
+    else if type is 'system'
+      to.isLinkText = true
+      text = '文章不错,已转发到手机应用 -- ' + postData.title
     to.isPostAbstract = true
     to.mainImage = postData.mainImage
     msg = {

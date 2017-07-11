@@ -410,6 +410,7 @@ shareTo = function(to,self,index){
 //                    shareToWXTimeLine("『故事贴』 "+ title,"『故事贴』 "+ title,result,url);
                     shareToWechatTimeLine( title, title,result,url);
                 }
+              messageBasedOnPost('timeline', title ,Session.get('postContent'))
             } else if (to ==='WXSession'){
                 if(description){
 //                    shareToWXSession("分享『故事贴』中的一段文字：",description,result,url);
@@ -420,6 +421,7 @@ shareTo = function(to,self,index){
                     shareToWechatSession(title,title,result,url);
 //                    shareToWXSession("分享『故事贴』中的一篇文章：",title,result,url);
                 }
+              messageBasedOnPost('chat', title ,Session.get('postContent'))
             } else if (to ==='System'){
                 if(description){
                     shareToSystem(title, description, result, url)
@@ -428,6 +430,7 @@ shareTo = function(to,self,index){
 //                    shareToSystem("『故事贴』 "+title, null, result, url)
                     shareToSystem(title, null, result, url)
                 }
+              messageBasedOnPost('system', title ,Session.get('postContent'))
             }
         } else {
             PUB.toast(TAPi18n.__("failToGetPicAndTryAgain"));
