@@ -100,7 +100,7 @@ Template.bellPostTips.helpers({
     return isIOS && withEnableUniversalLink;
   },
   universalLink:function(){
-    var link = universal_link_host + '/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=message&postId='+Session.get('postContent')._id;
+    var link = universal_link_host + '/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=post&postId='+Session.get('postContent')._id;
     return link;
   }
 });
