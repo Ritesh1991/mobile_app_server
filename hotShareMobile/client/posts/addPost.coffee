@@ -334,7 +334,7 @@ if Meteor.isClient
             newEditorImportPUB.push(item)
           Session.set('newEditorImportPUB',newEditorImportPUB)
           Session.set('importProcedure',100)
-          PUB.page '/newEditor'
+          Router.go '/newEditor'
         catch error
           console.log('error simpleEditor  import== '+error)
         return
