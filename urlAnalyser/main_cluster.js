@@ -851,6 +851,17 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
   post.import_status = 'imported';
   // post.req_ver = qVer || '1';
 
+  // 标题图
+  if(post.pub.length > 0){
+    for(var _i=0;_i<post.pub.length;_i++){
+      if(post.pub[_i].type === 'image' && post.pub[_i].imgUrl && post.pub[_i].imgUrl.startsWith('http://')){
+        post.mainImage = post.pub[_i].imgUrl;
+        break;
+      }
+    }
+  }
+  console.log('标题图：', post.mainImage);
+
   var url = hotshare_web+'/restapi/importPost/image/NOUSERID?v='+qVer;
   console.log("updateURL="+url+", postId="+postId);
   httppost(url, post, function(err, data){
@@ -869,7 +880,7 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
           var new_post = {import_status: 'imported', publish: true};
 
           // 用户没有修改标题图片
-          if (post.mainImage && ((old_post.mainImage && old_post.mainImage.startsWith('http://data.tiegushi.com/res/defaultMainImage')) || !old_post.mainImage))
+          if (post.mainImage )
             new_post.mainImage = post.mainImage;
           if (post.createdAt)
             new_post.createdAt = new Date(post.createdAt);
