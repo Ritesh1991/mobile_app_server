@@ -118,7 +118,7 @@ if Meteor.isClient
         name: followername,
         icon: @profile.icon
       }
-      sendMqttMessageToFollower(type,to,'刚刚关注了你')
+      #sendMqttMessageToFollower(type,to,'刚刚关注了你')
       addFollower(insertObj)
     'click .del':(e)->
       followerId = e.currentTarget.id
@@ -373,7 +373,7 @@ if Meteor.isClient
         name: followername,
         icon: @profile.icon
       }
-      sendMqttMessageToFollower(type,to,'刚刚关注了你')
+      #sendMqttMessageToFollower(type,to,'刚刚关注了你')
       addFollower(insertObj)
     'click .del':(e)->
       followerId = e.currentTarget.id

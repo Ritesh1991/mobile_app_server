@@ -184,7 +184,7 @@ if Meteor.isClient
         name: this.username,
         icon: this.userIcon
       }
-      sendMqttMessageToFollower(type,to,'刚刚关注了你')
+      #sendMqttMessageToFollower(type,to,'刚刚关注了你')
       addFollower(insertObj)
     'click .meet_letter_btn':(e)->
       e.stopPropagation()
