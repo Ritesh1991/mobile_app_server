@@ -813,12 +813,55 @@ if Meteor.isClient
         PUB.toast('快速导入失败啦，请尝试高级导入吧。')
         Router.go('/')
 
+  #New server import
+  @hanldeDirectLinkServerImportNew = (url)->
+    isCancel = false;
+    isRes = false
+    isTimeout = false
+    unique_id = new Mongo.ObjectID()._str
+    api_url = Meteor.absoluteUrl('import-server-new')
+    if (api_url.endsWith("/"))
+      api_url += Meteor.userId()
+    else
+      api_url += '/' + Meteor.userId()
+    api_url += '/' + encodeURIComponent(url)
+    api_url += '?task_id=' + unique_id + '&isMobile=true'
+    #if(withImportToEdit is true)
+    api_url += '&v=3'
+    console.log("api_url="+api_url)
+    try
+        succ_return = (res)->
+          result = res.data.split('\r\n')
+          result = result[result.length-1]
+          console.log("cordovaHTTP result="+result)
+          try
+            result = JSON.parse(result)
+            if result.status is 'succ'
+              PUB.toast('正在快速导入中，请稍后在“我”|“草稿”中编辑后再发表。')
+            else
+              PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+            PUB.back()
+          catch error
+             console.log('cordovaHTTP JSON.parse catch error.'+error)
+             PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+             PUB.back()
+        error_return = (res)->
+          console.log('cordovaHTTP failed! res='+JSON.stringify(res))
+          PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+          PUB.back()
+        cordovaHTTP.get api_url, {}, {}, succ_return, error_return
+    catch error
+        console.log("CATCH ERROR: cordovaHTTP, api_url="+api_url)
+        PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+        #Router.go('/')
+
   @handleDirectLinkImport = (url, clientSide)->
     if url.match(/localhost/g)
       url = "about:blank"
     if withServerImport and clientSide is undefined
       console.log("Import url on server side...")
       hanldeDirectLinkServerImport(url)
+      #hanldeDirectLinkServerImportNew(url)
     else
       console.log("Import url on mobile side...")
       showPopupProgressBar()
@@ -1274,11 +1317,14 @@ if Meteor.isClient
     progressBarWidth:->
       Session.get('importProcedure')
     percentage:->
-      Session.get('editProgessBarPercentage')[0]
+      percentage = Session.get('editProgessBarPercentage')
+      if percentage then percentage[0] else 0
     numOfContent:->
-      Session.get('editProgessBarPercentage')[2]
+      percentage = Session.get('editProgessBarPercentage')
+      if percentage then percentage[2] else 0
     numOfProcessed:->
-      Session.get('editProgessBarPercentage')[1]
+      percentage = Session.get('editProgessBarPercentage')
+      if percentage then percentage[1] else 0
     displayUrl:->
       if Drafts.findOne({type:'image'}) and Drafts.findOne({type:'image'}).url and Drafts.findOne({type:'image'}).url isnt ''
         ""
@@ -2076,6 +2122,8 @@ if Meteor.isClient
   Template.addPost.onRendered ()->
       Session.set('addPostTheme', 'default')
       addPostTheme = 'default'
+      unless Session.get('postContent')
+        return
       draft = Drafts.findOne({_id:Session.get('postContent')._id})
       post = Posts.findOne({_id: Session.get('postContent')._id})
       if post and post.style
