@@ -244,6 +244,17 @@ if(Meteor.isCordova){
             function sendMsg(user_id,message,toBrowser,callback){
               if (toBrowser){
                 Meteor.call('Msg',"/t/msg/u/" + user_id,message,function(err,result){
+                  if(!err && result === true){
+                    var msg = SimpleChat.Messages.findOne({_id:message._id})
+                    if(msg && msg.send_status !== 'success'){
+                      SimpleChat.Messages.update({_id:message._id},{$set:{send_status:'success'}})
+                    }
+                  } else {
+                    var msg = SimpleChat.Messages.findOne({_id:message._id})
+                    if(msg && msg.send_status !== 'success'){
+                      SimpleChat.Messages.update({_id:message._id},{$set:{send_status:'failed'}})
+                    }
+                  }
                   return callback && callback(err,result);
                 });
               } else {
@@ -251,15 +262,23 @@ if(Meteor.isCordova){
               }
             };
             sendMqttUserMessage=function(user_id, message, callback) {
-                var toUser = Meteor.users.findOne({_id: user_id});
-                if (!toUser || !toUser.profile){
+                var toUser = userType.findOne({_id: user_id});
+                if ((!toUser) || (typeof toUser.browser !== "boolean")){
                   //get-user-web-browser-info
-                  Meteor.subscribe('uWebInfo', user_id, function(){
-                    toUser = Meteor.users.findOne({_id: user_id});
-                    sendMsg(user_id, message, toUser.profile.browser, callback);
-                  });
+                  Meteor.call('userType',user_id,function(err,isUserBrowser){
+                    if(err){
+                      return callback && callback(err,isUserBrowser)
+                    }
+                    try{
+                      userType.upsert({_id:user_id},{browser:isUserBrowser})
+                    } catch(e){
+                      console.log('insert when saving userType');
+                    }
+                    sendMsg(user_id, message, isUserBrowser, callback);
+                  })
                 } else {
-                    sendMsg(user_id, message, toUser.profile.browser, callback);
+                    console.log(toUser.browser);
+                    sendMsg(user_id, message, toUser.browser, callback);
                 }
             };
         }

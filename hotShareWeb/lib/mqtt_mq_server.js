@@ -116,6 +116,7 @@ if(Meteor.isServer){
               var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
               if (userInfo && userInfo.profile && userInfo.profile.browser){
                 console.log(message)
+                delete message._id;
                 WebUserMessages.insert(message);
                 var userInfo = Meteor.users.findOne({_id:user});
                 var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
@@ -123,7 +124,7 @@ if(Meteor.isServer){
                 {
                     waitReadMsgCount = 0;
                 }
-                console.log('waitReadMsgCount--->'+waitReadMsgCount);
+                console.log('waitReadMsgCount--->'+(waitReadMsgCount+1));
                 Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': waitReadMsgCount+1}});
               } else {
                 sendMqttMessage(topic,message);
@@ -131,7 +132,15 @@ if(Meteor.isServer){
             } else {
               sendMqttMessage(topic,message);
             }
+            return true;
             //sendMqttMessage(topic,message);
+          },
+          userType:function(userId){
+            var userInfo = Meteor.users.findOne({_id: userId}, {fields: {'profile.browser': 1, 'token': 1}});
+            if (userInfo){
+              return !!userInfo.profile.browser
+            }
+            throw new Meteor.Error(500, 'cant find the user info from requesting user id: ' + userId);
           },
           wMsgRead:function(id){
             // 暂时没做校验/检查
@@ -141,7 +150,7 @@ if(Meteor.isServer){
                 Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': 0}});
                 WebUserMessages.remove({_id:id});
             }
-        }
+          }
         });
     })
 

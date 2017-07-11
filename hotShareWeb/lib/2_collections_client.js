@@ -17,6 +17,7 @@ if(Meteor.isClient){
 
 
     FollowPosts = new Ground.Collection('followPosts', { connection: null });
+    userType = new Ground.Collection('userType', { connection: null });
 }
 
 
