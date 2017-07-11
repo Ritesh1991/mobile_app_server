@@ -70,14 +70,20 @@ if (Meteor.isClient) {
       onDeviceReady2 = function () {
         var registerInterval1 = window.setInterval(function () {
           console.log('on onDeviceReady2');
-          var push = PushNotification.init({
-            ios: {
-              alert: "true",
-              badge: "true",
-              sound: "true",
-              clearBadge: "true"
-            }
-          });
+          try{
+            var push = PushNotification.init({
+              ios: {
+                alert: "true",
+                badge: "true",
+                sound: "true",
+                clearBadge: "true"
+              }
+            });
+          } catch (e){
+            console.log('Exception in ready 2, for PushNotification.init')
+            clearInterval(registerInterval1);
+            registerInterval1 = null;
+          }
 
           push.on('registration', function (data) {
             // data.registrationId
@@ -119,7 +125,9 @@ if (Meteor.isClient) {
 
           push.on('error', function (e) {
             // e.message
-            return console.log('No Push Notification support in this build error = ' + e.message);
+            console.log('No Push Notification support in this build error = ' + e.message);
+            clearInterval(registerInterval1);
+            registerInterval1 = null;
           });
           /*window.plugins.pushNotification.register(function(result) {
             console.log('Got registrationID ' + result);

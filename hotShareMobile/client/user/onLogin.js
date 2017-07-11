@@ -35,14 +35,20 @@ if (Meteor.isClient) {
           if (device.platform === 'iOS' && localStorage.getItem('registrationID') == null ) {
             var registerInterval1 = window.setInterval( function(){
               console.log('on push notification init');
-              var push = PushNotification.init({
-                ios: {
-                  alert: "true",
-                  badge: "true",
-                  sound: "true",
-                  clearBadge: "true"
-                }
-              });
+              try{
+                var push = PushNotification.init({
+                  ios: {
+                    alert: "true",
+                    badge: "true",
+                    sound: "true",
+                    clearBadge: "true"
+                  }
+                });
+              } catch(e){
+                console.log('Exception in PushNotification.init')
+                clearInterval(registerInterval1);
+                registerInterval1 = null;
+              }
 
               push.on('registration', function (data) {
                 // data.registrationId
@@ -72,7 +78,9 @@ if (Meteor.isClient) {
               });
 
               push.on('error', function (e) {
-                return console.log('No Push Notification support in this build error = ' + e.message);
+                console.log('No Push Notification support in this build error = ' + e.message);
+                clearInterval(registerInterval1);
+                registerInterval1 = null;
               });
             },20000 );
           }
