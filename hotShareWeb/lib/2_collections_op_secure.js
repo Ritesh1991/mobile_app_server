@@ -147,7 +147,9 @@ if(Meteor.isServer){
     Posts.allow({
         insert: function (userId, doc) {
             doc._id = doc._id || new Mongo.ObjectID()._str;
-            doc.publish = doc.publish || true;
+            if (doc.publish != false) {
+                doc.publish = doc.publish || true;
+            }
             var user;
             //   禁止相关用户发帖
             if(userId){

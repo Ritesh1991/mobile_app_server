@@ -87,7 +87,7 @@ Meteor.startup(function(){
 });
 
 Router.route('/import-server/:_id/:url', function (req, res, next) {
-  var slef = this;
+  var self = this;
   var clientIp = getClientIp(req);
   var req_url = import_server_url + '/' + this.params._id + '/' + encodeURIComponent(this.params.url) + '?chunked=true';
   var taskId = this.params.query['task_id'] || new Mongo.ObjectID()._str;
@@ -178,6 +178,7 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
     })
     .on('end', function() {
         if (!req_datastr) {
+            console.log('importPost req_datastr is null');
             return res.end(JSON.stringify({result: 'failed'}));
         }
         try {
@@ -244,9 +245,20 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
                       });
                     res.end(JSON.stringify({result: 'success'}));
                 });
+            } else if (req_type === 'saveDraft') {
+                console.log("importPost saveDraft 1, req_data._id="+req_data._id);
+                var postId = req_data._id;
+                var post = req_data;
+                console.log('importPost saveDraft 2, postId='+postId);
+                if (req_data.createdAt) {
+                    req_data.createdAt = new Date(req_data.createdAt);
+                }
+                SavedDrafts.update({_id:postId}, {$set:post}, {upsert:true});
+                res.end(JSON.stringify({result: 'success'}));
             } else if(req_type === 'image'){
               var post = Posts.findOne({_id: req_data._id});
-              var new_post = {import_status: 'imported', publish: true};
+              //var new_post = {import_status: 'imported', publish: true};
+              var new_post = {import_status: 'imported'};
 
               if (!req_data || !post)
                 return res.end(JSON.stringify({result: 'failed'}));
@@ -299,5 +311,62 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
                 res.end(JSON.stringify({result: 'failed'}));
             }
         }).run();
+    });
+}, {where: 'server'});
+
+Router.route('/import-server-new/:_id/:url', function (req, res, next) {
+  var self = this;
+  var clientIp = getClientIp(req);
+  var req_url = import_server_url + '/' + this.params._id + '/' + encodeURIComponent(this.params.url) + '?chunked=true';
+  var taskId = this.params.query['task_id'] || new Mongo.ObjectID()._str;
+  var importServer = new ImportServer(res, taskId, true);
+  var q_ver = this.params.query['v'] || '3';
+
+  res.writeHead(200, {
+    'Content-Type' : 'text/html;charset=UTF-8',
+    'Transfer-Encoding' : 'chunked'
+  });
+
+  res.on('error', function(err){
+    console.log('import server: client offline');
+    res.isResErr = true;
+    importServer.cancelImport();
+  });
+
+  if (clientIp)
+    req_url += '&ip='+clientIp;
+  req_url += '&fromserver='+encodeURIComponent(Meteor.absoluteUrl());
+  req_url += '&task_id=' + taskId;
+  req_url += '&v=' + q_ver;
+  if (this.params.query['isMobile'])
+    req_url += '&isMobile=' + this.params.query['isMobile']
+  console.log("api_url="+req_url+", Meteor.absoluteUrl()="+Meteor.absoluteUrl());
+
+  // 超时处理
+  var timeoutHandle = setTimeout(function(){
+    if(res.isEnd === true)
+      return;
+    importServer.cancelImport();
+  }, 1000*18);
+
+  // 请求导入server
+  request({method: 'GET', uri: req_url})
+    .on('error', function(err){
+      console.log("request req_url error: req_url="+req_url);
+      importServer.sendRes('{"status": "failed"}', true);
+    }).on('data', function(data) {
+      if (timeoutHandle) {
+          clearTimeout(timeoutHandle);
+          timeoutHandle = null;
+      }
+      data = JSON.parse(data);
+      if(data.status != 'importing') {
+        console.log("data.status is not importing: data="+JSON.stringify(data));
+        return importServer.sendRes(JSON.stringify(data), true);
+      }
+      importServer.sendRes(JSON.stringify(data));
+    }).on('end', function(data) {
+      console.log("request req_url end: req_url="+req_url);
+      importServer.sendRes(data, true);
     });
 }, {where: 'server'});

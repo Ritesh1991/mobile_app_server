@@ -25,6 +25,7 @@ var hotshare_web = process.env.HOTSHARE_WEB_HOST || 'http://cdn.tiegushi.com';
 var MongoClient = require('mongodb').MongoClient;
 var DB_CONN_STR = process.env.MONGO_URL || 'mongodb://hotShareAdmin:aei_19056@host1.tiegushi.com:27017/hotShare';
 var posts = null;
+var SavedDrafts = null;
 var users = null;
 var Follower = null;
 var FollowPosts = null;
@@ -405,6 +406,7 @@ MongoClient.connect(DB_CONN_STR, function(err, db) {
         return;
     }
     posts = db.collection('posts');
+    SavedDrafts = db.collection('saveddrafts');
     users = db.collection('users');
     //Follower = db.collection('follower');
     FollowPosts = db.collection('followposts');
@@ -864,12 +866,17 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
 
   var url = hotshare_web+'/restapi/importPost/image/NOUSERID?v='+qVer;
   console.log("updateURL="+url+", postId="+postId);
+  if (qVer == '3') {
+    post.publish = false;
+  }
   httppost(url, post, function(err, data){
     try {
         dataObj = JSON.parse(data);
     } catch (error) {
         console.log("updatePosts3: JSON.parse exception! error="+error);
-        return callback('err', -1);;
+        console.log("  data="+data);
+        err = 'JSON.parse exception';
+        //return callback('err', -1);
     }
     if(err || !dataObj || dataObj.result != "success") {
         console.log("httppost update DB failed! Let's try to update DB directly! data="+data);
@@ -877,7 +884,11 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
           if(err)
             return callback && callback(err, 0);
 
+          //var new_post = {import_status: 'imported', publish: true};
           var new_post = {import_status: 'imported', publish: true};
+          if (qVer == '3') {
+            new_post.publish = false;
+          }
 
           // 用户没有修改标题图片
           if (post.mainImage )
@@ -941,6 +952,36 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
     }
   }
 };
+
+var saveToDrafts = function(postId, post, qVer, callback) {
+  var dataObj;
+  post._id = postId;
+
+  var url = hotshare_web+'/restapi/importPost/saveDraft/NOUSERID?v='+qVer;
+  console.log("saveToDrafts URL="+url+", postId="+postId);
+  httppost(url, post, function(err, data){
+    try {
+        dataObj = JSON.parse(data);
+    } catch (error) {
+        console.log("saveToDrafts: JSON.parse exception! error="+error);
+        console.log("  data="+data);
+        err = 'JSON.parse exception';
+        //return callback('err', -1);
+    }
+    if(err || !dataObj || dataObj.result != "success") {
+        console.log("httppost saveToDrafts failed! Let's try to update DB directly! data="+data);
+        SavedDrafts.update({_id:postId}, {$set:post}, {upsert:true});
+        return callback && callback(null, 1);
+    }
+    console.log("httppost saveToDrafts success!");
+    if(dataObj.result === 'success') {
+        return callback && callback(null, 2);
+    }
+    console.log("dataObj="+JSON.stringify(dataObj));
+    return callback && callback('err', -1);
+  });
+};
+
 var updateFollowPosts = function(userId, postId, post, callback){
   //console.log("userId="+userId+", postId="+postId+", post="+JSON.stringify(post));
   // FollowPosts.update({followby:userId, postId:postId}, {$set: {
@@ -1022,6 +1063,7 @@ function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVe
   var chunked_result = {};
   var userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12D508 (5752533504)';   //iPhone 8.2 Safari UA
   qVer = qVer || '1';
+  console.log('qVer='+qVer);
 
   console.log("isMobile="+isMobile);
   if (isMobile == '') {
@@ -1339,6 +1381,9 @@ function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVe
                     return callback && callback({status:'failed'});
                 }
 
+                if (qVer == '3') {
+                    dataJson.publish = false;
+                }
                 var insertURL = hotshare_web+'/restapi/importPost/insert/'+_id;
                 console.log("insertURL = "+insertURL);
                 ReadWriteDatabase(insertURL, dataJson, function(err2, dataObj){
@@ -1405,6 +1450,21 @@ function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVe
                                     console.log('upload images info to DB failed -2.');
                                 }
 
+                                if (qVer == '3') {
+                                    //SavedDrafts.update({_id:postId}, {$set:drafts}, {upsert:true})
+                                    if (postObj) {
+                                        postObj.publish = true;
+                                    }
+                                    saveToDrafts(postId, postObj, qVer, function(err4, saveResult) {
+                                        if (err4) {
+                                            console.log('saveToDrafts failed' + saveResult);
+                                        } else {
+                                            console.log('saveToDrafts suc');
+                                        }
+                                    });
+                                    console.log('New import method, return');
+                                    return;
+                                }
                                 var tmpServer = hotshare_web;
                                 if (server && (server != '')) {
                                     if (server.charAt(server.length - 1) == '/')
@@ -1648,6 +1708,11 @@ if (cluster.isMaster) {
         }
       }
 
+      if (q_ver == '3') {
+        var dataObj = {status: 'succ'};
+        writeRes(res, JSON.stringify(dataObj), true);
+      }
+
       if (unique_id != '') {
         Task.add(unique_id, req.params._id, req.params.url);
       }
@@ -1696,8 +1761,13 @@ if (cluster.isMaster) {
         }else if(progress === 60){
           // TODO: set postId
         }else {
-          writeRes(res, data);
           Task.update(unique_id, 'importing');
+          /*if (q_ver == '3') {
+            dataObj.status = 'succ';
+            writeRes(res, JSON.stringify(dataObj), true);
+            return;
+          }*/
+          writeRes(res, data);
         }
 
         // cancel
