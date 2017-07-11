@@ -51,6 +51,8 @@ if Meteor.isClient
       }
       sendMqttMessageToUser(type,to,postData)
   @sendMqttMessageToUser=(type,to,postData)->
+    if(Meteor.userId() && to && Meteor.userId() == to.id)
+      return
     username = Meteor.user().profile.fullname || Meteor.user().username
     if type is 'thumbsUp'
       to.isThumbsUp = true
