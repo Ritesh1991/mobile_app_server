@@ -16,3 +16,7 @@ review_post_url = "http://"+server_domain_name + '/restapi/postInsertHook/';
 //review_post_url = 'http://192.168.1.65:5000/restapi/postInsertHook/';
 theme_host_url = 'http://cdcdn.tiegushi.com';
 version_host_url = 'http://data.tiegushi.com/versions/version.json?t='+(Date.now());
+//正式版
+universal_link_host = 'https://hostgst.tiegushi.com';
+//测试版
+//universal_link_host = 'https://tsdfg.tiegushi.com';

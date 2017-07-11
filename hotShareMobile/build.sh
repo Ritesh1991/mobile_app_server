@@ -4,5 +4,9 @@ rm -rf .meteor/local/cordova-build
 rm -rf .meteor/local/build
 rm -rf .meteor/local/bundler-cache
 rm -rf .meteor/local/plugin-cache
-meteor build ~/build-hot-share --server=https://tsdfg.tiegushi.com/
+#正式版本
+meteor build ~/build-hot-share --server=https://hostgst.tiegushi.com/
+#测试版本
+#meteor build ~/build-hot-share --server=https://tsdfg.tiegushi.com/
+
 # meteor build ~/build-hot-share --server=http://storeboard.tiegushi.com
