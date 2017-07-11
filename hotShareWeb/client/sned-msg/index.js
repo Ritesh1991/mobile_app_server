@@ -82,7 +82,7 @@ Template._sendMsg.helpers({
     return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId='+Session.get('postContent')._id;
   },
   openAppUrl: function(to){
-    return 'https://tsdfg.tiegushi.com/web-rw-message?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId='+Session.get('postContent')._id;
+    return  universal_link_host+'/web-rw-message?userId='+Meteor.userId()+'&touserId='+to+'&p=message&postId='+Session.get('postContent')._id;
   },
   isIOS_UniversalLink:function(){
     return isIOS && withEnableUniversalLink;
