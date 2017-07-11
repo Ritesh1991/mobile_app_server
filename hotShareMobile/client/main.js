@@ -1,3 +1,24 @@
+var checkAssociated = function(query){
+  var user = Meteor.user();
+  var alreadyAssociated = false;
+  if (query['userId'] && user && user.profile && user.profile.associated) {
+    var associated = user.profile.associated;
+    for (var i = 0; i < associated.length; i++) {
+      if(associated[i].id === query['userId']){
+        alreadyAssociated = true;
+      }
+    }
+  }
+  if (alreadyAssociated) {
+    Router.go('/simple-chat/user-list/'+Meteor.userId());
+    return;
+  }
+  navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
+        if (index === 2)
+          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
+      }, '提示', ['取消', '绑定']);
+}
+
 var checkoutQRCode = function(){
   console.log('clipboard check...');
   withQRTips && Meteor.isCordova && cordova.plugins.clipboard.paste(function (text) {
@@ -24,10 +45,8 @@ var checkoutQRCode = function(){
         return;
       }
 
-      navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
-        if (index === 2)
-          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
-      }, '提示', ['取消', '绑定']);
+      checkAssociated(query);
+
     }catch(e){console.log('cordova.plugins.clipboard.paste err:', e)}
   });
 };
@@ -48,7 +67,7 @@ Deps.autorun(function(){
         return;
       }
       Session.set('fromUniversalLink',true);
-      bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId'])
+      checkAssociated(query);
   }
 });
 // ---
