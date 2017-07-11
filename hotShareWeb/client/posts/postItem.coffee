@@ -215,6 +215,29 @@ if Meteor.isClient
           sendMqttMessageToUser(type,to,postData)
     'click .pcomments': (e)->
       otherElementShowOrHidden(false)
+      Session.set("pcommetsReply",false)
+      $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
+      bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
+      # $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
+      $('.showPostsBox').hide();
+      Session.set("pcommetsId","")
+      backgroundTop = 0-$(window).scrollTop()
+      Session.set('backgroundTop', backgroundTop);
+      Meteor.setTimeout ()->
+          if Session.get('pcommentsValue') isnt ''
+            $('#pcommitReport').val(Session.get('pcommentsValue'))
+        ,100
+      pcommentPlaceHolderText = getPcommentPlaceHolder()
+      Session.set "pcommentIndexNum", this.index
+      Session.set 'pcommentPlaceHolderText', pcommentPlaceHolderText
+      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+        $('#pcommitReport').focus()
+      # $pcommentInput = $(e.currentTarget).parent()
+      # $pcommentInput.after('<div id="pcommentInput" class="pcommentInput"><div class="input-group"><form onsubmit="return" class="pcommentInput-form"><input type="text" id="pcommitReport" autofocus="autofocus" class="form-control" maxlength="180" placeholder="' + pcommentPlaceHolderText + '" /></form><div onclick="pcommitReport()" id="pcommitReportBtn">发送</div></div></div><div onclick="hidePcomments()" class="newalertBackground"></div>')
+
+
+    'click .pcommentsold': (e)->
+      otherElementShowOrHidden(false)
       #console.log($(e.currentTarget).parent().parent().parent())
       Session.set("pcommetsReply",false)
       $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
@@ -252,13 +275,16 @@ if Meteor.isClient
       #bgheight = $(window).height() + $(window).scrollTop()
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
       # $('.showBgColor').css('overflow','hidden')
-      $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
+      # $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
+      $('.showPostsBox').hide();
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
       Session.set('backgroundTop', backgroundTop);
       pcommentPlaceHolderText = getPcommentPlaceHolder()
-      $pcommentInput = $(e.currentTarget).parent()
-      $pcommentInput.after('<div id="pcommentInput" class="pcommentInput"><div class="input-group"><form onsubmit="return" class="pcommentInput-form"><input type="text" id="pcommitReport" autofocus="autofocus" class="form-control" maxlength="180" placeholder="' + pcommentPlaceHolderText + '" /></form><div onclick="pcommitReport()" id="pcommitReportBtn">发送</div></div></div><div onclick="hidePcomments()" class="newalertBackground"></div>')
+      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+        $('#pcommitReport').focus()
+      # $pcommentInput = $(e.currentTarget).parent()
+      # $pcommentInput.after('<div id="pcommentInput" class="pcommentInput"><div class="input-group"><form onsubmit="return" class="pcommentInput-form"><input type="text" id="pcommitReport" autofocus="autofocus" class="form-control" maxlength="180" placeholder="' + pcommentPlaceHolderText + '" /></form><div onclick="pcommitReport()" id="pcommitReportBtn">发送</div></div></div><div onclick="hidePcomments()" class="newalertBackground"></div>')
       #$('body').attr('style','position:fixed;top:'+Session.get('backgroundTop')+'px;')
       # $('.pcommentInput,.alertBackground').fadeIn 300, ()->
       #   $('#pcommitReport').focus()

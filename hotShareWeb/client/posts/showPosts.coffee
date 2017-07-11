@@ -1162,6 +1162,19 @@ if Meteor.isClient
           Posts.update {_id: postId},{$set: {retweet: arr}}
           FollowPosts.update {_id: FollowPostsId},{$inc: {retweet: -1}}
           return
+  Template.pcommentInputPage.helpers
+      placeHolder:->
+        placeHolderText = '评论'
+        if Session.get("pcommetsReply")
+           i = Session.get "pcommentIndexNum"
+           post = Session.get("postContent").pub
+           selectedIndex = Session.get("pcommentSelectedIndex")
+           if post and post[i] and post[i].pcomments isnt undefined
+              pcomments = post[i].pcomments
+              if pcomments[selectedIndex] isnt undefined
+                toUsername = pcomments[selectedIndex].username
+                placeHolderText = '回复'+toUsername+':'
+         return placeHolderText
   Template.pCommentsList.helpers
       time_diff: (created)->
         GetTime0(new Date() - created)

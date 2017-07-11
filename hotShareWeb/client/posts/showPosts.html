@@ -20,6 +20,7 @@
 		抱歉，您访问的帖子已被删除。
 	</center>
   {{> pcommentInputPrompt}}
+  {{> pcommentInputPage}}
   <div class="showBgColor post-theme post-detail-page">
     <div class="showPostsBox">
     <div class="showPosts">
@@ -469,6 +470,21 @@
     </script>
 </template>
 
+<template name='pcommentInputPage'>
+  <div class="pcommentInput" style="display:none;height: 100%;width: 100%;">
+      <div class="head">
+        <strong>编辑文字</strong>
+        <div  onclick="hidePcommentsNew()" class="leftButton back">
+          <i class="fa fa-angle-left fa-fw"></i>
+        </div>
+        <div class="rightButton" style="font-weight:bold;color: #fff;" onclick="pcommitReport()">发送</div>
+      </div>
+      <div class="input-group" style="height: 100%;padding-top: 50px;">
+      <textarea style="width: 100%;height: 100%;margin: 0;border: none;font-size: 120%;" placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea>
+      </div>
+  </div>
+</template>
+
 <template name="pcommentInput">
   <!-- <div class="pcommentInput" style="display:none;">
       <div class="input-group">
@@ -503,6 +519,19 @@
          console.log(postItem);
          postItem.removeClass('post-pcomment-current-pub-item');
        }
+       function hidePcommentsNew(){
+         Session.set('pcommentsValue', $('#pcommitReport').val());
+         $('.show-or-hidden').show();
+         // $('.showBgColor').removeAttr('style');
+         $('.showPostsBox').show();
+         $(window).scrollTop(0-Session.get('backgroundTop'));
+         $('.pcommentInput,.alertBackground').hide();
+         Session.set('backgroundTop','');
+
+         var postItem = $('.post-pcomment-current-pub-item');
+         console.log(postItem);
+         postItem.removeClass('post-pcomment-current-pub-item');
+       }
        function pcommitReport(){
           var content, i, pcommentJson, pcomments, position, post, postId, userIcon, userId, username;
           i = Session.get("pcommentIndexNum");
@@ -525,7 +554,8 @@
           }
 
           if (content === "") {
-            $('.showBgColor').removeAttr('style');
+            // $('.showBgColor').removeAttr('style');
+            $('.showPostsBox').show();
             $(window).scrollTop(0 - Session.get('backgroundTop'));
             $('.pcommentInput,.newalertBackground').remove();
             return false;
@@ -616,7 +646,8 @@
           $('#pcommitReport').val('');
           Session.set('pcommentsValue', '');
           $("#pcommitReport").attr("placeholder", "评论");
-          $('.showBgColor').removeAttr('style');
+          // $('.showBgColor').removeAttr('style');
+          $('.showPostsBox').show();
           $(window).scrollTop(0 - Session.get('backgroundTop'));
           $('.pcommentInput,.newalertBackground').remove();
           return false;
