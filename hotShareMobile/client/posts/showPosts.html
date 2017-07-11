@@ -287,6 +287,8 @@
   {{> userProfileBox}}
   </div>
   {{> shareReaderClub}}
+  {{#if showBindTips}}
+  {{else}}
   {{#if showPostGroupChatIntro}}
     {{> introsPostGroupchat}}
   {{/if}}
@@ -295,6 +297,7 @@
   {{/if}}
   {{#if showPostPinImagesIntro}}
     {{> pinImagesIntros}}
+  {{/if}}
   {{/if}}
 </template>
 <template name="shareReaderClub">

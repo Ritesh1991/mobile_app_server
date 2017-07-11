@@ -235,6 +235,7 @@ if Meteor.isClient
           Router.go('/simple-chat/user-list/'+Meteor.userId())
           navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
         when 'post'    # 浏览贴子
+          Session.set('showBindTips',true);
           Router.go('/posts/'+postId)
           Template.bindWebUserPost.open(r.msg || [])
         else

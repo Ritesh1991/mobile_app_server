@@ -42,6 +42,7 @@ Template.bindWebUserPost.close = function(){
   if(view)
     Blaze.remove(view);
   view = null;
+  Session.set('showBindTips',false);
 };
 
 Template.bindWebUserPost.helpers({
