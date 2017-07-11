@@ -117,7 +117,7 @@ if(Meteor.isServer){
                 var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
                 if (userInfo && userInfo.profile && userInfo.profile.browser){
                   console.log(message)
-                  delete message._id;
+                  //delete message._id;
                   WebUserMessages.insert(message);
                   var userInfo = Meteor.users.findOne({_id:user});
                   var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
