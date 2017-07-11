@@ -350,10 +350,16 @@ if Meteor.isClient
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
-        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
-          $('#bellPostDialog').fadeIn();
-        Session.set('qrtype', '联系人');
-        showQrTips('','post',Session.get('postContent')._id)
+        profile = PostFriends.findOne {ta: Session.get("ProfileUserId1")};
+        Template._sendMsg.open({
+          id: Session.get("ProfileUserId1"),
+          name: profile.profile.fullname || profile.username,
+          icon: profile.profile.icon
+        })
+        # if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+        #   $('#bellPostDialog').fadeIn();
+        # Session.set('qrtype', '联系人');
+        # showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -487,10 +493,16 @@ if Meteor.isClient
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
-        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
-          $('#bellPostDialog').fadeIn();
-        Session.set('qrtype', '联系人');
-        showQrTips('','post',Session.get('postContent')._id)
+        profile = PostFriends.findOne {ta: Session.get("ProfileUserId2")};
+        Template._sendMsg.open({
+          id: Session.get("ProfileUserId2"),
+          name: profile.profile.fullname || profile.username,
+          icon: profile.profile.icon
+        })
+        # if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+        #   $('#bellPostDialog').fadeIn();
+        # Session.set('qrtype', '联系人');
+        # showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -625,10 +637,16 @@ if Meteor.isClient
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
-        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
-          $('#bellPostDialog').fadeIn();
-        Session.set('qrtype', '联系人');
-        showQrTips('','post',Session.get('postContent')._id)
+        profile = PostFriends.findOne {ta: Session.get("ProfileUserId3")};
+        Template._sendMsg.open({
+          id: Session.get("ProfileUserId3"),
+          name: profile.profile.fullname || profile.username,
+          icon: profile.profile.icon
+        })
+        # if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+        #   $('#bellPostDialog').fadeIn();
+        # Session.set('qrtype', '联系人');
+        # showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
@@ -743,10 +761,16 @@ if Meteor.isClient
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
-        if user and user.profile and user.profile.associated and user.profile.associated.length > 0
-          $('#bellPostDialog').fadeIn();
-        Session.set('qrtype', '联系人');
-        showQrTips('','post',Session.get('postContent')._id)
+        profile = UserDetail.findOne {_id: Session.get("ProfileUserId")}
+        Template._sendMsg.open({
+          id: Session.get("ProfileUserId"),
+          name: profile.profile.fullname || profile.username,
+          icon: profile.profile.icon
+        })
+        # if user and user.profile and user.profile.associated and user.profile.associated.length > 0
+        #   $('#bellPostDialog').fadeIn();
+        # Session.set('qrtype', '联系人');
+        # showQrTips('','post',Session.get('postContent')._id)
     'click .userProfile .back':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
