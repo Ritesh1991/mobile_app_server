@@ -255,7 +255,7 @@ if(Meteor.isCordova){
                       SimpleChat.Messages.update({_id:message._id},{$set:{send_status:'failed'}})
                     }
                   }
-                  return callback && callback(err,result);
+                  //return callback && callback(err,result);
                 });
               } else {
                 sendMqttMessage("/t/msg/u/" + user_id, message, callback);

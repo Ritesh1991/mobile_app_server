@@ -110,28 +110,31 @@ if(Meteor.isServer){
         initMQTT(null);
         Meteor.methods({
           Msg:function(topic,message){
-            this.unblock();
-            if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
-              var user = message.to.id;
-              var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
-              if (userInfo && userInfo.profile && userInfo.profile.browser){
-                console.log(message)
-                delete message._id;
-                WebUserMessages.insert(message);
-                var userInfo = Meteor.users.findOne({_id:user});
-                var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
-                if(waitReadMsgCount === undefined || isNaN(waitReadMsgCount))
-                {
-                    waitReadMsgCount = 0;
+
+            Meteor.defer(function(){
+              if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
+                var user = message.to.id;
+                var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
+                if (userInfo && userInfo.profile && userInfo.profile.browser){
+                  console.log(message)
+                  delete message._id;
+                  WebUserMessages.insert(message);
+                  var userInfo = Meteor.users.findOne({_id:user});
+                  var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
+                  if(waitReadMsgCount === undefined || isNaN(waitReadMsgCount))
+                  {
+                      waitReadMsgCount = 0;
+                  }
+                  console.log('waitReadMsgCount--->'+(waitReadMsgCount+1));
+                  Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': waitReadMsgCount+1}});
+                } else {
+                  sendMqttMessage(topic,message);
                 }
-                console.log('waitReadMsgCount--->'+(waitReadMsgCount+1));
-                Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': waitReadMsgCount+1}});
               } else {
                 sendMqttMessage(topic,message);
               }
-            } else {
-              sendMqttMessage(topic,message);
-            }
+            })
+            
             return true;
             //sendMqttMessage(topic,message);
           },
