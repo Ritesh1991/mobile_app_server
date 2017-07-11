@@ -91,7 +91,7 @@ if Meteor.isClient
             trackEvent("Share","Section to Wechat Timeline")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'timeline',section:section}})
             addToFavouriteAfterShare(Session.get('postContent'))
-            
+
             messageBasedOnPost('timeline',description,Session.get('postContent'))
             # if Session.get('inWechatBrowser') is true
             #   Session.set('shareToWechatType','WXSession')
@@ -108,7 +108,9 @@ if Meteor.isClient
           success: () ->
             trackEvent("Share","Section to Wechat Chat")
             FeedAfterShare(Session.get('postContent'),{wechat:{type:'chat',section:section}})
-            addToFavouriteAfterShare(Session.get('postContent'))         messageBasedOnPost('chat',description,Session.get('postContent'))
+            addToFavouriteAfterShare(Session.get('postContent'))
+
+            messageBasedOnPost('chat',description,Session.get('postContent'))
             # if Session.get('inWechatBrowser') is true
             #   Session.set('shareToWechatType','WXTimeLine')
             #   $('.shareTheReadingRoom,.shareAlertBackground').fadeIn(300)

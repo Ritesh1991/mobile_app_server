@@ -46,10 +46,10 @@ if Meteor.isClient
         text = '“' + to.pcommentContent + '”' + '\n' + "---- " + '我评论了你的文章《' + postData.title + '》中的段落'
     else if type is 'timeline'
       to.isLinkText = true
-      text = '文章不错，已转发到微信朋友圈：《' + postData.title + '》'
+      text = '文章不错，已转发到微信朋友圈 -- ' + postData.title
     else if type is 'chat'
       to.isLinkText = true
-      text = '文章不错，已转发到微信群聊：《' + postData.title + '》'
+      text = '文章不错，已转发到微信群聊 -- ' + postData.title
     to.isPostAbstract = true
     to.mainImage = postData.mainImage
     msg = {
