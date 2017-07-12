@@ -1479,6 +1479,12 @@ if Meteor.isClient
         $('.pcommentInput,.alertBackground').fadeOut 300
         #refreshPostContent()
         false
+  Template.pcommentInputPrompt.helpers
+    isMyPcomment:->
+      if Session.get('pcommentInputPromptPageUserId') is Meteor.userId()
+        return true
+      else
+        return false
 
   Template.pcommentInputPrompt.events
     'click .deleteComment':(e,t)->
@@ -1513,6 +1519,18 @@ if Meteor.isClient
       $('.pcommentInputPromptPage').hide()
     'click .bg, click .cancleBtn':->
       $('.pcommentInputPromptPage').hide()
+    'click .reply':->
+      $('.pcommentInputPromptPage').hide()
+      Session.set("pcommetsReply",true)
+      bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
+      $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
+      Session.set("pcommetsId","")
+      backgroundTop = 0-$(window).scrollTop()
+      Session.set('backgroundTop', backgroundTop);
+      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+        $('#pcommitReport').focus()
+      $('#pcommitReport').focus()
+      
 
   Template.shareReaderClub.helpers
     # show_share_reader_club: ->

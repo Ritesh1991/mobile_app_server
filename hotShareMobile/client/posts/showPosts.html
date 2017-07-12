@@ -397,9 +397,13 @@
   <div class="pcommentInputPromptPage">
     <div class="bg"></div>
     <div class="content">
-        <div class="header">删除我的评论</div>
-        <div class="deleteComment">删除</div>
-        <div class="cancleBtn">取消</div>
+      {{#if isMyPcomment}}
+      <div class="header">删除我的评论</div>
+      {{else}}
+      <div class="reply">回复</div>
+      {{/if}}
+      <div class="deleteComment">删除</div>
+      <div class="cancleBtn">取消</div>
     </div>
   </div>
 </template>
