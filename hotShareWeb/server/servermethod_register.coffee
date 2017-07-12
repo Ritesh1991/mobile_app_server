@@ -310,11 +310,11 @@ if Meteor.isServer
         Meteor.defer ()->
           try
             if options.name
-              Follower.update({userId:userId},{$set:{'userName':options.name}},{multi: true, upsert:true})
-              Follower.update({followerId:userId},{$set:{'followerName':options.name}},{multi: true, upsert:true})
+              Follower.update({userId:userId},{$set:{'userName':options.name}},{multi: true})
+              Follower.update({followerId:userId},{$set:{'followerName':options.name}},{multi: true})
             if options.icon
-              Follower.update({userId:userId},{$set:{'userIcon':options.icon}},{multi: true, upsert:true})
-              Follower.update({followerId:userId},{$set:{'followerIcon':options.icon}},{multi: true, upsert:true})
+              Follower.update({userId:userId},{$set:{'userIcon':options.icon}},{multi: true})
+              Follower.update({followerId:userId},{$set:{'followerIcon':options.icon}},{multi: true})
           catch error
             console.log('Error on updateFollower' + error)
       'profileData': (userId)->
