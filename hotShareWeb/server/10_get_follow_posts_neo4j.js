@@ -7,6 +7,10 @@ if(Meteor.isServer){
      * 本函数的目的是从Neo4J中查询从since开始的limit条新FollowPost数据
      */
     getLatestFollowPostFromNeo4J = function(userId,since,limit){
+        var since = since;
+        if(typeof since != 'number')
+            since = (new Date(since)).getTime();
+
         var queryLimit = limit
         if(typeof limit === 'undefined'){
             queryLimit = 10

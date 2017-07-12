@@ -136,7 +136,9 @@ if(Meteor.isClient){
             latestPost = FollowPosts.findOne({followby:Meteor.userId()},{sort:{createdAt:-1}})
             since = 0
             if(latestPost){
-                since = latestPost.createdAt
+                var ts = latestPost.createdAt;
+                ts = (new Date(ts)).getTime();
+                since = ts;
             }
             Meteor.call('pullLatestPosts', since, 10,function(err,result){
                 console.log(err)
