@@ -329,7 +329,7 @@ if Meteor.isClient
     'click #photo-select':(e)->
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
-      Session.set('newEditorFormURL',inputUrl)
+      Session.set('newEditorFormURL',null)
       if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
         prepareToEditorMode()
         PUB.page '/newEditor'
