@@ -1,6 +1,6 @@
 .qr-page {
   position: fixed;top: 0;right: 0;bottom: 0;left: 0;background: #fff;z-index: 999999;
-  > div{position: absolute; left:0;right: 0;}
+  // > div{position: absolute; left:0;right: 0;}
   .qr-head{
     top: 0; height: 40px;z-index: 9;
     .close{line-height: 40px;cursor: pointer;}
@@ -8,14 +8,33 @@
   }
   .qr-body{top: 40px; bottom: 0;overflow-x: hidden;overflow-y: auto; -webkit-overflow-scrolling: touch;}
   .qr-body {
+    .banner{
+      background: #359efc;
+      padding: 5px;
+      color: #fff;
+    }
     .body-top{
-      font-size: 20px;
+      font-size: 160%;
       font-weight: 400;
       margin-top: 40px;
       margin-bottom: 20px;
     }
     .body-text{
+      font-size: 130%;
       font-weight: 400;
+    }
+    .logo{
+      margin-top: 35px;
+      div{
+        font-size: 160%;
+        font-weight: bold;
+      }
+    }
+    .desc{
+      font-weight: bolder;
+      color: grey;
+      margin-top: 35px;
+      font-size: 120%;
     }
   }
   .step-index{
@@ -29,15 +48,19 @@
       font-size: 18px;
     }
   }
-  .qr-foot{bottom: 0; z-index: 9;background-size: contain; background-position: bottom;padding-bottom: 10px;background-repeat: no-repeat;background: #fff;}
+  .qr-foot{
+    margin-top: 30px;
+
+  }
+  // .qr-foot{bottom: 0; z-index: 9;background-size: contain; background-position: bottom;padding-bottom: 10px;background-repeat: no-repeat;background: #fff;}
   .qr-btn-Div {
     text-align: center;margin-bottom:40px;
   }
   .qr-btn{
     cursor:pointer;
     padding:8px 10px;
-    border-radius:10px;
-    font-size: 14px;
+    border-radius:25px;
+    font-size: 130%;
   }
   .preStep{
     border-style: solid; 
@@ -45,8 +68,10 @@
     color: deepskyblue;
   }
   .nextStep{
-    background: deepskyblue;
+    background: #359efc;
     color: #fff;
+    padding: 20px 25px;
+    margin-top: 20px;
   }
   // .qr-foot:after{content:"长按二维码保存消息"; position: absolute; top: 0;left: 0;right: 0;text-align: center; font-size: 16px; font-weight: bold;}
   .saveQrCode {width: 200px;height: 40px;color: #fff;background: deepskyblue;line-height: 40px;text-align: center;margin: 0 auto;border-radius: 20px; cursor: pointer;}
