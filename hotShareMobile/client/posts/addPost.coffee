@@ -334,6 +334,9 @@ if Meteor.isClient
             newEditorImportPUB.push(item)
           Session.set('newEditorImportPUB',newEditorImportPUB)
           Session.set('importProcedure',100)
+          history = Session.get("history_view")
+          history.pop()
+          Session.set "history_view", history
           Router.go '/newEditor'
         catch error
           console.log('error simpleEditor  import== '+error)
