@@ -337,6 +337,68 @@ if(Meteor.isServer){
 
             if(fieldNames.toString() ==='pub,ptype,pindex')
             {
+                // 故事群
+                if(withPostGroupChat){
+                  deferSetImmediate(function(){
+                    // console.log('modifier：', modifier);
+                    // console.log('处理点赞/踩/取消', modifier.$set["ptype"]);
+                    switch(modifier.$set["ptype"]){
+                      case 'like':
+                      case 'dislike':
+                      case 'pcomments':
+                        var groupManager = Meteor.users.findOne({_id: doc.owner});
+                        var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的群聊' : '故事贴群聊';
+                        Meteor.call('create-group', doc.owner, groupName, [doc.owner, userId], function(err, res){
+                          console.log('create/update 故事贴群聊:', res, groupName);
+
+                          var group = SimpleChat.Groups.findOne({_id: res});
+                          var formUser = Meteor.users.findOne({_id: userId});
+                          var msgObj = {
+                            form: {
+                              id: formUser._id,
+                              name: formUser.profile.icon || '/userPicture.png',
+                              icon: formUser.profile.fullname || formUser.username
+                            },
+                            to: {
+                              id: group._id,
+                              name: group.name,
+                              icon: group.icon,
+                              isPostAbstract: true,
+                              mainImage: doc.mainImage,
+                              pcomment: doc.pub[modifier.$set["pindex"]].text,
+                              pcommentIndexNum: modifier.$set["pindex"]
+                            },
+                            type: 'text',
+                            to_type: 'group',
+                            title: doc.title,
+                            addontitle: doc.addontitle,
+                            mainImage: doc.mainImage,
+                            postId: doc._id,
+                            is_read: false,
+                            create_time: new Date()
+                          }
+
+                          if (modifier.$set["ptype"] === 'pcomments'){
+                            msgObj.to.pcommentContent = modifier.$push['pub.'+modifier.$set["pindex"]+'.pcomments'].content;
+                            msgObj.to.isPcomments = true;
+                            msgObj.text = '“'+msgObj.form.name+'”↵---- 我评论了你的文章《'+doc.title+'》中的段落';
+                          } else if (modifier.$set["ptype"] === 'like') {
+                            msgObj.to.isThumbsUp = true;
+                            msgObj.text = '我赞了你的文章《'+doc.title+'》哦~';
+                          } else if (modifier.$set["ptype"] === 'dislike') {
+                            msgObj.to.isThumbsDown = true;
+                            msgObj.text = '我踩了你的文章《'+doc.title+'》哦~';
+                          }
+
+                          // console.log(msgObj);
+                          sendMqttGroupMessage(res, msgObj);
+                        });
+                        break;
+                    }
+                  });
+                }
+
+
                 //console.log("====================change ptype========================");
                 //console.log("=========ptype:"+doc.ptype+"===================");
                 //console.log("=========pindex:"+doc.pindex+"=================");

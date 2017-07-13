@@ -200,7 +200,7 @@ if(Meteor.isCordova){
             };
             subscribeMqttGroup=function(group_id) {
                 if (mqtt_connection) {
-                    console.log('sub mqtt:' + group_id);
+                    console.log('sub group mqtt:' + group_id);
                     mqtt_connection.subscribe('/t/msg/g/'+group_id,{qos:1, onSuccess:onSuccess, onFailure:onFailure});
                     function onSuccess() {
                         console.log('mqtt subscribe group msg successfully.');
