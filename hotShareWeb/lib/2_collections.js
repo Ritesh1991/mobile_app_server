@@ -277,6 +277,12 @@ if(Meteor.isServer){
                 console.log("globalPostsInsertHookDeferHandle: userId="+userId+", doc._id="+doc._id+", doc.import_status="+doc.import_status+", doc.isReview="+doc.isReview);
                 if (doc.isReview === true) {
                     Posts.update({_id: postId}, {$set:{import_status: "done"}});
+                    try{
+                        if(syncToNeo4jWithMqtt)
+                            mqttUpdatePostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
+                        else
+                            updatePostToNeo4j(doc);
+                    }catch(err){}
                     postsInsertHookDeferHandle(userId, doc);
                     try{
                         postsInsertHookPostToBaiduDeferHandle(doc._id);
