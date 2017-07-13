@@ -147,7 +147,7 @@ if(Meteor.isServer){
     Posts.allow({
         insert: function (userId, doc) {
             doc._id = doc._id || new Mongo.ObjectID()._str;
-            if (doc.publish != false) {
+            if ((doc.publish == undefined) || (doc.publish == null)) {
                 doc.publish = doc.publish || true;
             }
             var user;
@@ -221,6 +221,10 @@ if(Meteor.isServer){
                 });
             }
 
+            if (!doc.publish) {
+                console.log('Insert a story with publish as false, skip...');
+                return;
+            }
             /*
              AssociatedUsers.find({}).forEach(function(item) {
              if (!~userIds.indexOf(item.userIdA)) {

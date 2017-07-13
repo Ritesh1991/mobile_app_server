@@ -117,6 +117,7 @@
   "reference": "引用",
   "tooBigAndWait": "帖子那么大，让我分析下",
   "plsWait": "请稍候...",
+  "requestImportServer": "正在请求服务器，请稍候...",
   "interruptAndIgnore": "中断,跳过未导入内容",
   "total": "总计 ",
   "numOfContent": " 段内容，",

@@ -115,6 +115,7 @@
   "reference": "Quote",
   "tooBigAndWait": "Wait wait, let me processing it ...",
   "plsWait": "Loading ...",
+  "requestImportServer": "Sending request to server，please wait...",
   "interruptAndIgnore": "Skip unimported contents",
   "total": "Total ",
   "numOfContent": " of total contents,",

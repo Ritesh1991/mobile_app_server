@@ -440,6 +440,25 @@ if Meteor.isClient
         Session.set('importProcedure',0)
         $(this).find('#cancelImport').off('click')
         $(this).find('.progress-bar').css('width', '0%').attr('aria-valuenow', 0);
+  @showImportInformationBar = (callback)->
+    Session.set('cancelImport',false)
+    window.importInformationBar = $('.importInformationBar').bPopup
+      positionStyle: 'absolute'
+      position: [0, 0]
+      onOpen: ()->
+        $(this).find('#cancelImport').on('click',()->
+          console.log('Clicked on cancelImport button')
+          Session.set('cancelImport',true)
+          $('.modal-backdrop.in').remove()
+          if Drafts.find().count() < 1
+            Router.go('/')
+          if (callback)
+            callback()
+        )
+      onClose: ()->
+        window.importInformationBar = undefined
+        $(this).find('#cancelImport').off('click')
+        #$(this).find('.information-content').css('width', '0%').attr('aria-valuenow', 0);
     Tracker.autorun (handler)->
       $('.importProgressBar').find('.progress-bar').css('width', Session.get('importProcedure')+'%').attr('aria-valuenow', Session.get('importProcedure'));
       if Session.equals('importProcedure',100)
@@ -832,6 +851,21 @@ if Meteor.isClient
     #if(withImportToEdit is true)
     api_url += '&v=3'
     console.log("api_url="+api_url)
+    #Show Information Bar
+    abortFastImport = (cancel)->
+        isCancel = true
+        isRes = true
+        request_return = (res)->
+          console.log('cancel import res: ' + JSON.stringify(res))
+          return
+        request_return_ok = (res)->
+          return
+        cordovaHTTP.get Meteor.absoluteUrl('import-cancel/') + unique_id, {}, {}, request_return_ok, request_return
+        Router.go('/')
+        console.log("import-cancel: unique_id="+unique_id);
+    showImportInformationBar(()->
+        abortFastImport(true)
+    )
     try
         succ_return = (res)->
           result = res.data.split('\r\n')
@@ -840,23 +874,41 @@ if Meteor.isClient
           try
             result = JSON.parse(result)
             if result.status is 'succ'
-              PUB.toast('正在快速导入中，请稍后在“我”|“草稿”中编辑后再发表。')
+              #PUB.toast('正在快速导入中，请稍后在“我”|“草稿”中编辑后再发表。')
+              $('.information-content').text('服务器正在处理中，请稍后在“我”|“草稿”中编辑后再发表。')
             else
-              PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
-            PUB.back()
+              #PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+              $('.information-content').text('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+            setTimeout(()->
+                PUB.back()
+                importInformationBar.close()
+            , 2000)
+            #PUB.back()
           catch error
-             console.log('cordovaHTTP JSON.parse catch error.'+error)
-             PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
-             PUB.back()
+            console.log('cordovaHTTP JSON.parse catch error.'+error)
+            #PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+            $('.information-content').text('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+            setTimeout(()->
+                PUB.back()
+                importInformationBar.close()
+            , 2000)
         error_return = (res)->
           console.log('cordovaHTTP failed! res='+JSON.stringify(res))
-          PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
-          PUB.back()
+          #PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+          $('.information-content').text('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+          setTimeout(()->
+            PUB.back()
+            importInformationBar.close()
+          , 2000)
         cordovaHTTP.get api_url, {}, {}, succ_return, error_return
     catch error
         console.log("CATCH ERROR: cordovaHTTP, api_url="+api_url)
         PUB.toast('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
-        #Router.go('/')
+        $('.information-content').text('链接'+url+'快速导入失败啦，请尝试高级导入吧。')
+        setTimeout(->
+            PUB.back()
+            importInformationBar.close()
+        , 2000)
 
   @handleDirectLinkImport = (url, clientSide)->
     if url.match(/localhost/g)

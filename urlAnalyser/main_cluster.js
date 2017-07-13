@@ -558,6 +558,7 @@ var update_mainImage = function(userId, postId, mainImageUrl, style){
 }
 
 function get_insertData(user, url, data, draftsObj, callback) {
+    var _post_id = mongoid();
     if (!data) {
         console.log('Error: null of id or data');
         if (callback){
@@ -600,7 +601,6 @@ function get_insertData(user, url, data, draftsObj, callback) {
 
     /*filedownup.EalyMainImage(data, function (mainImageURL) {*/
     draftsObj.EalyMainImage(data, url, function (mainImageURL) {
-        var _post_id = mongoid();
         var data_insert = [{
             '_id': _post_id,
             'ownerId': user ? user._id: '',
@@ -956,6 +956,10 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
 var saveToDrafts = function(postId, post, qVer, callback) {
   var dataObj;
   post._id = postId;
+  var draft0 = {_id:postId, type:'image', isImage:true, url:post.fromUrl ,owner: post.owner, imgUrl:post.mainImage, filename:post.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0};
+  if (post.pub) {
+    post.pub.splice(0, 0, draft0);
+  }
 
   var url = hotshare_web+'/restapi/importPost/saveDraft/NOUSERID?v='+qVer;
   console.log("saveToDrafts URL="+url+", postId="+postId);

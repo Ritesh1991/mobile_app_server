@@ -238,12 +238,14 @@ if Meteor.isClient
             if index is 2
               saveHotPosts()
             $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
+            $('.importInformationBar').remove()
             Tips.show('_tips_addPost')
           '提示'
           ['暂不','保存']
         )
         return
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
+      $('.importInformationBar').remove()
       Tips.show('_tips_addPost')
       if Session.get('persistentLoginStatus') and !Meteor.userId() and !Meteor.loggingIn()
         window.plugins.toast.showLongCenter("登录超时，需要重新登录~");
