@@ -5,7 +5,7 @@ if Meteor.isClient
     callback = ()->
       blackId = BlackList.findOne({blackBy: Meteor.userId()})._id
       BlackList.update({_id: blackId}, {$pull: {blacker: userId}})
-      Router.go('/simple-chat/to/user?id='+userId)
+      if $('.simple-chat').length > 0 then Router.go('/simple-chat/guide/to/user?id='+userId) else Router.go('/simple-chat/to/user?id='+userId)
     #对方在黑名单中
     if BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [userId]}}).count() > 0
        navigator.notification.confirm(
@@ -17,7 +17,7 @@ if Meteor.isClient
                 ['暂不','解除']
             )
     else
-      Router.go('/simple-chat/to/user?id='+userId)
+      if $('.simple-chat').length > 0 then Router.go('/simple-chat/guide/to/user?id='+userId) else Router.go('/simple-chat/to/user?id='+userId)
   Template.writeLetter.rendered=->
     #true 列出偶像列表，false 列出粉丝列表
     Session.set 'followers_tag', true
