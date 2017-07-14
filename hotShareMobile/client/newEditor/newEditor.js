@@ -520,6 +520,7 @@ Template.newEditor.events({
         Session.set('draftTitle','')
         Session.set('draftAddontitle','');
         Session.set('NewImgAdd','false');
+        var ablubImgLists = [];
         selectMediaFromAblum(20, function(cancel, result,currentCount,totalCount){
             if (cancel){
                 return
@@ -527,7 +528,7 @@ Template.newEditor.events({
             if(result){
               console.log('Current Count is ' + currentCount + ' Total is ' + totalCount);
               console.log('image url is ' + result.smallImage);
-              sortable.add(pIndex,{
+              ablubImgLists.push({
                 type: 'image',
                 isImage:true,
                 currentCount:currentCount, 
@@ -536,6 +537,23 @@ Template.newEditor.events({
                 filename: result.filename,
                 URI: result.URI
               });
+
+              if(currentCount === totalCount){
+                ablubImgLists.reverse();
+                for(var i=0; i < ablubImgLists.length; i++){
+                  sortable.add(pIndex,ablubImgLists[i]);
+                }
+                ablubImgLists = null;
+              }
+              // sortable.add(pIndex,{
+              //   type: 'image',
+              //   isImage:true,
+              //   currentCount:currentCount, 
+              //   totalCount:totalCount,
+              //   imgUrl: result.smallImage,
+              //   filename: result.filename,
+              //   URI: result.URI
+              // });
             }
         });
       } else if (index === 2){
