@@ -90,7 +90,15 @@
     </div>
     <div class="importWayFooter">
       <div class="importWayBtn" id="appImport">高级导入</div>
-      <div class="importWayBtn importWayBtnLight" id="serverImport">快速导入</div>
+      <div class="fastImportWay">
+        <div class="importWayBtn importWayBtnLight" id="serverImport">快速导入</div>
+        <div class="radioDirectPublish">
+            <input id="fastImportDirectPublish" type="radio" name="groupFastImport" value="1"/>直接发表
+        </div>
+        <div class="radioSaveDraft">
+            <input id="fastImportSaveDraft" type="radio" name="groupFastImport" value="2" />存为草稿
+        </div>
+    </div>
     </div>
   </div>
 </template>

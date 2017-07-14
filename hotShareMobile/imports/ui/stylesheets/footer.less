@@ -46,7 +46,7 @@
   position: fixed;
   background-color: #fff;
   border-radius: 4px;
-  height: 200px;
+  height: 270px;
   width: 80%;
   left: 10%;
   bottom: 20%;
@@ -60,7 +60,12 @@
     .importWayTitle{ padding-left: 6px; text-align: center; font-size: 18px; letter-spacing:2px;}
     .importWayContent{margin-top: 16px;}
   }
-  .importWayFooter { padding: 16px; border-radius: 4px;}
+  .importWayFooter { padding: 16px; border-radius: 4px;
+    .fastImportWay {width: 100%; position: relative;
+      .radioDirectPublish {position:absolute; color:#77a9d8; line-height:22px; display:inline-block; padding-left: 15px; padding-top: 2px; top: 0px; font-weight: bold;}
+      .radioSaveDraft {position: absolute; color: #77a9d8; line-height: 22px; display: inline-block; padding-left: 15px; padding-bottom: 2px; bottom: 0px; font-weight: bold;}
+    }
+  }
   .importWayBtn {
     display: inline-block;
     text-align: center;
@@ -70,11 +75,13 @@
     border-radius: 8px;
     border: 1px solid #77a9d8;
     color: #77a9d8;
+    margin-bottom:7px;
   }
   .importWayBtnLight{
     right: 16px;
     color: #fff;
-    position: absolute;
     background: #77a9d8;
+    padding-bottom: 20px;
+    padding-top: 20px;
   }
 }

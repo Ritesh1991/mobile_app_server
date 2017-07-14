@@ -910,13 +910,15 @@ if Meteor.isClient
             importInformationBar.close()
         , 2000)
 
-  @handleDirectLinkImport = (url, clientSide)->
+  @handleDirectLinkImport = (url, clientSide, type)->
     if url.match(/localhost/g)
       url = "about:blank"
     if withServerImport and clientSide is undefined
       console.log("Import url on server side...")
-      hanldeDirectLinkServerImport(url)
-      #hanldeDirectLinkServerImportNew(url)
+      if type is '2'
+        hanldeDirectLinkServerImportNew(url)
+      else
+        hanldeDirectLinkServerImport(url)
     else
       console.log("Import url on mobile side...")
       showPopupProgressBar()

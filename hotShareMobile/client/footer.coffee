@@ -392,10 +392,15 @@ if Meteor.isClient
           ###
           deferedProcessAddPostItemsWithEditingProcessBar(pub)
 
+  Template.selectImportWay.onRendered ()->
+    if localStorage.getItem('serverImport_method') is '2'
+      $('#fastImportSaveDraft').attr('checked','checked')
+    else
+      $('#fastImportDirectPublish').attr('checked','checked')
   Template.selectImportWay.helpers
     hasAssocaitedUsers: ()->
       (AssociatedUsers.find({}).count() > 0) or (UserRelation.find({userId: Meteor.userId()}).count() > 0)
-  serverImportClick = (e, t)->
+  serverImportClick = (e, t, type)->
     Session.set('post_improt_way',e.currentTarget.id)
     Session.set('display_select_import_way',undefined)
     Meteor.defer ()->
@@ -413,9 +418,9 @@ if Meteor.isClient
           Session.set('newEditorFormURL',importLink)
           if e.currentTarget.id is 'serverImport'
             Session.set 'isServerImport', true
-            handleDirectLinkImport(importLink)
+            handleDirectLinkImport(importLink, undefined, type)
           else
-            handleDirectLinkImport(importLink,1)
+            handleDirectLinkImport(importLink, 1)
         ,100)
       else
         handleAddedLink(null)
@@ -427,4 +432,11 @@ if Meteor.isClient
     'click #mask': ->
       Session.set('display_select_import_way',undefined)
     'click .importWayBtn':(e,t)->
-      serverImportClick(e, t)
+      value = $("input[name='groupFastImport']:checked").val()
+      serverImportClick(e, t, value)
+    'click input[name=groupFastImport]': (e,t) ->
+      console.log('$(e.currentTarget).val()='+$(e.currentTarget).val());
+      if $(e.currentTarget).val() is '1'
+        localStorage.setItem('serverImport_method', '1')
+      else
+        localStorage.setItem('serverImport_method', '2')
