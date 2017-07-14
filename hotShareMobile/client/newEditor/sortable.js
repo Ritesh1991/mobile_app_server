@@ -69,6 +69,7 @@ Sortable._create = function(el, options){
         switch(data.type){
           case 'text':
             data.text = text;
+            data.html = text;
             result.push(data);
             break;
           case 'image':
