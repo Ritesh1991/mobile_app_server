@@ -347,17 +347,17 @@ if(Meteor.isServer){
                       case 'dislike':
                       case 'pcomments':
                         var groupManager = Meteor.users.findOne({_id: doc.owner});
-                        var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的群聊' : '故事贴群聊';
+                        var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的故事群' : '故事聊';
                         Meteor.call('create-group', doc.owner, groupName, [doc.owner, userId], function(err, res){
-                          console.log('create/update 故事贴群聊:', res, groupName);
+                          console.log('create/update 故事群:', res, groupName);
 
                           var group = SimpleChat.Groups.findOne({_id: res});
                           var formUser = Meteor.users.findOne({_id: userId});
                           var msgObj = {
                             form: {
                               id: formUser._id,
-                              name: formUser.profile.icon || '/userPicture.png',
-                              icon: formUser.profile.fullname || formUser.username
+                              icon: formUser.profile.icon || '/userPicture.png',
+                              name: formUser.profile.fullname || formUser.username
                             },
                             to: {
                               id: group._id,
@@ -381,13 +381,13 @@ if(Meteor.isServer){
                           if (modifier.$set["ptype"] === 'pcomments'){
                             msgObj.to.pcommentContent = modifier.$push['pub.'+modifier.$set["pindex"]+'.pcomments'].content;
                             msgObj.to.isPcomments = true;
-                            msgObj.text = '“'+msgObj.form.name+'”↵---- 我评论了你的文章《'+doc.title+'》中的段落';
+                            msgObj.text = msgObj.form.name+' 点评了文章《'+doc.title+'》中的段落';
                           } else if (modifier.$set["ptype"] === 'like') {
                             msgObj.to.isThumbsUp = true;
-                            msgObj.text = '我赞了你的文章《'+doc.title+'》哦~';
+                            msgObj.text = msgObj.form.name + ' 赞了文章《'+doc.title+'》~';
                           } else if (modifier.$set["ptype"] === 'dislike') {
                             msgObj.to.isThumbsDown = true;
-                            msgObj.text = '我踩了你的文章《'+doc.title+'》哦~';
+                            msgObj.text = msgObj.form.name + ' 踩了文章《'+doc.title+'》~';
                           }
 
                           // console.log(msgObj);

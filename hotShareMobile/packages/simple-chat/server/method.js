@@ -7,7 +7,7 @@ Meteor.methods({
     // console.log('group:', group);
 
     if (!name)
-      name = '群聊 ' + (Groups.find({}).count() + 1);
+      name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
     if(group){
       console.log('update group:', id);
       if (slef.userId && ids.indexOf(slef.userId) === -1)
@@ -40,7 +40,7 @@ Meteor.methods({
                 },
                 type: 'text',
                 to_type: 'group',
-                text: '',
+                text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
                 is_read: false,
                 create_time: new Date()
               });
@@ -94,7 +94,7 @@ Meteor.methods({
               },
               type: 'text',
               to_type: 'group',
-              text: '',
+              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
               is_read: false,
               create_time: new Date()
             });

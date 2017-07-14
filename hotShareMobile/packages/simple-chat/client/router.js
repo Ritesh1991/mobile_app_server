@@ -87,7 +87,8 @@ Router.route(AppConfig.path + '/user-list/:_user',{
       ids = _.pluck(user.profile.associated, 'id');
     }
     ids.push(Meteor.userId());
-    var lists = MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
+    // var lists = MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
+    var lists = withPostGroupChat ? MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}}) : MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
     Session.set('channel','bell');
     return {
       title: '消息',
@@ -1643,7 +1644,7 @@ Template._simpleChatListLayout.events({
     });
 
     Session.set("history_view", history);
-    if(this.isGroups){
+    if(this.sessionType){
       Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
     } else {
       Router.go(AppConfig.path + '/to/user?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
@@ -1728,6 +1729,7 @@ Template._groupMessageList.events({
       icon:this.userIcon
     }
     Session.set('msgFormUser',from);
-    return Router.go(AppConfig.path+'/to/user?id='+e.currentTarget.id);
+    console.log('url', AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
+    return Router.go(AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
   }
 })
