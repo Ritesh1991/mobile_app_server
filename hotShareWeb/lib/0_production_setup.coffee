@@ -44,4 +44,4 @@
 @withEnableHaveReadMsg = false #已读消息
 @withEnableUniversalLink = true #深度链接唤醒App
 @withSectionRateToOwner = true #点评消息更新到Feed里
-@withPostGroupChat = false #点评、赞踩、转发贴子时产生故事群
+@withPostGroupChat = true #点评、赞踩、转发贴子时产生故事群
