@@ -1643,8 +1643,19 @@ Template._simpleChatListLayout.events({
       scrollTop: document.body.scrollTop
     });
 
+    var msgid = $(e.currentTarget).attr('msgid')
+    MsgSession.update({'_id':msgid},{$set:{count:0}})
+    console.log('this to user name is ' + this.toUserName);
+    Session.set('msgToUserName', this.toUserName);
+    var from = {
+      id:this.userId,
+      name:this.userName,
+      icon:this.userIcon
+    }
+    Session.set('msgFormUser',from);
+
     Session.set("history_view", history);
-    if(this.sessionType){
+    if(this.sessionType === 'group'){
       Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
     } else {
       Router.go(AppConfig.path + '/to/user?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
@@ -1718,18 +1729,18 @@ Template._groupMessageList.events({
     Session.set('bellType', currentType);
     return Router.go('/bellcontent');
   },
-  'click li': function(e){
-    msgid = $(e.currentTarget).attr('msgid')
-    MsgSession.update({'_id':msgid},{$set:{count:0}})
-    console.log('this to user name is ' + this.toUserName);
-    Session.set('msgToUserName', this.toUserName);
-    var from = {
-      id:this.userId,
-      name:this.userName,
-      icon:this.userIcon
-    }
-    Session.set('msgFormUser',from);
-    console.log('url', AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
-    return Router.go(AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
-  }
+  // 'click li': function(e){
+  //   msgid = $(e.currentTarget).attr('msgid')
+  //   MsgSession.update({'_id':msgid},{$set:{count:0}})
+  //   console.log('this to user name is ' + this.toUserName);
+  //   Session.set('msgToUserName', this.toUserName);
+  //   var from = {
+  //     id:this.userId,
+  //     name:this.userName,
+  //     icon:this.userIcon
+  //   }
+  //   Session.set('msgFormUser',from);
+  //   console.log('url', AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
+  //   return Router.go(AppConfig.path+'/to/'+this.sessionType+'?id='+e.currentTarget.id);
+  // }
 })
