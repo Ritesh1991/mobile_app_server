@@ -415,6 +415,13 @@ Template.newEditor.events({
           break;
       }
     });
+
+    Session.set('terminateUpload', false);
+    if (e.currentTarget.id === 'drafts')
+      Session.set("isDelayPublish", false);
+    else
+      Session.set("isDelayPublish", true);
+
     if (draftToBeUploadedImageData.length > 0){
       console.log('draftToBeUploadedImageData', draftToBeUploadedImageData);
       return multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, function(err, result){
@@ -431,10 +438,10 @@ Template.newEditor.events({
               pub[index].videoInfo.imageUrl = item.videoInfo.imageUrl;
           }
         });
-        removeImagesFromCache(draftImageData);
+        try{removeImagesFromCache(draftImageData);}catch(e){}
         if(Session.get('saveedBase64Images') && Session.get('saveedBase64Images').length > 0){
           var imgPreRemoveLists = Session.get('saveedBase64Images');
-          removeImagesFromCache(imgPreRemoveLists);
+          try{removeImagesFromCache(imgPreRemoveLists);}catch(e){}
           Session.set('saveedBase64Images',null);
         }
         publishPost();
