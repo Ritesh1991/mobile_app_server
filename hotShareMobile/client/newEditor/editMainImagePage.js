@@ -67,7 +67,7 @@ Template.eidtMainImagePage.events({
                 URI: result.URI
               });
               Meteor.setTimeout(function(){
-                var mainImageSrc = $('.selectMainImage').data('imgurl');
+                var mainImageSrc = $('.selectMainImage').attr('data-imgurl');
                 clipArea.clear();
                 clipArea.load(mainImageSrc);
               },500);
@@ -88,7 +88,7 @@ Template.eidtMainImagePage.events({
                     URI: result.URI
                   });
                   Meteor.setTimeout(function(){
-                    var mainImageSrc = $('.selectMainImage').data('imgurl');
+                    var mainImageSrc = $('.selectMainImage').attr('data-imgurl');
                     clipArea.clear();
                     clipArea.load(mainImageSrc);
                   },500);
