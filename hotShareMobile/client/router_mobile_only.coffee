@@ -90,6 +90,10 @@ if Meteor.isClient
       $(window).off('scroll')
       console.log('channel changed to '+channel+' Off Scroll')
       setTimeout ->
+          newbell = 'simple-chat/user-list/'+Meteor.userId()
+          if channel is newbell
+            Session.set 'focusOn','bell'
+            return
           Session.set 'focusOn',channel
         ,300
     Tracker.autorun ()->

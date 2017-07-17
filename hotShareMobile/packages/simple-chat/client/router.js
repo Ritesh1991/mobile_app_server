@@ -89,7 +89,7 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     ids.push(Meteor.userId());
     // var lists = MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
     var lists = withPostGroupChat ? MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}}) : MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
-    Session.set('channel','bell');
+    Session.set('channel','simple-chat/user-list/'+Meteor.userId());
     return {
       title: '消息',
       isGroups: false,

@@ -206,7 +206,7 @@ if Meteor.isClient
           (index)->
             if index is 2
               saveHotPosts()
-            PUB.page('/bell')
+            PUB.page('/simple-chat/user-list/'+Meteor.userId())
           '提示'
           ['暂不','保存']
         )
