@@ -467,6 +467,10 @@ cloneWithoutSibling=(parentNode, node)->
                   return NodeFilter.FILTER_REJECT
                 if $(node).parent() and $(node).parent().css("display") is 'none'
                   return NodeFilter.FILTER_REJECT
+                # 缩进小于50px，认为不显示
+                if node.tagName is 'P' and $(node).css("text-indent") isnt '0px'
+                  if (parseInt($(node).css("text-indent")) <= -50)
+                    return NodeFilter.FILTER_REJECT
               catch error
                 console.log('Get Display Exception')
               unless node.hasChildNodes()
