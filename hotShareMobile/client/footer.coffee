@@ -336,6 +336,7 @@ if Meteor.isClient
         prepareToEditorMode()
         PUB.page '/newEditor'
       else
+        prepareToEditorMode()
         PUB.page '/add'
       Meteor.defer ()->
         if window.takePhoto
