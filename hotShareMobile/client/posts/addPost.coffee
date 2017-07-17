@@ -440,6 +440,11 @@ if Meteor.isClient
         Session.set('importProcedure',0)
         $(this).find('#cancelImport').off('click')
         $(this).find('.progress-bar').css('width', '0%').attr('aria-valuenow', 0);
+    Tracker.autorun (handler)->
+      $('.importProgressBar').find('.progress-bar').css('width', Session.get('importProcedure')+'%').attr('aria-valuenow', Session.get('importProcedure'));
+      if Session.equals('importProcedure',100)
+        popupProgressBar.close()
+        handler.stop()
   @showImportInformationBar = (callback)->
     Session.set('cancelImport',false)
     window.importInformationBar = $('.importInformationBar').bPopup
