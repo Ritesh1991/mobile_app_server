@@ -442,6 +442,7 @@ if Meteor.isClient
         $(this).find('.progress-bar').css('width', '0%').attr('aria-valuenow', 0);
     Tracker.autorun (handler)->
       $('.importProgressBar').find('.progress-bar').css('width', Session.get('importProcedure')+'%').attr('aria-valuenow', Session.get('importProcedure'));
+      Session.set("progressBarWidth",Session.get('importProcedure'))
       if Session.equals('importProcedure',100)
         popupProgressBar.close()
         handler.stop()
@@ -466,6 +467,7 @@ if Meteor.isClient
         #$(this).find('.information-content').css('width', '0%').attr('aria-valuenow', 0);
     Tracker.autorun (handler)->
       $('.importProgressBar').find('.progress-bar').css('width', Session.get('importProcedure')+'%').attr('aria-valuenow', Session.get('importProcedure'));
+      Session.set("progressBarWidth",Session.get('importProcedure'))
       if Session.equals('importProcedure',100)
         popupProgressBar.close()
         handler.stop()
