@@ -76,6 +76,15 @@ if Meteor.isClient
           refreshPostContent()
         this.render 'showPosts', {data: post}
         Session.set 'channel','posts/'+this.params._id
+
+        # 刷新本地follpost
+        try
+          followPost = FollowPosts.findOne({postId: this.params._id})
+          if (post and post.owner is Meteor.userId() and followPost and followPost.mainImage isnt post.mainImage)
+            followPost.mainImage = post.mainImage
+            FollowPosts._collection._docs.set(followPost._id, followPost)
+            console.log('refresh follpost', this.params._id)
+        catch
       fastRender: true
     }
   Router.route '/view_posts/:_id', {
@@ -168,6 +177,15 @@ if Meteor.isClient
 
       this.render 'showPosts', {data: post}
       Session.set('channel','posts/'+this.params._id+'/'+this.params._index)
+
+      # 刷新本地follpost
+      try
+        followPost = FollowPosts.findOne({postId: this.params._id})
+        if (post and post.owner is Meteor.userId() and followPost and followPost.mainImage isnt post.mainImage)
+          followPost.mainImage = post.mainImage
+          FollowPosts._collection._docs.set(followPost._id, followPost)
+          console.log('refresh follpost', this.params._id)
+      catch
     fastRender: true
   }
   Router.route '/',()->
