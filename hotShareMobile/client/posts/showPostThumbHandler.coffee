@@ -50,7 +50,9 @@ if Meteor.isClient
         }
         post[i].pcomments.push(pcommentJson)
         updatePostsContentSession(post,"pcomments",i)
+        window.dbupdate = true;
         Posts.update({_id: postId},{"$set":{"pub":post,"ptype":"pcomments","pindex":i}}, (error, result)->
+          window.dbupdate = false;
           if error
             console.log(error.reason)
           else
@@ -246,6 +248,7 @@ if Meteor.isClient
       postId = Session.get("postContent")._id
       post = Session.get("postContent").pub
       userId = Meteor.userId()
+      window.dbupdate = true;
       if (favp = FavouritePosts.findOne({postId: postId, userId: userId}))
         FavouritePosts.update({_id: favp._id}, {$set: {updateAt: new Date()}})
       else
@@ -345,6 +348,7 @@ if Meteor.isClient
       postId = Session.get("postContent")._id
       post = Session.get("postContent").pub
       userId = Meteor.userId()
+      window.dbupdate = true;
       if not post[i].likeUserId
         likeUserId = {}
         post[i].likeUserId = likeUserId
@@ -424,4 +428,5 @@ if Meteor.isClient
         triggerToolbarShowOnThumb($(e.target))
         return
   @triggerToolbarShowOnThumb = ($node)->
+    window.dbupdate = false;
     $node.parent().click()
