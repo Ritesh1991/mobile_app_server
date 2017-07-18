@@ -26,12 +26,18 @@ function cropcallback (result,$elemLI){
     }
     imgUrl = res[0].imgUrl;
     console.log('imgUrl==',imgUrl)
+    // 这里实时更新编辑器内部显示
     Template.newEditor.sortable().update($elemLI.attr('id'),{
       _id: _id,
       imgUrl: imgUrl,
       filename: filename,
       URI: URI
     });
+    // 这里处理存储相关（裁剪不生效问题）
+    $elemLI.data('imgurl',imgUrl);
+    $elemLI.data('filename',filename);
+    $elemLI.data('uri',URI);
+    $elemLI.attr('id',_id);
   })
 }
 
@@ -141,15 +147,36 @@ Template.newEditorItem.events({
             });
         }
       } else if(index === 3){
-        var imageURI = $elemLI.data('uri') || $elemLI.data('imgurl');
-        plugins.crop(function success(newPath){
-          console.log('plugins crop newPath:' + newPath);
-          if (newPath) {
-            cropcallback(newPath,$elemLI)
-          }
-        },function fail(error){
-          console.log('plugins crop Err='+ JSON.stringify(error));
-        },imageURI);
+        var imageURI = $elemLI.data('uri');
+        var imgUrl = $elemLI.data('imgurl');
+        console.log('imageURI is=',imageURI);
+        console.log('imgUrl is=',imgUrl);
+        if(imgUrl.indexOf('http') >= 0){
+          downloadFromBCS(imgUrl, function(result){
+            if(result) {
+              console.log('result is==',result)
+              plugins.crop(function success(newPath){
+                console.log('plugins crop newPath:' + newPath);
+                if (newPath) {
+                  cropcallback(newPath,$elemLI)
+                }
+              },function fail(error){
+                console.log('plugins crop Err='+ JSON.stringify(error));
+              },result);
+            } else {
+              return PUB.toast('裁剪失败了~')
+            }
+          });
+        } else {
+          plugins.crop(function success(newPath){
+            console.log('plugins crop newPath:' + newPath);
+            if (newPath) {
+              cropcallback(newPath,$elemLI)
+            }
+          },function fail(error){
+            console.log('plugins crop Err='+ JSON.stringify(error));
+          },imageURI);
+        }
       }
     });
   }
