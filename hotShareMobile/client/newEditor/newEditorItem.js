@@ -1,11 +1,10 @@
-function cropcallback (result, imgUrl,$elemLI){
+function cropcallback (result,$elemLI){
   var filename = '';
   var URI = result;
-  imgUrl = imgUrl.substring(0,imgUrl.lastIndexOf('/'))
+  var imgUrl = '';
   var timestamp = new Date().getTime();
   var originalFilename = result.replace(/^.*[\\\/]/, '');
   filename = Meteor.userId() + '_' + timestamp + '_' + originalFilename;
-  imgUrl = imgUrl+'/'+filename;
   console.log('File name ' + filename);
   var lastQuestionFlag = result.lastIndexOf('?');
   if (lastQuestionFlag >= 0)
@@ -14,15 +13,26 @@ function cropcallback (result, imgUrl,$elemLI){
   if (lastQuestionFlag >= 0)
     filename = filename.substring(0, lastQuestionFlag);
     imgUrl = imgUrl+'/'+filename;
-  console.log('imgUrl==',imgUrl)
   console.log('filename==',filename)
   console.log('URI==',URI)
-  Template.newEditor.sortable().update($elemLI.attr('id'),{
-    _id: new Mongo.ObjectID()._str,
-    imgUrl: imgUrl,
+  var _id = new Mongo.ObjectID()._str;
+  multiThreadUploadFile_new([{
+    type: 'image',
     filename: filename,
     URI: URI
-  });
+  }],1,function(err,res){
+    if(err || res.length <= 0){
+      return PUB.toast('上传图片失败');
+    }
+    imgUrl = res[0].imgUrl;
+    console.log('imgUrl==',imgUrl)
+    Template.newEditor.sortable().update($elemLI.attr('id'),{
+      _id: _id,
+      imgUrl: imgUrl,
+      filename: filename,
+      URI: URI
+    });
+  })
 }
 
 Template.newEditorItem.events({
@@ -131,14 +141,14 @@ Template.newEditorItem.events({
             });
         }
       } else if(index === 3){
-        var imageURI = $elemLI.data('uri');
+        var imageURI = $elemLI.data('uri') || $elemLI.data('imgurl');
         plugins.crop(function success(newPath){
           console.log('plugins crop newPath:' + newPath);
           if (newPath) {
-            cropcallback(newPath, $elemLI.data('imgurl'),$elemLI)
+            cropcallback(newPath,$elemLI)
           }
         },function fail(error){
-          console.log('plugins crop Err='+ error);
+          console.log('plugins crop Err='+ JSON.stringify(error));
         },imageURI);
       }
     });
