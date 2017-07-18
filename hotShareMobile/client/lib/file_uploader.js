@@ -458,7 +458,7 @@ if (Meteor.isCordova){
           }
         };
 
-        multiThreadUploadFile_new(draftData, 1, multiThreadUploadFileCallback);
+        multiThreadUploadFile_new(draftData, 5, multiThreadUploadFileCallback);
         return;
     };
     uploadFileWhenPublishInCordova = function(draftData, postId){
