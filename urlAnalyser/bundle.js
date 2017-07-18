@@ -629,6 +629,11 @@ extract = function(page) {
               if ($(node).parent() && $(node).parent().css("display") === 'none') {
                 return NodeFilter.FILTER_REJECT;
               }
+              if (node.tagName === 'P' && $(node).css("text-indent") !== '0px') {
+                if (parseInt($(node).css("text-indent")) <= -50) {
+                  return NodeFilter.FILTER_REJECT;
+                }
+              }
             } catch (error2) {
               error = error2;
               console.log('Get Display Exception');
