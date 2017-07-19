@@ -93,15 +93,19 @@ Template.newEditorItem.events({
       Session.set('targetBeforeEditorEditingTIP',target);
       return Session.set('showSimpleEditorEditingTIP', 'true');
     }
+
+    var loading = $.loading('加载中...', 1000*3);
     var html = $(e.currentTarget).html();
     cordova.plugins.richtexteditor.edit({
       html: html
     },
     function(content){
+      loading && loading.close();
       $(e.currentTarget).data('text',content.html)
       $(e.currentTarget).data('html',content.html)
       $(e.currentTarget).html(content.html);
     },function(error){
+      loading && loading.close();
       console.log('edit text Err = '+ error);
     });
   },

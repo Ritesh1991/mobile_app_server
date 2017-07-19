@@ -195,6 +195,14 @@ Template.newEditor.events({
     if (!title || title === '[空标题]')
       return PUB.toast('请为您的故事加个标题');
 
+    Session.set('terminateUpload', false);
+    if (e.currentTarget.id === 'drafts')
+      Session.set("isDelayPublish", false);
+    else
+      Session.set("isDelayPublish", true);
+    Template.progressBar.__helpers.get('show')();
+    Session.set("progressBarWidth", 1);
+
     // data
     var pub = sortable.getDocs();
     pub.unshift({
@@ -204,6 +212,7 @@ Template.newEditor.events({
       filename: t.$('.mainImage').data('filename'),
       URI: t.$('.mainImage').data('uri')
     });
+    if(Session.equals('terminateUpload', true)){return}
 
     var publishPost = function(){
       console.log('=====', JSON.stringify(pub));
@@ -211,6 +220,7 @@ Template.newEditor.events({
       console.log('mainImage', mainImg);
       titleImg = pub[0].imgUrl;
       pub.splice(0, 1);
+      if(Session.equals('terminateUpload', true)){return}
 
       // index
       pub.map(function(item, index){
@@ -241,6 +251,7 @@ Template.newEditor.events({
         pub[index].owner = Meteor.userId();
         pub[index].data_wait_init = true;
       });
+      if(Session.equals('terminateUpload', true)){return}
 
       // post
       var post = {
@@ -272,8 +283,10 @@ Template.newEditor.events({
       }
       Session.set('newEditorFormURL',null);
       console.log('post:', post);
+      if(Session.equals('terminateUpload', true)){return}
 
       var updatePost = function(){
+        if(Session.equals('terminateUpload', true)){return}
         Posts.update({_id: t.data.id}, {$set: {
           title: post.title,
           addontitle: post.addontitle,
@@ -289,8 +302,11 @@ Template.newEditor.events({
           createdAt: new Date(),
           editorVersion: 'simpleEditor'
         }}, function(err, num){
-          if (err || num <= 0)
+          Template.progressBar.__helpers.get('close')()
+          if (err){
+            console.log(err);
             return PUB.toast('保存失败，请重试~');
+          }
           
           // 删除草稿
           if (t.data.type === 'draft')
@@ -310,6 +326,7 @@ Template.newEditor.events({
       if (t.data.type === 'edit'){
         updatePost();
       } else {
+        if(Session.equals('terminateUpload', true)){return}
         if (e.currentTarget.id === 'drafts'){
           post.pub.unshift({
             _id: t.data.id,
@@ -331,6 +348,7 @@ Template.newEditor.events({
           post.pub.map(function(item, index){
             if(index > 0){post.pub[index].data_row = post.pub[index-1].data_row + post.pub[index-1].data_sizey;}
           });
+          if(Session.equals('terminateUpload', true)){return}
           if (t.data.id){
             SavedDrafts.update({_id: t.data.id}, {$set: {
               title: post.title,
@@ -341,8 +359,11 @@ Template.newEditor.events({
               createdAt: new Date(),
               editorVersion: 'simpleEditor'
             }}, function(err, num){
-              if (err || num <= 0)
+              Template.progressBar.__helpers.get('close')()
+              if (err){
+                console.log(err);
                 return PUB.toast('存草稿失败，请重试~');
+              }
               
               PUB.toast('存草稿成功~');
               PUB.back();
@@ -357,8 +378,11 @@ Template.newEditor.events({
               createdAt: new Date(),
               editorVersion: 'simpleEditor'
             }, function(err, _id){
-              if (err || !_id)
+              Template.progressBar.__helpers.get('close')()
+              if (err || !_id){
+                console.log(err);
                 return PUB.toast('存草稿失败，请重试~');
+              }
 
               PUB.toast('存草稿成功~');
               PUB.back();
@@ -368,10 +392,13 @@ Template.newEditor.events({
           if(Posts.find({_id: t.data.id}).count() > 0)
             return updatePost();
 
+          if(Session.equals('terminateUpload', true)){return}
           post.owner = owner;
           post.ownerName = ownerName;
           post.ownerIcon = ownerIcon;
           Posts.insert(post, function(err, _id){
+            Template.progressBar.__helpers.get('close')();
+            console.log(err);
             if (err || !_id)
               return PUB.toast('发表失败，请重试~');
             
@@ -415,16 +442,12 @@ Template.newEditor.events({
           break;
       }
     });
-
-    Session.set('terminateUpload', false);
-    if (e.currentTarget.id === 'drafts')
-      Session.set("isDelayPublish", false);
-    else
-      Session.set("isDelayPublish", true);
+    if(Session.equals('terminateUpload', true)){return}
 
     if (draftToBeUploadedImageData.length > 0){
       console.log('draftToBeUploadedImageData', draftToBeUploadedImageData);
       return multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, function(err, result){
+        if(Session.equals('terminateUpload', true)){return}
         if (err || !result || result.length <= 0)
           return PUB.toast('上传失败，请稍后重试');
         result.map(function(item){
