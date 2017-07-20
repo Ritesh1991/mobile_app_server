@@ -149,6 +149,7 @@ class @newLayout
     );
 Template.newLayoutContainer.events =
   'click .newLayout_element':(e)->
+    prepareToEditorMode()
     wookmark_debug&&console.log('layoutId ' + this.displayId)
     Session.set("historyForwardDisplay", false)
     postId = this.displayId

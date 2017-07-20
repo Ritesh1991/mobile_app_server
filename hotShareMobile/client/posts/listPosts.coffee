@@ -96,15 +96,17 @@ if Meteor.isClient
           return false
       $('.home').addClass('animated ' + animateOutLowerEffect);
       postId = this.postId
+      prepareToEditorMode()
       setTimeout ()->
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
-      console.log this.postId
+      # console.log this.postId
       Session.set 'FollowPostsId',this._id
-      console.log this._id
+      # console.log this._id
     'click .footer .icon': (e)->
-      console.log 'i clicked a icon'
-      console.log "owner is: " + this.owner
+      # console.log 'i clicked a icon'
+      # console.log "owner is: " + this.owner
+      prepareToEditorMode()
       Session.set("ProfileUserId1", this.owner)
       Session.set("currentPageIndex",-1)
       Meteor.subscribe("usersById", this.owner)
@@ -113,7 +115,8 @@ if Meteor.isClient
       Session.set('pageScrollTop',$(window).scrollTop())
       onUserProfile()
     'click .footer .name': (e)->
-      console.log 'i clicked a name'
+      # console.log 'i clicked a name'
+      prepareToEditorMode()
       Session.set("ProfileUserId1", this.owner)
       Session.set("currentPageIndex",-1)
       Meteor.subscribe("usersById", this.owner)

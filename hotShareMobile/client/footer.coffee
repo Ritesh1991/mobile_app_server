@@ -178,6 +178,7 @@ if Meteor.isClient
           ['暂不','保存']
         )
         return
+      prepareToEditorMode()
       PUB.page('/')
     'click #search':(e)->
       if (Session.get("myHotPostsChanged"))
@@ -192,6 +193,7 @@ if Meteor.isClient
           ['暂不','保存']
         )
         return
+      prepareToEditorMode()
       PUB.page('/search')
     'click #bell':(e)->
       Meteor.defer ()->
@@ -212,6 +214,7 @@ if Meteor.isClient
         )
         return
       # PUB.page('/bell')
+      prepareToEditorMode()
       PUB.page('/simple-chat/user-list/'+Meteor.userId())
     'click #user':(e)->
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
@@ -227,6 +230,7 @@ if Meteor.isClient
           ['暂不','保存']
         )
         return
+      prepareToEditorMode()
       PUB.page('/user')
     'click #add': (e)->
       # return Router.go('/newEditor')
