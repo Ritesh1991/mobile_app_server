@@ -37,7 +37,8 @@ function cropcallback (result,$elemLI){
     $elemLI.data('imgurl',imgUrl);
     $elemLI.data('filename',filename);
     $elemLI.data('uri',URI);
-    $elemLI.attr('id',_id);
+    //can not update id, or pictures will not be changed after crop
+    //$elemLI.attr('id',_id);
   })
 }
 
@@ -134,6 +135,9 @@ Template.newEditorItem.events({
                   filename: result.filename,
                   URI: result.URI
                 });
+                $elemLI.data('imgurl',result.smallImage);
+                $elemLI.data('filename',result.filename);
+                $elemLI.data('uri',result.URI);
             }
         });
       } else if(index === 2){
@@ -147,6 +151,9 @@ Template.newEditorItem.events({
                       filename: result.filename,
                       URI: result.URI
                     });
+                    $elemLI.data('imgurl',result.smallImage);
+                    $elemLI.data('filename',result.filename);
+                    $elemLI.data('uri',result.URI);
                 }
             });
         }
