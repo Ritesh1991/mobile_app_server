@@ -22,3 +22,21 @@
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment:after{ border-bottom-color: rgba(247, 247, 247, 0.3) !important;}
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment .bubble{ color: #FFE2C0 !important;}
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment .personName{ color: #debc8a !important;}
+
+/* for simpleEditorPost */
+.post-detail-page .showPostsBox .postImageItem img, .post-add-page .simpleEditorPost .resortitem img{background-color: transparent !important;}
+
+.post-detail-page .showPostsBox .postImageItem , .post-add-page .simpleEditorPost .resortitem .imgContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 54 58 60 58 repeat; border-width: 12px; }
+.post-detail-page .showPosts > .content .simpleEditorPost .textDiv1{color: #FFE2C0 !important;}
+.post-add-page .simpleEditorPost ul{background-color: transparent !important;}
+.post-add-page .simpleEditorPost .textdiv textarea{border-width: 0px !important; color: #FFE2C0 !important;}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.pressed .textdiv textarea{border-width: 1px !important;}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.edit .textdiv textarea{color: #000 !important;}
+
+.post-add-page .simpleEditorPost .postAudioItem  img{border: none !important; border-radius: 0 !important;}
+.post-detail-page .showPosts > .content .postIframeItem iframe, .post-add-page .simpleEditorPost .resortitem iframe{border: 1px solid #2d2926; border-image: url('img_border.png') 54 58 60 58 repeat; border-width: 12px; }
+.post-detail-page .showPostsBox .musicContainer, .post-add-page .simpleEditorPost .musicContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 54 58 60 58 repeat; border-width: 12px; }
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment{ background: rgba(247, 247, 247, 0.3); border-radius: 4px;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment:after{ border-bottom-color: rgba(247, 247, 247, 0.3) !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment .bubble{ color: #FFE2C0 !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment .personName{ color: #debc8a !important;}

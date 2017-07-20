@@ -27,3 +27,23 @@
 .post-add-page .gridster .resortitem .musicContainer img{border: none !important;}
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment .bubble{ color: #ff006b !important;}
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment .personName{ color: #F44336 !important;}
+
+
+/* for simpleEditorPost */
+.post-detail-page .showPostsBox .postImageItem img, .post-add-page .simpleEditorPost .resortitem img{background-color: transparent !important;}
+.post-detail-page .showPostsBox .postImageItem , .post-add-page .simpleEditorPost .resortitem .imgContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 12% stretch; border-width: 12px; }
+.post-detail-page .showPosts > .content .simpleEditorPost .textDiv1{color: #f35698 !important;font-weight: bold;text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.64);}
+.post-add-page .simpleEditorPost ul{background-color: transparent !important;}
+.post-add-page .simpleEditorPost .textdiv textarea{border-width: 0px !important; color: #f35698 !important;}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.pressed .textdiv textarea{border-width: 1px !important;}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.edit .textdiv textarea{color: #000 !important;}
+
+ 
+.post-detail-page .showPosts > .content .postIframeItem iframe, .post-add-page .simpleEditorPost .resortitem iframe{border: 1px solid #2d2926; border-image: url('img_border.png') 12% stretch; border-width: 12px; }
+
+.post-detail-page .showPosts > .content .postAudioItem .musicContainer, .post-add-page .simpleEditorPost .resortitem .musicContainer{color: #f35698 !important;border: 1px solid #2d2926; border-image: url('img_border.png') 12% stretch; border-width: 12px; }
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment{ background: rgba(243, 86, 152, 0.4); color: #ff006b !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment:after{ border-bottom-color: rgba(243, 86, 152, 0.4) !important;}
+.post-add-page .simpleEditorPost .resortitem .musicContainer img{border: none !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment .bubble{ color: #ff006b !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment .personName{ color: #F44336 !important;}

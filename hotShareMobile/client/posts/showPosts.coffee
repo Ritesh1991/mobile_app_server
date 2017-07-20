@@ -546,6 +546,8 @@ if Meteor.isClient
     , 600
 
   Template.showPosts.helpers
+    isSimpleEditorPost:->
+      return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
     showPostGroupChatIntro:->
       return !localStorage.getItem('postGroupChatIntro')
     showSaveTipHintTemplate:->

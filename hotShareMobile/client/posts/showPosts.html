@@ -154,6 +154,17 @@
           </div>
         </div>
         {{/if}}
+        {{#if isSimpleEditorPost}}
+        <div class="simpleEditorPost">
+          <div id="test">
+              {{#if displayPostContent}}
+                  {{#each getPub}}
+                      {{>postItem}}
+                  {{/each}}
+              {{/if}}
+          </div>
+        </div>
+        {{else}}
         <div class="gridster">
           <div id="test">
               {{#if displayPostContent}}
@@ -163,6 +174,7 @@
               {{/if}}
           </div>
         </div>
+        {{/if}}
 
         {{> SubscribeAuthor}}
       </div>

@@ -24,3 +24,20 @@
 .post-detail-page .showPosts > .content .postAudioItem .musicContainer, .post-add-page .gridster .resortitem .musicContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 6% stretch; border-width: 8px; }
 .post-add-page .gridster .resortitem .musicContainer img{border: none !important;}
 .post-detail-page .showPosts > .content .gridster .postTextItem .pcomment{ background: rgba(247, 247, 247, 0.64); }
+
+
+/* for simpleEditorPost */
+.post-detail-page .showPostsBox .postImageItem img, .post-add-page .simpleEditorPost .resortitem img{background-color: transparent !important;}
+.post-detail-page .showPostsBox .postImageItem , .post-add-page .simpleEditorPost .resortitem .imgContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 6% stretch; border-width: 8px; }
+.post-detail-page .showPosts > .content .simpleEditorPost .textDiv1{color: #000 !important;font-weight: bold;text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.64);}
+.post-add-page .simpleEditorPost ul{background-color: transparent !important;}
+.post-add-page .simpleEditorPost .textdiv textarea{border-width: 0px !important; color: #000 !important;font-weight: bold;text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.64);}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.pressed .textdiv textarea{border-width: 1px !important;}
+.post-add-page .simpleEditorPost ul .resortitem.hastextarea.edit .textdiv textarea{color: #000 !important;}
+
+ 
+.post-detail-page .showPosts > .content .postIframeItem iframe, .post-add-page .simpleEditorPost .resortitem iframe{border: 1px solid #2d2926; border-image: url('img_border.png') 6% stretch; border-width: 8px; }
+
+.post-detail-page .showPosts > .content .postAudioItem .musicContainer, .post-add-page .simpleEditorPost .resortitem .musicContainer{border: 1px solid #2d2926; border-image: url('img_border.png') 6% stretch; border-width: 8px; }
+.post-add-page .simpleEditorPost .resortitem .musicContainer img{border: none !important;}
+.post-detail-page .showPosts > .content .simpleEditorPost .postTextItem .pcomment{ background: rgba(247, 247, 247, 0.64); }

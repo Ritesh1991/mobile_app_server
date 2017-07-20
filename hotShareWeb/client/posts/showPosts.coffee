@@ -401,6 +401,8 @@ if Meteor.isClient
       $(window).scroll(scrollEventCallback)
 
   Template.showPosts.helpers
+    isSimpleEditorPost:->
+      return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
     isInSeries:()->
       latestSeries = Session.get("postContent").latestSeries
       if latestSeries
