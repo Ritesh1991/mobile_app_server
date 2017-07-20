@@ -123,6 +123,13 @@
             <p>{{text}}</p>
           {{/if}}
         {{/if}}
+        {{#if to.isShare}}
+          {{#if to.pcommentIndexNum}}
+          <p>分享了文章 <strong>第{{formatPIndex to.pcommentIndexNum}}段:</strong></p>
+          {{else}}
+           <p>分享了文章</p>
+          {{/if}}
+        {{/if}}
         <div>
           <img class="anstract_img" src="{{mainImage}}"/>
           <div>

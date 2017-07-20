@@ -326,6 +326,11 @@ shareToSystem = function(title,description,thumbData,url) {
 // To could be
 // WXTimeLine, WXSession, QQShare, QQZoneShare, System
 shareTo = function(to,self,index){
+    // 分享文章
+    Meteor.setTimeout(function(){
+        withPostGroupChat && Meteor.call(to, self._id, index);
+    }, 0);
+
     var url = getPostSharingPath();
     var title = getSharingTitle(self);
     var description = null;

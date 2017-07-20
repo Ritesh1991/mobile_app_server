@@ -347,7 +347,7 @@ if(Meteor.isServer){
                       case 'dislike':
                       case 'pcomments':
                         var groupManager = Meteor.users.findOne({_id: doc.owner});
-                        var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的故事群' : '故事聊';
+                        var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的故事群' : '故事群';
                         Meteor.call('create-group', doc.owner, groupName, [doc.owner, userId], function(err, res){
                           console.log('create/update 故事群:', res, groupName);
 
