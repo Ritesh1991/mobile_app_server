@@ -490,8 +490,10 @@ Template._simpleChatToChatItem.events({
     // paraIndex = subtext[1];
     var history = Session.get('history_view') || [];
     var paraIndex = $(e.currentTarget).data('pindex');
-    var owner = $(e.currentTarget).data('owner');
-    var ownerName = $(e.currentTarget).data('ownername');
+    // var owner = $(e.currentTarget).data('owner');
+    // var ownerName = $(e.currentTarget).data('ownername');
+    var owner = page_data.id;
+    var ownerName = page_data.name;
     history.push({
       view: 'simple-chat/to/user?id='+owner,
       scrollTop: document.body.scrollTop
