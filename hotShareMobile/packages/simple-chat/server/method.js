@@ -55,7 +55,7 @@ Meteor.methods({
     Groups.insert({
       _id: id,
       name: name,
-      icon: '',
+      icon: 'http://oss.tiegushi.com/groupMessages.png',
       describe: '',
       create_time: new Date(Date.now() + MQTT_TIME_DIFF),
       last_text: '',
@@ -73,7 +73,7 @@ Meteor.methods({
           GroupUsers.insert({
             group_id: id,
             group_name: name,
-            group_icon: '',
+            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
