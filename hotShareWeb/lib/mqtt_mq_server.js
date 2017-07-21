@@ -14,8 +14,10 @@ if(Meteor.isServer){
             console.log('Connected to mqtt server');
         });
         sendMqttMessage=function(topic,message){
+            var msg = JSON.stringify(message);
             Meteor.defer(function(){
-                mqtt_connection.publish(topic,JSON.stringify(message),{qos:1})
+                mqtt_connection.publish(topic,msg,{qos:1})
+                console.log(msg);
             })
         }
         sendMqttUserMessage=function(user_id, message) {
@@ -25,7 +27,7 @@ if(Meteor.isServer){
             }catch(e){}
         };
         sendMqttGroupMessage=function(group_id, message) {
-            //console.log('>>> sendMqttUserMessage: ' + JSON.stringify(message))
+            //console.log('>>> sendMqttGroupMessage: ' + JSON.stringify(message))
             try{
                 sendMqttMessage("/t/msg/g/" + group_id, message);
             }catch(e){}

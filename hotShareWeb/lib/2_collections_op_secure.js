@@ -391,7 +391,12 @@ if(Meteor.isServer){
                           }
 
                           // console.log(msgObj);
-                          sendMqttGroupMessage(res, msgObj);
+                          SimpleChat.GroupUsers.find({user_id: userId}).forEach(function(item){
+                            msgObj.to.id = item.group_id;
+                            msgObj.to.name = item.group_name;
+                            msgObj.to.icon = item.group_icon;
+                            sendMqttGroupMessage(item.group_id, msgObj);
+                          });
                         });
                         break;
                     }

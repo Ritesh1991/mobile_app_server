@@ -1,4 +1,17 @@
 if Meteor.isServer
+  Fiber = Meteor.npmRequire('fibers')
+  deferSetImmediate = (func)->
+    runFunction = ()->
+      return func.apply(null)
+    if (typeof setImmediate is 'function')
+      setImmediate ()->
+        Fiber(runFunction).run()
+    else
+      setTimeout(
+        Fiber(runFunction).run()
+        0
+      )
+
   myCrypto = Npm.require "crypto"
   aliyun = Meteor.npmRequire "aliyun-sdk"
   aliyun_access_key_id = process.env.ALIYUN_ACCESS_KEY_ID
@@ -1318,4 +1331,10 @@ if Meteor.isServer
             }
             msgObj.to.isShare = true
             msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
-            sendMqttGroupMessage(res, msgObj)
+
+            SimpleChat.GroupUsers.find({user_id: userId}).forEach (item)->
+              msgObj1 = _.clone(msgObj)
+              msgObj1.to.id = item.group_id
+              msgObj1.to.name = item.group_name
+              msgObj1.to.icon = item.group_icon
+              sendMqttGroupMessage(item.group_id, msgObj1)
