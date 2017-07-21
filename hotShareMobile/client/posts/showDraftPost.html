@@ -78,7 +78,17 @@
                             <div class="text" style="height: initial;">{{mainText}}</div>
                         {{/if}}
                     </div>
-
+                    {{#if isSimpleEditorPost}}
+                    <div class="simpleEditorPost">
+                    <div id="test">
+                        {{#if displayPostContent}}
+                            {{#each getPub}}
+                                {{>postItem}}
+                            {{/each}}
+                        {{/if}}
+                    </div>
+                    </div>
+                    {{else}}
                     <div class="gridster">
                         <div id="test">
                             {{#if displayPostContent}}
@@ -88,6 +98,8 @@
                             {{/if}}
                         </div>
                     </div>
+                    {{/if}}
+                    
                 </div>
             </div>
             {{#if haveUrl}}

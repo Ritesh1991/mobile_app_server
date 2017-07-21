@@ -593,6 +593,8 @@ if Meteor.isClient
       return
 
   Template.showDraftPosts.helpers
+    isSimpleEditorPost:->
+      return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
     is_owner: ()->
       return Meteor.userId() is Session.get('postContent').owner
     themes: ()->
