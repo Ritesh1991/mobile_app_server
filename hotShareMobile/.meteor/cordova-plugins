@@ -22,7 +22,7 @@ cordova-plugin-camera@https://github.com/PluginCordova/cordova-plugin-camera/tar
 cordova-plugin-inappbrowser@https://github.com/PluginCordova/inappbrowser/tarball/61e7d527d8b381e0e76277ee385823151f20c90a
 cordova-plugin-iosaudiopicker@https://github.com/PluginCordova/iosaudiopicker/tarball/c0ed773bc6b6de8211466d136e1992e880b25812
 cordova-plugin-media@https://github.com/PluginCordova/media/tarball/2d158b0ef7173cad2b2f84c05c62727932635f8e
-cordova-plugin-meteor-webapp@1.4.1
+cordova-plugin-meteor-webapp@https://github.com/PluginCordova/cordova-plugin-meteor-webapp/tarball/7dd3a5835f2cef0876acddea098ece327d2ab789
 cordova-plugin-network-information@1.2.0
 cordova-plugin-themeablebrowser@https://github.com/PluginCordova/cordova-plugin-themeablebrowser/tarball/12117b16548e0ad309280c2a4b8c82cf313e2693
 cordova-plugin-wkwebview-engine@1.1.0
