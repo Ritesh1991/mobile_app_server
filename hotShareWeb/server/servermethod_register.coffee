@@ -1243,6 +1243,8 @@ if Meteor.isServer
         Meteor.setTimeout(
           ()->
             user = Meteor.users.findOne({_id: userId})
+            defaultEditor = user.profile.defaultEditor
+            editorVersion = defaultEditor || 'fullEditor'
             post = Posts.findOne({_id: postId},{fields:{
               createdAt:1,
               title:1,
@@ -1259,7 +1261,8 @@ if Meteor.isServer
               ownerId: userId,
               owner: userId,
               ownerIcon: newOwnerIcon,
-              ownerName: newOwnerName
+              ownerName: newOwnerName,
+              editorVersion: editorVersion
             }})
 
             syncPostInfoInNeo4j(postId)
