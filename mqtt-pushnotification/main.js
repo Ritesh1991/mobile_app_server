@@ -54,12 +54,12 @@ function mqttPushNotificationInit() {
           // message is Buffer
           debug_on && console.log(topic)
           var msgObj = JSON.parse(message.toString());
-          if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
-              console.log(msgObj)
+          //if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
+          console.log(msgObj)
 
           if(allowGroupNotification && topic.match('/msg/g/')){
-              if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
-                  sendGroupNotification(db,msgObj,'groupmessage');
+              //if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
+              sendGroupNotification(db,msgObj,'groupmessage');
           }
           if(topic.match('/msg/u/')){
               //sendNotification(msgObj, msgObj.to.id,'usermessage');
