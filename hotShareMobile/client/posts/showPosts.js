@@ -328,7 +328,7 @@ shareToSystem = function(title,description,thumbData,url) {
 shareTo = function(to,self,index){
     // 分享文章
     Meteor.setTimeout(function(){
-        withPostGroupChat && Meteor.call(to, self._id, index);
+        withPostGroupChat && Meteor.call('sharePost', to, self._id, index);
     }, 0);
 
     var url = getPostSharingPath();

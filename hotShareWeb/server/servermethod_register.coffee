@@ -1280,45 +1280,42 @@ if Meteor.isServer
         )
 
       "sharePost": (type, postId, postIndex)->
-        Meteor.setTimeout(
-          ()->
-            doc = Posts.findOne({_id: postId})
-            unless (doc)
-              return
-            
-            userId = this.userId
-            groupManager = Meteor.users.findOne({_id: doc.owner})
-            groupName = if groupManager and groupManager.profile and groupManager.profile.fullname then groupManager.profile.fullname + ' 的故事群' else '故事群'
-            Meteor.call 'create-group', doc.owner, groupName, [doc.owner, userId], (err, res)->
-              console.log('create/update 故事群:', res, groupName)
-              group = SimpleChat.Groups.findOne({_id: res})
-              formUser = Meteor.users.findOne({_id: userId})
-              msgObj = {
-                form: {
-                  id: formUser._id,
-                  icon: formUser.profile.icon || '/userPicture.png',
-                  name: formUser.profile.fullname || formUser.username
-                },
-                to: {
-                  id: group._id,
-                  name: group.name,
-                  icon: group.icon,
-                  isPostAbstract: true,
-                  mainImage: doc.mainImage,
-                  pcomment: doc.pub[postIndex].text,
-                  pcommentIndexNum: postIndex
-                },
-                type: 'text',
-                to_type: 'group',
-                title: doc.title,
-                addontitle: doc.addontitle,
+        userId = this.userId
+        Meteor.defer ()->
+          doc = Posts.findOne({_id: postId})
+          unless (doc)
+            return
+          
+          groupManager = Meteor.users.findOne({_id: doc.owner})
+          groupName = if groupManager and groupManager.profile and groupManager.profile.fullname then groupManager.profile.fullname + ' 的故事群' else '故事群'
+          Meteor.call 'create-group', doc.owner, groupName, [doc.owner, userId], (err, res)->
+            console.log('create/update 故事群:', res, groupName)
+            group = SimpleChat.Groups.findOne({_id: res})
+            formUser = Meteor.users.findOne({_id: userId})
+            msgObj = {
+              form: {
+                id: formUser._id,
+                icon: formUser.profile.icon || '/userPicture.png',
+                name: formUser.profile.fullname || formUser.username
+              },
+              to: {
+                id: group._id,
+                name: group.name,
+                icon: group.icon,
+                isPostAbstract: true,
                 mainImage: doc.mainImage,
-                postId: doc._id,
-                is_read: false,
-                create_time: new Date()
-              }
-              msgObj.to.isShare = true
-              msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
-              sendMqttGroupMessage(res, msgObj)
-          0
-        )
+                pcomment: doc.pub[postIndex].text,
+                pcommentIndexNum: postIndex
+              },
+              type: 'text',
+              to_type: 'group',
+              title: doc.title,
+              addontitle: doc.addontitle,
+              mainImage: doc.mainImage,
+              postId: doc._id,
+              is_read: false,
+              create_time: new Date()
+            }
+            msgObj.to.isShare = true
+            msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
+            sendMqttGroupMessage(res, msgObj)

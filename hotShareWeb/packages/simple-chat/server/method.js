@@ -33,7 +33,7 @@ Meteor.methods({
     Groups.insert({
       _id: id,
       name: name,
-      icon: '',
+      icon: 'http://oss.tiegushi.com/groupMessages.png',
       describe: '',
       create_time: new Date(Date.now() + MQTT_TIME_DIFF),
       last_text: '',
