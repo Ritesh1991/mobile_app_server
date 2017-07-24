@@ -14,7 +14,7 @@ Accounts.onLogin(function(){
         }
       } 
     })
-  },50);
+  },3000);
   Meteor.setTimeout(function(){
     console.log("Accounts.onLogin will update my own current version")
     window.updateMyCurrentVersion()
