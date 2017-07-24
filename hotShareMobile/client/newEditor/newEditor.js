@@ -173,6 +173,14 @@ Template.newEditor.events({
     $('#chooseAssociatedUser').modal('show');
   },
   'click #save, click #drafts, click #modalPublish': function(e, t){
+    Session.set('terminateUpload', false);
+    if (e.currentTarget.id === 'drafts')
+      Session.set("isDelayPublish", false);
+    else
+      Session.set("isDelayPublish", true);
+    Template.progressBar.__helpers.get('show')();
+    Session.set("progressBarWidth", 1);
+
     var owner = Meteor.userId();
     var ownerName = Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username;
     var ownerIcon = Meteor.user().profile && Meteor.user().profile.icon ? Meteor.user().profile.icon : '/userPicture.png';
@@ -183,8 +191,10 @@ Template.newEditor.events({
       $('.modal-backdrop').remove();
     }
 
-    if(!Meteor.user())
+    if(!Meteor.user()){
+      Template.progressBar.__helpers.get('close')();
       return PUB.toast('请登录后发表您的故事');
+    }
     if(!Meteor.status().connected && Meteor.status().status != 'connecting')
       Meteor.reconnect()
 
@@ -192,18 +202,13 @@ Template.newEditor.events({
     var title = t.$('.title').val();
     var addontitle = t.$('.addontitle').val();
     var titleImg = t.$('.mainImage').data('imgurl');
-    if (!title || title === '[空标题]')
+    if (!title || title === '[空标题]'){
+      Template.progressBar.__helpers.get('close')();
       return PUB.toast('请为您的故事加个标题');
-
-    Session.set('terminateUpload', false);
-    if (e.currentTarget.id === 'drafts')
-      Session.set("isDelayPublish", false);
-    else
-      Session.set("isDelayPublish", true);
-    Template.progressBar.__helpers.get('show')();
-    Session.set("progressBarWidth", 1);
+    }
 
     // data
+    if(Session.equals('terminateUpload', true)){return}
     var pub = sortable.getDocs();
     pub.unshift({
       _id: new Mongo.ObjectID()._str,
