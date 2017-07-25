@@ -1424,8 +1424,10 @@ if Meteor.isClient
             postItem.removeClass 'post-pcomment-current-pub-item'
       )
       $('.pcommentInputPromptPage').hide()
+      $('.show-or-hidden').show()
     'click .bg, click .cancleBtn':->
       $('.pcommentInputPromptPage').hide()
+      $('.show-or-hidden').show()
 
   Template.SubscribeAuthor.onRendered ->
     Meteor.subscribe 'follower'
