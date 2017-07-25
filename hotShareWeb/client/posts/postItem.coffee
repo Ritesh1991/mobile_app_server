@@ -219,7 +219,7 @@ if Meteor.isClient
       $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
       # $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
-      $('.showPostsBox').hide();
+      # $('.showPostsBox').hide();
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
       Session.set('backgroundTop', backgroundTop);
@@ -230,7 +230,8 @@ if Meteor.isClient
       pcommentPlaceHolderText = getPcommentPlaceHolder()
       Session.set "pcommentIndexNum", this.index
       Session.set 'pcommentPlaceHolderText', pcommentPlaceHolderText
-      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+      # $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+      $('.pcommentInputPages').fadeIn 300, ()->
         $('#pcommitReport').focus()
       # $pcommentInput = $(e.currentTarget).parent()
       # $pcommentInput.after('<div id="pcommentInput" class="pcommentInput"><div class="input-group"><form onsubmit="return" class="pcommentInput-form"><input type="text" id="pcommitReport" autofocus="autofocus" class="form-control" maxlength="180" placeholder="' + pcommentPlaceHolderText + '" /></form><div onclick="pcommitReport()" id="pcommitReportBtn">发送</div></div></div><div onclick="hidePcomments()" class="newalertBackground"></div>')
@@ -276,12 +277,13 @@ if Meteor.isClient
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
       # $('.showBgColor').css('overflow','hidden')
       # $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
-      $('.showPostsBox').hide();
+      # $('.showPostsBox').hide();
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
       Session.set('backgroundTop', backgroundTop);
       pcommentPlaceHolderText = getPcommentPlaceHolder()
-      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+      # $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+      $('.pcommentInputPages').fadeIn 300, ()->
         $('#pcommitReport').focus()
       # $pcommentInput = $(e.currentTarget).parent()
       # $pcommentInput.after('<div id="pcommentInput" class="pcommentInput"><div class="input-group"><form onsubmit="return" class="pcommentInput-form"><input type="text" id="pcommitReport" autofocus="autofocus" class="form-control" maxlength="180" placeholder="' + pcommentPlaceHolderText + '" /></form><div onclick="pcommitReport()" id="pcommitReportBtn">发送</div></div></div><div onclick="hidePcomments()" class="newalertBackground"></div>')

@@ -1301,7 +1301,7 @@ if Meteor.isServer
           
           groupManager = Meteor.users.findOne({_id: doc.owner})
           groupName = if groupManager and groupManager.profile and groupManager.profile.fullname then groupManager.profile.fullname + ' 的故事群' else '故事群'
-          Meteor.call 'create-group', doc.owner, groupName, [doc.owner, userId], (err, res)->
+          Meteor.call 'create-group-2', doc.owner, groupName, [doc.owner, userId], (err, res)->
             console.log('create/update 故事群:', res, groupName)
             group = SimpleChat.Groups.findOne({_id: res})
             formUser = Meteor.users.findOne({_id: userId})
@@ -1332,7 +1332,7 @@ if Meteor.isServer
             msgObj.to.isShare = true
             msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
 
-            SimpleChat.GroupUsers.find({user_id: userId}).forEach (item)->
+            SimpleChat.GroupUsers.find({user_id: userId, post_group: true}).forEach (item)->
               msgObj1 = _.clone(msgObj)
               msgObj1.to.id = item.group_id
               msgObj1.to.name = item.group_name
