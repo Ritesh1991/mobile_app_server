@@ -104,6 +104,114 @@ Meteor.methods({
     });
     return id;
   },
+  'create-group-2': function(id, name, ids){
+    var slef = this;
+    id = id || new Mongo.ObjectID()._str;
+    ids = ids || [];
+    var group = Groups.findOne({_id: id, post_group: true});
+    // console.log('group:', group);
+
+    if (!name)
+      name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
+    if(group){
+      console.log('update group:', id);
+      if (slef.userId && ids.indexOf(slef.userId) === -1)
+        ids.push(slef.userId);
+      if (ids.length > 0){
+        for(var i=0;i<ids.length;i++){
+          var user = Meteor.users.findOne({_id: ids[i]});
+          if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
+            GroupUsers.insert({
+              group_id: id,
+              group_name: group.name,
+              group_icon: group.icon,
+              user_id: user._id,
+              user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+              user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
+              create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+              post_group: true
+            }, function(err){
+              if (err)
+                return;
+              sendMqttGroupMessage(id, {
+                form: {
+                  id: 'AsK6G8FvBn525bgEC',
+                  name: '故事贴小秘',
+                  icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+                },
+                to: {
+                  id: group._id,
+                  name: group.name,
+                  icon: group.icon
+                },
+                type: 'text',
+                to_type: 'group',
+                text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+                is_read: false,
+                create_time: new Date()
+              });
+            });
+          }
+        }
+      }
+      return id;
+    }
+
+    // console.log('ids:', ids);
+    Groups.insert({
+      _id: id,
+      name: name,
+      icon: 'http://oss.tiegushi.com/groupMessages.png',
+      describe: '',
+      create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+      last_text: '',
+      last_time: new Date(Date.now() + MQTT_TIME_DIFF),
+      barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id,
+      post_group: true
+    }, function(err){
+      err && console.log('create group err:', err);
+      if(ids.indexOf(slef.userId) === -1)
+        ids.splice(0, 0, slef.userId);
+      // console.log('ids:', ids);
+      for(var i=0;i<ids.length;i++){
+        var user = Meteor.users.findOne({_id: ids[i]});
+        if(user){
+          // console.log(user);
+          GroupUsers.insert({
+            group_id: id,
+            group_name: name,
+            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
+            user_id: user._id,
+            user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+            user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
+            create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+            post_group: true
+          }, function(err){
+            if (err)
+              return;
+            sendMqttGroupMessage(id, {
+              form: {
+                id: 'AsK6G8FvBn525bgEC',
+                name: '故事贴小秘',
+                icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+              },
+              to: {
+                id: group._id,
+                name: group.name,
+                icon: group.icon
+              },
+              type: 'text',
+              to_type: 'group',
+              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+              is_read: false,
+              create_time: new Date()
+            });
+          });
+        }
+      }
+    });
+    return id;
+  },
   'add-group-urser':function(id,usersId){
     var slef = this;
     usersId = usersId || [];
