@@ -484,7 +484,26 @@
 </template>
 
 <template name='pcommentInputPage'>
-  <div class="pcommentInput" style="display:none;height: auto;width: 100%;top: 0;bottom: auto;">
+  <div class="pcommentInputPages">
+    <div class="bg disable-scroll-mask"></div>
+    <div class="content">
+        <div class="header">
+          <div class="left" onclick="hidePcommentsNew()">关闭</div>
+          <div class="right" onclick="pcommitReport()">发布</div>
+          <div class="title">编辑文字</div>
+        </div>
+        <div class="body">
+          <textarea style="width: 100%;height: 100%;margin: 0;border: none;font-size: 120%;" placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea>
+        </div>
+    </div>
+  </div>
+  <script>
+  $('.disable-scroll-mask,.pcommentInputPages').on('touchmove',function(e){
+    e.preventDefault();
+  });
+  </script>
+  
+  <!--<div class="pcommentInput" style="display:none;height: auto;width: 100%;top: 0;bottom: auto;">
       <div class="head">
         <strong>编辑文字</strong>
         <div  onclick="hidePcommentsNew()" class="leftButton back">
@@ -495,7 +514,7 @@
       <div class="input-group" style="height: 100%;padding-top: 50px;">
       <textarea style="width: 100%;height: 100%;margin: 0;border: none;font-size: 120%;" placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea>
       </div>
-  </div>
+  </div>-->
 </template>
 
 <template name="pcommentInput">
@@ -538,7 +557,8 @@
          // $('.showBgColor').removeAttr('style');
          $('.showPostsBox').show();
          $(window).scrollTop(0-Session.get('backgroundTop'));
-         $('.pcommentInput,.alertBackground').hide();
+        //  $('.pcommentInput,.alertBackground').hide();
+         $('.pcommentInputPages').hide();
          Session.set('backgroundTop','');
 
          var postItem = $('.post-pcomment-current-pub-item');
@@ -568,9 +588,10 @@
 
           if (content === "") {
             // $('.showBgColor').removeAttr('style');
-            $('.showPostsBox').show();
+            // $('.showPostsBox').show();
             $(window).scrollTop(0 - Session.get('backgroundTop'));
-            $('.pcommentInput,.newalertBackground').remove();
+            // $('.pcommentInput,.newalertBackground').remove();
+            $('.pcommentInputPages').fadeOut();
             return false;
           }
           if (Meteor.user()) {
@@ -660,9 +681,10 @@
           Session.set('pcommentsValue', '');
           $("#pcommitReport").attr("placeholder", "评论");
           // $('.showBgColor').removeAttr('style');
-          $('.showPostsBox').show();
+          // $('.showPostsBox').show();
           $(window).scrollTop(0 - Session.get('backgroundTop'));
-          $('.pcommentInput,.newalertBackground').remove();
+          // $('.pcommentInput,.newalertBackground').remove();
+          $('.pcommentInputPages').fadeOut();
           return false;
        }
     </script>
