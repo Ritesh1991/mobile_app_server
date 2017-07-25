@@ -2829,7 +2829,7 @@ if(Meteor.isServer){
                 'profile.fullname': 1,
                 'profile.icon': 1,
                 'profile.sex':1,
-                'profile.loaction':1
+                'profile.location':1
             }
         });
   });
