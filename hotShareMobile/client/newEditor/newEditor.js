@@ -178,7 +178,7 @@ Template.newEditor.events({
       Session.set("isDelayPublish", false);
     else
       Session.set("isDelayPublish", true);
-    Template.progressBar.__helpers.get('show')();
+    //Template.progressBar.__helpers.get('show')();
     Session.set("progressBarWidth", 1);
 
     var owner = Meteor.userId();
@@ -192,7 +192,7 @@ Template.newEditor.events({
     }
 
     if(!Meteor.user()){
-      Template.progressBar.__helpers.get('close')();
+      //Template.progressBar.__helpers.get('close')();
       return PUB.toast('请登录后发表您的故事');
     }
     if(!Meteor.status().connected && Meteor.status().status != 'connecting')
@@ -203,7 +203,7 @@ Template.newEditor.events({
     var addontitle = t.$('.addontitle').val();
     var titleImg = t.$('.mainImage').data('imgurl');
     if (!title || title === '[空标题]'){
-      Template.progressBar.__helpers.get('close')();
+      //Template.progressBar.__helpers.get('close')();
       return PUB.toast('请为您的故事加个标题');
     }
 
