@@ -96,7 +96,7 @@ if Meteor.isClient
         Session.equals('followeesCollection','error')
   Template.writeLetter.events
     'click .back' :->
-      history.go(-1)
+      PUB.back()
     'click .contentList':(e)->
       history = Session.get('history_view') || []
       history.push {
