@@ -20,6 +20,10 @@ if Meteor.isClient
         # Meets.update({_id: meetInfo._id}, {$set: {count: 2}})
         ClientPostFriends.insert(meetInfo)
   getLocation = (userId)->
+    user = Meteor.users.findOne({'_id':userId})
+    if user and user.profile
+      if user.profile.location and user.profile.location isnt ''
+        return user.profile.location
     userInfo = PostFriends.findOne({ta:userId})
     console.log('Get location for user '+ userId + JSON.stringify(userInfo))
     if userInfo and userInfo.profile
