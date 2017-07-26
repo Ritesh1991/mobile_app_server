@@ -391,11 +391,18 @@ if(Meteor.isServer){
                           }
 
                           // console.log(msgObj);
+                          var groupIds = [];
                           SimpleChat.GroupUsers.find({user_id: userId, post_group: true}).forEach(function(item){
-                            msgObj.to.id = item.group_id;
-                            msgObj.to.name = item.group_name;
-                            msgObj.to.icon = item.group_icon;
-                            sendMqttGroupMessage(item.group_id, msgObj);
+                            if (groupIds.indexOf(item.group_id) === -1){
+                              groupIds.push(item.group_id);
+                              msgObj.to.id = item.group_id;
+                              msgObj.to.name = item.group_name;
+                              msgObj.to.icon = item.group_icon;
+                              console.log('========发送故事群消息=========');
+                              console.log(msgObj.to);
+                              console.log('=============================');
+                              sendMqttGroupMessage(item.group_id, msgObj);
+                            }
                           });
                         });
                         break;

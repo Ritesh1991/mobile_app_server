@@ -9,7 +9,10 @@ Meteor.methods({
     if (!name)
       name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
     if(group){
+      group.name = name;
       console.log('update group:', id);
+      Groups.update({_id: id}, {$set: {name: name}});
+
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
       if (ids.length > 0){
@@ -52,7 +55,7 @@ Meteor.methods({
     }
 
     // console.log('ids:', ids);
-    Groups.insert({
+    group = {
       _id: id,
       name: name,
       icon: 'http://oss.tiegushi.com/groupMessages.png',
@@ -61,7 +64,8 @@ Meteor.methods({
       last_text: '',
       last_time: new Date(Date.now() + MQTT_TIME_DIFF),
       barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id
-    }, function(err){
+    };
+    Groups.insert(group, function(err){
       err && console.log('create group err:', err);
       if(ids.indexOf(slef.userId) === -1)
         ids.splice(0, 0, slef.userId);
@@ -105,16 +109,21 @@ Meteor.methods({
     return id;
   },
   'create-group-2': function(id, name, ids){
+    console.log('=========创建故事群===========');
     var slef = this;
     id = id || new Mongo.ObjectID()._str;
     ids = ids || [];
-    var group = Groups.findOne({_id: id, post_group: true});
+    var group = Groups.findOne({_id: id});
     // console.log('group:', group);
 
     if (!name)
       name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
     if(group){
+      group.name = name;
+      group.post_group = true;
       console.log('update group:', id);
+      Groups.update({_id: id}, {$set: {name: name, post_group: true, icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'}});
+
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
       if (ids.length > 0){
@@ -158,17 +167,18 @@ Meteor.methods({
     }
 
     // console.log('ids:', ids);
-    Groups.insert({
+    group = {
       _id: id,
       name: name,
-      icon: 'http://oss.tiegushi.com/groupMessages.png',
+      icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg',
       describe: '',
       create_time: new Date(Date.now() + MQTT_TIME_DIFF),
       last_text: '',
       last_time: new Date(Date.now() + MQTT_TIME_DIFF),
       barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id,
       post_group: true
-    }, function(err){
+    };
+    Groups.insert(group, function(err){
       err && console.log('create group err:', err);
       if(ids.indexOf(slef.userId) === -1)
         ids.splice(0, 0, slef.userId);
@@ -180,7 +190,7 @@ Meteor.methods({
           GroupUsers.insert({
             group_id: id,
             group_name: name,
-            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
+            group_icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg',
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
