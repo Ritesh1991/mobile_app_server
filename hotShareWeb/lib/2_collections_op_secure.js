@@ -348,7 +348,8 @@ if(Meteor.isServer){
                       case 'pcomments':
                         var groupManager = Meteor.users.findOne({_id: doc.owner});
                         var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的故事群' : '故事群';
-                        Meteor.call('create-group-2', doc.owner, groupName, [doc.owner, userId], function(err, res){
+                        groupName = groupName === '故事群' && doc.ownerName ? doc.ownerName + ' 的故事群' : groupName;
+                        Meteor.call('create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], function(err, res){
                           console.log('create/update 故事群:', res, groupName);
 
                           var group = SimpleChat.Groups.findOne({_id: res});
@@ -392,7 +393,7 @@ if(Meteor.isServer){
 
                           // console.log(msgObj);
                           var groupIds = [];
-                          SimpleChat.GroupUsers.find({user_id: userId, post_group: true}).forEach(function(item){
+                          SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
                             if (groupIds.indexOf(item.group_id) === -1){
                               groupIds.push(item.group_id);
                               msgObj.to.id = item.group_id;

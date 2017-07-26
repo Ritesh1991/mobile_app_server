@@ -120,16 +120,16 @@ Meteor.methods({
       name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
     if(group){
       group.name = name;
-      group.post_group = true;
+      group.is_post_group = true;
       console.log('update group:', id);
-      Groups.update({_id: id}, {$set: {name: name, post_group: true, icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'}});
+      Groups.update({_id: id}, {$set: {name: name, is_post_group: true, icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'}});
 
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
       if (ids.length > 0){
         for(var i=0;i<ids.length;i++){
           var user = Meteor.users.findOne({_id: ids[i]});
-          if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
+          if (user && GroupUsers.find({group_id: id, user_id: ids[i], is_post_group: true}).count() <= 0){
             GroupUsers.insert({
               group_id: id,
               group_name: group.name,
@@ -138,7 +138,7 @@ Meteor.methods({
               user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
               user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
               create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-              post_group: true
+              is_post_group: true
             }, function(err){
               if (err)
                 return;
@@ -176,7 +176,7 @@ Meteor.methods({
       last_text: '',
       last_time: new Date(Date.now() + MQTT_TIME_DIFF),
       barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id,
-      post_group: true
+      is_post_group: true
     };
     Groups.insert(group, function(err){
       err && console.log('create group err:', err);
@@ -185,7 +185,7 @@ Meteor.methods({
       // console.log('ids:', ids);
       for(var i=0;i<ids.length;i++){
         var user = Meteor.users.findOne({_id: ids[i]});
-        if(user){
+        if (user && GroupUsers.find({group_id: id, user_id: ids[i], is_post_group: true}).count() <= 0){
           // console.log(user);
           GroupUsers.insert({
             group_id: id,
@@ -195,7 +195,7 @@ Meteor.methods({
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
             create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-            post_group: true
+            is_post_group: true
           }, function(err){
             if (err)
               return;
