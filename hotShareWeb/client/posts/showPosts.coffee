@@ -1651,6 +1651,13 @@ if Meteor.isClient
         if ($theme.length > 0)
           return $theme.attr('href', theme_host_url + style)
         $('head').append('<link id="post-theme" rel="stylesheet" type="text/css" href="'+theme_host_url + style+'">')
+    Tracker.autorun ()->
+      post = Session.get('postContent');
+      if post && post.import_status is 'done'
+        Meteor.setTimeout(()->
+          $('.showPosts').find('img.lazy:not([src])').lazyload();
+          console.log('init lazyload');
+        , 100);
     Template.showPosts.helpers
       is_owner: ()->
         return Meteor.userId() is Session.get('postContent').owner

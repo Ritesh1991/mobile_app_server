@@ -285,6 +285,14 @@ if Meteor.isClient
         userName=Session.get("pcommentsName")
         toastr.info(userName+"点评过的段落已为您用蓝色标注！")
       ,1000
+  
+  Tracker.autorun ()->
+    post = Session.get('postContent');
+    if post && post.import_status is 'done'
+      Meteor.setTimeout(()->
+        $('.showPosts').find('img.lazy:not([src])').lazyload();
+        console.log('init lazyload');
+      , 100);
   # Session.setDefault('hottestPosts', [])
   Template.showPosts.created=->
     layoutHelperInit()
