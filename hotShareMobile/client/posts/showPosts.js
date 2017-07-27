@@ -67,6 +67,26 @@ Template.showPosts.helpers({
 //       $('#commitMsg').focus();
 //    }
 // });
+decodeEntities = (function() {
+  // this prevents any overhead from creating the object each time
+  var element = document.createElement('div');
+
+  function decodeHTMLEntities (str) {
+    if(str && typeof str === 'string') {
+      // strip script/html tags
+      str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+      str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+      element.innerHTML = str;
+      str = element.textContent;
+      element.textContent = '';
+    }
+
+    return str;
+  }
+
+  return decodeHTMLEntities;
+})();
+
 filterEmoji = function(value) {
     var ranges = [
         '\ud83c[\udc00-\udfff]',
@@ -335,10 +355,14 @@ shareTo = function(to,self,index){
     var title = getSharingTitle(self);
     var description = null;
     var firstParagraph = getFirstParagraph();
+    firstParagraph = decodeEntities(firstParagraph);
+    firstParagraph = firstParagraph.replace(/<\/?.+?>/g,"");
+    firstParagraph = filterEmoji(firstParagraph);
     console.log(firstParagraph);
     if(index !== undefined) {
         var text =Session.get('postContent').pub[index].text;
         url = url + '/' + index;
+        text = decodeEntities(text);
         text = text.replace(/<\/?.+?>/g,"");
         text = filterEmoji(text);
         description = text;
