@@ -40,6 +40,7 @@ if(Meteor.isServer){
     var msgObj = null;
     switch(doc.to_type){
       case 'group':
+        // var group = Groups.findOne({_id: doc.to.id});
         //if (GroupUsers.find({group_id: doc.to.id}).count() > 0) // -> my group
         msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'group'};
         break;
@@ -93,6 +94,15 @@ if(Meteor.isServer){
     }
     msgObj.lastText = doc.type === 'text' ? doc.text : '[图片]';
     msgObj.updateAt = new Date(Date.now() + MQTT_TIME_DIFF);
+
+    // 不是故事群的聊天室，则不显示
+    var _group = Groups.findOne({_id: doc.to.id});
+    if (doc.to_type === 'group' && _group && !_group.is_post_group)
+      return;
+
+    // 修正故事群的图标
+    if (doc.to_type === 'group' && _group && _group.is_post_group)
+      msgObj.toUserIcon = 'http://oss.tiegushi.com/groupMessages.png';
 
     var msgSession = MsgSession.findOne({userId: msgObj.userId, toUserId: msgObj.toUserId});
     if (msgSession){
