@@ -492,8 +492,8 @@
           <div class="right" onclick="pcommitReport()">发布</div>
           <div class="title">编辑文字</div>
         </div>
-        <div class="body">
-          <textarea style="width: 100%;height: 100%;margin: 0;border: none;font-size: 120%;" placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea>
+        <div class="body" id="pcommentInputPageBody">
+          <!-- <textarea placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea> -->
         </div>
     </div>
   </div>
@@ -554,16 +554,14 @@
        function hidePcommentsNew(){
          Session.set('pcommentsValue', $('#pcommitReport').val());
          $('.show-or-hidden').show();
-         // $('.showBgColor').removeAttr('style');
          $('.showPostsBox').show();
          $(window).scrollTop(0-Session.get('backgroundTop'));
-        //  $('.pcommentInput,.alertBackground').hide();
          $('.pcommentInputPages').hide();
          Session.set('backgroundTop','');
-
          var postItem = $('.post-pcomment-current-pub-item');
          console.log(postItem);
          postItem.removeClass('post-pcomment-current-pub-item');
+         $('#pcommitReport').remove();
        }
        function pcommitReport(){
           var content, i, pcommentJson, pcomments, position, post, postId, userIcon, userId, username;
@@ -680,11 +678,9 @@
           $('#pcommitReport').val('');
           Session.set('pcommentsValue', '');
           $("#pcommitReport").attr("placeholder", "评论");
-          // $('.showBgColor').removeAttr('style');
-          // $('.showPostsBox').show();
           $(window).scrollTop(0 - Session.get('backgroundTop'));
-          // $('.pcommentInput,.newalertBackground').remove();
           $('.pcommentInputPages').fadeOut();
+          $('#pcommitReport').remove();
           return false;
        }
     </script>
