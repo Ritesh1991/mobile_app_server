@@ -494,10 +494,18 @@ Template._simpleChatToChatItem.events({
     // var ownerName = $(e.currentTarget).data('ownername');
     var owner = page_data.id;
     var ownerName = page_data.name;
-    history.push({
-      view: 'simple-chat/to/user?id='+owner,
-      scrollTop: document.body.scrollTop
-    });
+    if (page_data.type == 'group') {
+      history.push({
+        view: 'simple-chat/to/group?id='+owner + '&name='+encodeURIComponent(page_data.name)+'&icon='+encodeURIComponent(page_data.icon),
+        scrollTop: document.body.scrollTop
+      });
+    }
+    else {
+      history.push({
+        view: 'simple-chat/to/user?id='+owner,
+        scrollTop: document.body.scrollTop
+      });
+    }
 
     Session.set("history_view", history);
 
@@ -933,8 +941,8 @@ Template._simpleChatToChatLayout.onRendered(function(){
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
-  Session.set('msgToUserName', null);
-  Session.set('msgFormUser', null);
+  //Session.set('msgToUserName', null);
+  //Session.set('msgFormUser', null);
 });
 
 Template._simpleChatToChatLayout.helpers({
