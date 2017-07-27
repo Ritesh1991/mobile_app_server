@@ -7,11 +7,12 @@ Meteor.methods({
     // console.log('group:', group);
 
     if (!name)
-      name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
+      name = '群聊 ' + (Groups.find({}).count() + 1);
     if(group){
       group.name = name;
+      group.icon= 'http://oss.tiegushi.com/groupMessages.png';
       console.log('update group:', id);
-      Groups.update({_id: id}, {$set: {name: name}});
+      Groups.update({_id: id}, {$set: {name: name, icon: 'http://oss.tiegushi.com/groupMessages.png'}});
 
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
@@ -72,7 +73,7 @@ Meteor.methods({
       // console.log('ids:', ids);
       for(var i=0;i<ids.length;i++){
         var user = Meteor.users.findOne({_id: ids[i]});
-        if(user){
+        if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
           // console.log(user);
           GroupUsers.insert({
             group_id: id,
