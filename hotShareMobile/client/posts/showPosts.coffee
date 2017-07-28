@@ -657,7 +657,8 @@ if Meteor.isClient
       count
     getPostContent:(obj)->
       self = obj
-      self.pub = self.pub || []
+      #self.pub = self.pub || []
+      self.pub = Session.get("postContent").pub || []
       _.map self.pub, (doc, index, cursor)->
         _.extend(doc, {index: index})
     getPub:->

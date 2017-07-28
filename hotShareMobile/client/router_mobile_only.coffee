@@ -66,7 +66,11 @@ if Meteor.isClient
       refreshPostContent()
       toastr.info('作者修改了帖子内容.')
     else
-      Session.set('postContent',post)
+      if window.dbupdate
+        if window.dbupdate == false
+          Session.set('postContent',post)
+      else
+        Session.set('postContent',post)
 
     if Session.get("doSectionForward") is true
       Session.set("doSectionForward",false)
