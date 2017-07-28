@@ -555,7 +555,8 @@ if Meteor.isClient
       #   false
     getPostContent:(obj)->
       self = obj
-      self.pub = self.pub || []
+      #self.pub = self.pub || []
+      self.pub = Session.get("postContent").pub || []
       if withSponserLinkAds
         position = 1+(self.pub.length / 2)
         self.pub.splice(position,0,{adv:true,type:'insertedLink',data_col:1,data_sizex:6,urlinfo:'http://cdn.tiegushi.com/posts/qwWdWJPMAbyeo8tiJ'})
