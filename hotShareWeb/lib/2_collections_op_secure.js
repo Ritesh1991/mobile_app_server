@@ -352,7 +352,11 @@ if(Meteor.isServer){
                         Meteor.call('create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], function(err, res){
                           console.log('create/update 故事群:', res, groupName);
 
-                          var group = SimpleChat.Groups.findOne({_id: res});
+                          var group = {
+                            _id: doc.owner + '_group',
+                            name: groupName,
+                            icon: 'http://oss.tiegushi.com/groupMessages.png'
+                          };
                           var formUser = Meteor.users.findOne({_id: userId});
                           var msgObj = {
                             form: {
@@ -405,6 +409,14 @@ if(Meteor.isServer){
                               sendMqttGroupMessage(item.group_id, msgObj);
                             }
                           });
+
+                          // 当前group - 有可以还在insert中
+                          if (groupIds.indexOf(group._id) === -1){
+                            msgObj.to.id = group._id;
+                            msgObj.to.name = group.name;
+                            msgObj.to.icon = group.icon;
+                            sendMqttGroupMessage(group._id, msgObj);
+                          }
                         });
                         break;
                     }

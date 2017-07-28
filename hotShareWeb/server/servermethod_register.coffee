@@ -1304,7 +1304,11 @@ if Meteor.isServer
           groupName = if groupName is '故事群' and doc.ownerName then doc.ownerName + ' 的故事群' else groupName
           Meteor.call 'create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], (err, res)->
             console.log('create/update 故事群:', res, groupName)
-            group = SimpleChat.Groups.findOne({_id: res})
+            group = {
+              _id: doc.owner + '_group'
+              name: groupName
+              icon: 'http://oss.tiegushi.com/groupMessages.png'
+            }
             formUser = Meteor.users.findOne({_id: userId})
             msgObj = {
               form: {
@@ -1345,3 +1349,8 @@ if Meteor.isServer
                 console.log(msgObj.to)
                 console.log('=============================')
                 sendMqttGroupMessage(item.group_id, msgObj1)
+            if (groupIds.indexOf(group._id) is -1)
+              msgObj.to.id = group._id
+              msgObj.to.name = group.name
+              msgObj.to.icon = group.icon
+              sendMqttGroupMessage(group._id, msgObj)

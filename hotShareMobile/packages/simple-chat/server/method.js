@@ -122,8 +122,9 @@ Meteor.methods({
     if(group){
       group.name = name;
       group.is_post_group = true;
+      group.icon = 'http://oss.tiegushi.com/groupMessages.png';
       console.log('update group:', id);
-      Groups.update({_id: id}, {$set: {name: name, is_post_group: true, icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'}});
+      Groups.update({_id: id}, {$set: {name: name, is_post_group: true, icon: 'http://oss.tiegushi.com/groupMessages.png'}});
 
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
@@ -171,7 +172,7 @@ Meteor.methods({
     group = {
       _id: id,
       name: name,
-      icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg',
+      icon: 'http://oss.tiegushi.com/groupMessages.png',
       describe: '',
       create_time: new Date(Date.now() + MQTT_TIME_DIFF),
       last_text: '',
@@ -191,7 +192,7 @@ Meteor.methods({
           GroupUsers.insert({
             group_id: id,
             group_name: name,
-            group_icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg',
+            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
