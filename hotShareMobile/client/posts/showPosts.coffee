@@ -474,8 +474,10 @@ if Meteor.isClient
     $('.mainImage').css('height',$(window).height()*0.55)
     postContent = Session.get("postContent")
     title=postContent.title.replace(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g, '')
-    if postContent.publish is false
-      Router.go('/unpublish')
+    
+    unless Template.showPosts.__helpers.get('is_server_import')() is true
+      if postContent.publish is false
+        Router.go('/unpublish')
     if postContent.addontitle
       title=title+":"+postContent.addontitle
     trackPage('http://cdn.tiegushi.com/posts/'+postContent._id,title)
@@ -554,6 +556,8 @@ if Meteor.isClient
     , 600
 
   Template.showPosts.helpers
+    is_server_import: ()->
+      return location.search is '?server_import=true'
     isSimpleEditorPost:->
       return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
     showPostGroupChatIntro:->

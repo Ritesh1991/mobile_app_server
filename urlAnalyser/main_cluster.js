@@ -867,7 +867,7 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
   var url = hotshare_web+'/restapi/importPost/image/NOUSERID?v='+qVer;
   console.log("updateURL="+url+", postId="+postId);
   if (qVer == '3') {
-    post.publish = false;
+    delete post.publish;
   }
   httppost(url, post, function(err, data){
     try {
@@ -887,7 +887,7 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
           //var new_post = {import_status: 'imported', publish: true};
           var new_post = {import_status: 'imported', publish: true};
           if (qVer == '3') {
-            new_post.publish = false;
+            delete new_post.publish;
           }
 
           // 用户没有修改标题图片
@@ -1456,14 +1456,23 @@ function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVe
 
                                 if (qVer == '3') {
                                     //SavedDrafts.update({_id:postId}, {$set:drafts}, {upsert:true})
-                                    if (postObj) {
-                                        postObj.publish = true;
-                                    }
-                                    saveToDrafts(postId, postObj, qVer, function(err4, saveResult) {
-                                        if (err4) {
-                                            console.log('saveToDrafts failed' + saveResult);
-                                        } else {
-                                            console.log('saveToDrafts suc');
+                                    posts.findOne({_id: postId}, function (err4, thePostObj) {
+                                        if(err4) {
+                                            console.log('posts.findOne failed: postId='+postId);
+                                            return ;
+                                        }
+                                        console.log('postId='+postId+', thePostObj.publish='+thePostObj.publish);
+                                        if (thePostObj && !thePostObj.publish) {
+                                            if (postObj) {
+                                                postObj.publish = true;
+                                            }
+                                            saveToDrafts(postId, postObj, qVer, function(err5, saveResult) {
+                                                if (err5) {
+                                                    console.log('saveToDrafts failed' + saveResult);
+                                                } else {
+                                                    console.log('saveToDrafts suc');
+                                                }
+                                            });
                                         }
                                     });
                                     console.log('New import method, return');
@@ -1712,10 +1721,10 @@ if (cluster.isMaster) {
         }
       }
 
-      if (q_ver == '3') {
+      /*if (q_ver == '3') {
         var dataObj = {status: 'succ'};
         writeRes(res, JSON.stringify(dataObj), true);
-      }
+      }*/
 
       if (unique_id != '') {
         Task.add(unique_id, req.params._id, req.params.url);
@@ -1766,7 +1775,7 @@ if (cluster.isMaster) {
           // TODO: set postId
         }else {
           Task.update(unique_id, 'importing');
-          /*if (q_ver == '3') {
+          /*if (å == '3') {
             dataObj.status = 'succ';
             writeRes(res, JSON.stringify(dataObj), true);
             return;

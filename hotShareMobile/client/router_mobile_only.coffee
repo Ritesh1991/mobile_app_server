@@ -368,6 +368,7 @@ if Meteor.isClient
           documentTitle = "『故事贴』" + post.title
         Session.set("DocumentTitle",documentTitle)
         this.render 'showDraftPosts', {data: post}
+        console.log('render showDraftPosts');
         Session.set 'draftposts','draftposts/'+this.params._id
     }
     # Router.route '/posts/:_id/:_index', {
@@ -539,7 +540,12 @@ if Meteor.isClient
       if Meteor.isCordova is true
         this.render 'addTopicComment'
         Session.set 'addTopicComment_server_import', this.params.query.server_import
-        Session.set 'channel','addTopicComment'
+        console.log('location.search='+location.search+', this.params.query='+JSON.stringify(this.params.query))
+        if this.params.query.server_import?
+          Session.set 'channel','addTopicComment?server_import='+this.params.query.server_import
+        else
+          Session.set 'channel','addTopicComment'
+        console.log('addTopicComment: channel is '+Session.get('channel'))
         return
     Router.route '/thanksReport',()->
       if Meteor.isCordova is true

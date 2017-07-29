@@ -178,6 +178,10 @@ if(Meteor.isServer){
                 }
             }
 
+            if (!doc.publish) {
+                console.log('Insert a story with publish as false, skip...');
+                return;
+            }
             try{
                 if(syncToNeo4jWithMqtt)
                     mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
@@ -221,10 +225,10 @@ if(Meteor.isServer){
                 });
             }
 
-            if (!doc.publish) {
+            /*if (!doc.publish) {
                 console.log('Insert a story with publish as false, skip...');
                 return;
-            }
+            }*/
             /*
              AssociatedUsers.find({}).forEach(function(item) {
              if (!~userIds.indexOf(item.userIdA)) {
@@ -267,7 +271,7 @@ if(Meteor.isServer){
         update: function(userId, doc, fieldNames, modifier) {
             if (doc.message_post)
                 return false;
-
+console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+', modifier='+JSON.stringify(modifier));
             // Need refresh CDN since the post data is going to be changed
             // Currently our quota is 10k.
             deferSetImmediate(function(){

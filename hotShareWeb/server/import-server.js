@@ -292,7 +292,7 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
                 if (err || num <= 0) {
                     return res.end(JSON.stringify({result: 'failed'}));
                 }
-                if (post.publish) {
+                if (post && post.publish) {
                     var post = Posts.findOne({_id: req_data._id});
                     //var position = Meteor.absoluteUrl().length-1;
                     //var hostAndPortUrl = Meteor.absoluteUrl().substr(0, position) + ":8083" + Meteor.absoluteUrl().substr(position);

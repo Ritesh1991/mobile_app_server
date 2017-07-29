@@ -86,7 +86,48 @@ if Meteor.isClient
        if topicsCountIsBeyond(comment)
         return
        Session.set("comment",comment)
-    "click #save":(event, t)->
+    "click #preview":(event, t)->
+      topicPostId = Session.get("TopicPostId")
+      console.log('preview post: '+topicPostId)
+      Session.set('pubImages', [])
+      Session.set('backtoalldrafts', true)
+      #Use for if user discard change on Draft
+      TempDrafts
+        .find {owner: Meteor.userId()}
+        .forEach (drafts)->
+          TempDrafts.remove drafts._id
+      #Clear draft first
+      Drafts
+        .find {owner: Meteor.userId()}
+        .forEach (drafts)->
+          Drafts.remove drafts._id
+      post = Posts.findOne({_id: topicPostId})
+      if post and post.pub and post._id
+        draft0 = {_id:post._id, type:'image', isImage:true, url:post.fromUrl ,owner: post.owner, imgUrl:post.mainImage, filename:post.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0};
+        if post.pub?
+          post.pub.splice(0, 0, draft0);
+        Session.set('postContent',post)
+        Router.go('/draftposts/'+topicPostId+'?server_import=true')
+    "click #save, click #publish":(event, t)->
+       if Template.addTopicComment.__helpers.get('is_server_import')() is true
+         console.log('click #publish is_server_import is true')
+         postId = Session.get("TopicPostId")
+         Posts.update(
+            {
+              _id:postId
+            },
+            {
+              $set:{
+                publish:true,
+                isReview:true,
+                createdAt: new Date(),
+              }
+            }
+          )
+         SavedDrafts.remove({_id:postId})
+         #Delete the Drafts
+         Drafts.remove({})
+         TempDrafts.remove({})
        if topicsCountIsBeyond(Session.get("comment"))
         return
        $save = $(event.currentTarget)
@@ -332,3 +373,4 @@ if Meteor.isClient
       Session.set 'post-publish-user-id', user_id
       Meteor.subscribe "usersById", user_id
       Meteor.call('updatePostUser', Session.get('TopicPostId'), user_id)
+      topicPostId = Session.get("TopicPostId")

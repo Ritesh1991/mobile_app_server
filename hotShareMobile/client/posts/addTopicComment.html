@@ -64,7 +64,11 @@
 <div class="addTopicComment">
 {{> Template.dynamic template=template data=data }}
 <div class="content">
-  <div id="title">{{_ "yourStoryPublished"}}</div>
+  {{#if is_server_import}}
+    <div id="title">{{_ "yourStoryImported"}}</div>
+  {{else}}
+    <div id="title">{{_ "yourStoryPublished"}}</div>
+  {{/if}}
   <div><textarea id="comment" placeholder="{{_ 'addTopicOrComment'}}" maxlength="150">{{comment}}</textarea></div>
   <div id="topics">{{_ "hotTopics"}}
       {{#each topics}}
@@ -120,7 +124,12 @@
       </div>
       {{/if}}
   </div>
-  <div id="save">{{_ "OK"}}</div>
+  {{#if is_server_import}}
+    <div id="preview">{{_ "preview"}}</div>
+    <div id="publish">{{_ "publish"}}</div>
+  {{else}}
+    <div id="save">{{_ "OK"}}</div>
+  {{/if}}
 </div>
 </div>
 </template>
@@ -224,6 +233,6 @@
         </dl>
       {{/each}}      
     </div>
-    <div class="f"><button type="button" id="modalServerPublish" class="btn btn-primary">发表</button></div>
+    <div class="f"><button type="button" id="modalServerPublish" class="btn btn-primary">{{_ "choose"}}</button></div>
   </div>
 </template>
