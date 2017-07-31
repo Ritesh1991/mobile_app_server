@@ -161,7 +161,7 @@
       </div>
     {{else}}-->
       {{#if text}}
-        <div class="text">{{text}}
+        <div class="text">{{{convertLink text}}}
           {{#if is_me form.id}}
             {{#if status_sending send_status}}
             <div class="status"><img src="/loading.gif" /></div>

@@ -414,6 +414,14 @@ Template._simpleChatToChat.onRendered(function(){
 });
 
 Template._simpleChatToChatItem.events({
+  'click li .text a': function(e){
+    var href = $(e.currentTarget).attr('href');
+    if(Meteor.isCordova){
+      handleAddedLink(href);
+    } else {
+      window.location.href = href; 
+    }
+  },
   'click li img.swipebox': function(e){
     var imgs = []
     var index = 0;
@@ -1186,6 +1194,9 @@ Template._simpleChatToChatItem.onRendered(function(){
 // });
 
 Template._simpleChatToChatItem.helpers({
+  convertLink: function(str){
+    return str.convertLink("_blank");
+  },
   formatPIndex:function(index){
     if(index == 0){
       return '1'

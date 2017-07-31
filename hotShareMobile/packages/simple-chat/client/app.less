@@ -110,6 +110,7 @@
           padding-left: 60px; min-height: 40px;
           .icon{left: 0px;}
           .text{background-color: #fff; color: #000;}
+          .text{word-break: break-all;}
           .icon:before{content: " ";position: absolute; top: 10px;left: 50px;width: 0; height: 0;border-bottom: 10px solid transparent;border-top: 10px solid transparent;border-right: 10px solid #d2d2d2;}
           .icon:after{content: " ";position: absolute; top: 10px;left: 52px;width: 0; height: 0;border-bottom: 10px solid transparent;border-top: 10px solid transparent;border-right: 10px solid #fff;}
         }
@@ -117,6 +118,8 @@
           text-align: right; padding-right: 60px; min-height: 40px; padding-top: 0px;
           .icon{right: 0px;}
           .text{background-color: @master_color; color: #fff; text-align: left;}
+          .text{word-break: break-all;}
+          .text a, .text a:hover, .text a:focus{color: #FFEB3B;}
           .img{
             margin-right: -10px;
             img{-webkit-clip-path: polygon(0px 0px, 95% 0px, 95% 10px, 100% 20px, 95% 30px, 95% 100%, 0 100%);}
