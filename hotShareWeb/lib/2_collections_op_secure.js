@@ -401,20 +401,20 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
 
                           // console.log(msgObj);
                           var groupIds = [];
-                          SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
-                            if (groupIds.indexOf(item.group_id) === -1){
-                              groupIds.push(item.group_id);
-                              msgObj.to.id = item.group_id;
-                              msgObj.to.name = item.group_name;
-                              msgObj.to.icon = item.group_icon;
-                              console.log('========发送故事群消息=========');
-                              console.log(msgObj.to);
-                              console.log('=============================');
-                              sendMqttGroupMessage(item.group_id, msgObj);
-                            }
-                          });
+                        //   SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
+                        //     if (groupIds.indexOf(item.group_id) === -1){
+                        //       groupIds.push(item.group_id);
+                        //       msgObj.to.id = item.group_id;
+                        //       msgObj.to.name = item.group_name;
+                        //       msgObj.to.icon = item.group_icon;
+                        //       console.log('========发送故事群消息=========');
+                        //       console.log(msgObj.to);
+                        //       console.log('=============================');
+                        //       sendMqttGroupMessage(item.group_id, msgObj);
+                        //     }
+                        //   });
 
-                          // 当前group - 有可以还在insert中
+                          // 当前group
                           if (groupIds.indexOf(group._id) === -1){
                             msgObj.to.id = group._id;
                             msgObj.to.name = group.name;

@@ -1338,17 +1338,17 @@ if Meteor.isServer
             msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
 
             groupIds = []
-            SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach (item)->
-              if (groupIds.indexOf(item.group_id) is -1)
-                groupIds.push(item.group_id)
-                msgObj1 = _.clone(msgObj)
-                msgObj1.to.id = item.group_id
-                msgObj1.to.name = item.group_name
-                msgObj1.to.icon = item.group_icon
-                console.log('========发送故事群消息=========')
-                console.log(msgObj.to)
-                console.log('=============================')
-                sendMqttGroupMessage(item.group_id, msgObj1)
+            # SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach (item)->
+            #   if (groupIds.indexOf(item.group_id) is -1)
+            #     groupIds.push(item.group_id)
+            #     msgObj1 = _.clone(msgObj)
+            #     msgObj1.to.id = item.group_id
+            #     msgObj1.to.name = item.group_name
+            #     msgObj1.to.icon = item.group_icon
+            #     console.log('========发送故事群消息=========')
+            #     console.log(msgObj.to)
+            #     console.log('=============================')
+            #     sendMqttGroupMessage(item.group_id, msgObj1)
             if (groupIds.indexOf(group._id) is -1)
               msgObj.to.id = group._id
               msgObj.to.name = group.name
