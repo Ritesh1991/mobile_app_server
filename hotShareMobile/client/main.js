@@ -1,21 +1,32 @@
 var checkAssociated = function(query){
   var user = Meteor.user();
   var alreadyAssociated = false;
+  var associatedUser = null;
   if (query['userId'] && user && user.profile && user.profile.associated) {
     var associated = user.profile.associated;
     for (var i = 0; i < associated.length; i++) {
       if(associated[i].id === query['userId']){
         alreadyAssociated = true;
+        associatedUser = associated[i];
+        break;
       }
     }
   }
+  var group_msg_page = null;
+  if (query['p'] === 'group_msg' && query['postOwerId']) {
+    var name = query['postOwerName'] ? query['postOwerName']+'的故事群' : ''
+    var icon = 'http://oss.tiegushi.com/groupMessages.png';
+    group_msg_page = '/simple-chat/to/group?id='+query['postOwerId']+'_group&name='+encodeURIComponent(name)+'&icon='+encodeURIComponent(icon);
+    Session.set('msgFormUser',associatedUser);
+  }
   if (alreadyAssociated) {
-    Router.go('/simple-chat/user-list/'+Meteor.userId());
+    var page = group_msg_page ? group_msg_page : '/simple-chat/user-list/'+Meteor.userId();
+    Router.go(page);
     return;
   }
   navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){
         if (index === 2)
-          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId']);
+          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId'],group_msg_page);
       }, '提示', ['取消', '绑定']);
 }
 
