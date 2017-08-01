@@ -190,6 +190,80 @@ Template.newEditorItem.events({
         }
       }
     });
+  },
+  // 更换或裁剪照片
+  'click .editTextImage': function(e){
+    var li = e.currentTarget.parentNode.parentNode;
+    var fadeOutli = $(e.currentTarget).parents("li");
+    var isMain = e.currentTarget.getAttribute('class').indexOf('main') >= 0;
+    var pIndex = isMain ? 0 : (_.pluck(li.parentNode.children, 'id')).indexOf(li.id);
+    console.log('index;', pIndex);
+    var options = {
+        title: '从相册选择图片或拍摄一张照片~',
+        buttonLabels: ['从相册选择图片', '拍摄照片'],
+        addCancelButtonWithLabel: '取消',
+        androidEnableCancelButton: true,
+    };
+    window.footbarOppration = true;
+    window.plugins.actionsheet.show(options, function(index) {
+      if(index === 1){
+        Session.set('draftTitle','')
+        Session.set('draftAddontitle','');
+        Session.set('NewImgAdd','false');
+        var ablubImgLists = [];
+        selectMediaFromAblum(20, function(cancel, result,currentCount,totalCount){
+            if (cancel){
+                return
+            }
+            if(result){
+              console.log('Current Count is ' + currentCount + ' Total is ' + totalCount);
+              console.log('image url is ' + result.smallImage);
+              ablubImgLists.push({
+                type: 'image',
+                isImage:true,
+                currentCount:currentCount, 
+                totalCount:totalCount,
+                imgUrl: result.smallImage,
+                filename: result.filename,
+                URI: result.URI
+              });
+              console.log(fadeOutli)
+              fadeOutli.fadeOut(function(){
+                fadeOutli.remove();
+              });
+              if(currentCount === totalCount){
+                ablubImgLists.reverse();
+                for(var i=0; i < ablubImgLists.length; i++){
+                  Template.newEditor.sortable().add(pIndex,ablubImgLists[i]);
+                }
+                ablubImgLists = null;
+              }
+            }
+        });
+      } else if (index === 2){
+            window.footbarOppration = true;
+            Session.set('NewImgAdd','false');
+            if(window.takePhoto){
+                window.takePhoto(function(result){
+                    console.log('result from camera is ' + JSON.stringify(result));
+                    if (result){
+                      console.log(fadeOutli)
+                      fadeOutli.fadeOut(function(){
+                        fadeOutli.remove();
+                      });
+                      Template.newEditor.sortable().add(pIndex,{
+                        _id: new Mongo.ObjectID()._str,
+                        type: 'image',
+                        isImage:true,
+                        imgUrl: result.smallImage,
+                        filename: result.filename,
+                        URI: result.URI
+                      });
+                    }
+                });
+            }
+      }
+    });
   }
 });
 
