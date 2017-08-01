@@ -1133,10 +1133,10 @@ Template._simpleChatToChatLayout.events({
       return false;
     }catch(ex){console.log(ex); return false;}
   },
-  // 'click .groupsProfile':function(e,t){
-  //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
-  //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
-  // },
+  'click .groupsProfile':function(e,t){
+    var data = page_data;
+    Router.go('/groupsProfile/'+data.type+'/'+data.id);
+  },
   // 'click .userProfile':function(e,t){
   //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
   //   Router.go('/groupsProfile/'+data.type+'/'+data.id);

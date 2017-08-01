@@ -21,7 +21,8 @@
           if (sender && sender.id) {
             userId = sender.id;
           }
-          SimpleChat.MsgSession.update({userId: userId, toUserId: location.search.split("&")[0].replace('?id=', '')}, {$set: {count: 0}});
+          var msgSession = SimpleChat.MsgSession.findOne({userId: userId, toUserId: location.search.split("&")[0].replace('?id=', '')});;
+          msgSession && SimpleChat.MsgSession.update({_id: msgSession._id}, {$set: {count: 0}});
           var currentPage = location.pathname;
           if(Session.get('simpleChatFormPage') && Session.get('simpleChatFormPage').match('posts')){
             if(currentPage.match('/to/user')){
@@ -35,7 +36,7 @@
         </script>
         <span>{{title}}</span>
         {{#if isGroups}}
-          <!--<div class="right groupsProfile"></div>-->
+          <!-- <div class="right groupsProfile"></div> -->
         {{else}}
         <div class="rightDropMenu dropdown">
             <div class="rightButton dropdown-toggle" id="btn-more" data-toggle="dropdown">

@@ -29,7 +29,7 @@ Meteor.publish('get-messages', function(type, to){
 });
 
 Meteor.publish('get-msg-session', function(){
-  return MsgSession.find({user_id: this.userId}, {limit: 20});
+  return MsgSession.find({userId: this.userId}, {limit: 60});
 });
 
 Meteor.publish('get-group', function(id){
@@ -53,6 +53,7 @@ Meteor.publish("group-user-counter",function(id){
 });
 
 Meteor.publish('get-my-group', function(user_id){
+  console.log('pub get-my-group', GroupUsers.find({user_id: user_id}).count());
   return GroupUsers.find({user_id: user_id});
 });
 
