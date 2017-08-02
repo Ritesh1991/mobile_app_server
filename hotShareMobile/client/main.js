@@ -13,15 +13,24 @@ var checkAssociated = function(query){
     }
   }
   var group_msg_page = null;
+  var name = null;
   if (query['p'] === 'group_msg' && query['postOwerId']) {
-    var name = query['postOwerName'] ? query['postOwerName']+'的故事群' : ''
+    name = query['postOwerName'] ? query['postOwerName']+' 的故事群' : '故事群'
     var icon = 'http://oss.tiegushi.com/groupMessages.png';
     group_msg_page = '/simple-chat/to/group?id='+query['postOwerId']+'_group&name='+encodeURIComponent(name)+'&icon='+encodeURIComponent(icon);
+    Session.set('msgToUserName', name);
     Session.set('msgFormUser',associatedUser);
   }
   if (alreadyAssociated) {
     var page = group_msg_page ? group_msg_page : '/simple-chat/user-list/'+Meteor.userId();
-    Router.go(page);
+    Meteor.call('create-group-2', query['postOwerId'] + '_group', name, [query['postOwerId'], query['userId'],Meteor.userId()], function(err, res){
+      if (err) {
+        PUB.toast('暂时无法打开群聊！');
+        return;
+      }
+      console.log('create/update 故事群:', res, name);
+      Router.go(page);
+    });
     return;
   }
   navigator.notification.confirm('检测到可以绑定您在浏览器上的用户帐号，绑定之后可以方便的查看此帐号的消息及与其他人进行互动。', function(index){

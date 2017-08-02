@@ -949,8 +949,8 @@ Template._simpleChatToChatLayout.onRendered(function(){
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
-  //Session.set('msgToUserName', null);
-  //Session.set('msgFormUser', null);
+  Session.set('msgToUserName', null);
+  Session.set('msgFormUser', null);
 });
 
 Template._simpleChatToChatLayout.helpers({

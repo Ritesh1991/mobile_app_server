@@ -249,7 +249,16 @@ if Meteor.isClient
                   Session.set('msgFormUser',associated[i])
                   break
                 i++
-            Router.go(group_msg_page)
+            groupId = group_msg_page.split("&")[0].replace('/simple-chat/to/group?id=', '')
+            name = Session.get('msgToUserName')
+            postsOwner = groupId.replace('_group','');
+            Meteor.call('create-group-2', groupId , name, [postsOwner,userId,Meteor.userId()], (err, res)->
+              if (err) 
+                PUB.toast('暂时无法打开群聊！');
+                return;
+              console.log('create/update 故事群:', res, name);
+              Router.go(group_msg_page)
+            )
           else
             Router.go('/simple-chat/user-list/'+Meteor.userId())
           navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
