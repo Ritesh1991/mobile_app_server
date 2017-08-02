@@ -417,7 +417,7 @@ Template._simpleChatToChatItem.events({
   'click li .text a': function(e){
     var href = $(e.currentTarget).attr('href');
     if(Meteor.isCordova){
-      handleAddedLink(href);
+      openWithThemeBrowser(href);
     } else {
       window.location.href = href; 
     }
@@ -1150,8 +1150,32 @@ Template._simpleChatToChatItem.onRendered(function(){
 
   // if (data.form.id === Meteor.userId() && data.send_status === 'sending')
   //   sendMqttMsg(data);
+  touch.on(this.$('li a'),'hold',function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+    var link = $(this).text()
+    console.log(link);
+    window.plugins.actionsheet.show({
+      title:'复制或打开链接~',
+      buttonLabels: ['复制链接','打开链接'],
+      addCancelButtonWithLabel: '取消',
+      androidEnableCancelButton: true
+    }, function(index){
+      if(index === 1){
+        cordova.plugins.clipboard.copy(link,function(){
+          PUB.toast('链接已复制');
+        },function(){
+          PUB.toast('复制失败');
+        });
+      } else if(index === 2){
+        openWithThemeBrowser(link);
+      }
+    })
+  });
 
   touch.on(this.$('li'),'hold',function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
     var msg = Messages.findOne({_id: data._id});
     console.log('hold event:', msg);
     if (!msg)
@@ -1184,6 +1208,22 @@ Template._simpleChatToChatItem.onRendered(function(){
           });
           break;
       }
+    } else if(msg.to && !msg.to.isPostAbstract){
+      // 复制文本
+      window.plugins.actionsheet.show({
+        title:'复制文本~',
+        buttonLabels: ['复制文本'],
+        addCancelButtonWithLabel: '取消',
+        androidEnableCancelButton: true
+      }, function(index){
+        if(index === 1){
+          cordova.plugins.clipboard.copy(msg.text,function(){
+            PUB.toast('文本已复制');
+          },function(){
+            PUB.toast('复制失败');
+          })
+        }
+      })
     }
   });
 });
