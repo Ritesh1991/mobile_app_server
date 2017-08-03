@@ -36,11 +36,6 @@ if Meteor.isClient
         return true
       else
         return false
-
-    barcodeUrl:()->
-      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
-      if  group and group.barcode
-        return group.barcode
     hasTemplate:()->
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       if  group and group.template and group.template._id
@@ -333,9 +328,11 @@ if Meteor.isClient
       else
         return ''
     barcodeUrl:()->
-      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
-      if  group and group.barcode
-        return group.barcode
+      # group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
+      # if  group and group.barcode
+      #   return group.barcode
+      group_id = Session.get('groupsId')
+      return 'http://' + server_domain_name + '/restapi/group-qrcode/?group_id=' + group_id
   Template.groupBarCode.events
     'click #groupBarCodePageback':(event)->
       Session.set("groupsProfileMenu","groupInformation")

@@ -22,12 +22,15 @@
                         <label>群聊名称</label>
                         <div class="value">{{groupName}}<i class="fa fa-angle-right"></i></div>
                     </li>
-                    {{#if hasBarCode}}
-                    <!--<li class="barcode">
+                    <!--{{#if hasBarCode}}-->
+                    <li class="barcode">
                         <label>群二维码</label>
-                        <div class="value"><img src="{{barcodeUrl}}"><i class="fa fa-angle-right"></i></div>
-                    </li>-->
-                    {{/if}}
+                        <div class="value">
+                            <i class="fa fa-qrcode" style="font-size:28px; line-height: 28px; margin-top: -4px;"></i>
+                            <i class="fa fa-angle-right" style="vertical-align: top;"></i>
+                        </div>
+                    </li>
+                    <!--{{/if}}-->
                 </ul>
                 <!--<div class="disbaleNormalLabelMsg">
                     <div style="display: inline-block;">消息免打扰</div>
@@ -130,7 +133,7 @@
                     <ul class="dropdown-menu" role="menu" aria-labelledby="btn-more">
                       <!-- <li role="presentation"><a id="addNewFriends" role="menuitem" tabindex="-1" ><span class="add-more-drop-item"><span class="fa fa-plus"></span><i class="fa fa-user"></i></span> 添加朋友</a></li> -->
                       <li role="presentation"><a id="savebarcode" role="menuitem" tabindex="-1" >保存二维码</a></li>
-                      <li role="presentation"><a id="scanbarcode" role="menuitem" tabindex="-1" >扫描二维码</a></li>
+                      <!--<li role="presentation"><a id="scanbarcode" role="menuitem" tabindex="-1" >扫描二维码</a></li>-->
                     </ul>
                 </div>
             </div>
@@ -142,7 +145,7 @@
                 {{else}}
                 <i class="fa fa-users" aria-hidden="true"></i>
                 {{/if}}
-                <span>{{groupName}}</span>
+                <h4>{{groupName}}</h4>
             </div>
             <div class="barcode">
                 <img src="{{barcodeUrl}}">

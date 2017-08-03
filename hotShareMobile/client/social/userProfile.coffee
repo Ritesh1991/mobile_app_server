@@ -349,6 +349,7 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+        $('.popUpBox, .b-modal').remove()
       # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
       # console.log 'userName is ' + $(e.currentTarget).attr('username')
       if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
@@ -511,6 +512,7 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+        $('.popUpBox, .b-modal').remove()
       # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
       # console.log 'userName is ' + $(e.currentTarget).attr('username')
       if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
@@ -672,6 +674,7 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+        $('.popUpBox, .b-modal').remove()
       # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
       # console.log 'userName is ' + $(e.currentTarget).attr('username')
       if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
@@ -836,6 +839,7 @@ if Meteor.isClient
       $(window).unbind('scroll')
       if PopUpBox
         PopUpBox.close()
+        $('.popUpBox, .b-modal').remove()
       # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
       # console.log 'userName is ' + $(e.currentTarget).attr('username')
       if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
@@ -1075,7 +1079,11 @@ if Meteor.isClient
         !Session.equals('favouritepostsCollection3_getmore','done')) and
         Session.equals("SocialOnButton",'contactsList')
     onPostId:()->
-      Session.get("postContent")._id
+      # Session.get("postContent")._id
+      if Session.get("postContent")
+        return Session.get("postContent")._id
+      else
+        return null
     favoritePosts3:()->
       #NewDynamicMoments.find({currentPostId:Session.get("postContent")._id},{sort: {createdAt: -1}})
       postIds = []
