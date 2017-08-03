@@ -169,7 +169,13 @@ Template.newEditor.events({
       }, '提示', ['删除故事', '继续创作']);
     }
   },
-  'click #saveAssocaitedUsers': function(){
+  'click #saveAssocaitedUsers': function(e, t){
+    // title
+    var title = t.$('.title').val();
+    if (!title || title === '[空标题]'){
+      //Template.progressBar.__helpers.get('close')();
+      return PUB.toast('请为您的故事加个标题');
+    }
     $('#chooseAssociatedUser').modal('show');
   },
   'click #save, click #drafts, click #modalPublish': function(e, t){
@@ -312,7 +318,7 @@ Template.newEditor.events({
             console.log(err);
             return PUB.toast('保存失败，请重试~');
           }
-          
+
           // 删除草稿
           if (t.data.type === 'draft')
             SavedDrafts.remove({_id: t.data.id});
@@ -369,7 +375,7 @@ Template.newEditor.events({
                 console.log(err);
                 return PUB.toast('存草稿失败，请重试~');
               }
-              
+
               PUB.toast('存草稿成功~');
               PUB.back();
             });
@@ -406,7 +412,7 @@ Template.newEditor.events({
             console.log(err);
             if (err || !_id)
               return PUB.toast('发表失败，请重试~');
-            
+
             post._id = _id;
             post.browse = 1;
             insertPostOnTheHomePage(post._id, post);
@@ -566,7 +572,7 @@ Template.newEditor.events({
               ablubImgLists.push({
                 type: 'image',
                 isImage:true,
-                currentCount:currentCount, 
+                currentCount:currentCount,
                 totalCount:totalCount,
                 imgUrl: result.smallImage,
                 filename: result.filename,
@@ -583,7 +589,7 @@ Template.newEditor.events({
               // sortable.add(pIndex,{
               //   type: 'image',
               //   isImage:true,
-              //   currentCount:currentCount, 
+              //   currentCount:currentCount,
               //   totalCount:totalCount,
               //   imgUrl: result.smallImage,
               //   filename: result.filename,

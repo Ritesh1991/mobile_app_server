@@ -18,8 +18,19 @@ if Meteor.isClient
       $(".chatBtn .red_spot").hide().html(0)
       trackEvent("socialBar","GroupChat")
       #url = 'http://'+chat_server_url+'/channel/'+ Session.get('postContent')._id+'/userid/'+Meteor.userId();
-      url = '/simple-chat/to/group?id='+Session.get('postContent')._id
-      return Router.go(url);
+      post = Session.get('postContent');
+      name = if post.ownerName then post.ownerName+' 的故事群' else '故事群'
+      icon = 'http://oss.tiegushi.com/groupMessages.png';
+      url = '/simple-chat/to/group?id='+post.owner+'_group&name='+encodeURIComponent(name)+'&icon='+encodeURIComponent(icon);
+      Session.set('msgToUserName', name);
+      Meteor.call('create-group-2', post.owner + '_group', name, [post.owner, Meteor.userId()], (err, res)->
+        if err
+          PUB.toast('暂时无法打开群聊！')
+          return;
+        console.log('create/update 故事群:', res, name);
+        Router.go(url)
+      )
+      return
       if isUSVersion
         url += '#en'
       else

@@ -11,6 +11,7 @@ if Meteor.isClient
       if $('.contactsList .head').is(':visible')
         $('.contactsList .head').fadeOut 300
       document.body.scrollTop = 0
+    ###
     'click .chatBtn': (e)->
       $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
       $(".chatBtn .red_spot").hide().html(0)
@@ -25,6 +26,7 @@ if Meteor.isClient
       window.open(url,'_blank')
 #Session.set("Social.LevelOne.Menu",'chatContent')
       #Session.set("SocialOnButton",'chatContent')
+    ###
     'click .contactsBtn':->
       $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
       trackEvent("socialBar","Newfrineds")
@@ -67,6 +69,27 @@ if Meteor.isClient
     inst = this    
     $('.chatBoxContent').css('min-height',$(window).height()-90)
     msg_rest_url = 'http://' + chat_server_url + '/api/gushitie/msgcount/' + Meteor.userId()
+    onChatBoxClient = ()->
+      $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
+      $(".chatBtn .red_spot").hide().html(0)
+      trackEvent("socialBar","GroupChat")
+      if isIOS
+        return;
+      else if isAndroidFunc()
+        Router.go('/downLoadTipPage1');
+    clipboard = new Clipboard('.chatBtn');
+    clipboard.on('success',(e)->
+      console.log('Action:', e.action);
+      console.log('Text:', e.text);
+      console.log('Trigger:', e.trigger);
+      e.clearSelection();
+      onChatBoxClient();
+      )
+    clipboard.on('error',(e)->
+      console.log('Action:', e.action);
+      console.log('Trigger:', e.trigger);
+      onChatBoxClient();
+      )
     #msg_rest_url = 'http://172.16.10.34:4000/api/gushitie/msgcount/' + Meteor.userId()
     # $.getJSON(msg_rest_url, (data) ->
     #   if data? and data.count?
@@ -115,3 +138,13 @@ if Meteor.isClient
       if count > 99 then '99+' else count
     haschats: ()->
       return (if Template.instance().reactivevars.chatcount.get() > 0 then true else false) 
+    isIOS_UniversalLink:()->
+      return isIOS && withEnableUniversalLink;
+    msgBoxClipboard:()->
+      postOwerId = Session.get('postContent').owner
+      postOwerName = Session.get('postContent').ownerName
+      return 'http://'+server_domain_name+'/restapi/webuser-qrcode?userId='+Meteor.userId()+'&touserId=&p=group_msg&postId='+Session.get('postContent')._id+'&postOwerId='+postOwerId+'&postOwerName='+postOwerName;
+    openAppUrl: ()->
+      postOwerId = Session.get('postContent').owner
+      postOwerName = Session.get('postContent').ownerName
+      return  universal_link_host+'/web-rw-message?userId='+Meteor.userId()+'&touserId=&p=group_msg&postId='+Session.get('postContent')._id+'&postOwerId='+postOwerId+'&postOwerName='+postOwerName;

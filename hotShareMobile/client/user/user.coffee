@@ -220,7 +220,7 @@ if Meteor.isClient
       else
         this.mainImage
 
-  @bindWebUserFun = (userId, toUserId, p, postId)->
+  @bindWebUserFun = (userId, toUserId, p, postId,group_msg_page)->
     loading = $.loading('绑定用户中...')
     Meteor.call 'bind_web_user', Meteor.userId(), userId, toUserId, p, postId, (err, r)->
       loading.close()
@@ -238,6 +238,30 @@ if Meteor.isClient
           Session.set('showBindTips',true);
           Router.go('/posts/'+postId)
           Template.bindWebUserPost.open(r.msg || [])
+        when 'group_msg' #作者群
+          if group_msg_page
+            user = Meteor.user()
+            if user and user.profile and user.profile.associated
+              associated = user.profile.associated
+              i = 0
+              while i < associated.length
+                if associated[i].id is userId
+                  Session.set('msgFormUser',associated[i])
+                  break
+                i++
+            groupId = group_msg_page.split("&")[0].replace('/simple-chat/to/group?id=', '')
+            name = Session.get('msgToUserName')
+            postsOwner = groupId.replace('_group','');
+            Meteor.call('create-group-2', groupId , name, [postsOwner,userId,Meteor.userId()], (err, res)->
+              if (err) 
+                PUB.toast('暂时无法打开群聊！');
+                return;
+              console.log('create/update 故事群:', res, name);
+              Router.go(group_msg_page)
+            )
+          else
+            Router.go('/simple-chat/user-list/'+Meteor.userId())
+          navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
         else
           console.log('绑定web用户发现未知的场景类型:', p)
           navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
@@ -271,7 +295,7 @@ if Meteor.isClient
             loading.close()
             return navigator.notification.alert '无效的二维码~', `function(){}`, '提示', '知道了'
           
-          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId'])
+          bindWebUserFun(query['userId'], query['touserId'], query['p'], query['postId'],null)
           # loading = $.loading('绑定用户中...')
           # Meteor.call 'bind_web_user', Meteor.userId(), query['userId'], query['touserId'], query['p'], query['postId'], (err, r)->
           #   loading.close()
@@ -287,6 +311,8 @@ if Meteor.isClient
           #     else
           #       console.log('绑定web用户发现未知的场景类型:', query['p'])
           #       navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
+        else if (res.indexOf('/simple-chat/to/group?id=') >= 0)
+          PUB.page(res)
         else if res.indexOf('http://') >= 0
           callback = (index)->
             if index is 2

@@ -601,7 +601,7 @@ if Meteor.isClient
     #api_url += '/' + Meteor.userId();
     #api_url += '/' + encodeURIComponent(url);
     #api_url += '/' + unique_id;
-    api_url = Meteor.absoluteUrl('import-server')
+    api_url = Meteor.absoluteUrl('import-server-new')
     if (api_url.endsWith("/"))
       api_url += Meteor.userId()
     else
@@ -723,6 +723,14 @@ if Meteor.isClient
                 'publicPosts'
                 postId
               )
+              Tracker.autorun (handler)->
+                postObj = Posts.findOne({_id: postId})
+                Session.set('postContent', postObj)
+                console.log('Tracker.autorun update publicPosts '+postId)
+                console.log('postObj='+JSON.stringify(postObj))
+                if postObj? and postObj.import_status is "imported"
+                  console.log('Tracker.autorun import_status is imported')
+                  handler.stop()
             else
               navigator.notification.confirm(
                 '导入成功，是编辑后发表还是立即发表？',

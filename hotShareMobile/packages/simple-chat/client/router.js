@@ -414,6 +414,14 @@ Template._simpleChatToChat.onRendered(function(){
 });
 
 Template._simpleChatToChatItem.events({
+  'click li .text a': function(e){
+    var href = $(e.currentTarget).attr('href');
+    if(Meteor.isCordova){
+      openWithThemeBrowser(href);
+    } else {
+      window.location.href = href; 
+    }
+  },
   'click li img.swipebox': function(e){
     var imgs = []
     var index = 0;
@@ -941,8 +949,8 @@ Template._simpleChatToChatLayout.onRendered(function(){
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
-  //Session.set('msgToUserName', null);
-  //Session.set('msgFormUser', null);
+  Session.set('msgToUserName', null);
+  Session.set('msgFormUser', null);
 });
 
 Template._simpleChatToChatLayout.helpers({
@@ -1125,10 +1133,10 @@ Template._simpleChatToChatLayout.events({
       return false;
     }catch(ex){console.log(ex); return false;}
   },
-  // 'click .groupsProfile':function(e,t){
-  //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
-  //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
-  // },
+  'click .groupsProfile':function(e,t){
+    var data = page_data;
+    Router.go('/groupsProfile/'+data.type+'/'+data.id);
+  },
   // 'click .userProfile':function(e,t){
   //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
   //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
@@ -1142,8 +1150,32 @@ Template._simpleChatToChatItem.onRendered(function(){
 
   // if (data.form.id === Meteor.userId() && data.send_status === 'sending')
   //   sendMqttMsg(data);
+  touch.on(this.$('li a'),'hold',function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+    var link = $(this).text()
+    console.log(link);
+    window.plugins.actionsheet.show({
+      title:'复制或打开链接~',
+      buttonLabels: ['复制链接','打开链接'],
+      addCancelButtonWithLabel: '取消',
+      androidEnableCancelButton: true
+    }, function(index){
+      if(index === 1){
+        cordova.plugins.clipboard.copy(link,function(){
+          PUB.toast('链接已复制');
+        },function(){
+          PUB.toast('复制失败');
+        });
+      } else if(index === 2){
+        openWithThemeBrowser(link);
+      }
+    })
+  });
 
   touch.on(this.$('li'),'hold',function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
     var msg = Messages.findOne({_id: data._id});
     console.log('hold event:', msg);
     if (!msg)
@@ -1176,6 +1208,22 @@ Template._simpleChatToChatItem.onRendered(function(){
           });
           break;
       }
+    } else if(msg.to && !msg.to.isPostAbstract){
+      // 复制文本
+      window.plugins.actionsheet.show({
+        title:'复制文本~',
+        buttonLabels: ['复制文本'],
+        addCancelButtonWithLabel: '取消',
+        androidEnableCancelButton: true
+      }, function(index){
+        if(index === 1){
+          cordova.plugins.clipboard.copy(msg.text,function(){
+            PUB.toast('文本已复制');
+          },function(){
+            PUB.toast('复制失败');
+          })
+        }
+      })
     }
   });
 });
@@ -1186,6 +1234,9 @@ Template._simpleChatToChatItem.onRendered(function(){
 // });
 
 Template._simpleChatToChatItem.helpers({
+  convertLink: function(str){
+    return str.convertLink("_blank");
+  },
   formatPIndex:function(index){
     if(index == 0){
       return '1'

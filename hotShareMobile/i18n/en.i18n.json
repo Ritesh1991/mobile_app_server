@@ -129,8 +129,11 @@
   //end
   //addTopicComment.html
   "yourStoryPublished": "您的故事已发表",
+  "yourStoryImported": "您的故事已导入",
   "hotTopics": "热门话题:",
   "addTopicOrComment": "添加#话题#或评论",
+  "preview": "预览",
+  "choose": "选择",
   //"OK": "完成", duplicate
   //end
   //commentBar.html

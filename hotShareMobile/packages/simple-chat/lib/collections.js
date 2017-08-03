@@ -14,7 +14,40 @@ if(Meteor.isServer){
 
   Groups = new Mongo.Collection(PRFIX + 'groups', options);
   GroupUsers = new Mongo.Collection(PRFIX + 'groups_users', options);
-  // MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
+  MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
+
+  MsgSession.allow({
+    insert: function (userId, doc) {
+      if (doc.userId != userId)
+        return false;
+
+      var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
+      if (msgSession){
+        doc.createAt = msgSession.createAt;
+        MsgSession.update({_id: msgSession._id}, {$set: doc, $inc: {count: 1}});
+        return false;
+      } else {
+        return true;
+      }
+    },
+    remove: function (userId, doc) {
+      return doc.userId === userId;
+    },
+    update: function (userId, doc) {
+      if (doc.userId != userId)
+        return false;
+
+      var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
+      if (msgSession){
+        return true;
+      } else {
+        doc.createAt = new Date();
+        doc.count = 1;
+        MsgSession.insert(doc);
+        return false;
+      }
+    }
+  });
 }else{
   Groups = new Mongo.Collection(PRFIX + 'groups');
   GroupUsers = new Mongo.Collection(PRFIX + 'groups_users');
@@ -24,12 +57,24 @@ if(Meteor.isServer){
     //Ground.Collection(Messages, 'gdb');
 
     Messages = new Ground.Collection(PRFIX + 'messages', { connection: null })
-    MsgSession = new Ground.Collection(PRFIX + 'msg_session', { connection: null });
+    MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
     Messages.after.insert(function (userId, doc) {updateMsgSession(doc);});
     Messages.after.update(function (userId, doc, fieldNames, modifier, options) {updateMsgSession(doc);});
 
     SimpleChat.Messages = Messages;
     SimpleChat.MsgSession = MsgSession;
+
+    // 老版本的本地消息会话列表
+    var oldMsgSession = new Ground.Collection(PRFIX + 'msg_session', { connection: null });
+    var oldSes = oldMsgSession.find({}).fetch();
+    if (oldSes.length > 0){
+      Meteor.setTimeout(function(){
+        oldSes.map(function(item){
+          MsgSession.insert(item);
+          oldMsgSession.remove({_id: item._id});
+        });
+      }, 2000);
+    }
   });
 
   // 生成聊天会话
@@ -125,6 +170,8 @@ if(Meteor.isServer){
     GroupUsers._ensureIndex({'group_id': 1});
     GroupUsers._ensureIndex({'group_id': 1, 'user_id': 1});
   });
+
+
 }
 
 SimpleChat.Groups = Groups;

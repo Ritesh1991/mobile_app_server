@@ -184,6 +184,18 @@ if Meteor.isClient
         this.render 'addressBook'
         Session.set 'channel','addressBook'
       return
+    Router.route '/groupsProfile/:_type/:_id',()->
+      console.log 'this.params._type'+this.params._type
+      if this.params._type is 'group'
+        limit =  29
+        Meteor.subscribe("get-group-user-with-limit", this.params._id, limit)
+      else
+        Meteor.subscribe('usersById', this.params._id)
+      console.log(this.params._id)
+      Session.set('groupsId', this.params._id)
+      Session.set('groupsType', this.params._type)
+      this.render 'groupsProfile'
+      return
     Router.route '/simpleUserProfile/:_id',()->
       Session.set('simpleUserProfileUserId',this.params._id)
       this.render 'simpleUserProfile'
@@ -376,6 +388,7 @@ if Meteor.isClient
           documentTitle = "『故事贴』" + post.title
         Session.set("DocumentTitle",documentTitle)
         this.render 'showDraftPosts', {data: post}
+        console.log('render showDraftPosts');
         Session.set 'draftposts','draftposts/'+this.params._id
     }
     # Router.route '/posts/:_id/:_index', {
@@ -547,7 +560,12 @@ if Meteor.isClient
       if Meteor.isCordova is true
         this.render 'addTopicComment'
         Session.set 'addTopicComment_server_import', this.params.query.server_import
-        Session.set 'channel','addTopicComment'
+        console.log('location.search='+location.search+', this.params.query='+JSON.stringify(this.params.query))
+        if this.params.query.server_import?
+          Session.set 'channel','addTopicComment?server_import='+this.params.query.server_import
+        else
+          Session.set 'channel','addTopicComment'
+        console.log('addTopicComment: channel is '+Session.get('channel'))
         return
     Router.route '/thanksReport',()->
       if Meteor.isCordova is true

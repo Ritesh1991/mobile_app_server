@@ -127,8 +127,11 @@
   //end
   //addTopicComment.html
   "yourStoryPublished": "Your story has been published",
+  "yourStoryImported": "Your story has been imported",
   "hotTopics": "Topics you may interest",
   "addTopicOrComment": "Add #Topics# or comments",
+  "preview": "Preview",
+  "choose": "Choose",
   //"OK": "完成", duplicate
   //end
   //commentBar.html

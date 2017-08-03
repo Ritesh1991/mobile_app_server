@@ -366,6 +366,10 @@ if (Meteor.isCordova){
             filename = item.filename;
             URI = item.URI
         }
+        if ((filename == undefined || filename == null) || (URI == undefined || URI == null)) {
+            console.log('filename or URI is null: filename='+filename+', URI='+URI);
+            return callback(null,item);
+        }
         var ft = uploadToAliyun_new(filename, URI, function(status,param){
             if (Session.get('terminateUpload')) {
                 if (Session.get('flag')){

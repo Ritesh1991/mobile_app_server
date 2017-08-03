@@ -162,6 +162,20 @@ if Meteor.isServer
       this.response.writeHead(414, {'Content-Type': 'text/html'})
       this.response.end('<h1>414 Request-URI Too Large</h1>')
     )
+
+  # 群二维码
+  Router.route('/restapi/group-qrcode', {where: 'server'}).get(()->
+    group_id = this.params.query.group_id
+    console.log 'restapi/group_qrcode get request, group_id', group_id
+    try
+      img = QRImage.image('/simple-chat/to/group?id=' + group_id ,{size: 10})
+      this.response.writeHead(200, {'Content-Type': 'image/png'})
+      img.pipe(this.response)
+    catch
+      this.response.writeHead(414, {'Content-Type': 'text/html'})
+      this.response.end('<h1>414 Request-URI Too Large</h1>')
+    ) 
+
   Router.route('/restapi/postInsertHook/:_userId/:_postId', (req, res, next)->
     return_result = (result)->
       res.writeHead(200, {

@@ -63,8 +63,10 @@ if Meteor.isClient
     $('.mainImage').css('height',$(window).height()*0.55)
     postContent = Session.get("postContent")
     title=postContent.title.replace(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g, '')
-    if postContent.publish is false
-      Router.go('/unpublish')
+    unless Template.showDraftPosts.__helpers.get('is_server_import')() is true
+      if postContent.publish is false
+        console.log('Goto unpublish page...')
+        Router.go('/unpublish')
     if postContent.addontitle
       title=title+":"+postContent.addontitle
     setTimeout ()->
@@ -88,6 +90,9 @@ if Meteor.isClient
     ,200
 
   Template.showDraftPosts.helpers
+    is_server_import: ()->
+      console.log('showDraftPosts: location.search = '+location.search)
+      return location.search is '?server_import=true'
     getmainImage:()->
       mImg = this.mainImage
       if (mImg.indexOf('file:///') >= 0)
@@ -102,7 +107,7 @@ if Meteor.isClient
       else
         this.mainImage
     showImporting: ()->
-      this.status is 'importing' and this.ownerId is Meteor.userId()
+      this.import_status is 'importing' and this.ownerId is Meteor.userId()
     isMobile:->
       Meteor.isCordova
     displayPostContent:()->
@@ -112,10 +117,11 @@ if Meteor.isClient
     getPostContent:(obj)->
       self = obj
       self.pub = self.pub || []
+      console.log('call getPostContent')
       _.map self.pub, (doc, index, cursor)->
         _.extend(doc, {index: index})
     getPub:->
-      self = this
+      self = Session.get("postContent")
       contentList = Template.showDraftPosts.__helpers.get('getPostContent')(self)
       loadedCount = if Session.get("content_loadedCount") then Session.get("content_loadedCount") else 0
       # console.log("loadedCount="+loadedCount+", "+contentList.length)
@@ -131,7 +137,7 @@ if Meteor.isClient
           , 0)
       contentList.slice(1, newLoadedCount)
     getPub2:->
-      self = this
+      self = Session.get("postContent")
       self.pub = self.pub || []
       _.map self.pub, (doc, index, cursor)->
         _.extend(doc, {index: index})
@@ -329,6 +335,15 @@ if Meteor.isClient
                   }
                 }
               )
+              if Template.showDraftPosts.__helpers.get('is_server_import')() is true
+                Posts.update(
+                  {
+                    _id:postId
+                  },
+                  {
+                    isReview: true
+                  }
+                )
             else
               Posts.insert( {
                 _id:postId,
@@ -434,6 +449,15 @@ if Meteor.isClient
                 }
               }
             )
+            if Template.showDraftPosts.__helpers.get('is_server_import')() is true
+              Posts.update(
+                {
+                  _id:postId
+                },
+                {
+                  isReview: true
+                }
+              )
           else
             Posts.insert( {
               _id:postId,

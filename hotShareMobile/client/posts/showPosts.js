@@ -355,9 +355,13 @@ shareTo = function(to,self,index){
     var title = getSharingTitle(self);
     var description = null;
     var firstParagraph = getFirstParagraph();
-    firstParagraph = decodeEntities(firstParagraph);
-    firstParagraph = firstParagraph.replace(/<\/?.+?>/g,"");
-    firstParagraph = filterEmoji(firstParagraph);
+
+    if (firstParagraph) {
+        firstParagraph = decodeEntities(firstParagraph);
+        firstParagraph = firstParagraph.replace(/<\/?.+?>/g,"");
+        firstParagraph = filterEmoji(firstParagraph);
+    }
+
     console.log(firstParagraph);
     if(index !== undefined) {
         var text =Session.get('postContent').pub[index].text;

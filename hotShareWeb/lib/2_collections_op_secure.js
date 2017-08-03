@@ -178,6 +178,10 @@ if(Meteor.isServer){
                 }
             }
 
+            if (!doc.publish) {
+                console.log('Insert a story with publish as false, skip...');
+                return;
+            }
             try{
                 if(syncToNeo4jWithMqtt)
                     mqttInsertNewPostHook(doc.owner,doc._id,doc.title,doc.addonTitle,doc.ownerName,doc.mainImage);
@@ -221,10 +225,10 @@ if(Meteor.isServer){
                 });
             }
 
-            if (!doc.publish) {
+            /*if (!doc.publish) {
                 console.log('Insert a story with publish as false, skip...');
                 return;
-            }
+            }*/
             /*
              AssociatedUsers.find({}).forEach(function(item) {
              if (!~userIds.indexOf(item.userIdA)) {
@@ -267,7 +271,7 @@ if(Meteor.isServer){
         update: function(userId, doc, fieldNames, modifier) {
             if (doc.message_post)
                 return false;
-
+console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+', modifier='+JSON.stringify(modifier));
             // Need refresh CDN since the post data is going to be changed
             // Currently our quota is 10k.
             deferSetImmediate(function(){
@@ -352,7 +356,11 @@ if(Meteor.isServer){
                         Meteor.call('create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], function(err, res){
                           console.log('create/update 故事群:', res, groupName);
 
-                          var group = SimpleChat.Groups.findOne({_id: res});
+                          var group = {
+                            _id: doc.owner + '_group',
+                            name: groupName,
+                            icon: 'http://oss.tiegushi.com/groupMessages.png'
+                          };
                           var formUser = Meteor.users.findOne({_id: userId});
                           var msgObj = {
                             form: {
@@ -393,18 +401,26 @@ if(Meteor.isServer){
 
                           // console.log(msgObj);
                           var groupIds = [];
-                          SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
-                            if (groupIds.indexOf(item.group_id) === -1){
-                              groupIds.push(item.group_id);
-                              msgObj.to.id = item.group_id;
-                              msgObj.to.name = item.group_name;
-                              msgObj.to.icon = item.group_icon;
-                              console.log('========发送故事群消息=========');
-                              console.log(msgObj.to);
-                              console.log('=============================');
-                              sendMqttGroupMessage(item.group_id, msgObj);
-                            }
-                          });
+                        //   SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
+                        //     if (groupIds.indexOf(item.group_id) === -1){
+                        //       groupIds.push(item.group_id);
+                        //       msgObj.to.id = item.group_id;
+                        //       msgObj.to.name = item.group_name;
+                        //       msgObj.to.icon = item.group_icon;
+                        //       console.log('========发送故事群消息=========');
+                        //       console.log(msgObj.to);
+                        //       console.log('=============================');
+                        //       sendMqttGroupMessage(item.group_id, msgObj);
+                        //     }
+                        //   });
+
+                          // 当前group
+                          if (groupIds.indexOf(group._id) === -1){
+                            msgObj.to.id = group._id;
+                            msgObj.to.name = group.name;
+                            msgObj.to.icon = group.icon;
+                            sendMqttGroupMessage(group._id, msgObj);
+                          }
                         });
                         break;
                     }
