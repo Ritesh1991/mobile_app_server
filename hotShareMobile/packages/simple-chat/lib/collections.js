@@ -57,13 +57,24 @@ if(Meteor.isServer){
     //Ground.Collection(Messages, 'gdb');
 
     Messages = new Ground.Collection(PRFIX + 'messages', { connection: null })
-    // MsgSession = new Ground.Collection(PRFIX + 'msg_session', { connection: null });
     MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
     Messages.after.insert(function (userId, doc) {updateMsgSession(doc);});
     Messages.after.update(function (userId, doc, fieldNames, modifier, options) {updateMsgSession(doc);});
 
     SimpleChat.Messages = Messages;
     SimpleChat.MsgSession = MsgSession;
+
+    // 老版本的本地消息会话列表
+    var oldMsgSession = new Ground.Collection(PRFIX + 'msg_session', { connection: null });
+    var oldSes = oldMsgSession.find({}).fetch();
+    if (oldSes.length > 0){
+      Meteor.setTimeout(function(){
+        oldSes.map(function(item){
+          MsgSession.insert(item);
+          oldMsgSession.remove({_id: item._id});
+        });
+      }, 2000);
+    }
   });
 
   // 生成聊天会话
