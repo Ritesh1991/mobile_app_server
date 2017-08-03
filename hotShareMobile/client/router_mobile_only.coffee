@@ -180,6 +180,18 @@ if Meteor.isClient
         this.render 'addressBook'
         Session.set 'channel','addressBook'
       return
+    Router.route '/groupsProfile/:_type/:_id',()->
+      console.log 'this.params._type'+this.params._type
+      if this.params._type is 'group'
+        limit =  29
+        Meteor.subscribe("get-group-user-with-limit", this.params._id, limit)
+      else
+        Meteor.subscribe('usersById', this.params._id)
+      console.log(this.params._id)
+      Session.set('groupsId', this.params._id)
+      Session.set('groupsType', this.params._type)
+      this.render 'groupsProfile'
+      return
     Router.route '/simpleUserProfile/:_id',()->
       Session.set('simpleUserProfileUserId',this.params._id)
       this.render 'simpleUserProfile'
