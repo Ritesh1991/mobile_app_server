@@ -349,7 +349,7 @@ if Meteor.isClient
     'click .editProfile':()->
       Router.go('/editProfile')
     'click #setting' :->
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      #$('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         Router.go '/dashboard'
       ,animatePageTrasitionTimeout

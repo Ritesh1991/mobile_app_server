@@ -112,6 +112,8 @@ if Meteor.isClient
           window.iabHandle.close()
           window.iabHandle = null
     Router.route '/',()->
+      #Session.set 'board', 'home'
+      #this.render 'selectFrame'
       this.render 'home'
       Session.set 'channel','home'
       return
@@ -159,7 +161,9 @@ if Meteor.isClient
       return
     Router.route '/search',()->
       if Meteor.isCordova is true
-        this.render 'search'
+        Session.set 'board', 'search'
+        this.render 'selectFrame'
+        #this.render 'search'
         Session.set 'channel','search'
       return
     Router.route '/searchFollow',()->
@@ -186,7 +190,9 @@ if Meteor.isClient
       return
     Router.route '/bell',()->
       if Meteor.isCordova is true
-        this.render 'bell'
+        Session.set 'board', 'bell'
+        this.render 'selectFrame'
+        #this.render 'bell'
         Session.set 'channel','bell'
       return
     Router.route '/bellcontent', {
@@ -211,7 +217,9 @@ if Meteor.isClient
       return
     Router.route '/user',()->
       if Meteor.isCordova is true
-        this.render 'user'
+        Session.set 'board', 'user'
+        this.render 'selectFrame'
+        #this.render 'user'
         Session.set 'channel','user'
         return
     Router.route '/dashboard',()->
