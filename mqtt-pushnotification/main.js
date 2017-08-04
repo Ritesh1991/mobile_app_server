@@ -55,9 +55,15 @@ function mqttPushNotificationInit() {
           debug_on && console.log(topic)
           var msgObj = JSON.parse(message.toString());
           //if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
-          console.log(msgObj)
+          console.log('mqtt msg ==>', msgObj)
 
-          if(allowGroupNotification && topic.match('/msg/g/')){
+          // 处理故事贴的故事群
+          if (projectName && topic.startsWith('/'+projectName+'/msg/g/')){
+            if (msgObj.type === 'haveReadMsg') {
+              return;
+            }
+            sendGroupNotification2(db, msgObj, 'groupmessage');
+          } else if(allowGroupNotification && topic.match('/msg/g/')){
               //if(msgObj && msgObj.to && msgObj.to.id && msgObj.to.id != 'd2bc4601dfc593888618e98f')
               sendGroupNotification(db,msgObj,'groupmessage');
           }
@@ -185,7 +191,7 @@ function sendNotification(message, toUserId ,type, cb) {
       return cb && cb(err);
     }
 
-    if(projectName && projectName == 't')
+    if(projectName && projectName == 't' && message.to_type != 'group')
       cloneMsgToAssociatedUsers(toUser, message);
 
     if (toUser && toUser.type && toUser.token) {
@@ -255,7 +261,7 @@ function sendNotification(message, toUserId ,type, cb) {
             debug_on && console.log(result)
             return cb && cb(null);
           }
-        })
+        });
       });
     }
     else {
@@ -304,6 +310,33 @@ function sendUserNotification(db, message, type){
         } else {
           updateSucc()
         }
+    });
+  });
+};
+
+function sendGroupNotification2(db, message, type){
+  var groupUsers = db.collection('simple_chat_groups_users');
+
+  var groupId = message.to.id;
+  groupUsers.find({group_id:  groupId, is_post_group: true}).toArray(function(err, docs) {
+    if(err){
+      return
+    }
+    forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
+      if(message.form.id != doc.user_id && doc.user_id) {
+        sendNotification(message, doc.user_id, type, function(err) {
+            if(err){
+                console.log('sendGroupNotification: err=' + err);
+            } else {
+              updateSucc()
+            }
+            return callback && callback();
+        });
+      } else {
+        return callback && callback();
+      }
+    }, function() {
+      console.log('send GroupNotification complete, messageForm:',JSON.stringify(message.form));
     });
   });
 };
