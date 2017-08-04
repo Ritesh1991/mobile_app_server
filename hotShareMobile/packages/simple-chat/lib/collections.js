@@ -152,13 +152,14 @@ if(Meteor.isServer){
     }
 
     var msgSession = MsgSession.findOne({userId: msgObj.userId, toUserId: msgObj.toUserId});
+    var count = doc.form.id === Meteor.userId() ? 0 : 1; //用户自己发的消息未读消息数量不增加；
     if (msgSession){
       msgObj.createAt = msgSession.createAt;
-      MsgSession.update({_id: msgSession._id}, {$set: msgObj, $inc: {count: 1}});
+      MsgSession.update({_id: msgSession._id}, {$set: msgObj, $inc: {count: count}});
       console.log('update chat session:', msgObj);
     } else {
       msgObj.createAt = new Date(Date.now() + MQTT_TIME_DIFF);
-      msgObj.count = 1;
+      msgObj.count = count;
       MsgSession.insert(msgObj);
       console.log('insert chat session:', msgObj);
     }
