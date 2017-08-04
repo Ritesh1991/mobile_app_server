@@ -1359,8 +1359,7 @@ if Meteor.isServer
                 icon: group.icon,
                 isPostAbstract: true,
                 mainImage: doc.mainImage,
-                pcomment: doc.pub[postIndex].text,
-                pcommentIndexNum: postIndex
+                
               },
               type: 'text',
               to_type: 'group',
@@ -1371,8 +1370,14 @@ if Meteor.isServer
               is_read: false,
               create_time: new Date()
             }
-            msgObj.to.isShare = true
-            msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
+
+            msgObj.to.isLinkText = true
+            if postIndex
+              msgObj.to.pcomment =  doc.pub[postIndex].text
+              msgObj.to.pcommentIndexNum = postIndex
+
+            # msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
+            msgObj.text = '文章不错，已转发 -- '+doc.title
 
             groupIds = []
             # SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach (item)->
