@@ -145,9 +145,11 @@ if(Meteor.isServer){
     if (doc.to_type === 'group' && _group && !_group.is_post_group)
       return;
 
-    // 修正故事群的图标
-    if (doc.to_type === 'group' && _group && _group.is_post_group)
+    // 修正故事群的图标及名称
+    if (doc.to_type === 'group' && _group && _group.is_post_group){
       msgObj.toUserIcon = 'http://oss.tiegushi.com/groupMessages.png';
+      msgObj.toUserName = doc.name;
+    }
 
     var msgSession = MsgSession.findOne({userId: msgObj.userId, toUserId: msgObj.toUserId});
     if (msgSession){
@@ -170,8 +172,6 @@ if(Meteor.isServer){
     GroupUsers._ensureIndex({'group_id': 1});
     GroupUsers._ensureIndex({'group_id': 1, 'user_id': 1});
   });
-
-
 }
 
 SimpleChat.Groups = Groups;
