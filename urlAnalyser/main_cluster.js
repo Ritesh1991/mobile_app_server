@@ -133,7 +133,7 @@ var formatResult = function(data){
       data.resortedArticle[i].data_sizey = parseInt(data.resortedArticle[i].data_sizey);
       data.resortedArticle[i].data_wait_init = true;
       data.resortedArticle[i].originImgUrl = data.resortedArticle[i].imageUrl;
-      data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
+      //data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
       if (i > 0) {
         data.resortedArticle[i].data_row = data.resortedArticle[i-1].data_row + data.resortedArticle[i-1].data_sizey;
       }
@@ -591,7 +591,7 @@ function get_insertData(user, url, data, draftsObj, callback) {
               data.resortedArticle[i].data_sizey = parseInt(data.resortedArticle[i].data_sizey);
               data.resortedArticle[i].data_wait_init = true;
               data.resortedArticle[i].originImgUrl = data.resortedArticle[i].imageUrl;
-              data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
+              //data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
               if (i > 0) {
                   data.resortedArticle[i].data_row = data.resortedArticle[i-1].data_row + data.resortedArticle[i-1].data_sizey;
               }
@@ -662,7 +662,7 @@ var insert_data = function(user, url, data, draftsObj, cb) {
         data.resortedArticle[i].data_sizey = parseInt(data.resortedArticle[i].data_sizey);
         data.resortedArticle[i].data_wait_init = true;
         data.resortedArticle[i].originImgUrl = data.resortedArticle[i].imageUrl;
-        data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
+        //data.resortedArticle[i].imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
         if(i > 0){data.resortedArticle[i].data_row = data.resortedArticle[i-1].data_row + data.resortedArticle[i-1].data_sizey;}
       }
     }
@@ -869,6 +869,7 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
   if (qVer == '3') {
     delete post.publish;
   }
+
   httppost(url, post, function(err, data){
     try {
         dataObj = JSON.parse(data);
@@ -903,17 +904,18 @@ var updatePosts3 = function(postId, post, taskId, callback, qVer){
               for(var ii=0;ii<post.pub.length;ii++){
                 if(post.pub[ii]._id === old_post.pub[i]._id){
                   // 用户没有修改图片
-                  if(old_post.pub[i].imgUrl.startsWith('data:image/')){
+                  //if(old_post.pub[i].imgUrl.startsWith('data:image/')){
+                  //if(old_post.pub[i].imgUrl){
                     new_post['pub.'+i+'.imgUrl'] = post.pub[ii].imgUrl;
                     new_post['pub.'+i+'.souImgUrl'] = old_post.pub[i].originImgUrl;
                     new_post['pub.'+i+'.data_sizey'] = post.pub[ii].data_sizey;
-                  }
+                  //}
                   break;
                 }
               }
             }
           }
-
+console.log('new_post='+JSON.stringify(new_post));
           posts.update({_id: postId},{$set: new_post}, function(err, number){
               if (err || number <= 0) {
                   console.log("Update DB failed!");

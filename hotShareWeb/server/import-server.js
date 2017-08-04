@@ -276,17 +276,18 @@ Router.route('/restapi/importPost/:type/:_id', function(req, res, next) {
                   for(var ii=0;ii<req_data.pub.length;ii++){
                     if(req_data.pub[ii]._id === post.pub[i]._id){
                       // 用户没有修改图片
-                      if(post.pub[i].imgUrl.startsWith('data:image/')){
+                      //if(post.pub[i].imgUrl && post.pub[i].imgUrl.startsWith('data:image/')){
+                      //if(post.pub[i].imgUrl){
                         new_post['pub.'+i+'.imgUrl'] = req_data.pub[ii].imgUrl;
                         new_post['pub.'+i+'.souImgUrl'] = post.pub[i].originImgUrl;
                         new_post['pub.'+i+'.data_sizey'] = req_data.pub[ii].data_sizey;
-                      }
+                      //}
                       break;
                     } 
                   }               
                 }
               }
-              console.log('import update post:', new_post);
+              console.log('import update post:'+ JSON.stringify(new_post)+', req_data._id='+req_data._id);
               Posts.update({_id: req_data._id}, {$set: new_post}, function(err, num) {
                 console.log("importPost update 2, err="+err+", num="+num);
                 if (err || num <= 0) {
