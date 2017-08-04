@@ -23,7 +23,7 @@ Template.cacher = new Template('Template.cacher', function () {
     return HTML.Raw('<div></div>'); // eslint-disable-line
   });
 
-  let view = viewMap[id];
+  var view = viewMap[id];
   if (!view) {
     view = Blaze._TemplateWith(data, function () {
       return Spacebars.include(Template[templateName]);
