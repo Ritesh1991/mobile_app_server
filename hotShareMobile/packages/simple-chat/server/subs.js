@@ -1,4 +1,8 @@
 Meteor.publish('get-messages', function(type, to){
+  if (!this.userId)
+    return;
+  
+  console.log('======get-messages======', this.userId);
   var slef = this;
   var user = Meteor.users.findOne(slef.userId);
   var where = null;

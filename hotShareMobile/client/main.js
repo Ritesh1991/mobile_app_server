@@ -697,5 +697,9 @@ Deps.autorun(function(){
     Meteor.setTimeout(function(){
       Meteor.subscribe('get-msg-session');
     }, 1000*2);
+  } else {
+    // 用户退出的时候，停止订阅群消息（meteor不会自动停止）
+    window.group_sub && window.group_sub.stop();
+    window.group_sub = null;
   }
 });
