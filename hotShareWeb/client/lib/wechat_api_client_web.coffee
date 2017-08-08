@@ -16,10 +16,21 @@ if Meteor.isClient
           cache: true
         });
     window.FeedAfterShare=(postContent,extra)->
+      console.log('share post.');
       me = Meteor.user()
       username = me.username
       if me.profile.fullname
         username = me.profile.fullname
+      Meteor.setTimeout(
+        ()->
+          index = null
+          type = ''
+          if (extra && extra.wechat)
+            index = if extra.wechat.section then extra.wechat.section else null
+            type = if extra.wechat.type then extra.wechat.type else ''
+          withPostGroupChat and Meteor.call('sharePost', type, postContent._id, index)
+        0
+      )
       Feeds.insert({
         owner: Meteor.userId()
         ownerName: username,
