@@ -411,13 +411,42 @@ Template._simpleChatToChat.onRendered(function(){
     is_loading.set(false);
   }});
 
-  $('.box').scroll(function () {
+  var $_box = $('.box');
+  var getLastMsgTime = null;
+  var getLastMsg = function(){
+    getLastMsgTime && Meteor.clearTimeout(getLastMsgTime);
+    getLastMsgTime = Meteor.setTimeout(function(){
+      var top = $_box.height() + $_box.scrollTop();
+      $_box.find('ul.group-list > li').each(function(){
+        var $li = $(this);
+        if ($li[0].offsetTop >= top){
+          console.log('==>', $li.attr('id'));
+        }
+      });
+    }, 300);
+  };
+
+  var before = $_box.scrollTop();
+  $_box.scroll(function () {
     if($('.box').scrollTop() === 0 && !is_loading.get()){
       // if(slef.data.messages.count() >= list_limit.get())
       is_loading.set(true);
       list_limit.set(list_limit.get()+list_limit_val);
       Meteor.setTimeout(function(){is_loading.set(false);}, 500);
     }
+
+    // 滚动方向
+    var after = $_box.scrollTop();
+    var direction = '';
+    if (before>after)
+      direction = 'up';
+    if (before<after)
+      direction = 'down';
+     before = after;
+
+    // 处理新消息（滚动条后面的未读）
+    // if (direction === 'down')
+    //   getLastMsg();
   });
 });
 
@@ -1471,9 +1500,27 @@ window.___message = {
 SimpleChat.onMqttMessage = function(topic, msg) {
   var insertMsg = function(msgObj, type){
     console.log(type, msgObj._id);
+
+    // 聊天窗口判断是否自动滚动
+    var auto_to_bottom = false;
+    if (location.pathname === '/simple-chat/to/user' || location.pathname === '/simple-chat/to/group' && list_data && list_data.id === msgObj.to.id){
+      var $box = $('.simple-chat > .msg-box .box');
+      var box_height = $box.scrollTop()+$box.height();
+      var ul_height = $box.find('ul.group-list').height();
+      console.log('是否在低部:', box_height, ul_height);
+      if (box_height >= ul_height)
+        auto_to_bottom = true;
+    }
+
     Messages.insert(msgObj, function(err, _id){
       if (err)
-        console.log('insert msg error:', err);
+        return console.log('insert msg error:', err);
+      if (auto_to_bottom === true){
+        Meteor.setTimeout(function(){
+          $('.box').scrollTop($('.box ul').height());
+          console.log('==聊天自动滚动==');
+        }, 600);
+      }
     });
   };
 
@@ -1518,7 +1565,8 @@ SimpleChat.onMqttMessage = function(topic, msg) {
 
   if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
   else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
-  else {return Messages.insert(msgObj)}
+  else {return insertMsg(msgObj)}
+  // else {return Messages.insert(msgObj)}
 
   console.log('SimpleChat.SimpleChat where:', where);
   var targetMsg = Messages.findOne(where, {sort: {create_time: -1}});
