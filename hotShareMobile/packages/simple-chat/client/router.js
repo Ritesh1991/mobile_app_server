@@ -390,7 +390,13 @@ Template._simpleChatToChat.onRendered(function(){
   Meteor.subscribe('people_new', function(){});
 
   console.log('=======get-messages=======');
-  window.group_sub = Meteor.subscribe('get-messages', slef.data.type, slef.data.id, function(){
+  window.group_sub = Meteor.subscribe('get-messages', slef.data.type, slef.data.id, {onStop: function(err){
+    err && console.log('get-messages error:', err);
+    setToUsers();
+    init_page = true;
+    $('.box').scrollTop($('.box ul').height());
+    is_loading.set(false);
+  }, onReady: function(){
     if(slef.data.type != 'user'){
       // page_title.set(Groups.findOne({_id: slef.data.id}) ? Groups.findOne({_id: slef.data.id}).name : '聊天室');
       page_title.set(AppConfig.get_post_title());
@@ -403,7 +409,7 @@ Template._simpleChatToChat.onRendered(function(){
     init_page = true;
     $('.box').scrollTop($('.box ul').height());
     is_loading.set(false);
-  });
+  }});
 
   $('.box').scroll(function () {
     if($('.box').scrollTop() === 0 && !is_loading.get()){
