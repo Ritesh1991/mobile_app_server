@@ -1792,7 +1792,7 @@ Template._simpleChatListLayout.events({
     $(e.target).parents('li').slideUp('fast',function () {
       $(e.target).parent('li').remove();
       // remove current list
-      SimpleChat.MsgSession.remove({_id, _id},function(err,num){
+      SimpleChat.MsgSession.remove({_id: _id},function(err,num){
         if(err){
           return console.log('del MsgSession Err:',err);
         } 
