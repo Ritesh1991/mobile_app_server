@@ -51,7 +51,7 @@
         {{/if}}
       {{/if}}<i class="fa fa-angle-right after-title" aria-hidden="true"></i></div>
     {{#each lists}}
-    <li id="{{toUserId}}" msgid='{{_id}}'>
+    <li id="{{toUserId}}" msgid='{{_id}}' class="swiperElem">
       <div class="left">
         <img src="{{toUserIcon}}">
         {{#if count}}
@@ -69,6 +69,7 @@
         <span>关联</span>
       </div>
       {{/if}}
+      <div id="{{_id}}" class="delBtnContent" data-type="{{sessionType}}" data-touserid="{{toUserId}}">删除</div>
     </li>
     {{/each}}
     <!--<li>
@@ -93,4 +94,29 @@
       <span class="time">下午 3:40</span>
     </li>-->
   </ul>
+  <script>
+  $(function() {
+    touch.on('body', 'swipeup swipedown', function(ev){
+      console.log("swipe: ",ev.type );
+      $('.swiperElem').animate({left: '0px'},100);
+    });
+    touch.live('.simple-chat-medialist', 'swipeup swipedown','.swiperElem', function(ev){
+      $('.swiperElem').animate({left: '0px'},100);
+    });
+    touch.live('.simple-chat-medialist', 'swipeleft swipeing','.swiperElem', function(ev){
+      $('.swiperElem').animate({left: '0px'},100);
+      var x = ev.x;
+      if(x < -40){
+        x = -100;
+      } else {
+        x = 0;
+      }
+      console.log($(ev.target))
+      $(ev.target).parents('.swiperElem').animate({left: x+'px'},100);
+    });
+    touch.live('.simple-chat-medialist', 'swiperight swipeing','.swiperElem', function(ev){
+      $(ev.target).parents('.swiperElem').animate({left: '0px'},100);
+    });
+  })
+  </script>
 </template>

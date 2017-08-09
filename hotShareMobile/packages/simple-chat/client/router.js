@@ -1775,6 +1775,29 @@ Template._simpleChatToChatLabelRemove.events({
 });
 
 Template._simpleChatListLayout.events({
+  'click .delBtnContent': function(e,t){
+    e.stopImmediatePropagation();
+    var _id = e.currentTarget.id;
+    var type = $(e.currentTarget).data('type');
+    var userId = Meteor.userId();
+    var toUserId = $(e.currentTarget).data('touserid');
+    $(e.target).parents('li').slideUp('fast',function () {
+      $(e.target).parent('li').remove();
+      // remove current list
+      SimpleChat.MsgSession.remove({_id, _id},function(err,num){
+        if(err){
+          return console.log('del MsgSession Err:',err);
+        } 
+        console.log('num =',num)
+        // remove local msg with this Session
+        if(type == 'group'){
+          toUserId = toUserId.slice(0,toUserId.lastIndexOf('_group'));
+        }
+        SimpleChat.Messages.remove({'to.id': toUserId,'form.id': userId});
+        SimpleChat.Messages.remove({'to.id': userId,'form.id': toUserId});
+      });
+    });
+  },
   'click li': function(e, t){
     var _id = e.currentTarget.id;
     var history = Session.get('history_view') || [];
