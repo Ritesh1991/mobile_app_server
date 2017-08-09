@@ -948,6 +948,28 @@ var loadScript = function(url, callback){
   document.getElementsByTagName('head')[0].appendChild(script);
 }
 Template._simpleChatToChatLayout.onRendered(function(){
+ $("#simple-chat-text").autogrow({
+    maxHeight: 130,
+    postGrowCallback: function(){
+      var dif = $(".footbar").outerHeight();
+      if (dif <= 54) {
+        $("#simple-chat-text").css('padding-top', 5);
+        $("#simple-chat-text").css('padding-bottom', 5);
+      } else {
+        $("#simple-chat-text").css('padding-top', 0);
+        $("#simple-chat-text").css('padding-bottom', 0);
+      }
+      //$('.box')
+      if (dif <= 150) {
+        $(".simple-chat .msg-box .box").css('padding-bottom', dif);
+        console.log("Frank: Yes, outerHeight="+$(".footbar").outerHeight()+", dif = "+dif);
+      } else {
+        console.log("Frank: No, outerHeight="+$(".footbar").outerHeight()+", dif = "+dif);
+      }
+      var chatMessages = $(".simple-chat .msg-box .box");
+      chatMessages.get(0).scrollTop = chatMessages.get(0).scrollHeight+99999;
+    }
+  });
   Meteor.subscribe('myBlackList');
   if(Meteor.isCordova){
     $('#container').click(function(){
@@ -1167,6 +1189,7 @@ Template._simpleChatToChatLayout.events({
       });
       trackEvent("socialBar","AuthorReply")
       $('.input-text').val('');
+      $('#simple-chat-text').get(0).updateAutogrow();
       return false;
     }catch(ex){console.log(ex); return false;}
   },

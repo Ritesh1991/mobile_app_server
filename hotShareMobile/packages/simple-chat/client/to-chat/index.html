@@ -71,7 +71,10 @@
           #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
         </style>
         <div class="btn-box image" id="selectfiles"></div>
-        <div class="input"><input class="input-text" type="text" placeholder="说点什么" /></div>
+        <td class="center" style=" width: calc(100% - 75px); position: absolute;">
+          <textarea dir="auto" name="msg" id="simple-chat-text" maxlength="5000" class="input-message autogrow-short text" placeholder="说点什么" style="width: 100%; padding: 5px;margin-right: 5px; line-height: 25px; color: black; font-size:16px;"></textarea>
+        </td>
+        <!--div class="input"><input class="input-text autogrow-short" type="text"  id="simple-chat-text" placeholder="说点什么" /></div-->
         <div class="send-btn"><input class="btn" type="submit" value="发送" style="border-radius: 5px;" /></div>
       </form></div>
     </div>
