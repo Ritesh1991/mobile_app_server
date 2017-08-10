@@ -55,12 +55,12 @@ if Meteor.isServer
 
     rawPath = 'http://'  +server_domain_name+'/raw/' + postId;
 
-    cdn.refreshObjectCaches({
-        ObjectType: 'File',
-        ObjectPath: rawPath
-      }, (err, res)->
-        console.log(err, res)
-    )
+    # cdn.refreshObjectCaches({
+    #     ObjectType: 'File',
+    #     ObjectPath: rawPath
+    #   }, (err, res)->
+    #     console.log(err, res)
+    # )
 
     cdn.refreshObjectCaches({
         ObjectType: 'File',
