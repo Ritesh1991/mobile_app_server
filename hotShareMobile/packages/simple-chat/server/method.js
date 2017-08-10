@@ -9,10 +9,9 @@ Meteor.methods({
     if (!name)
       name = '群聊 ' + (Groups.find({}).count() + 1);
     if(group){
-      group.name = name;
-      group.icon= 'http://oss.tiegushi.com/groupMessages.png';
-      console.log('update group:', id);
-      Groups.update({_id: id}, {$set: {name: name, icon: 'http://oss.tiegushi.com/groupMessages.png'}});
+      group.name = group.name || name;
+      group.icon = group.icon || 'http://oss.tiegushi.com/groupMessages.png';
+      Groups.update({_id: id}, {$set: {name: group.name, icon: group.icon}});
 
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
@@ -21,7 +20,7 @@ Meteor.methods({
           var user = Meteor.users.findOne({_id: ids[i]});
           if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
             GroupUsers.insert({
-              group_id: id,
+              group_id: group._id,
               group_name: group.name,
               group_icon: group.icon,
               user_id: user._id,
@@ -76,9 +75,9 @@ Meteor.methods({
         if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
           // console.log(user);
           GroupUsers.insert({
-            group_id: id,
-            group_name: name,
-            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
+            group_id: group._id,
+            group_name: group.name,
+            group_icon: group.icon,
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
@@ -117,14 +116,19 @@ Meteor.methods({
     var group = Groups.findOne({_id: id});
     // console.log('group:', group);
 
+    if (!name && ids.length > 0){
+      var owner_user = Meteor.users.findOne({_id: ids[0]});
+      if (owner_user && owner_user.profile && owner_user.profile.fullname)
+        name = owner_user.profile.fullname + ' 的故事群';
+    }
     if (!name)
-      name = '故事群';//'群聊 ' + (Groups.find({}).count() + 1);
+      name = '故事群';
+
     if(group){
-      group.name = name;
+      group.name = group.name || name;
+      group.icon = group.icon || 'http://oss.tiegushi.com/groupMessages.png';
       group.is_post_group = true;
-      group.icon = 'http://oss.tiegushi.com/groupMessages.png';
-      console.log('update group:', id);
-      Groups.update({_id: id}, {$set: {name: name, is_post_group: true, icon: 'http://oss.tiegushi.com/groupMessages.png'}});
+      Groups.update({_id: id}, {$set: {is_post_group: true, name: group.name, icon: group.icon}});
 
       if (slef.userId && ids.indexOf(slef.userId) === -1)
         ids.push(slef.userId);
@@ -190,9 +194,9 @@ Meteor.methods({
         if (user && GroupUsers.find({group_id: id, user_id: ids[i], is_post_group: true}).count() <= 0){
           // console.log(user);
           GroupUsers.insert({
-            group_id: id,
-            group_name: name,
-            group_icon: 'http://oss.tiegushi.com/groupMessages.png',
+            group_id: group._id,
+            group_name: group.name,
+            group_icon: group.icon,
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',

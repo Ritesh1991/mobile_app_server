@@ -24,6 +24,8 @@ if(Meteor.isServer){
       var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
       if (msgSession){
         doc.createAt = msgSession.createAt;
+        // delete doc.toUserName;
+        // delete doc.toUserIcon;
         MsgSession.update({_id: msgSession._id}, {$set: doc, $inc: {count: 1}});
         return false;
       } else {
@@ -43,6 +45,8 @@ if(Meteor.isServer){
       } else {
         doc.createAt = new Date();
         doc.count = 1;
+        // delete doc.toUserName;
+        // delete doc.toUserIcon;
         MsgSession.insert(doc);
         return false;
       }
@@ -147,14 +151,16 @@ if(Meteor.isServer){
 
     // 修正故事群的图标及名称
     if (doc.to_type === 'group' && _group && _group.is_post_group){
-      msgObj.toUserIcon = 'http://oss.tiegushi.com/groupMessages.png';
-      msgObj.toUserName = doc.name;
+      msgObj.toUserIcon = _group.icon || msgObj.toUserIcon ;
+      msgObj.toUserName = _group.name || msgObj.toUserName;
     }
 
     var msgSession = MsgSession.findOne({userId: msgObj.userId, toUserId: msgObj.toUserId});
     var count = doc.form.id === Meteor.userId() ? 0 : 1; //用户自己发的消息未读消息数量不增加；
     if (msgSession){
       msgObj.createAt = msgSession.createAt;
+      delete msgObj.toUserIcon;
+      delete msgObj.toUserName;
       MsgSession.update({_id: msgSession._id}, {$set: msgObj, $inc: {count: count}});
       console.log('update chat session:', msgObj);
     } else {
