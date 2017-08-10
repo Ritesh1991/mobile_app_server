@@ -272,7 +272,7 @@ if Meteor.isClient
        PostsSearch.cleanHistory()
        PUB.page '/searchMyPosts'
     'click #follow': (event)->
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         Router.go '/searchFollow'
       ,animatePageTrasitionTimeout
@@ -384,7 +384,7 @@ if Meteor.isClient
       Session.set('followeesitemsLimit', 10);
       #true 列出偶像列表，false 列出粉丝列表
       Session.set 'followers_tag', false
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         Router.go '/followers'
       ,animatePageTrasitionTimeout
@@ -393,7 +393,7 @@ if Meteor.isClient
       Session.set('followersitemsLimit', 10);
       #true 列出偶像列表，false 列出粉丝列表
       Session.set 'followers_tag', true
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         Router.go '/followers'
       ,animatePageTrasitionTimeout
@@ -438,14 +438,14 @@ if Meteor.isClient
       PUB.page('/add')
 
     'click .draftRight':(e)->
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         PUB.page('/allDrafts')
       ,animatePageTrasitionTimeout
     'click .postImages ul li':(e)->
       Session.set("postPageScrollTop", 0)
       postId = e.currentTarget.id
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       # history = []
       # history.push {
       #     view: 'user'
@@ -457,7 +457,7 @@ if Meteor.isClient
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
     'click .postRight':(e)->
-      $('.user').addClass('animated ' + animateOutLowerEffect);
+      # $('.user').addClass('animated ' + animateOutLowerEffect);
       Meteor.setTimeout ()->
         PUB.page('/myPosts')
       ,animatePageTrasitionTimeout
