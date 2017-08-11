@@ -21,9 +21,17 @@ if(Meteor.isServer){
       if (doc.userId != userId)
         return false;
 
+      // 修正群的名称和头像
+      if (doc.sessionType === 'group'){
+        var group = Groups.findOne({_id: doc.toUserId});
+        if (group && group.name)
+          doc.toUserName = group.name;
+        if (group && group.icon)
+          doc.toUserIcon = group.icon;
+      }
+
       var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
       if (msgSession){
-        doc.createAt = msgSession.createAt;
         MsgSession.update({_id: msgSession._id}, {$set: doc, $inc: {count: 1}});
         return false;
       } else {
@@ -33,19 +41,22 @@ if(Meteor.isServer){
     remove: function (userId, doc) {
       return doc.userId === userId;
     },
-    update: function (userId, doc) {
+    update: function (userId, doc, fieldNames, modifier) {
       if (doc.userId != userId)
         return false;
 
-      var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
-      if (msgSession){
-        return true;
-      } else {
-        doc.createAt = new Date();
-        doc.count = 1;
-        MsgSession.insert(doc);
-        return false;
-      }
+      // 修正群的名称和头像
+      if (doc.sessionType === 'group'){
+        if (!modifier['$set'])
+          modifier['$set'] = {};
+        var group = Groups.findOne({_id: doc.toUserId});
+        if (group && group.name)
+          modifier['$set'].toUserName = group.name;
+        if (group && group.icon)
+          modifier['$set'].toUserIcon = group.icon;
+      } 
+
+      return true;
     }
   });
 }else{
