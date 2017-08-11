@@ -30,6 +30,30 @@ Sortable._create = function(el, options){
     //   el.insertBefore(el.lastChild, el.firstChild); // index is 0 的时候renderWithData会写到最后，需要修正
   };
 
+  obj.addImgText = function(index, doc){
+    if(arguments.length <= 1){
+      doc = index;
+      index = null;
+    }
+
+    // fix data
+    doc._id = doc._id || new Mongo.ObjectID()._str;
+    doc.pid = doc.pid || new Mongo.ObjectID()._str;
+    doc.type = doc.type || 'text';
+    if(doc.type === 'text'){doc.isImage = false;}
+
+    // fix index
+    index = index < 0 ? 0 : index;
+    index = index > el.children.length ? el.children.length : index;
+
+    var view = null;
+    if (!index && index !== 0)
+      view = Blaze.renderWithData(Template.newEditorItem, doc, el);
+    else
+      view = Blaze.renderWithData(Template.newEditorItem, doc, el, el.children[index]);
+    obj._views[doc.pid] = view;
+  };
+
   obj.addAll = function(docs){
     docs.map(function(doc, index){
       doc._id = doc._id || new Mongo.ObjectID()._str;

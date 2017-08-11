@@ -197,13 +197,18 @@ Template.newEditorItem.events({
     var fadeOutli = $(e.currentTarget).parents("li");
     var isMain = e.currentTarget.getAttribute('class').indexOf('main') >= 0;
     var pIndex = isMain ? 0 : (_.pluck(li.parentNode.children, 'id')).indexOf(li.id);
-    console.log('index;', pIndex);
+    var hasText = false;
     var options = {
         title: '从相册选择图片或拍摄一张照片~',
         buttonLabels: ['从相册选择图片', '拍摄照片'],
         addCancelButtonWithLabel: '取消',
         androidEnableCancelButton: true,
     };
+    var oldPid = fadeOutli[0].getAttribute('id');
+    var getText = $('#' + oldPid + ' .text').html();
+    if(getText && getText != ''){
+      hasText = true;
+    }
     window.footbarOppration = true;
     window.plugins.actionsheet.show(options, function(index) {
       if(index === 1){
@@ -216,25 +221,39 @@ Template.newEditorItem.events({
                 return
             }
             if(result){
-              console.log('Current Count is ' + currentCount + ' Total is ' + totalCount);
-              console.log('image url is ' + result.smallImage);
-              ablubImgLists.push({
-                type: 'image',
-                isImage:true,
-                currentCount:currentCount, 
-                totalCount:totalCount,
-                imgUrl: result.smallImage,
-                filename: result.filename,
-                URI: result.URI
-              });
-              console.log(fadeOutli)
+              if(hasText){
+                ablubImgLists.push({
+                  type: 'image',
+                  isImage:true,
+                  currentCount:currentCount,
+                  totalCount:totalCount,
+                  imgUrl: result.smallImage,
+                  filename: result.filename,
+                  URI: result.URI
+                });
+                ablubImgLists.push({
+                  isImage: false,
+                  text: getText,
+                  type: 'text'
+                });
+              }else{
+                ablubImgLists.push({
+                  type: 'image',
+                  isImage:true,
+                  currentCount:currentCount,
+                  totalCount:totalCount,
+                  imgUrl: result.smallImage,
+                  filename: result.filename,
+                  URI: result.URI
+                });
+              }
               fadeOutli.fadeOut(function(){
                 fadeOutli.remove();
               });
               if(currentCount === totalCount){
                 ablubImgLists.reverse();
                 for(var i=0; i < ablubImgLists.length; i++){
-                  Template.newEditor.sortable().add(pIndex,ablubImgLists[i]);
+                  Template.newEditor.sortable().addImgText(pIndex,ablubImgLists[i]);
                 }
                 ablubImgLists = null;
               }
@@ -247,18 +266,25 @@ Template.newEditorItem.events({
                 window.takePhoto(function(result){
                     console.log('result from camera is ' + JSON.stringify(result));
                     if (result){
-                      console.log(fadeOutli)
                       fadeOutli.fadeOut(function(){
                         fadeOutli.remove();
                       });
-                      Template.newEditor.sortable().add(pIndex,{
-                        _id: new Mongo.ObjectID()._str,
+                      var newid = new Mongo.ObjectID()._str;
+                      Template.newEditor.sortable().addImgText(pIndex,{
+                        _id: newid,
                         type: 'image',
                         isImage:true,
                         imgUrl: result.smallImage,
                         filename: result.filename,
                         URI: result.URI
                       });
+                      if(hasText){
+                        Template.newEditor.sortable().addImgText(pIndex+1,{
+                          isImage: false,
+                          text: getText,
+                          type: 'text'
+                        });
+                      }
                     }
                 });
             }
