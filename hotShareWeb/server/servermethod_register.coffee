@@ -1397,5 +1397,6 @@ if Meteor.isServer
               msgObj.to.icon = group.icon
               sendMqttGroupMessage(group._id, msgObj)
       "updateGroupName": (groupId, name)->
-        SimpleChat.Groups.update({_id: groupId},{$set:{name: name}})
-        SimpleChat.GroupUsers.update({group_id: groupId},{$set:{group_name:name}},{multi: true})
+        SimpleChat.Groups.update({_id: groupId}, {$set:{name: name}})
+        SimpleChat.GroupUsers.update({group_id: groupId}, {$set:{group_name:name}}, {multi: true})
+        SimpleChat.MsgSession.update({toUserId: groupId}, {$set: {toUserName: name}}, {multi: true})

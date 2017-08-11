@@ -71,6 +71,12 @@ if Meteor.isClient
       $('.popUpBox, .b-modal').remove()
       Router.go(url)
     'click .name': (event)->
+      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
+
+      # 故事群
+      if group.is_post_group && Meteor.userId isnt Session.get('groupsId').replace('_group', '')
+        return PUB.toast('只能群主才能修改群的名称~')
+
       Session.set("groupsProfileMenu","setGroupname")
     'click .barcode': (event)->
       Session.set("groupsProfileMenu","groupBarCode")
@@ -250,6 +256,10 @@ if Meteor.isClient
 
   Template.groupUsers.events
     'click #addUserInGroup':(event)->
+      # 故事群
+      if group.is_post_group && Meteor.userId isnt Session.get('groupsId').replace('_group', '')
+        return PUB.toast('只能群主才能邀请新的群成员~')
+
       Session.set("groupsProfileMenu","inviteFriendIntoGroup")
     'click #showAllResults':(event)->
       Session.set("groupsProfileMenu","groupAllUser")
@@ -311,7 +321,7 @@ if Meteor.isClient
 
         Session.set("groupsProfileMenu","groupInformation")
       else
-        PUB.toast '训练群名称不能为空~'
+        PUB.toast '群名称不能为空~'
       false
 
   Template.groupBarCode.helpers
