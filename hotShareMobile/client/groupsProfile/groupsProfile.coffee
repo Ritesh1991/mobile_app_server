@@ -257,6 +257,7 @@ if Meteor.isClient
   Template.groupUsers.events
     'click #addUserInGroup':(event)->
       # 故事群
+      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       if group.is_post_group && Meteor.userId isnt Session.get('groupsId').replace('_group', '')
         return PUB.toast('只能群主才能邀请新的群成员~')
 

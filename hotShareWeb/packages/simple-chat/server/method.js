@@ -246,7 +246,7 @@ Meteor.methods({
             continue;
           }
           // console.log(user);
-          GroupUsers.insert({
+          var groupUser = {
             group_id: group._id,
             group_name: group.name,
             group_icon: group.icon,
@@ -254,7 +254,10 @@ Meteor.methods({
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
             create_time: new Date(Date.now() + MQTT_TIME_DIFF)
-          });
+          };
+          if (group.is_post_group)
+            groupUser.is_post_group = true;
+          GroupUsers.insert(groupUser);
         }
       }
       return 'succ'
