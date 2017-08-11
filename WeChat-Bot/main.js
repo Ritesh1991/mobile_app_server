@@ -2,7 +2,7 @@
  * Created by simba on 5/2/17.
  */
 
-const { Wechaty } = require('wechaty')
+// const { Wechaty } = require('wechaty')
 var DDP = require('ddp');
 var login = require('ddp-login');
 var async = require('async');
@@ -351,13 +351,45 @@ function testImportPost(callback){
 
 var globalRoom = null
 var reportToWechatRoom = function(string){
-    if(string && globalRoom){
-        globalRoom.say(string)
+    if(string/* && globalRoom*/){
+        // 发送消息给故事贴监控群
+        try{
+            // console.log('==============');
+            // console.log(string);
+            // console.log('==============');
+          mqttClient.publish('/t/msg/g/f75b78252d923d3fc597da8e_group', JSON.stringify({
+            form: {
+              id: 'AsK6G8FvBn525bgEC',
+              icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg',
+              name: '故事贴小秘'
+            },
+            to: {
+              id: 'f75b78252d923d3fc597da8e_group',
+              name: '故事贴监控群',
+              icon: 'http://oss.tiegushi.com/groupMessages.png'
+            },
+            type: 'text',
+            to_type: 'group',
+            text: string,
+            is_read: false,
+            create_time: new Date()
+          }));
+        }catch(e){
+          console.log('====发送消息到故事贴监控群时发生异常====');
+          console.log(e);
+          console.log('===================================');
+        }
+
+        // 发送消息给微信
+        // globalRoom.say(string)
     }
 }
 var reportToWechatRoomAlertALL = function(string){
-    if(string && globalRoom){
-        globalRoom.say(string,globalRoom.memberList())
+    if(string/* && globalRoom*/){
+        reportToWechatRoom(string);
+
+        // 发送消息给微信
+        // globalRoom.say(string,globalRoom.memberList())
     }
 }
 var recorder = {};
@@ -384,31 +416,33 @@ var simpleMessageHandle = function(message){
     }
 }
 
-wechatInstance = Wechaty.instance() // Singleton
+// wechatInstance = Wechaty.instance() // Singleton
 
-wechatInstance.on('scan', (url, code) => console.log(`Scan QR Code to login: ${code}\n${url}`))
-wechatInstance.on('login',       user => console.log(`User ${user} logined`))
-wechatInstance.on('message', function(message){
-    if(!globalRoom){
-        var room = message.room()
-        if(room && room.topic()==='故事贴监控群'){
-            globalRoom = room;
-            globalRoom.say('机器人助理 加入监控群，每次重启 机器人助理 后，需要任意人在监控群中发言激活功能')
+// wechatInstance.on('scan', (url, code) => console.log(`Scan QR Code to login: ${code}\n${url}`))
+// wechatInstance.on('login',       user => console.log(`User ${user} logined`))
+// wechatInstance.on('message', function(message){
+//     if(!globalRoom){
+//         var room = message.room()
+//         if(room && room.topic()==='故事贴监控群'){
+//             globalRoom = room;
+//             globalRoom.say('机器人助理 加入监控群，每次重启 机器人助理 后，需要任意人在监控群中发言激活功能')
 
-            intervalTask()
-            reportHowManyProductionServerIsBeingMonitored()
-            console.log(room)
-        }
-    } else {
-        simpleMessageHandle(message)
-    }
-    console.log(`Message: ${message}`)
-    //console.log(message)
-})
-wechatInstance.init()
+//             intervalTask()
+//             reportHowManyProductionServerIsBeingMonitored()
+//             console.log(room)
+//         }
+//     } else {
+//         simpleMessageHandle(message)
+//     }
+//     console.log(`Message: ${message}`)
+//     //console.log(message)
+// })
+// wechatInstance.init()
 
-taskList = [testLogin,testPostNew,testImportPost,testSwitchAccount,
-    testSubscribeShowPost,testNeo4J,testRedis,getProductionServerOnlineStatus]
+// taskList = [testLogin,testPostNew,testImportPost,testSwitchAccount,
+//     testSubscribeShowPost,testNeo4J,testRedis,getProductionServerOnlineStatus]
+taskList = [testLogin,testSwitchAccount,testSubscribeShowPost,testNeo4J,testRedis,getProductionServerOnlineStatus]
+
 var isTesting = false;
 var intervalTask = function(){
     if(isTesting){
