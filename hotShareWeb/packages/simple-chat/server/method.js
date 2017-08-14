@@ -1,60 +1,26 @@
-Meteor.methods({
-  'create-group': function(id, name, ids){
-    var slef = this;
-    id = id || new Mongo.ObjectID()._str;
-    ids = ids || [];
-    var group = Groups.findOne({_id: id});
-    // console.log('group:', group);
+// 创建群（如果不存在）及加群
+var upsertGroup = function(id, name, ids, is_post_group){
+  id = id || new Mongo.ObjectID()._str;
+  ids = ids || [];
 
-    if (!name)
-      name = '群聊 ' + (Groups.find({}).count() + 1);
-    if(group){
-      group.name = group.name || name;
-      group.icon = group.icon || 'http://oss.tiegushi.com/groupMessages.png';
-      Groups.update({_id: id}, {$set: {name: group.name, icon: group.icon}});
-
-      if (slef.userId && ids.indexOf(slef.userId) === -1)
-        ids.push(slef.userId);
-      if (ids.length > 0){
-        for(var i=0;i<ids.length;i++){
-          var user = Meteor.users.findOne({_id: ids[i]});
-          if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
-            GroupUsers.insert({
-              group_id: group._id,
-              group_name: group.name,
-              group_icon: group.icon,
-              user_id: user._id,
-              user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-              user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-              create_time: new Date(Date.now() + MQTT_TIME_DIFF)
-            }, function(err){
-              if (err)
-                return;
-              sendMqttGroupMessage(id, {
-                form: {
-                  id: 'AsK6G8FvBn525bgEC',
-                  name: '故事贴小秘',
-                  icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-                },
-                to: {
-                  id: group._id,
-                  name: group.name,
-                  icon: group.icon
-                },
-                type: 'text',
-                to_type: 'group',
-                text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-                is_read: false,
-                create_time: new Date()
-              });
-            });
-          }
-        }
-      }
-      return id;
+  var group = Groups.findOne({_id: id});
+  if(group){
+    var $set = {};
+    if (!group.name){
+      group.name = name;
+      $set.name = name;
     }
-
-    // console.log('ids:', ids);
+    if (!group.icon){
+      group.icon = 'http://oss.tiegushi.com/groupMessages.png';
+      $set.icon = 'http://oss.tiegushi.com/groupMessages.png';
+    }
+    if (is_post_group && !group.is_post_group){
+      group.is_post_group = true;
+      $set.is_post_group = true;
+    }
+    if ($set.name || $set.icon)
+      Groups.update({_id: id}, {$set: $set});
+  } else {
     group = {
       _id: id,
       name: name,
@@ -65,168 +31,93 @@ Meteor.methods({
       last_time: new Date(Date.now() + MQTT_TIME_DIFF),
       barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id
     };
-    Groups.insert(group, function(err){
-      err && console.log('create group err:', err);
-      if(ids.indexOf(slef.userId) === -1)
-        ids.splice(0, 0, slef.userId);
-      // console.log('ids:', ids);
-      for(var i=0;i<ids.length;i++){
-        var user = Meteor.users.findOne({_id: ids[i]});
-        if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
-          // console.log(user);
-          GroupUsers.insert({
-            group_id: group._id,
-            group_name: group.name,
-            group_icon: group.icon,
-            user_id: user._id,
-            user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-            user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-            create_time: new Date(Date.now() + MQTT_TIME_DIFF)
-          }, function(err){
-            if (err)
-              return;
-            sendMqttGroupMessage(id, {
-              form: {
-                id: 'AsK6G8FvBn525bgEC',
-                name: '故事贴小秘',
-                icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-              },
-              to: {
-                id: group._id,
-                name: group.name,
-                icon: group.icon
-              },
-              type: 'text',
-              to_type: 'group',
-              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-              is_read: false,
-              create_time: new Date()
-            });
-          });
-        }
-      }
-    });
+    if (is_post_group)
+      group.is_post_group = true;
+    Groups.insert(group);
+  }
+
+  if (!ids || ids.length <= 0)
     return id;
+
+  var newUsers = [];
+  for(var i=0;i<ids.length;i++){
+    var user = Meteor.users.findOne({_id: ids[i]});
+    if (user && GroupUsers.find({group_id: id, user_id: ids[i]}).count() <= 0){
+      var groupUser = {
+        group_id: group._id,
+        group_name: group.name,
+        group_icon: group.icon,
+        user_id: user._id,
+        user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+        user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
+        create_time: new Date(Date.now() + MQTT_TIME_DIFF)
+      };
+      if (is_post_group)
+        groupUser.is_post_group = true;
+      GroupUsers.insert(groupUser);
+      newUsers.push(user);
+      console.log('增加用户', groupUser.user_name, '到群', group.name);
+    }
+  }
+
+  newUsers.map(function(user){
+    // 生成此用户的消息会话（GroupUser同步到Client端需要时间，可能会在发送MQTT消息之前，Clinet还没有此群组的消息，最终导致消息的丢失）
+    var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
+    if (!msgSession){
+      MsgSession.insert({
+        toUserId : group._id,
+        toUserName : group.name,
+        toUserIcon : group.icon,
+        sessionType : "group",
+        userId : user._id,
+        userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+        userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
+        lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+        updateAt : new Date(),
+        createAt : new Date(),
+        count : 1
+      });
+      console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
+    }
+
+    sendMqttGroupMessage(id, {
+      form: {
+        id: 'AsK6G8FvBn525bgEC',
+        name: '故事贴小秘',
+        icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+      },
+      to: {
+        id: group._id,
+        name: group.name,
+        icon: group.icon
+      },
+      type: 'text',
+      to_type: 'group',
+      text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+      is_read: false,
+      create_time: new Date()
+    });
+  });
+
+  return id;
+};
+
+Meteor.methods({
+  'create-group': function(id, name, ids){
+    this.unblock();
+    if (!ids || ids.length <= 0 && this.userId)
+      ids = [this.userId];
+    if (!ids || ids.length <= 0)
+      return id;
+    return upsertGroup(id, name, ids);
   },
   'create-group-2': function(id, name, ids){
-    console.log('=========创建故事群===========');
-    var slef = this;
-    id = id || new Mongo.ObjectID()._str;
-    ids = ids || [];
-    var group = Groups.findOne({_id: id});
-    // console.log('group:', group);
-
-    if (!name && ids.length > 0){
-      var owner_user = Meteor.users.findOne({_id: ids[0]});
-      if (owner_user && owner_user.profile && owner_user.profile.fullname)
-        name = owner_user.profile.fullname + ' 的故事群';
-    }
-    if (!name)
-      name = '故事群';
-
-    if(group){
-      group.name = group.name || name;
-      group.icon = group.icon || 'http://oss.tiegushi.com/groupMessages.png';
-      group.is_post_group = true;
-      Groups.update({_id: id}, {$set: {is_post_group: true, name: group.name, icon: group.icon}});
-
-      if (slef.userId && ids.indexOf(slef.userId) === -1)
-        ids.push(slef.userId);
-      if (ids.length > 0){
-        for(var i=0;i<ids.length;i++){
-          var user = Meteor.users.findOne({_id: ids[i]});
-          if (user && GroupUsers.find({group_id: id, user_id: ids[i], is_post_group: true}).count() <= 0){
-            GroupUsers.insert({
-              group_id: id,
-              group_name: group.name,
-              group_icon: group.icon,
-              user_id: user._id,
-              user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-              user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-              create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-              is_post_group: true
-            }, function(err){
-              if (err)
-                return;
-              sendMqttGroupMessage(id, {
-                form: {
-                  id: 'AsK6G8FvBn525bgEC',
-                  name: '故事贴小秘',
-                  icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-                },
-                to: {
-                  id: group._id,
-                  name: group.name,
-                  icon: group.icon
-                },
-                type: 'text',
-                to_type: 'group',
-                text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-                is_read: false,
-                create_time: new Date()
-              });
-            });
-          }
-        }
-      }
+    this.unblock();
+    if (!ids || ids.length <= 0 && this.userId)
+      ids = [this.userId];
+    if (!ids || ids.length <= 0)
       return id;
-    }
-
-    // console.log('ids:', ids);
-    group = {
-      _id: id,
-      name: name,
-      icon: 'http://oss.tiegushi.com/groupMessages.png',
-      describe: '',
-      create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-      last_text: '',
-      last_time: new Date(Date.now() + MQTT_TIME_DIFF),
-      barcode: rest_api_url + '/restapi/workai-group-qrcode?group_id=' + id,
-      is_post_group: true
-    };
-    Groups.insert(group, function(err){
-      err && console.log('create group err:', err);
-      if(ids.indexOf(slef.userId) === -1)
-        ids.splice(0, 0, slef.userId);
-      // console.log('ids:', ids);
-      for(var i=0;i<ids.length;i++){
-        var user = Meteor.users.findOne({_id: ids[i]});
-        if (user && GroupUsers.find({group_id: id, user_id: ids[i], is_post_group: true}).count() <= 0){
-          // console.log(user);
-          GroupUsers.insert({
-            group_id: group._id,
-            group_name: group.name,
-            group_icon: group.icon,
-            user_id: user._id,
-            user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-            user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-            create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-            is_post_group: true
-          }, function(err){
-            if (err)
-              return;
-            sendMqttGroupMessage(id, {
-              form: {
-                id: 'AsK6G8FvBn525bgEC',
-                name: '故事贴小秘',
-                icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-              },
-              to: {
-                id: group._id,
-                name: group.name,
-                icon: group.icon
-              },
-              type: 'text',
-              to_type: 'group',
-              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-              is_read: false,
-              create_time: new Date()
-            });
-          });
-        }
-      }
-    });
-    return id;
+    return upsertGroup(id, name, ids, true);
   },
   'add-group-urser':function(id,usersId){
     var slef = this;
