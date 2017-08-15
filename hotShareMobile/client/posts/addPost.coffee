@@ -1735,7 +1735,7 @@ if Meteor.isClient
       Session.set 'draftTitle',''
       Session.set 'draftAddontitle',''
       Session.set('NewImgAdd','false')
-      selectMediaFromAblum(20, (cancel, result,currentCount,totalCount)->
+      selectMediaFromAblum(999, (cancel, result,currentCount,totalCount)->
         if cancel
           if Drafts.find().count() is 0
             PUB.back()

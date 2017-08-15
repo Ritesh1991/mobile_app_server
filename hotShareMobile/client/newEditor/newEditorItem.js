@@ -216,7 +216,7 @@ Template.newEditorItem.events({
         Session.set('draftAddontitle','');
         Session.set('NewImgAdd','false');
         var ablubImgLists = [];
-        selectMediaFromAblum(20, function(cancel, result,currentCount,totalCount){
+        selectMediaFromAblum(999, function(cancel, result,currentCount,totalCount){
             if (cancel){
                 return
             }

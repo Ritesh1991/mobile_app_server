@@ -265,7 +265,7 @@ if Meteor.isClient
         prepareToEditorMode()
         PUB.page '/add'
       Meteor.defer ()->
-          selectMediaFromAblum(20, (cancel, result,currentCount,totalCount)->
+          selectMediaFromAblum(999, (cancel, result,currentCount,totalCount)->
             if cancel
               #$('#level2-popup-menu').modal('hide');
               PUB.back()
