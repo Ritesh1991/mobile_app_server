@@ -460,7 +460,7 @@ Template._simpleChatToChatItem.events({
     if(Meteor.isCordova){
       openWithThemeBrowser(href);
     } else {
-      window.location.href = href; 
+      window.location.href = href;
     }
   },
   'click li img.swipebox': function(e){
@@ -971,7 +971,8 @@ Template._simpleChatToChatLayout.onRendered(function(){
         console.log("Frank: No, outerHeight="+$(".footbar").outerHeight()+", dif = "+dif);
       }
       var chatMessages = $(".simple-chat .msg-box .box");
-      chatMessages.get(0).scrollTop = chatMessages.get(0).scrollHeight+99999;
+      if (chatMessages && chatMessages.get(0))
+        chatMessages.get(0).scrollTop = chatMessages.get(0).scrollHeight+99999;
     }
   });
   Meteor.subscribe('myBlackList');
@@ -1795,7 +1796,7 @@ Template._simpleChatListLayout.events({
       SimpleChat.MsgSession.remove({_id: _id},function(err,num){
         if(err){
           return console.log('del MsgSession Err:',err);
-        } 
+        }
         console.log('num =',num)
         // remove local msg with this Session
         if(type == 'group'){
