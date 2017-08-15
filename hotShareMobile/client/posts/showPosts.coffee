@@ -905,7 +905,8 @@ if Meteor.isClient
       Meteor.subscribe("recentPostsViewByUser", this.owner)
       Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
       Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      # onUserProfile()
+      $('.showUserProfile').fadeIn()
     "click .showPostsFollowMe span a":->
       if Meteor.isCordova
         cordova.plugins.clipboard.copy('故事贴')

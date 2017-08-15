@@ -415,11 +415,6 @@ if Meteor.isClient
             $('.div_discover').css('display',"none")
             $('.div_me').css('display',"none")
         ,300
-    # 'click #suggestCurrentPost': ()->
-    #   suggestCurrentPost("ProfileUserId1")
-    # 'click #sendChatMessage': ()->
-    #   Session.set("messageDialog_to", {id: Session.get("ProfileUserId1"), type: 'user'})
-    #   Session.set("Social.LevelOne.Menu", 'messageDialog')
     'click .postImages ul li':(e)->
       postId = e.currentTarget.id
       $(window).children().off()
@@ -578,11 +573,6 @@ if Meteor.isClient
             $('.div_discover').css('display',"none")
             $('.div_me').css('display',"none")
         ,300
-    # 'click #suggestCurrentPost': ()->
-    #   suggestCurrentPost("ProfileUserId2")
-    # 'click #sendChatMessage': ()->
-    #   Session.set("messageDialog_to", {id: Session.get("ProfileUserId2"), type: 'user'})
-    #   Session.set("Social.LevelOne.Menu", 'messageDialog')
     'click .postImages ul li':(e)->
       postId = e.currentTarget.id
       $(window).children().off()
@@ -675,8 +665,6 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').remove()
-      # console.log 'userprofile is ' + $(e.currentTarget).attr('userprofile')
-      # console.log 'userName is ' + $(e.currentTarget).attr('username')
       if $(e.currentTarget).attr('userprofile') and $(e.currentTarget).attr('userprofile') isnt ''
         userName = $(e.currentTarget).attr('userprofile')
       else if $(e.currentTarget).attr('username') and $(e.currentTarget).attr('username') isnt ''
@@ -740,12 +728,6 @@ if Meteor.isClient
             $('.div_discover').css('display',"none")
             $('.div_me').css('display',"none")
         ,300
-
-    # 'click #suggestCurrentPost': ()->
-    #   suggestCurrentPost("ProfileUserId3")
-    # 'click #sendChatMessage': ()->
-    #   Session.set("messageDialog_to", {id: Session.get("ProfileUserId3"), type: 'user'})
-    #   Session.set("Social.LevelOne.Menu", 'messageDialog')
     'click .postImages ul li':(e)->
       postId = e.currentTarget.id
       $(window).children().off()
