@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="cordova-plugin-richtexteditor"
+    version="1.0.0">
+
+    <name>RichTextEditor</name>
+    <description>RichTextEditor plugin for Cordova/Phonegap</description>
+    <author>Actiontec</author>
+    <keywords>cordova,plugin,richtexteditor</keywords>
+    <license>MIT</license>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <js-module src="www/richtexteditor.js" name="RichTextEditor">
+        <clobbers target="cordova.plugins.richtexteditor" />
+    </js-module>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="RichTextEditor">
+                <param name="ios-package" value="RichTextEditor"/>
+            </feature>
+        </config-file>
+        <header-file src="src/ios/RichTextEditor.h"/>
+        <source-file src="src/ios/RichTextEditor.m"/>
+        <header-file src="src/ios/EditorViewController.h"/>
+        <source-file src="src/ios/EditorViewController.m"/>
+
+        <header-file src="src/ios/ZSSRichTextEditor/ZSSBarButtonItem.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/ZSSBarButtonItem.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/ZSSFontsViewController.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/ZSSFontsViewController.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/ZSSRichTextEditor.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/ZSSRichTextEditor.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/ZSSTextView.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/ZSSTextView.m"/>
+
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/CYRLayoutManager.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/CYRLayoutManager.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/CYRTextStorage.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/CYRTextStorage.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/CYRTextView.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/CYRTextView.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/CYRToken.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/CYRToken.m"/>
+
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRBrightnessCursor.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRBrightnessCursor.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRCgUtil.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRCgUtil.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorCursor.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorCursor.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorPickerMacros.h"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorPickerView.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorPickerView.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorPickerViewController.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorPickerViewController.m"/>
+        <header-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorUtil.h"/>
+        <source-file src="src/ios/ZSSRichTextEditor/Third Party/HRColorUtil.m"/>
+
+
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSbgcolor.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSbgcolor@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSbold.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSbold@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSScenterjustify.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSScenterjustify@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSclearstyle.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSclearstyle@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSfonts.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSfonts@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSforcejustify.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSforcejustify@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh1.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh1@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh2.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh2@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh3.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh3@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh4.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh4@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh5.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh5@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh6.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSh6@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSShorizontalrule.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSShorizontalrule@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSimage.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSimage@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSimageDevice.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSimageDevice@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSindent.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSindent@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSinsertkeyword.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSinsertkeyword@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSitalic.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSitalic@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSkeyboard.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSkeyboard@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSleftjustify.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSleftjustify@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSlink.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSlink@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSorderedlist.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSorderedlist@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSoutdent.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSoutdent@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSparagraph.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSparagraph@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSpicker.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSpicker@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSquicklink.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSquicklink@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSredo.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSredo@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSrightjustify.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSrightjustify@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSstrikethrough.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSstrikethrough@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSsubscript.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSsubscript@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSsuperscript.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSsuperscript@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSStable.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSStable@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSStextcolor.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSStextcolor@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunderline.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunderline@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSundo.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSundo@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunlink.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunlink@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunorderedlist.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSunorderedlist@2x.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSviewsource.png" />
+        <resource-file src="src/ios/ZSSRichTextEditor/Images/ZSSviewsource@2x.png" />
+
+        <resource-file src="src/ios/ZSSRichTextEditor/ZSSRichTextEditor.js" />
+        <resource-file src="src/ios/ZSSRichTextEditor/JSBeautifier.js" />
+        <resource-file src="src/ios/ZSSRichTextEditor/jQuery.js" />
+        <resource-file src="src/ios/ZSSRichTextEditor/editor.html" />
+
+        <framework src="CoreGraphics.framework" />
+        <framework src="CoreText.framework" />
+
+    </platform>
+
+    <!-- android -->
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/*">
+			<feature name="RichTextEditor">
+				<param name="android-package" value="com.actiontec.tiegushi.RichTextEditor"/>
+			</feature>
+		</config-file>
+
+    <framework src="src/android/hotshare_editor.gradle" custom="true" type="gradleReference" />
+
+    <resource-file src="src/android/libs/editor-release.aar" target="libs/editor-release.aar" />
+    <resource-file src="src/android/libs/utils-1.11.0.aar" target="libs/utils-1.11.0.aar" />
+    <resource-file src="src/android/libs/design-23.4.0.aar" target="libs/design-23.4.0.aar" />
+    <resource-file src="src/android/libs/constraint-layout-1.0.2.aar" target="libs/constraint-layout-1.0.2.aar" />
+
+		<source-file src="src/android/RichTextEditor.java" target-dir="src/com/actiontec/tiegushi" />
+	</platform>
+
+</plugin>
