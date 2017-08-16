@@ -1339,8 +1339,11 @@ if Meteor.isServer
           groupManager = Meteor.users.findOne({_id: doc.owner})
           groupName = if groupManager and groupManager.profile and groupManager.profile.fullname then groupManager.profile.fullname + ' 的故事群' else '故事群'
           groupName = if groupName is '故事群' and doc.ownerName then doc.ownerName + ' 的故事群' else groupName
-          Meteor.call 'create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], (err, res)->
-            console.log('create/update 故事群:', res, groupName)
+          SimpleChat.upsertGroup doc.owner + '_group', groupName, [doc.owner, userId], true, (err)->
+            if err
+              console.log '转发创建 ' + groupName + ' 时失败', err
+
+            # 生成 MQTT 消息
             group = {
               _id: doc.owner + '_group'
               name: groupName
@@ -1376,26 +1379,8 @@ if Meteor.isServer
               msgObj.to.pcomment =  doc.pub[postIndex].text
               msgObj.to.pcommentIndexNum = postIndex
 
-            # msgObj.text = msgObj.form.name+' 转发了文章《'+doc.title+'》'
             msgObj.text = '文章不错，已转发 -- '+doc.title
-
-            groupIds = []
-            # SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach (item)->
-            #   if (groupIds.indexOf(item.group_id) is -1)
-            #     groupIds.push(item.group_id)
-            #     msgObj1 = _.clone(msgObj)
-            #     msgObj1.to.id = item.group_id
-            #     msgObj1.to.name = item.group_name
-            #     msgObj1.to.icon = item.group_icon
-            #     console.log('========发送故事群消息=========')
-            #     console.log(msgObj.to)
-            #     console.log('=============================')
-            #     sendMqttGroupMessage(item.group_id, msgObj1)
-            if (groupIds.indexOf(group._id) is -1)
-              msgObj.to.id = group._id
-              msgObj.to.name = group.name
-              msgObj.to.icon = group.icon
-              sendMqttGroupMessage(group._id, msgObj)
+            sendMqttGroupMessage(group._id, msgObj)
       "updateGroupName": (groupId, name)->
         SimpleChat.Groups.update({_id: groupId}, {$set:{name: name}})
         SimpleChat.GroupUsers.update({group_id: groupId}, {$set:{group_name:name}}, {multi: true})

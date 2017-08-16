@@ -1,5 +1,42 @@
+var async = Meteor.npmRequire('async');
+var subscribeMQTT = function(userId, topic, callback){
+  var client = mqtt.connect('ws://tmq.tiegushi.com:80', {
+    clean: true,
+    keepalive: 30,
+    reconnectPeriod: 20*1000,
+    clientId: userId
+  });
+
+  var timeout = Meteor.setTimeout(function(){
+    client_end(new Error('mqtt sub timeout'));
+  }, 1000*30);
+
+  var client_end = function(err){
+    try{
+      timeout && Meteor.clearTimeout(timeout);
+      timeout = null;
+      client.end(false, function(){
+        client = null;
+      });
+      callback && callback(err);
+    } catch (e){callback && callback(e)}
+  };
+
+  client.on('connect', function(){
+    client.subscribe(topic, {qos: 1}, function(err){
+      if (err)
+        return client_end(err);
+      client.unsubscribe(topic);
+      client_end();
+    });
+  });
+  client.on('error', function(err){
+    client_end(err);
+  });
+};
+
 // 创建群（如果不存在）及加群
-var upsertGroup = function(id, name, ids, is_post_group){
+var upsertGroup = function(id, name, ids, is_post_group, cb){
   id = id || new Mongo.ObjectID()._str;
   ids = ids || [];
 
@@ -60,8 +97,7 @@ var upsertGroup = function(id, name, ids, is_post_group){
     }
   }
 
-  newUsers.map(function(user){
-    // 生成此用户的消息会话（GroupUser同步到Client端需要时间，可能会在发送MQTT消息之前，Clinet还没有此群组的消息，最终导致消息的丢失）
+  async.mapLimit(newUsers, 10, function(user, callback){
     var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
     if (!msgSession){
       MsgSession.insert({
@@ -75,32 +111,43 @@ var upsertGroup = function(id, name, ids, is_post_group){
         lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
         updateAt : new Date(),
         createAt : new Date(),
-        count : 1
+        count : 0
       });
       console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
     }
+    subscribeMQTT(user._id, '/t/msg/g/' + group._id, function(err){
+      callback && callback(err);
+    });
+  }, function(err){
+    if (err)
+      return cb && cb(err, id);
 
-    sendMqttGroupMessage(id, {
-      form: {
-        id: 'AsK6G8FvBn525bgEC',
-        name: '故事贴小秘',
-        icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-      },
-      to: {
-        id: group._id,
-        name: group.name,
-        icon: group.icon
-      },
-      type: 'text',
-      to_type: 'group',
-      text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-      is_read: false,
-      create_time: new Date()
+    async.mapLimit(newUsers, 10, function(user, callback){
+      sendMqttGroupMessage(id, {
+        form: {
+          id: 'AsK6G8FvBn525bgEC',
+          name: '故事贴小秘',
+          icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+        },
+        to: {
+          id: group._id,
+          name: group.name,
+          icon: group.icon
+        },
+        type: 'text',
+        to_type: 'group',
+        text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+        is_read: false,
+        create_time: new Date()
+      });
+    }, function(error){
+      cb && cb(null, id); // XXX 加入群的消息不处理成功/失败
     });
   });
 
   return id;
 };
+SimpleChat.upsertGroup = upsertGroup;
 
 Meteor.methods({
   'create-group': function(id, name, ids){
@@ -149,6 +196,44 @@ Meteor.methods({
           if (group.is_post_group)
             groupUser.is_post_group = true;
           GroupUsers.insert(groupUser);
+
+          var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
+          if (!msgSession){
+            MsgSession.insert({
+              toUserId : group._id,
+              toUserName : group.name,
+              toUserIcon : group.icon,
+              sessionType : "group",
+              userId : user._id,
+              userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+              userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
+              lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+              updateAt : new Date(),
+              createAt : new Date(),
+              count : 0
+            });
+            console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
+          }
+
+          subscribeMQTT(user._id, '/t/msg/g/' + group._id, function(err){
+            sendMqttGroupMessage(id, {
+              form: {
+                id: 'AsK6G8FvBn525bgEC',
+                name: '故事贴小秘',
+                icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+              },
+              to: {
+                id: group._id,
+                name: group.name,
+                icon: group.icon
+              },
+              type: 'text',
+              to_type: 'group',
+              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+              is_read: false,
+              create_time: new Date()
+            });
+          });
         }
       }
       return 'succ'
@@ -167,27 +252,10 @@ Meteor.methods({
         if (GroupUsers.find({group_id: id}).count === 0){
           Groups.remove({_id:id});
         }
+
+        MsgSession.remove({userId: userId, toUserId: id, sessionType: 'group'});
       });
     }
     return id;
   }
 });
-
-// console.log('users:', GroupUsers.find({group_id: '84d27087d40b82e2a6fbc33e'}).fetch());
-// GroupUsers.after.insert(function (userId, doc) {
-//   var sess = MsgSession.findOne({user_id: doc.user_id, 'to.id': doc.group_id, type: 'group'});
-//   if(!sess){
-//     MsgSession.insert({
-//       user_id: doc.user_id,
-//       user_name: doc.user_name,
-//       user_icon: doc.user_icon,
-//       text: '群聊天',
-//       update_time: new Date(),
-//       msg_count: 1,
-//       type: 'group',
-//       to_user_id: doc.group_id,
-//       to_user_name: doc.group_name,
-//       to_user_icon: doc.group_icon
-//     });
-//   }
-// });

@@ -353,9 +353,11 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                         var groupManager = Meteor.users.findOne({_id: doc.owner});
                         var groupName = groupManager && groupManager.profile && groupManager.profile.fullname ? groupManager.profile.fullname + ' 的故事群' : '故事群';
                         groupName = groupName === '故事群' && doc.ownerName ? doc.ownerName + ' 的故事群' : groupName;
-                        Meteor.call('create-group-2', doc.owner + '_group', groupName, [doc.owner, userId], function(err, res){
-                          console.log('create/update 故事群:', res, groupName);
-
+                        SimpleChat.upsertGroup(doc.owner + '_group', groupName, [doc.owner, userId], true, function(err){
+                          if (err)
+                            console.log('创建 '+groupName+' 时失败['+modifier.$set["ptype"]+']:', err);
+                          
+                          // 生成 MQTT 消息
                           var group = {
                             _id: doc.owner + '_group',
                             name: groupName,
@@ -399,34 +401,12 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                             msgObj.text = msgObj.form.name + ' 踩了文章《'+doc.title+'》~';
                           }
 
-                          // console.log(msgObj);
-                          var groupIds = [];
-                        //   SimpleChat.GroupUsers.find({user_id: userId, is_post_group: true}).forEach(function(item){
-                        //     if (groupIds.indexOf(item.group_id) === -1){
-                        //       groupIds.push(item.group_id);
-                        //       msgObj.to.id = item.group_id;
-                        //       msgObj.to.name = item.group_name;
-                        //       msgObj.to.icon = item.group_icon;
-                        //       console.log('========发送故事群消息=========');
-                        //       console.log(msgObj.to);
-                        //       console.log('=============================');
-                        //       sendMqttGroupMessage(item.group_id, msgObj);
-                        //     }
-                        //   });
-
-                          // 当前group
-                          if (groupIds.indexOf(group._id) === -1){
-                            msgObj.to.id = group._id;
-                            msgObj.to.name = group.name;
-                            msgObj.to.icon = group.icon;
-                            sendMqttGroupMessage(group._id, msgObj);
-                          }
+                          sendMqttGroupMessage(group._id, msgObj);
                         });
                         break;
                     }
                   });
                 }
-
 
                 //console.log("====================change ptype========================");
                 //console.log("=========ptype:"+doc.ptype+"===================");
