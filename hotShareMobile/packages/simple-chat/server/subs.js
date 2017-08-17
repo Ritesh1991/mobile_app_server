@@ -49,6 +49,17 @@ Meteor.publish('get-msg-session', function(){
       var group = Groups.findOne({_id: fields.toUserId});
       if (group && group.name){fields.toUserName = group.name}
       if (group && group.icon){fields.toUserIcon = group.icon}
+
+      // 临时性的自动将群名称是"群聊 XXX"的故事群修正为"XXX 的故事群"
+      if (group && group.name && group.is_post_group && group._id.endsWith('_group') && group.name.startsWith('群聊 ')){
+        var id = group._id.replace('_group', '');
+        var user = Meteor.users.findOne({_id: id});
+        if (user && user.profile && user.profile.fullname){
+          fields.toUserName = user.profile.fullname + ' 的故事群';
+          Groups.update({_id: group._id}, {$set: {name: fields.toUserName}});
+          console.log('修正群名称:', group._id);
+        }
+      }
     }
   };
 
