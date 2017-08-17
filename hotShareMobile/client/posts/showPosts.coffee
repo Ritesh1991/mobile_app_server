@@ -111,7 +111,6 @@ if Meteor.isClient
     if Session.get("postContent")
       setTimeout ()->
         Meteor.subscribe "comment",Session.get("postContent")._id
-        #Meteor.subscribe "viewers",Session.get("postContent")._id
       ,500
   onUserProfile = ->
     @PopUpBox = $('.popUpBox').bPopup
@@ -123,7 +122,7 @@ if Meteor.isClient
         Session.set('displayUserProfileBox',true)
   @toNextPost = ->
     id = $('.newLayout_element').attr('id')
-    console.log( 'ID' + id);
+    console.log('ID' + id);
     toGo = '/posts/' + id
     Meteor.defer ()->
       BaiduTTS.speak({
@@ -342,14 +341,6 @@ if Meteor.isClient
       document.body.scrollTop = $(".showPostsBox").height()
       Session.set('formSimpleChatPage',false)
   Template.showPosts.onDestroyed ->
-    # if window._music
-    #   document.getElementById('audio_' + window._music_id).pause()
-    #   if window._media
-    #     window._media.stop()
-    #   window._music = null
-    #   window._music_id = null
-    #   window._media = null
-
     document.body.scrollTop = 0
     Session.set("postPageScrollTop", 0)
     Session.set("showSuggestPosts",false)
@@ -400,71 +391,11 @@ if Meteor.isClient
   Template.showPosts.onRendered ->
     postId = this.data._id
     ownerId = this.data.ownerId
-    # showFollowTips = ()->
-    #   owner = Meteor.users.findOne({_id: ownerId})
-
-    #   if !owner
-    #     return
-    #   # is 0
-    #   if !(Counts.has('post_viewer_count_'+Meteor.userId()+'_'+postId))
-    #     return
-    #   console.log('viewer_counts = '+Counts.get('post_viewer_count_'+Meteor.userId()+'_'+postId))
-    #   # off
-    #   if !(owner.profile.followTips isnt false)
-    #     return
-    #   # slef
-    #   if Meteor.userId() is owner._id
-    #     return
-    #   # follower
-    #   if Follower.find({userId: Meteor.userId(), followerId: owner._id}).count() > 0
-    #     return
-    #   # < 3
-    #   if Counts.get('post_viewer_count_'+Meteor.userId()+'_'+postId) < 3
-    #     return
-    #   if Counts.get('post_viewer_count_'+Meteor.userId()+'_'+postId) >= 3
-    #     $('.subscribeAutorPage').show()
-    # showFollowTips()
-
-    # getHotPostsData()
-    #if !amplify.store('chatNotify')
-    #  amplify.store('chatNotify',1)
-    #if amplify.store('chatNotify') < 6
-    #  amplify.store('chatNotify',amplify.store('chatNotify')+1)
-    #  $(".chatBtn .red_spot").show().html(1)
-    ###
-    mqtt_connection=mqtt.connect('ws://rpcserver.raidcdn.com:80')
-    mqtt_connection.on('connect',()->
-      console.log('Connected to server')
-      mqtt_connection.subscribe(Session.get('postContent')._id)
-      #mqtt_connection.publish(Session.get('postContent')._id, 'Hello u'+Session.get('postContent')._id)
-    )
-    mqtt_connection.on 'message',(topic, message)->
-      mqtt_msg = JSON.parse(message.toString())
-      console.log(message.toString())
-      if mqtt_msg.type and mqtt_msg.type is 'newmessage'
-        $('.socialContent .chatFooter').fadeIn 300
-        #$(".chatBtn").addClass('twinking')
-        #$(".chatBtn i").removeClass('fa-comment-o').addClass('fa-commenting-o')
-        mqtt_msg_num = $.trim($(".chatBtn .red_spot").html())
-        mqtt_msg_num = if mqtt_msg_num is '' then 0 else parseInt(mqtt_msg_num)
-        mqtt_msg_num += 1
-        mqtt_msg_num = if mqtt_msg_num > 99 then '99+' else mqtt_msg_num
-        $(".chatBtn .red_spot").show().html(mqtt_msg_num)
-
-      #if mqtt_msg.type and mqtt_msg.type is 'newmember'
-      $(".chatBtn .chat-icon-img").addClass('twinkling')
-      setTimeout(() ->
-        $(".chatBtn .chat-icon-img").removeClass('twinkling')
-      , 10000);
-    ###
-    #Calc Wechat token after post rendered. not on mobile
-    #calcPostSignature(window.location.href.split('#')[0]);
     if Session.get("postPageScrollTop") isnt undefined and Session.get("postPageScrollTop") isnt 0
       setTimeout ()->
           document.body.scrollTop = Session.get("postPageScrollTop")
         , 280
   Template.showPosts.onRendered ->
-    # getHotPostsData()
     $('.popUpBox, .b-modal').hide()
     Session.set 'showDraft', false
     Session.setDefault "displayPostContent",true
@@ -508,7 +439,6 @@ if Meteor.isClient
             if BlackList.find({blackBy: Meteor.userId(), blacker:{$in: [postContent._id]}}).count() > 0
               return
             $('.subscribeAutorPage').show()
-#    $('.textDiv1Link').linkify();
     setTimeout ()->
       $("a[target='_blank']").click((e)->
         e.preventDefault();
@@ -899,14 +829,13 @@ if Meteor.isClient
         else
           window.location.href=Session.get("postContent").fromUrl
     'click .post-user':->
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
+      Session.set("userProfileId", this.owner)
       Meteor.subscribe("userinfo", this.owner)
       Meteor.subscribe("recentPostsViewByUser", this.owner)
-      Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
+      # Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
       Session.set('pageScrollTop',$(window).scrollTop())
-      # onUserProfile()
       $('.showUserProfile').fadeIn()
+      $('.showBgColor').fadeOut()
     "click .showPostsFollowMe span a":->
       if Meteor.isCordova
         cordova.plugins.clipboard.copy('故事贴')

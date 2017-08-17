@@ -19,7 +19,7 @@ if Meteor.isClient
       if(meetCount and meetCount is 1 and clientMeetCount is 0)
         # Meets.update({_id: meetInfo._id}, {$set: {count: 2}})
         ClientPostFriends.insert(meetInfo)
-  getLocation = (userId)->
+  @getLocation = (userId)->
     user = Meteor.users.findOne({'_id':userId})
     if user and user.profile
       if user.profile.location and user.profile.location isnt ''
@@ -77,7 +77,7 @@ if Meteor.isClient
       recommanderIcon:Meteor.user().profile.icon
       recommanderId:Meteor.userId()
     }
-  addToContactList = (userId)->
+  @addToContactList = (userId)->
     username = Meteor.user().username
     if Meteor.user().profile.fullname
       username = Meteor.user().profile.fullname
