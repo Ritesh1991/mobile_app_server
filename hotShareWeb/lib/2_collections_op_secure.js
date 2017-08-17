@@ -401,6 +401,7 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                             msgObj.text = msgObj.form.name + ' 踩了文章《'+doc.title+'》~';
                           }
 
+                          console.log('发送群消息到:', group._id);
                           sendMqttGroupMessage(group._id, msgObj);
                         });
                         break;

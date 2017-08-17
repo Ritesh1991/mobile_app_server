@@ -1,4 +1,6 @@
 var async = Meteor.npmRequire('async');
+var Fiber = Meteor.npmRequire('fibers');
+
 var subscribeMQTT = function(userId, topic, callback){
   var client = mqtt.connect('ws://tmq.tiegushi.com:80', {
     clean: true,
@@ -12,22 +14,34 @@ var subscribeMQTT = function(userId, topic, callback){
   }, 1000*30);
 
   var client_end = function(err){
-    try{
-      timeout && Meteor.clearTimeout(timeout);
-      timeout = null;
-      client.end(false, function(){
-        client = null;
-      });
-      callback && callback(err);
-    } catch (e){callback && callback(e)}
+    Fiber(function(){
+      try{
+        timeout && Meteor.clearTimeout(timeout);
+        timeout = null;
+        client.end(false, function(){
+          client = null;
+        });
+        Meteor.setTimeout(function(){
+          callback && callback(err);
+        }, 1000*1);
+      } catch (e){
+        console.log('subscribeMQTT error:', e);
+        // callback && callback(e);
+      }
+    }).run();
   };
 
   client.on('connect', function(){
     client.subscribe(topic, {qos: 1}, function(err){
+      err && console.log('mqtt sub err:', err);
       if (err)
         return client_end(err);
-      client.unsubscribe(topic);
-      client_end();
+      
+      client.unsubscribe(topic, function(err1){
+        err1 && console.log('mqtt unsub err:', err1);
+        console.log('mqtt sub && unsub succ', userId);
+        client_end(err1);
+      });
     });
   });
   client.on('error', function(err){
@@ -35,8 +49,106 @@ var subscribeMQTT = function(userId, topic, callback){
   });
 };
 
+Meteor.startup(function(){
+  Meteor.setTimeout(function(){
+    console.log('==================');
+    async.mapLimit([1], 1, function(user, re_cb){
+      Fiber(function(){
+        subscribeMQTT('eb07a3d35e3ac2315770bfef', '/t/msg/g/67dd8b026a59fb5ea8436c0c', function(err){
+          console.log('=======fsdfdsfdsf====');
+          re_cb && re_cb();
+        });
+      }).run();
+    }, function(){
+      sendMqttGroupMessage('67dd8b026a59fb5ea8436c0c', {
+        form: {
+          id: 'AsK6G8FvBn525bgEC',
+          name: '故事贴小秘',
+          icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+        },
+        to: {
+          id: '67dd8b026a59fb5ea8436c0c',
+          name: 'test',
+          icon: ''
+        },
+        type: 'text',
+        to_type: 'group',
+        text: 'hi',
+        is_read: false,
+        create_time: new Date()
+      });
+      console.log('==================');
+      console.log('ok');
+      console.log('==================');
+    });
+  }, 1000*10);
+});
+
+var sendMQTTMsg = function(users, group, callback){
+  if (users.length <= 0)
+    return callback && callback(null);
+
+  async.mapLimit(users, 10, function(user, re_cb){
+    Fiber(function(){
+      sendMqttGroupMessage(group._id, {
+        form: {
+          id: 'AsK6G8FvBn525bgEC',
+          name: '故事贴小秘',
+          icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
+        },
+        to: {
+          id: group._id,
+          name: group.name,
+          icon: group.icon
+        },
+        type: 'text',
+        to_type: 'group',
+        text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+        is_read: false,
+        create_time: new Date()
+      });
+      re_cb && re_cb(null);
+    }).run();
+  }, function(err){
+    callback && callback(err);
+  });
+};
+
+var addGroupUserMsg = function(users, group, callback){
+  if (users.length <= 0)
+    return callback && callback(null);
+
+  async.mapSeries(users, function(user, re_cb){
+    Fiber(function(){
+      var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
+      if (!msgSession){
+        MsgSession.insert({
+          toUserId : group._id,
+          toUserName : group.name,
+          toUserIcon : group.icon,
+          sessionType : "group",
+          userId : user._id,
+          userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+          userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
+          lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+          updateAt : new Date(),
+          createAt : new Date(),
+          count : 0
+        });
+        console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
+      }
+
+      subscribeMQTT(user._id, '/t/msg/g/' + group._id, function(error){
+        re_cb && re_cb(error);
+      });
+    }).run();
+  }, function(err){
+    callback && callback(err);
+  });
+};
+
 // 创建群（如果不存在）及加群
-var upsertGroup = function(id, name, ids, is_post_group, cb){
+var upsertGroup = function(id, name, ids, is_post_group, callback){
   id = id || new Mongo.ObjectID()._str;
   ids = ids || [];
 
@@ -97,51 +209,15 @@ var upsertGroup = function(id, name, ids, is_post_group, cb){
     }
   }
 
-  async.mapLimit(newUsers, 10, function(user, callback){
-    var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
-    if (!msgSession){
-      MsgSession.insert({
-        toUserId : group._id,
-        toUserName : group.name,
-        toUserIcon : group.icon,
-        sessionType : "group",
-        userId : user._id,
-        userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-        userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
-        lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-        updateAt : new Date(),
-        createAt : new Date(),
-        count : 0
-      });
-      console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
-    }
-    subscribeMQTT(user._id, '/t/msg/g/' + group._id, function(err){
-      callback && callback(err);
-    });
-  }, function(err){
-    if (err)
-      return cb && cb(err, id);
+  addGroupUserMsg(newUsers, group, function(err){
+    err && console.log('mqtt sub group err:', err);
+    !err && console.log('mqtt sub group succ');
 
-    async.mapLimit(newUsers, 10, function(user, callback){
-      sendMqttGroupMessage(id, {
-        form: {
-          id: 'AsK6G8FvBn525bgEC',
-          name: '故事贴小秘',
-          icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-        },
-        to: {
-          id: group._id,
-          name: group.name,
-          icon: group.icon
-        },
-        type: 'text',
-        to_type: 'group',
-        text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-        is_read: false,
-        create_time: new Date()
-      });
-    }, function(error){
-      cb && cb(null, id); // XXX 加入群的消息不处理成功/失败
+    if (err)
+      return callback && callback(err);
+
+    sendMQTTMsg(newUsers, group, function(err1){
+      callback && callback(err1);
     });
   });
 
@@ -175,6 +251,7 @@ Meteor.methods({
         usersId.splice(0, 0, slef.userId);
       }
       // console.log('ids:', ids);
+      var newUsers = [];
       for(var i=0;i<usersId.length;i++){
         var user = Meteor.users.findOne({_id: usersId[i]});
         if(user){
@@ -197,44 +274,39 @@ Meteor.methods({
             groupUser.is_post_group = true;
           GroupUsers.insert(groupUser);
 
-          var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
-          if (!msgSession){
-            MsgSession.insert({
-              toUserId : group._id,
-              toUserName : group.name,
-              toUserIcon : group.icon,
-              sessionType : "group",
-              userId : user._id,
-              userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
-              userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
-              lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-              updateAt : new Date(),
-              createAt : new Date(),
-              count : 0
-            });
-            console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
-          }
-
-          subscribeMQTT(user._id, '/t/msg/g/' + group._id, function(err){
-            sendMqttGroupMessage(id, {
-              form: {
-                id: 'AsK6G8FvBn525bgEC',
-                name: '故事贴小秘',
-                icon: 'http://data.tiegushi.com/AsK6G8FvBn525bgEC_1471329022328.jpg'
-              },
-              to: {
-                id: group._id,
-                name: group.name,
-                icon: group.icon
-              },
-              type: 'text',
-              to_type: 'group',
-              text: (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
-              is_read: false,
-              create_time: new Date()
-            });
-          });
+          // var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
+          // if (!msgSession){
+          //   MsgSession.insert({
+          //     toUserId : group._id,
+          //     toUserName : group.name,
+          //     toUserIcon : group.icon,
+          //     sessionType : "group",
+          //     userId : user._id,
+          //     userName : user.profile && user.profile.fullname ? user.profile.fullname : user.username,
+          //     userIcon : user.profile && user.profile.icon ? user.profile.icon : "/userPicture.png",
+          //     lastText : (user.profile && user.profile.fullname ? user.profile.fullname : user.username) + ' 加入了聊天室',
+          //     updateAt : new Date(),
+          //     createAt : new Date(),
+          //     count : 0
+          //   });
+          //   console.log('生成用户', (user.profile && user.profile.fullname ? user.profile.fullname : user.username), '消息会话');
+          // }
+          newUsers.push(user);
         }
+      }
+
+      if (newUsers.length > 0){
+        addGroupUserMsg(newUsers, group, function(err){
+          err && console.log('mqtt sub group err:', err);
+          !err && console.log('mqtt sub group succ');
+      
+          if (err)
+            return;
+      
+          sendMQTTMsg(newUsers, group, function(err1){
+            // TODO:
+          });
+        });
       }
       return 'succ'
     }
