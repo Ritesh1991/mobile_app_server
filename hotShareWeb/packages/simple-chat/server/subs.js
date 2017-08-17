@@ -34,7 +34,42 @@ Meteor.publish('get-messages', function(type, to){
 });
 
 Meteor.publish('get-msg-session', function(){
-  return MsgSession.find({userId: this.userId}, {limit: 60});
+  if (!this.userId)
+    return this.ready();
+
+  var slef = this;
+  var groupHandle = [];
+
+  var fixGroupName = function(fields){
+    if (fields.sessionType === 'group' && fields.toUserId){
+      var group = Groups.findOne({_id: fields.toUserId});
+      if (group && group.name){fields.toUserName = group.name}
+      if (group && group.icon){fields.toUserIcon = group.icon}
+    }
+  };
+
+  var handle = MsgSession.find({userId: this.userId}, {limit: 60}).observeChanges({
+    added: function(id, fields){
+      fixGroupName(fields);
+      // console.log('message session add', fields);
+      slef.added('simple_chat_msg_session', id, fields);
+    },
+    changed: function(id, fields){
+      fixGroupName(fields);
+      // console.log('message session changed', fields);
+      slef.changed('simple_chat_msg_session', id, fields);
+    },
+    removed: function(id){
+      // console.log('message session remove', id);
+      slef.removed('simple_chat_msg_session', id);
+    }
+  });
+  this.ready();
+  this.onStop(function(){
+    handle && handle.stop();
+  });
+
+  //return MsgSession.find({userId: this.userId}, {limit: 60});
 });
 
 Meteor.publish('get-group', function(id){
