@@ -21,9 +21,9 @@ var subscribeMQTT = function(userId, topic, callback){
         client.end(false, function(){
           client = null;
         });
-        Meteor.setTimeout(function(){
+        // Meteor.setTimeout(function(){
           callback && callback(err);
-        }, 1000*1);
+        // }, 1000*1);
       } catch (e){
         console.log('subscribeMQTT error:', e);
         // callback && callback(e);
@@ -34,14 +34,13 @@ var subscribeMQTT = function(userId, topic, callback){
   client.on('connect', function(){
     client.subscribe(topic, {qos: 1}, function(err){
       err && console.log('mqtt sub err:', err);
-      if (err)
-        return client_end(err);
-      
-      client.unsubscribe(topic, function(err1){
-        err1 && console.log('mqtt unsub err:', err1);
-        console.log('mqtt sub && unsub succ', userId);
-        client_end(err1);
-      });
+      !err && console.log('mqtt sub succ');
+      client_end(err);
+      // client.unsubscribe(topic, function(err1){
+      //   err1 && console.log('mqtt unsub err:', err1);
+      //   console.log('mqtt sub && unsub succ', userId);
+      //   client_end(err1);
+      // });
     });
   });
   client.on('error', function(err){
