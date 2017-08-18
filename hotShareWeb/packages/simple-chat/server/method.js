@@ -5,7 +5,7 @@ var subscribeMQTT = function(userId, topic, callback){
   var client = mqtt.connect('ws://tmq.tiegushi.com:80', {
     clean: false,
     keepalive: 30,
-    reconnectPeriod: 5*1000,
+    reconnectPeriod: 1000,
     clientId: userId
   });
 

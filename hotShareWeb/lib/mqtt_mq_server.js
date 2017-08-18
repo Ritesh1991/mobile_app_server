@@ -4,9 +4,9 @@
 if(Meteor.isServer){
     initMQTT = function(clientId){
         var mqttOptions = {
-            clean:true,
+            clean:false,
             keepalive:30,
-            reconnectPeriod:20*1000,
+            reconnectPeriod:1*1000,
             clientId:clientId
         }
         mqtt_connection=mqtt.connect('ws://tmq.tiegushi.com:80',mqttOptions);
@@ -115,7 +115,7 @@ if(Meteor.isServer){
     }
 
     Meteor.startup(function(){
-        initMQTT(null);
+        initMQTT('gushitie_server');
         Meteor.methods({
           Msg:function(topic,message){
 
