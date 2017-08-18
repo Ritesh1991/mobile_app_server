@@ -153,3 +153,45 @@
       ,300
     'click #addToContactList': ()->
       addToContactList("userProfileId")
+
+  Template.MyfavoritePosts.rendered=->
+    $(window).scroll (event)->
+      if Session.get("Social.LevelOne.Menu") is 'contactsList'
+        MOMENTS_ITEMS_INCREMENT = 10;
+        if window.innerHeight
+          winHeight = window.innerHeight
+        else
+          winHeight = $(window).height() # iphone fix
+        closeToBottom = ($(window).scrollTop() + winHeight > $(document).height() - 100);
+        if (closeToBottom and hasMoreResult1())
+          if window.favouritepostsCollection1_getmore is 'done' and (window.newLayoutImageInDownloading < 5)
+            console.log('Triggered data source refresh');
+            window.favouritepostsCollection1_getmore = 'inprogress'
+            Session.set("favouritepostsLimit1",Session.get("favouritepostsLimit1") + MOMENTS_ITEMS_INCREMENT);
+  Template.MyfavoritePosts.helpers
+    isLoading:()->
+      (Session.equals('newLayoutImageDownloading',true) or
+        !Session.equals('favouritepostsCollection1_getmore','done')) and
+        Session.equals("SocialOnButton",'contactsList')
+    onPostId:()->
+      if Session.get("postContent")
+        return Session.get("postContent")._id
+      else
+        return null
+    favoritePosts1:()->
+      postIds = []
+      FavouritePosts.find({userId: Session.get("userProfileId")}).forEach((item) ->
+        if !~postIds.indexOf(item.postId)
+          postIds.push(item.postId)
+      )
+      posts = Posts.find({_id: {$in: postIds}}).fetch()
+      posts.sort((p1, p2)->
+        return -(FavouritePosts.findOne({postId: p1._id, userId: Session.get("userProfileId")}).createdAt - FavouritePosts.findOne({postId: p2._id, userId: Session.get("userProfileId")}).createdAt)
+      )
+      posts         
+    suggestPosts:()->
+      SuggestPosts.find({},{sort: {createdAt: -1},limit:10})
+    loading:()->
+      Session.equals('momentsCollection','loading')
+    loadError:()->
+      Session.equals('momentsCollection','error')

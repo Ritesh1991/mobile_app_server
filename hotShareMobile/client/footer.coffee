@@ -256,6 +256,7 @@ if Meteor.isClient
         e.stopPropagation()
         PUB.page('/')
     'click #album-select':(e)->
+      $('#level2-popup-menu').modal('hide')
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
       Session.set('newEditorFormURL',null)
@@ -333,6 +334,7 @@ if Meteor.isClient
             Session.set('wait_import_count',false)
             console.log 'getShareData was Error!'
     'click #photo-select':(e)->
+      $('#level2-popup-menu').modal('hide')
       Meteor.defer ()->
         $('.modal-backdrop.in').remove()
       Session.set('newEditorFormURL',null)

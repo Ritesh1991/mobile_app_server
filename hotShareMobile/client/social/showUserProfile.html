@@ -65,6 +65,50 @@
       <div class="post">
           <span class="postLeft">{{_ "FavoriteStory"}}</span>
       </div>
-      {{>favoritePosts1}}
+      {{>MyfavoritePosts}}
   </div>
+</template>
+
+<template name="MyfavoritePosts">
+    <div class="favoritePosts1">
+      {{#if loading}}
+          <div>{{_ "isLoading"}}</div>
+      {{/if}}
+      {{#if loadError}}
+          <div>{{_ "FailToLoad"}}</div>
+      {{/if}}
+      {{#newLayoutContainer layoutId=onPostId src="favoritePosts1" container=".favoritePosts1"}}
+        {{#each favoritePosts1}}
+          {{#newLayoutElement layoutId=onPostId displayId=_id src="favoritePosts1" container=".favoritePosts1"}}
+              <div class="img_placeholder">
+                  <img class="mainImage" src="{{mainImage}}" />
+              </div>
+              <div class="pin_content">
+                  <p class="title">{{title}}</p>
+                  <p class="addontitle">{{addontitle}}</p>
+              </div>
+          {{/newLayoutElement}}
+        {{/each}}
+      {{/newLayoutContainer}}
+      {{#if isLoading}}
+          <div class="loading-spinner">
+              <div class='spinner-overlay'>
+                  <div class='spinner center'>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                      <div class='spinner-blade'></div>
+                  </div>
+              </div>
+          </div>
+      {{/if}}
+    </div>
 </template>
