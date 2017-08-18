@@ -54,8 +54,10 @@ Meteor.publish('get-msg-session', function(){
       if (group && group.name && group.is_post_group && group._id.endsWith('_group') && group.name.startsWith('群聊 ')){
         var id = group._id.replace('_group', '');
         var user = Meteor.users.findOne({_id: id});
-        if (user && user.profile && user.profile.fullname){
-          fields.toUserName = user.profile.fullname + ' 的故事群';
+        if (user){
+          var username = user.profile && user.profile.fullname ? user.profile.fullname : user.username;
+          console.log('username='+username);
+          fields.toUserName = username + ' 的故事群';
           Groups.update({_id: group._id}, {$set: {name: fields.toUserName}});
           console.log('修正群名称:', group._id);
         }

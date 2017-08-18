@@ -3,9 +3,9 @@ var Fiber = Meteor.npmRequire('fibers');
 
 var subscribeMQTT = function(userId, topic, callback){
   var client = mqtt.connect('ws://tmq.tiegushi.com:80', {
-    clean: true,
+    clean: false,
     keepalive: 30,
-    reconnectPeriod: 20*1000,
+    reconnectPeriod: 5*1000,
     clientId: userId
   });
 
