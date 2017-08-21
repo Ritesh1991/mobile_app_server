@@ -127,12 +127,35 @@ var sendHaveReadMsg = function(page_data){
   sendMqttUserMessage(msg.to.id, msg, callback);
 }
 
+var keyboardHeightHandle = function(event){
+  console.log ('Keyboard height is: ' + event.keyboardHeight);
+  Session.set('keyboardHeight',event.keyboardHeight);
+  if (event.keyboardHeight === 0) {
+    $('.simple-chat').height('100%');
+  }
+};
+
+window.onresize = function(){
+  console.log('window height:'+$(window).height());
+  Meteor.setTimeout(function(){
+    var keyboardHeight = Session.get('keyboardHeight');
+    var maxWindowHeight = Session.get('currentWindowHeight'); //不弹键盘时的高度;
+    if ((maxWindowHeight - $(window).height() <= 20 ) && keyboardHeight > 0) {
+      $('.simple-chat').height($(window).height()-keyboardHeight);
+    }
+    if (keyboardHeight === 0) {
+      $('.simple-chat').height('100%');
+    }
+  },100);
+};
+
 Template._simpleChatToChatLayout.onRendered(function(){
   page_data = this.data;
   if(Meteor.isCordova && device && device.platform === 'iOS'){
     try{
       Keyboard.shrinkView(true);
       Keyboard.disableScrollingInShrinkView(true);
+      window.addEventListener('keyboardHeightWillChange', keyboardHeightHandle);
     } catch (err){
       console.log(err)
     }
@@ -151,6 +174,8 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
     try{
       Keyboard.shrinkView(false);
       Keyboard.disableScrollingInShrinkView(false);
+      window.removeEventListener('keyboardHeightWillChange', keyboardHeightHandle);
+      $('.simple-chat').height('100%');
     } catch (err){
       console.log(err)
     }
@@ -343,6 +368,8 @@ var setToUsers = function(data){
 };
 
 Template._simpleChatToChat.onRendered(function(){
+  Session.set('currentWindowHeight',$(window).height());
+
   console.log('=====emplate._simpleChatToChat.onRendered=====');
   is_loading.set(true);
   list_limit.set(list_limit_val);
