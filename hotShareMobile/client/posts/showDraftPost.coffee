@@ -574,11 +574,20 @@ if Meteor.isClient
       if savedDraftData
         editDraft(savedDraftData)
       else
+        subLoad = (err)->
+          if (err)
+            console.log('savedDraftsWithIDCollection error:', err)
+          else
+            console.log('savedDraftsWithIDCollection loaded')
+          savedDraftData = SavedDrafts.findOne({_id:draftId})
+          if (!savedDraftData)
+            savedDraftData = Session.get("postContent")
+          editDraft(savedDraftData)
         Meteor.subscribe("savedDraftsWithID",draftId,{
             onReady:()->
-              console.log('savedDraftsWithIDCollection loaded')
-              savedDraftData = SavedDrafts.findOne({_id:draftId})
-              editDraft(savedDraftData)
+              subLoad()
+            onStop: (err)->
+              subLoad(err)
           })
 
     'click #delete':(event)->
