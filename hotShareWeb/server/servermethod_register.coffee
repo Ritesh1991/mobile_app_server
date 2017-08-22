@@ -775,8 +775,8 @@ if Meteor.isServer
           SavedDrafts.update({_id:postId}, {$set:drafts}, {upsert:true})
           drafts._id = draftId
           drafts.editorVersion = 'fullEditor'
-          drafts.mainText += '[经典模式]'
-          SavedDrafts.insert({drafts})
+          drafts.title = drafts.title + '[经典模式]'
+          SavedDrafts.insert drafts, (err, _id)->
           FollowPosts.update({postId:postId},{$set:{publish:false}},{multi: true, upsert:true})
           TPs=TopicPosts.find({postId:postId})
           if TPs.count()>0

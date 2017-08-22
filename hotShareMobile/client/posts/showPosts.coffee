@@ -974,7 +974,7 @@ if Meteor.isClient
         }
 
         draftNewId = new Mongo.ObjectID()._str
-        Meteor.call 'unpublish',postId,userId,drafts, draftNewId, (err, res)->
+        Meteor.call 'unpublishAndCopyNew',postId,userId,drafts, draftNewId, (err, res)->
           #Meteor.subscribe 'myCounter'
           myHotPosts = Meteor.user().myHotPosts || []
           if myHotPosts and myHotPosts.length > 0
@@ -986,24 +986,20 @@ if Meteor.isClient
             myHotPosts = newArray
             Meteor.users.update { _id: Meteor.userId() }, $set: 'myHotPosts': myHotPosts
           FollowPosts.remove({_id:postId})
-        return draftNewId
+        
+        drafts._id = draftNewId
+        drafts.editorVersion = 'fullEditor'
+        drafts.title = drafts.title + '[经典模式]'
+        return drafts
 
       editVer = (isSimple)->
         callback = ()->
           if isSimple
-            draftId = cancelPost()
+            savedDraftData = cancelPost()
             cleanDraft()
-            # draftId = Session.get("postContent")._id
-            savedDraftData = SavedDrafts.findOne({_id:draftId})
-            if savedDraftData
-              _editDraft(savedDraftData)
-            else
-              Meteor.subscribe("savedDraftsWithID",draftId,{
-                  onReady:()->
-                    console.log('savedDraftsWithIDCollection loaded')
-                    savedDraftData = SavedDrafts.findOne({_id:draftId})
-                    _editDraft(savedDraftData)
-                })
+            if (!SavedDrafts.findOne({_id: savedDraftData._id}))
+              Meteor.subscribe("savedDraftsWithID", savedDraftData._id)
+            _editDraft(savedDraftData)
           else
             #Clear draft first
             Drafts.remove({})
@@ -1029,22 +1025,22 @@ if Meteor.isClient
             '此文章是您之前使用简易模式发表的，我们推荐您使用简易模式进行编辑。当然您也可以使用经典模式编辑。'
             (index)->
               if index is 1
-                return Router.go('/newEditor?type=edit&id='+this._id)
+                return Router.go('/newEditor?type=edit&id='+self._id)
               callback()
             '模式选择'
             ['简易模式', '经典模式', '取消']
           )
         callback()
           
-      if this.import_status
+      if self.import_status
         # unless this.import_status is 'imported' or this.import_status is 'done'
-        if this.import_status is 'imported' or this.import_status is 'done'
+        if self.import_status is 'imported' or self.import_status is 'done'
           if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
             return editVer(true)
         else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
         
-      editorVersion = this.editorVersion || 'fullEditor'
+      editorVersion = self.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
         return editVer(true)
 
