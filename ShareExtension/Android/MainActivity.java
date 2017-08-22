@@ -19,23 +19,35 @@
 
 package org.hotshare.everywhere;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Build;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.app.ActivityCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Set;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.database.Cursor;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
 
 import org.apache.cordova.*;
 
@@ -163,6 +175,56 @@ public class MainActivity extends CordovaActivity
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        final WebView.HitTestResult result = ((WebView)(appView.getView())).getHitTestResult();
+
+        MenuItem.OnMenuItemClickListener handler = new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.i("##SI", "onMenuItemClick: " + item);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Bitmap image = BitmapFactory.decodeStream((InputStream) new URL(result.getExtra()).getContent());
+                            FileOutputStream out = null;
+                            File dir = new File(Environment.getExternalStorageDirectory() + "/Download");
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                            }
+                            String filename =  dir + "/hotshare_" + System.currentTimeMillis() + ".png";
+                            try {
+                                out = new FileOutputStream(filename);
+                                image.compress(Bitmap.CompressFormat.PNG, 90, out);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                try{
+                                    if (out != null)
+                                        out.close();
+                                } catch(Throwable ignore) {}
+                            }
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).start();
+
+                return true;
+            }
+        };
+
+        if (result.getType() == WebView.HitTestResult.IMAGE_TYPE ||
+                result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+
+            //menu.setHeaderTitle(result.getExtra());
+            menu.add(0, 0, 0, "保存图片").setOnMenuItemClickListener(handler);
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -180,6 +242,7 @@ public class MainActivity extends CordovaActivity
         }
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
+        registerForContextMenu(appView.getView());
     }
 
     /*private String getPath(Uri uri) {
