@@ -948,37 +948,107 @@ if Meteor.isClient
           return
       ,animatePageTrasitionTimeout
     'click #edit': (event)->
+      self = this
+      cancelPost = ()->
+        fromUrl = ''
+        if self.fromUrl and self.fromUrl isnt ''
+          fromUrl = self.fromUrl
+        draft0 = {_id:self._id, type:'image', isImage:true, url:fromUrl ,owner: Meteor.userId(), imgUrl:self.mainImage, filename:self.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0}
+        self.pub.splice(0, 0, draft0);
+        if Posts.find({owner: Meteor.userId()}).count() is 1
+          Session.setPersistent('persistentMyOwnPosts',null)
+          Session.setPersistent('myPostsCount',0)
+        postId = self._id
+        userId = Meteor.userId()
+        drafts = {
+          _id:postId,
+          pub:self.pub,
+          title:self.title,
+          fromUrl:fromUrl,
+          addontitle:self.addontitle,
+          mainImage: self.mainImage,
+          mainText: self.mainText,
+          owner:userId,
+          createdAt: new Date(),
+          editorVersion: self.editorVersion
+        }
+
+        draftNewId = new Mongo.ObjectID()._str
+        Meteor.call 'unpublish',postId,userId,drafts, draftNewId, (err, res)->
+          #Meteor.subscribe 'myCounter'
+          myHotPosts = Meteor.user().myHotPosts || []
+          if myHotPosts and myHotPosts.length > 0
+            newArray = []
+            for item in myHotPosts
+              itemPostId = item.postId or item._id
+              if itemPostId isnt postId
+                newArray.push(item)
+            myHotPosts = newArray
+            Meteor.users.update { _id: Meteor.userId() }, $set: 'myHotPosts': myHotPosts
+          FollowPosts.remove({_id:postId})
+        return draftNewId
+
+      editVer = (isSimple)->
+        callback = ()->
+          if isSimple
+            draftId = cancelPost()
+            cleanDraft()
+            # draftId = Session.get("postContent")._id
+            savedDraftData = SavedDrafts.findOne({_id:draftId})
+            if savedDraftData
+              _editDraft(savedDraftData)
+            else
+              Meteor.subscribe("savedDraftsWithID",draftId,{
+                  onReady:()->
+                    console.log('savedDraftsWithIDCollection loaded')
+                    savedDraftData = SavedDrafts.findOne({_id:draftId})
+                    _editDraft(savedDraftData)
+                })
+          else
+            #Clear draft first
+            Drafts.remove({})
+            #Prepare data from post
+            fromUrl = ''
+            if self.fromUrl and self.fromUrl isnt ''
+              fromUrl = self.fromUrl
+            draft0 = {_id:self._id, type:'image', isImage:true, url: fromUrl, owner: Meteor.userId(), imgUrl:self.mainImage, filename:self.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0,style:self.mainImageStyle}
+            Drafts.insert(draft0)
+            pub = self.pub;
+            if pub.length > 0
+              ###
+              Router.go('/add') will trigger addPost onRendered first, then defer function run.
+              The Drafts.insert will trigger addPostItem OnRendered function run, then do the layout thing. The 2nd defer function
+              will run after then. The final callback will be called after all item layout done, so closePreEditingPopup run.
+              ###
+              deferedProcessAddPostItemsWithEditingProcessBar(pub)
+            Session.set 'isReviewMode','2'
+            #Don't push showPost page into history. Because when save posted story, it will use Router.go to access published story directly. But in history, there is a duplicate record pointing to this published story.
+            Router.go('/add')
+        if (isSimple)
+          return navigator.notification.confirm(
+            '此文章是您之前使用简易模式发表的，我们推荐您使用简易模式进行编辑。当然您也可以使用经典模式编辑。'
+            (index)->
+              if index is 1
+                return Router.go('/newEditor?type=edit&id='+this._id)
+              callback()
+            '模式选择'
+            ['简易模式', '经典模式', '取消']
+          )
+        callback()
+          
       if this.import_status
         # unless this.import_status is 'imported' or this.import_status is 'done'
         if this.import_status is 'imported' or this.import_status is 'done'
           if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
-            return Router.go('/newEditor?type=edit&id='+this._id)
+            return editVer(true)
         else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
         
       editorVersion = this.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
-        return Router.go('/newEditor?type=edit&id='+this._id)
+        return editVer(true)
 
-      #Clear draft first
-      Drafts.remove({})
-      #Prepare data from post
-      fromUrl = ''
-      if this.fromUrl and this.fromUrl isnt ''
-        fromUrl = this.fromUrl
-      draft0 = {_id:this._id, type:'image', isImage:true, url: fromUrl, owner: Meteor.userId(), imgUrl:this.mainImage, filename:this.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0,style:this.mainImageStyle}
-      Drafts.insert(draft0)
-      pub = this.pub;
-      if pub.length > 0
-        ###
-        Router.go('/add') will trigger addPost onRendered first, then defer function run.
-        The Drafts.insert will trigger addPostItem OnRendered function run, then do the layout thing. The 2nd defer function
-        will run after then. The final callback will be called after all item layout done, so closePreEditingPopup run.
-        ###
-        deferedProcessAddPostItemsWithEditingProcessBar(pub)
-      Session.set 'isReviewMode','2'
-      #Don't push showPost page into history. Because when save posted story, it will use Router.go to access published story directly. But in history, there is a duplicate record pointing to this published story.
-      Router.go('/add')
+      editVer(false)
     'click #unpublish': (event)->
       self = this
       # navigator.notification.confirm('取消发表的故事将会被转换为草稿。', (r)->

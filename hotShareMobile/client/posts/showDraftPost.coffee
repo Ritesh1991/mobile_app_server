@@ -20,7 +20,7 @@ if Meteor.isClient
               topic = topic[...haveSpace]
           console.log topic
           Meteor.call('updateTopicPostsAfterComment', topicPostId, topic, topicPostObj)
-  editDraft = (savedDraftData)->
+  @_editDraft = editDraft = (savedDraftData)->
       editorVersion = savedDraftData.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
         return Router.go('/newEditor?type=draft&id='+savedDraftData._id)
