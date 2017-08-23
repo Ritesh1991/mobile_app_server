@@ -589,7 +589,38 @@ if Meteor.isClient
             onStop: (err)->
               subLoad(err)
           })
+    'click #editFull': (event)->
+      openEditPage = (savedDraftData)->
+        savedDraftData.fromPostId = savedDraftData._id
+        savedDraftData._id = new Mongo.ObjectID()._str
+        savedDraftData.editorVersion = 'fullEditor'
+        savedDraftData.title = '[经典模式]\r\n' + savedDraftData.title
+        SavedDrafts.insert savedDraftData, (err)->
+          if err
+            return PUB.alert('转换失败，请重试~')
+          editDraft(savedDraftData)
 
+      cleanDraft()
+      draftId = Session.get("postContent")._id
+      savedDraftData = SavedDrafts.findOne({_id:draftId})
+      if savedDraftData
+        openEditPage(savedDraftData)
+      else
+        subLoad = (err)->
+          if (err)
+            console.log('savedDraftsWithIDCollection error:', err)
+          else
+            console.log('savedDraftsWithIDCollection loaded')
+          savedDraftData = SavedDrafts.findOne({_id:draftId})
+          if (!savedDraftData)
+            savedDraftData = Session.get("postContent")
+          openEditPage(savedDraftData)
+        Meteor.subscribe("savedDraftsWithID",draftId,{
+            onReady:()->
+              subLoad()
+            onStop: (err)->
+              subLoad(err)
+          })
     'click #delete':(event)->
       navigator.notification.confirm('您是否要删除草稿？', (r)->
         if r isnt 2
@@ -628,6 +659,8 @@ if Meteor.isClient
   Template.showDraftPosts.helpers
     isSimpleEditorPost:->
       return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
+    isToFullVer:->
+      return Session.get('postContent').editorVersion is 'simpleEditor' and !Session.get('postContent').fromPostId and SavedDrafts.find({fromPostId: Session.get('postContent')._id}).count() <= 0
     is_owner: ()->
       return Meteor.userId() is Session.get('postContent').owner
     themes: ()->

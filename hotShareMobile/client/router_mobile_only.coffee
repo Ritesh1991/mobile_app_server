@@ -387,6 +387,7 @@ if Meteor.isClient
         else if post
           documentTitle = "『故事贴』" + post.title
         Session.set("DocumentTitle",documentTitle)
+        Meteor.subscribe("savedDraftsOther",this.params._id) #获取关联的经典模式的草稿（如果有）
         this.render 'showDraftPosts', {data: post}
         console.log('render showDraftPosts');
         Session.set 'draftposts','draftposts/'+this.params._id

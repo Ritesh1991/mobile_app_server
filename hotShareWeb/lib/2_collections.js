@@ -2431,6 +2431,13 @@ if(Meteor.isServer){
       else
         return SavedDrafts.find({_id: draftId});
   });
+  // 获取关联的经典模式的草稿（如果有）
+  Meteor.publish("savedDraftsOther", function(draftId) {
+    if(this.userId === null || !Match.test(draftId, String))
+      return this.ready();
+    else
+      return SavedDrafts.find({fromPostId: draftId});
+});
   Meteor.publish("followedByWithLimit", function(limit) {
       /*列出自己的粉丝*/
       if(this.userId === null|| !Match.test(limit, Number)){
