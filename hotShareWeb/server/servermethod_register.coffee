@@ -773,9 +773,10 @@ if Meteor.isServer
         Meteor.defer ()->
           Posts.update({_id:postId},{$set:{publish:false}})
           SavedDrafts.update({_id:postId}, {$set:drafts}, {upsert:true})
+          drafts.fromPostId = drafts._id
           drafts._id = draftId
           drafts.editorVersion = 'fullEditor'
-          drafts.title = drafts.title + '[经典模式]'
+          drafts.title = '[经典模式]\r\n' + drafts.title
           SavedDrafts.insert drafts, (err, _id)->
           FollowPosts.update({postId:postId},{$set:{publish:false}},{multi: true, upsert:true})
           TPs=TopicPosts.find({postId:postId})
