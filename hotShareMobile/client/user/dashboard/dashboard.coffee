@@ -150,6 +150,29 @@ if Meteor.isClient
       setTimeout(()->
         $("#updateToLatestVersion .btn-default").trigger('click');
       , 200)
+    'click .feedback' :->
+      history = Session.get('history_view') || []
+      history.push({
+        view: 'dashboard'
+        scrollTop: document.body.scrollTop
+      })
+      to = SimpleChat.Groups.findOne({_id: '7e68e6c1f153e984ca4b0fce'})
+      if !to
+        to = {
+          id: '7e68e6c1f153e984ca4b0fce'
+          name: '故事贴反馈群'
+          icon: '"http://oss.tiegushi.com/groupMessages.png'
+        }
+      else
+        to.id = '7e68e6c1f153e984ca4b0fce'
+      Session.set('msgFormUser', {
+        id: Meteor.userId()
+        name: if Meteor.user().profile and Meteor.user().profile.fullname then Meteor.user().profile.fullname else Meteor.user().username
+        icon: if Meteor.user().profile and Meteor.user().profile.icon then Meteor.user().profile.icon else '/userPicture.png'
+      })
+      Session.set("history_view", history)
+      Session.set('msgToUserName', to.name)
+      Router.go '/simple-chat/to/group?id='+to.id+'&name='+encodeURIComponent(to.name)+'&icon='+encodeURIComponent(to.icon)
     'click .about' :->
       addDashboardIntoHistory()
       Router.go '/my_about'

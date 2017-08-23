@@ -154,6 +154,9 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
 
   var group = Groups.findOne({_id: id});
   if(group){
+    if (group.is_post_group)
+      is_post_group = group.is_post_group;
+    
     var $set = {};
     if (!group.name){
       group.name = name;
