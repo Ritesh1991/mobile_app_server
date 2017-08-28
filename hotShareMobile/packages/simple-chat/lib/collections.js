@@ -102,7 +102,7 @@ if(Meteor.isServer){
         break;
       case 'user':
         if (doc.form.id === Meteor.userId()) // me -> ta
-          msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user', count: -1};
+          msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user'};
         else if (doc.to.id == Meteor.userId()) // ta - me
           msgObj = {toUserId: doc.form.id, toUserName: doc.form.name, toUserIcon: doc.form.icon, sessionType: 'user'};
         else{
@@ -113,7 +113,7 @@ if(Meteor.isServer){
               var id = associated[i].id;
               if (doc.form.id === id) { //associated ->ta
                 associatedUser = associated[i];
-                msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user', count: -1};
+                msgObj = {toUserId: doc.to.id, toUserName: doc.to.name, toUserIcon: doc.to.icon, sessionType: 'user'};
                 break;
               }
               else if(doc.to.id === id){//ta ->associated
