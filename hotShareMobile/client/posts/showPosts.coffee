@@ -834,13 +834,15 @@ if Meteor.isClient
         else
           window.location.href=Session.get("postContent").fromUrl
     'click .post-user':->
-      Session.set("userProfileId", this.owner)
+      Session.set("ProfileUserId1", this.owner)
+      Session.set("currentPageIndex",-1)
       Meteor.subscribe("userinfo", this.owner)
       Meteor.subscribe("recentPostsViewByUser", this.owner)
-      # Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
+      Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
       Session.set('pageScrollTop',$(window).scrollTop())
-      $('.showUserProfile').fadeIn()
-      $('.showBgColor').fadeOut()
+      onUserProfile()
+      # $('.showUserProfile').fadeIn()
+      # $('.showBgColor').fadeOut()
     "click .showPostsFollowMe span a":->
       if Meteor.isCordova
         cordova.plugins.clipboard.copy('故事贴')
@@ -925,8 +927,8 @@ if Meteor.isClient
       Session.set("pcommentsName","")
       $(window).children().off()
       $(window).unbind('scroll')
-      $('.showPosts').addClass('animated ' + animateOutUpperEffect)
-      $('.showPostsFooter').addClass('animated ' + animateOutUpperEffect)
+      # $('.showPosts').addClass('animated ' + animateOutUpperEffect)
+      # $('.showPostsFooter').addClass('animated ' + animateOutUpperEffect)
       setTimeout ()->
         #PUB.back()
         # if Session.get("backtoMyPosts") is true
