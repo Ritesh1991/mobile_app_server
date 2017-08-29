@@ -348,8 +348,9 @@ if Meteor.isClient
     'click #groupBarCodePageback':(event)->
       Session.set("groupsProfileMenu","groupInformation")
     'click #savebarcode':(event)->
-      group = SimpleChat.Groups.findOne({_id:Session.get('groupsId')});
-      cordova.plugins.barcodeScanner.saveBarCodeToPhotoAlum group.barcode, ((result) ->
+      #group = SimpleChat.Groups.findOne({_id:Session.get('groupsId')});
+      barcodeurl =  Template.groupBarCode.__helpers.get('barcodeUrl')()
+      cordova.plugins.barcodeScanner.saveBarCodeToPhotoAlum barcodeurl, ((result) ->
         console.log 'res:' + result
         PUB.toast '保存成功！'
         return

@@ -312,6 +312,7 @@ if Meteor.isClient
           #       console.log('绑定web用户发现未知的场景类型:', query['p'])
           #       navigator.notification.alert '绑定web用户成功~', `function(){}`, '提示', '知道了'
         else if (res.indexOf('/simple-chat/to/group?id=') >= 0)
+          loading.close()
           PUB.page(res)
         else if res.indexOf('http://') >= 0
           callback = (index)->
