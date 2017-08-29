@@ -123,9 +123,11 @@ if(Meteor.isServer){
               if(topic.indexOf('/msg/u/') >= 0 && message.to && message.to.id){
                 var user = message.to.id;
                 var userInfo = Meteor.users.findOne({_id:user},{fields:{'profile.browser':true}})
-                if (userInfo && userInfo.profile && userInfo.profile.browser){
-                  console.log(message)
+                if((userInfo && userInfo.profile && userInfo.profile.browser))   {
                   //delete message._id;
+                  if (message.is_from_web) { //web -->web
+                    message.web2web = true;
+                  }
                   WebUserMessages.insert(message);
                   var userInfo = Meteor.users.findOne({_id:user});
                   var waitReadMsgCount = userInfo.profile.waitReadMsgCount ? userInfo.profile.waitReadMsgCount : 0;
@@ -136,6 +138,9 @@ if(Meteor.isServer){
                   console.log('waitReadMsgCount--->'+(waitReadMsgCount+1));
                   Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': waitReadMsgCount+1}});
                 } else {
+                  if (message.is_from_web) { //web-->app
+                    WebUserMessages.insert(message);
+                  }
                   sendMqttMessage(topic,message);
                 }
               } else {
@@ -153,13 +158,25 @@ if(Meteor.isServer){
             }
             throw new Meteor.Error(500, 'cant find the user info from requesting user id: ' + userId);
           },
-          wMsgRead:function(id){
+          wMsgRead:function(id,isFormMe){
             // 暂时没做校验/检查
             var msg = WebUserMessages.findOne({_id:id});
             if (msg) {
-                var user = msg.to.id;
-                Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': 0}});
-                WebUserMessages.remove({_id:id});
+                if (!isFormMe) {
+                  var user = msg.to.id;
+                  Meteor.users.update({_id: user}, {$set: {'profile.waitReadMsgCount': 0}});
+                }
+                if (msg.web2web) {
+                    if (msg.is_read) {
+                        WebUserMessages.remove({_id:id});
+                    }
+                    else{
+                        WebUserMessages.update({_id:id},{$set:{is_read:true}});
+                    }
+                }
+                else{
+                    WebUserMessages.remove({_id:id});
+                }
             }
           }
         });
@@ -173,13 +190,23 @@ if(Meteor.isServer){
       // 直接返回的话，如果有collection.remove，也会向client发ddp的remove
       // return WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}})
       var self = this;
-      var handle = WebUserMessages.find({'to.id': id}, {limit: 40, sort: {create_time: -1}}).observeChanges({
+      var userId = id;
+      var where = {
+        $or: [
+          {'form.id': userId}, // me -> ta
+          {'to.id': userId}  // ta -> me
+        ]
+      };
+      var handle = WebUserMessages.find(where, {limit: 40, sort: {create_time: -1}}).observeChanges({
         added: function(id, fields){
+          if (fields.form.id === userId) {
+            fields.isFormMe = true;
+          }
           self.added("webUserMessages", id, fields);
-        },
+        }/*,
         changed: function(id, fields){
           self.changed("webUserMessages", id, fields);
-        }
+        }*/
       });
 
       self.onStop(function(){

@@ -29,7 +29,8 @@ Template._sendMsg.onRendered(function(){
       "type" : "text",
       "text" : text,
       "create_time" : new Date(),
-      "is_read" : false
+      "is_read" : false,
+      'is_from_web':true
     };
     msg.to = t.data;
     

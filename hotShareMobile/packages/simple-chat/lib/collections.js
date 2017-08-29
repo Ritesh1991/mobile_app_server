@@ -18,7 +18,7 @@ if(Meteor.isServer){
 
   MsgSession.allow({
     insert: function (userId, doc) {
-      if (doc.userId != userId)
+      if (doc.userId != userId && doc.app_user_id != userId)
         return false;
 
       // 修正群的名称和头像
@@ -39,10 +39,10 @@ if(Meteor.isServer){
       }
     },
     remove: function (userId, doc) {
-      return doc.userId === userId;
+      return doc.userId === userId || doc.app_user_id === userId;
     },
     update: function (userId, doc, fieldNames, modifier) {
-      if (doc.userId != userId)
+      if (doc.userId != userId && doc.app_user_id != userId)
         return false;
 
       // 修正群的名称和头像
@@ -142,6 +142,7 @@ if(Meteor.isServer){
       msgObj.userId = associatedUser.id;
       msgObj.userName = associatedUser.name;
       msgObj.userIcon = associatedUser.icon;
+      msgObj.app_user_id = Meteor.userId(); //关联的App用户
     }
     else{
       msgObj.userId = Meteor.userId();

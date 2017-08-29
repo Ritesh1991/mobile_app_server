@@ -381,7 +381,7 @@ if(Meteor.isCordova){
           destinationName: '/t/msg/' + (fields.to_type === 'user' ? 'u' : 'g') + '/' + fields.to.id,
           payloadString: JSON.stringify(fields)
         });
-        Meteor.call('wMsgRead',id)
+        Meteor.call('wMsgRead',id,fields.isFormMe);
       }
     });
 } else if (Meteor.isClient){

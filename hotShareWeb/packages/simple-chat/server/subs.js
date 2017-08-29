@@ -61,7 +61,14 @@ Meteor.publish('get-msg-session', function(){
     }
   };
 
-  var handle = MsgSession.find({userId: this.userId}, {limit: 60}).observeChanges({
+  var where = {
+    $or: [
+      {userId: this.userId}, // 自己的
+      {app_user_id: this.userId}  // 关联的web账户的
+    ]
+  };
+
+  var handle = MsgSession.find(where, {limit: 60}).observeChanges({
     added: function(id, fields){
       fixGroupName(fields);
       // console.log('message session add', fields);
