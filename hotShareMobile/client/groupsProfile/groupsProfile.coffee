@@ -66,6 +66,8 @@ if Meteor.isClient
     'click #groupsProfilePageback':(event)->
       groupid = Session.get('groupsId')
       type = Session.get('groupsType')
+      groupName = Template.groupInformation.__helpers.get('groupName')()
+      Session.set('msgToUserName', groupName);
       url = '/simple-chat/to/'+type+'?id='+groupid
       # remove popUpBox
       $('.popUpBox, .b-modal').remove()
