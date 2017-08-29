@@ -1406,7 +1406,7 @@ if Meteor.isServer
 
             msgObj.to.isLinkText = true
             if postIndex
-              msgObj.to.pcomment =  doc.pub[postIndex].text
+              msgObj.to.pcomment =  doc.pub[postIndex].text.replace(/<(?:.|\n)*?>/gm, '');
               msgObj.to.pcommentIndexNum = postIndex
 
             msgObj.text = '文章不错，已转发 -- '+doc.title

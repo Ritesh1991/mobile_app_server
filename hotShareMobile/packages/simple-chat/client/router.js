@@ -1335,6 +1335,9 @@ Template._simpleChatToChatItem.helpers({
   convertLink: function(str){
     return str.convertLink("_blank");
   },
+  format_pcomment:function(pcomment){
+    return pcomment.replace(/<(?:.|\n)*?>/gm, '');
+  },
   formatPIndex:function(index){
     if(index == 0){
       return '1'

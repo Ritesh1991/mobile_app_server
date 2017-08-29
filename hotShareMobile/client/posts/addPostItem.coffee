@@ -716,6 +716,8 @@ if Meteor.isClient
         catch
         
       return true
+    fomat_text:(text)->
+      return text.replace(/<(?:.|\n)*?>/gm, '')
     calcStyle: ()->
       # For backforward compatible. Only older version set style directly
       if this.style and this.style isnt ''
