@@ -955,17 +955,18 @@ if Meteor.isClient
           return
       ,animatePageTrasitionTimeout
     'click #edit': (event)->
-      if this.import_status
+      thispost = Session.get('postContent')
+      if thispost.import_status
         # unless this.import_status is 'imported' or this.import_status is 'done'
-        if this.import_status is 'imported' or this.import_status is 'done'
+        if thispost.import_status is 'imported' or thispost.import_status is 'done'
           if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
-            return Router.go('/newEditor?type=edit&id='+this._id)
+            return Router.go('/newEditor?type=edit&id='+thispost._id)
         else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
         
-      editorVersion = this.editorVersion || 'fullEditor'
+      editorVersion = thispost.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
-        return Router.go('/newEditor?type=edit&id='+this._id)
+        return Router.go('/newEditor?type=edit&id='+thispost._id)
 
       #Clear draft first
       Drafts.remove({})

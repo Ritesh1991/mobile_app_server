@@ -112,16 +112,26 @@ if Meteor.isClient
        if Template.addTopicComment.__helpers.get('is_server_import')() is true
          console.log('click #publish is_server_import is true')
          postId = Session.get("TopicPostId")
+         if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+           jsondata = {
+            publish:true,
+            isReview:true,
+            editorVersion: "simpleEditor",
+            createdAt: new Date()
+           }
+         else
+           jsondata = {
+            publish:true,
+            isReview:true,
+            editorVersion: "fullEditor",
+            createdAt: new Date()
+           }
          Posts.update(
             {
               _id:postId
             },
             {
-              $set:{
-                publish:true,
-                isReview:true,
-                createdAt: new Date(),
-              }
+              $set: jsondata
             }
           )
          SavedDrafts.remove({_id:postId})

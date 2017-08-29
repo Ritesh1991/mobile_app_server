@@ -568,6 +568,18 @@ if Meteor.isClient
         loopAtEnd: false
       }
     'click #edit': (event)->
+      thispost = Session.get('postContent')
+      if thispost.import_status
+        if thispost.import_status is 'imported' or thispost.import_status is 'done'
+          if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
+            return Router.go('/newEditor?type=edit&id='+thispost._id)
+        else
+          return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
+        
+      editorVersion = thispost.editorVersion || 'fullEditor'
+      if (editorVersion is 'simpleEditor')
+        return Router.go('/newEditor?type=edit&id='+thispost._id)
+
       cleanDraft()
       draftId = Session.get("postContent")._id
       savedDraftData = SavedDrafts.findOne({_id:draftId})
