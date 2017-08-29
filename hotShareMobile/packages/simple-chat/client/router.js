@@ -589,8 +589,8 @@ Template._simpleChatToChatItem.events({
 
     if (paraIndex){
       Session.set("pcurrentIndex", paraIndex);
-      Session.set("pcommetsId", owner);
-      Session.set("pcommentsName", ownerName);
+      Session.set("pcommetsId", this.form.id);
+      Session.set("pcommentsName", this.form.name);
       Session.set("toasted", false);
       console.log('ispcomment---'+paraIndex+'---'+owner+'---'+ownerName+'---'+$(e.currentTarget).data('ispcomment'))
       if ($(e.currentTarget).data('ispcomment')) {
