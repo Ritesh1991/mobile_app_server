@@ -32,7 +32,9 @@ if(Meteor.isServer){
 
       var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
       if (msgSession){
-        MsgSession.update({_id: msgSession._id}, {$set: doc, $inc: {count: 1}});
+        delete doc.count;
+        console.log('update doc:'+ JSON.stringify(doc));
+        MsgSession.update({_id: msgSession._id}, {$set: doc, $inc: {count: 1}},function(error){console.log('update error:'+error);});
         return false;
       } else {
         return true;

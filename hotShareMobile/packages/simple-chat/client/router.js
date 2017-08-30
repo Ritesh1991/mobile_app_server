@@ -1886,6 +1886,36 @@ Template._simpleChatListLayout.events({
     Router.go('/searchFollow');
   }
 });
+Template._groupMessageList.onRendered(function(){
+  Session.set('msgSessionLimit',60);
+  var medialistHeight = 0;
+  $('.container-box').scroll(function(){
+    var height = $('.simple-chat-medialist').height();
+    var contentTop = $('.container-box').scrollTop();
+    var contentHeight = $('.container-box').height();
+    console.log(contentTop+contentHeight)
+    console.log(height)
+    var is_loading_more = false;
+
+    if((contentHeight + contentTop + 50 ) >= height && !is_loading_more){
+      if (height === medialistHeight) {
+        return;
+      }
+      var limit = Session.get('msgSessionLimit') + 10;
+      console.log('loadMore and limit = ',limit);
+      is_loading_more = true;
+      Meteor.subscribe('device-timeline-with-hour',limit,{onStop:function(){
+        is_loading_more = false;
+        medialistHeight = $('.simple-chat-medialist').height();
+
+      },onReady:function(){
+        is_loading_more = false;
+        medialistHeight = $('.simple-chat-medialist').height();
+      }});
+      Session.set('msgSessionLimit',limit);
+    }
+  });
+});
 
 Template._groupMessageList.helpers({
   limit_top_read_count: function(count) {

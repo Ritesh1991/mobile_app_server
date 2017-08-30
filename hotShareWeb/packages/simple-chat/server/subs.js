@@ -33,9 +33,10 @@ Meteor.publish('get-messages', function(type, to){
   }
 });
 
-Meteor.publish('get-msg-session', function(){
+Meteor.publish('get-msg-session', function(limit){
   if (!this.userId)
     return this.ready();
+  var limit = limit || 60;
 
   var slef = this;
   var groupHandle = [];
@@ -68,7 +69,7 @@ Meteor.publish('get-msg-session', function(){
     ]
   };
 
-  var handle = MsgSession.find(where, {limit: 60}).observeChanges({
+  var handle = MsgSession.find(where, {limit: limit, sort: {updateAt: -1}}).observeChanges({
     added: function(id, fields){
       fixGroupName(fields);
       // console.log('message session add', fields);
