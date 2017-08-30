@@ -185,6 +185,7 @@ if Meteor.isClient
         siteTitle:linkInfo.title,
         siteHost:linkInfo.host,
         owner: Meteor.userId(),
+        style:'object-position: 0 0;',
         imgUrl:mainImageUrl,
         filename:Meteor.userId()+'_'+timestamp+ '_' + mainImageUrl.replace(/^.*[\\\/]/, ''),
         URI:mainImageUrl,
@@ -210,6 +211,7 @@ if Meteor.isClient
         siteTitle:linkInfo.title,
         siteHost:linkInfo.host,
         owner: Meteor.userId(),
+        style:'object-position: 0 0;',
         imgUrl:'cdvfile://localhost/persistent/'+file.name,
         filename:file.name,
         URI:file.toURL(),
@@ -254,6 +256,7 @@ if Meteor.isClient
         siteTitle:linkInfo.title,
         siteHost:linkInfo.host,
         owner: Meteor.userId(),
+        style:'object-position: 0 0;',
         imgUrl:mainImageUrl,
         filename:mainImageUrl,
         URI:mainImageUrl,
@@ -647,6 +650,7 @@ if Meteor.isClient
         isImage:true,
         inIframe:true,
         owner: Meteor.userId(),
+        style:'object-position: 0 0;',
         toTheEnd: true,
         text:'',
         iframe: iframeHtml,
@@ -1707,6 +1711,7 @@ if Meteor.isClient
                     isImage: true,
                     inIframe: true,
                     owner: Meteor.userId(),
+                    style:'object-position: 0 0;',
                     toTheEnd: true,
                     text: '您当前程序不支持视频观看',
                     iframe: '<iframe height="100%" width="100%" src="'+url+'" frameborder="0" allowfullscreen></iframe>',
@@ -1727,7 +1732,7 @@ if Meteor.isClient
           window.takePhoto (result)->
             console.log 'result from camera is ' + JSON.stringify(result)
             if result
-              Drafts.insert {type:'image', currentCount:1, totalCount:1,isImage:true, owner: Meteor.userId(),imgUrl:result.smallImage, filename:result.filename, URI:result.URI, data_row:'1', data_col:'3', data_sizex:'3', data_sizey:'3'}
+              Drafts.insert {type:'image', currentCount:1, totalCount:1,isImage:true, owner: Meteor.userId(),style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, data_row:'1', data_col:'3', data_sizex:'3', data_sizey:'3'}
 
     'click #addmore':->
       window.footbarOppration = true

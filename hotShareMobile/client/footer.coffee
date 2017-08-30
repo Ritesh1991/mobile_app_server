@@ -152,7 +152,7 @@ if Meteor.isClient
               return
             if result
               console.log 'Local is ' + result.smallImage
-              Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(),style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
               if currentCount >= totalCount
                 setTimeout(()->
                   Template.addPost.__helpers.get('saveDraft')()
@@ -283,7 +283,7 @@ if Meteor.isClient
               if (enableSimpleEditor and enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
                 Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
               else
-                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(),style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
               if currentCount >= totalCount
                 if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
                   return
@@ -358,7 +358,7 @@ if Meteor.isClient
               if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
                 Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
               else
-                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
                 Meteor.setTimeout(()->
                   Template.addPost.__helpers.get('saveDraft')()
                 ,100)
