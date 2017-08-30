@@ -672,7 +672,9 @@ if Meteor.isClient
     isSimpleEditorPost:->
       return Session.get('postContent').editorVersion and Session.get('postContent').editorVersion is 'simpleEditor'
     isToFullVer:->
-      return Session.get('postContent').editorVersion is 'simpleEditor' and !Session.get('postContent').fromPostId and SavedDrafts.find({fromPostId: Session.get('postContent')._id}).count() <= 0
+      # 导致简单模式的草稿不会显示转换为经典模式
+      # return Session.get('postContent').editorVersion is 'simpleEditor' and !Session.get('postContent').fromPostId and SavedDrafts.find({fromPostId: Session.get('postContent')._id}).count() <= 0
+      return Session.get('postContent').editorVersion is 'simpleEditor' and !Session.get('postContent').fromPostId
     is_owner: ()->
       return Meteor.userId() is Session.get('postContent').owner
     themes: ()->
