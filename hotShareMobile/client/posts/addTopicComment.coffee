@@ -103,6 +103,13 @@ if Meteor.isClient
           Drafts.remove drafts._id
       post = Posts.findOne({_id: topicPostId})
       if post and post.pub and post._id
+        # 更新快速导入的 editVersion
+        editorVersion = 'fullEditor'
+        if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+          editorVersion = 'simpleEditor'
+        post.editorVersion = editorVersion
+        Posts.update({_id: post._id}, {$set: {editorVersion: editorVersion}})
+
         draft0 = {_id:post._id, type:'image', isImage:true, url:post.fromUrl ,owner: post.owner, imgUrl:post.mainImage, filename:post.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0};
         if post.pub?
           post.pub.splice(0, 0, draft0);
