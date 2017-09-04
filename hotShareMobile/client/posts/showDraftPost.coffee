@@ -607,9 +607,20 @@ if Meteor.isClient
         savedDraftData._id = new Mongo.ObjectID()._str
         savedDraftData.editorVersion = 'fullEditor'
         savedDraftData.title = '[经典模式]\r\n' + savedDraftData.title
+        if (savedDraftData.pub.length > 0)
+          index = _.pluck(savedDraftData.pub, 'type').indexOf('image')
+          savedDraftData.pub[index]._id = savedDraftData._id
+          # if (savedDraftData.pub[index].url is savedDraftData.mainImage)
+          #   savedDraftData.pub[index]._id = savedDraftData.fromPostId
+        else
+          # TODO: 此贴子没有段落
+          return PUB.alert('转换失败，请重试~')
+
         SavedDrafts.insert savedDraftData, (err)->
           if err
             return PUB.alert('转换失败，请重试~')
+          console.log('转换经典模式成功：', savedDraftData._id)
+          Session.set('postContent', savedDraftData)
           editDraft(savedDraftData)
 
       cleanDraft()
