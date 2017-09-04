@@ -83,7 +83,7 @@ if Meteor.isClient
             width: imgWidth,
             height: imgHeight,
             mask: false,
-            zoom: {steps: 0.01,min: 1,max: 3,value: scale},
+            zoom: {steps: 0.1,min: 1,max: 2,value: scale},
             callback: ()->
               Session.set 'imgSizeW',$("#default"+event.currentTarget.id+" .crop-img").width()/scale
               Session.set 'imgSizeH',$("#default"+event.currentTarget.id+" .crop-img").height()/scale
