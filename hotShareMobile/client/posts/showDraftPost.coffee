@@ -578,7 +578,7 @@ if Meteor.isClient
         
       editorVersion = thispost.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
-        return Router.go('/newEditor?type=edit&id='+thispost._id)
+        return Router.go('/newEditor?type=draft&id='+thispost._id)
 
       cleanDraft()
       draftId = Session.get("postContent")._id
