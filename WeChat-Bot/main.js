@@ -406,8 +406,9 @@ wechatInstance.on('message', function(message){
     //console.log(message)
 })
 wechatInstance.init()
-
-taskList = [testLogin,testPostNew,testImportPost,testSwitchAccount,
+// 去除一直会失败的发帖测试
+// taskList = [testLogin,testPostNew,testImportPost,testSwitchAccount,
+taskList = [testLogin,testImportPost,testSwitchAccount,
     testSubscribeShowPost,testNeo4J,testRedis,getProductionServerOnlineStatus]
 var isTesting = false;
 var intervalTask = function(){

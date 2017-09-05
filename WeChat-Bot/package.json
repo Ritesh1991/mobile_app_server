@@ -7,7 +7,7 @@
     "start":"node main.js"
   },
   "dependencies": {
-    "wechaty":"^0.8.212",
+    // "wechaty":"^0.8.212",
     "ddp":"^0.12.1",
     "ddp-login":"^1.0.10",
     "mqtt":"^2.7.2",
