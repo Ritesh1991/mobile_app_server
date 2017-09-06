@@ -50,9 +50,9 @@ if Meteor.isClient
           return
         Session.set("refComment",[''])
         if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
-          Session.set('postContent',post)
           refreshPostContent()
           toastr.info('作者修改了帖子内容.')
+          Session.set('postContent',post)
         else
           if window.dbupdate
             if window.dbupdate == false
@@ -103,9 +103,9 @@ if Meteor.isClient
           return
         Session.set("refComment",[''])
         if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
-          Session.set('postContent',post)
           refreshPostContent()
           toastr.info('作者修改了帖子内容.')
+          Session.set('postContent',post)
         else
           Session.set('postContent',post)
         Session.set('focusedIndex',undefined)
@@ -155,9 +155,9 @@ if Meteor.isClient
         ,2000
       ###
       if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
-        Session.set('postContent',post)
         refreshPostContent()
         toastr.info('作者修改了帖子内容.')
+        Session.set('postContent',post)
       else
         if window.dbupdate
           if window.dbupdate == false
