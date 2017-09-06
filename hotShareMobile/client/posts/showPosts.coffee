@@ -959,8 +959,8 @@ if Meteor.isClient
       if thispost.import_status
         # unless this.import_status is 'imported' or this.import_status is 'done'
         if thispost.import_status is 'imported' or thispost.import_status is 'done'
-          if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
-            return Router.go('/newEditor?type=edit&id='+thispost._id)
+          # if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
+          #   return Router.go('/newEditor?type=edit&id='+thispost._id)
         else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
         

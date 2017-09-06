@@ -129,6 +129,7 @@ if Meteor.isClient
             mainText: mainText,
             owner:Meteor.userId(),
             createdAt: new Date(),
+            editorVersion: 'fullEditor'
           }}
         )
       else
@@ -142,6 +143,7 @@ if Meteor.isClient
           mainText: mainText,
           owner:Meteor.userId(),
           createdAt: new Date(),
+          editorVersion: 'fullEditor'
          },(e) ->
           if e.error
             console.log 'insert SavedDrafts error:' + e.error
@@ -156,6 +158,7 @@ if Meteor.isClient
                 mainText: mainText,
                 owner:Meteor.userId(),
                 createdAt: new Date(),
+                editorVersion: 'fullEditor'
               }}
             )
     catch error
@@ -171,6 +174,7 @@ if Meteor.isClient
           mainText: mainText,
           owner:Meteor.userId(),
           createdAt: new Date(),
+          editorVersion: 'fullEditor'
         }}
       )
     return
@@ -1309,7 +1313,8 @@ if Meteor.isClient
             ownerName:ownerName,
             ownerIcon:ownerIcon,
             createdAt: new Date(),
-            style: style
+            style: style,
+            editorVersion: 'fullEditor'
           }
         }
       )
@@ -1333,7 +1338,8 @@ if Meteor.isClient
         ownerName:ownerName,
         ownerIcon:ownerIcon,
         createdAt: new Date(),
-        style: style
+        style: style,
+        editorVersion: 'fullEditor'
       })
     newPostData = {
         _id:postId,
@@ -1354,7 +1360,8 @@ if Meteor.isClient
         ownerIcon:ownerIcon,
         isReview: true,
         createdAt: new Date(),
-        style: style
+        style: style,
+        editorVersion: 'fullEditor'
     }
     insertPostOnTheHomePage(postId,newPostData)
     Session.set('newpostsdata', newPostData)
@@ -1426,6 +1433,7 @@ if Meteor.isClient
               mainText: TempDraftData.mainText,
               owner:TempDraftData.owner,
               createdAt: TempDraftData.createAt,
+              editorVersion: 'fullEditor'
             }}
           )
         else
@@ -1439,6 +1447,7 @@ if Meteor.isClient
             mainText: TempDraftData.mainText,
             owner:TempDraftData.owner,
             createdAt: TempDraftData.createdAt,
+            editorVersion: 'fullEditor'
           }
       catch error
         console.log("Insert SavedDrafts error! Try update it...");
@@ -1453,6 +1462,7 @@ if Meteor.isClient
             mainText: TempDraftData.mainText,
             owner:TempDraftData.owner,
             createdAt: TempDraftData.createdAt,
+            editorVersion: 'fullEditor'
           }}
         )
       TempDrafts.remove {owner: Meteor.userId()}
