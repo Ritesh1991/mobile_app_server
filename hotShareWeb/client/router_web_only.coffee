@@ -52,6 +52,7 @@ if Meteor.isClient
         if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
           refreshPostContent()
           toastr.info('作者修改了帖子内容.')
+          Meteor.call('refreshPostCDN', Session.get('postContent')._id)
           Meteor.setTimeout ()->
             Session.set('postContent',post)
           ,300
@@ -107,6 +108,7 @@ if Meteor.isClient
         if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
           refreshPostContent()
           toastr.info('作者修改了帖子内容.')
+          Meteor.call('refreshPostCDN', Session.get('postContent')._id)
           Meteor.setTimeout ()->
             Session.set('postContent',post)
           ,300
@@ -161,6 +163,7 @@ if Meteor.isClient
       if post and Session.get('postContent') and post.owner isnt Meteor.userId() and post._id is Session.get('postContent')._id and String(post.createdAt) isnt String(Session.get('postContent').createdAt)
         refreshPostContent()
         toastr.info('作者修改了帖子内容.')
+        Meteor.call('refreshPostCDN', Session.get('postContent')._id)
         Meteor.setTimeout ()->
           Session.set('postContent',post)
         ,300

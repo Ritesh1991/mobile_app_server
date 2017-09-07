@@ -602,6 +602,8 @@ if Meteor.isServer
         if !confirmReporterAuth(userId)
           return false
         RePosts.remove(postId)
+      'refreshPostCDN': (postId)->
+        refreshPostsCDNCaches(postId)
       'restorePost': (postId,userId)->
         if !confirmReporterAuth(userId)
           return false

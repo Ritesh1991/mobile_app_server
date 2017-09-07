@@ -1376,6 +1376,7 @@ if Meteor.isClient
 
     if Session.get('isReviewMode') is '2'
       Meteor.call('updateTopicPostsAfterUpdatePost', postId)
+      Meteor.call('refreshPostCDN', postId)
       if Session.get('isServerImport')
         Session.set 'isServerImport', false
         Router.go('/posts/'+postId)

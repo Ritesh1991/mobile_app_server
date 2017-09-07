@@ -329,6 +329,7 @@ Template.newEditor.events({
           Session.set('newpostsdata', post);
 
           Meteor.call('updateTopicPostsAfterUpdatePost', t.data.id);
+          Meteor.call('refreshPostCDN', t.data.id);
           Session.set('isServerImport', false);
           Router.go('/posts/' + t.data.id);
         });
