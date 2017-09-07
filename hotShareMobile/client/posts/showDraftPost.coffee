@@ -25,31 +25,57 @@ if Meteor.isClient
       if (editorVersion is 'simpleEditor')
         return Router.go('/newEditor?type=draft&id='+savedDraftData._id)
 
-      TempDrafts.insert {
-        _id:savedDraftData._id,
-        pub:savedDraftData.pub,
-        title:savedDraftData.title,
-        addontitle:savedDraftData.addontitle,
-        fromUrl:savedDraftData.fromUrl,
-        mainImage: savedDraftData.mainImage,
-        mainText: savedDraftData.mainText,
-        owner:savedDraftData.owner,
-        createdAt: savedDraftData.createdAt,
-      }
-      # draft0 = {_id:savedDraftData._id, type:'image', isImage:true, url: savedDraftData.fromUrl, owner: Meteor.userId(), imgUrl:savedDraftData.mainImage, filename:savedDraftData.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0,style:savedDraftData.mainImageStyle}
-      # Drafts.insert(draft0)
-      pub = savedDraftData.pub
-      if pub.length > 0
-        ###
-        Router.go('/add') will trigger addPost onRendered first, then defer function run.
-        The Drafts.insert will trigger addPostItem OnRendered function run, then do the layout thing. The 2nd defer function
-        will run after then. The final callback will be called after all item layout done, so closePreEditingPopup run.
-        ###
-        deferedProcessAddPostItemsWithEditingProcessBar(pub)
-      Session.set('fromDraftPost',true)
-      Session.set('isReviewMode','0')
-      Session.set 'showDraft', false
-      Router.go('/add')
+      callback = ()->
+        TempDrafts.insert {
+          _id:savedDraftData._id,
+          pub:savedDraftData.pub,
+          title:savedDraftData.title,
+          addontitle:savedDraftData.addontitle,
+          fromUrl:savedDraftData.fromUrl,
+          mainImage: savedDraftData.mainImage,
+          mainText: savedDraftData.mainText,
+          owner:savedDraftData.owner,
+          createdAt: savedDraftData.createdAt,
+        }
+        # draft0 = {_id:savedDraftData._id, type:'image', isImage:true, url: savedDraftData.fromUrl, owner: Meteor.userId(), imgUrl:savedDraftData.mainImage, filename:savedDraftData.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0,style:savedDraftData.mainImageStyle}
+        # Drafts.insert(draft0)
+        pub = savedDraftData.pub
+        if pub.length > 0
+          ###
+          Router.go('/add') will trigger addPost onRendered first, then defer function run.
+          The Drafts.insert will trigger addPostItem OnRendered function run, then do the layout thing. The 2nd defer function
+          will run after then. The final callback will be called after all item layout done, so closePreEditingPopup run.
+          ###
+          deferedProcessAddPostItemsWithEditingProcessBar(pub)
+        Session.set('fromDraftPost',true)
+        Session.set('isReviewMode','0')
+        Session.set 'showDraft', false
+        Router.go('/add')
+
+      # 没有取到草稿数据
+      if (!savedDraftData or !savedDraftData.pub or savedDraftData.pub.length <= 0)
+        post = Session.get("postContent")
+        id = if post then post._id else ''
+        if (!id and location.pathname.startsWith('/draftposts/'))
+          id = location.pathname.substr('/draftposts/'.length)
+        if (!id)
+          PUB.alert('没有找到草稿数据，请返回上一页在重试~')
+        else
+          Meteor.subscribe("savedDraftsWithID", id, {
+            onReady: ()->
+              savedDraftData = SavedDrafts.findOne({_id: id})
+              if (!savedDraftData)
+                return PUB.alert('没有找到草稿数据，请返回上一页在重试~')
+              callback()
+            onStop: ()->
+              savedDraftData = SavedDrafts.findOne({_id: id})
+              if (!savedDraftData)
+                return PUB.alert('没有找到草稿数据，请返回上一页在重试~')
+              callback()
+          })
+      else
+        callback()
+
   Template.showDraftPosts.created=->
     layoutHelperInit()
     Session.set("content_loadedCount", 0)
