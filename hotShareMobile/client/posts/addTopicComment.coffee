@@ -88,6 +88,7 @@ if Meteor.isClient
        Session.set("comment",comment)
     "click #preview":(event, t)->
       topicPostId = Session.get("TopicPostId")
+      Meteor.subscribe("savedDraftsWithID",topicPostId)
       console.log('preview post: '+topicPostId)
       Session.set('pubImages', [])
       Session.set('backtoalldrafts', true)
