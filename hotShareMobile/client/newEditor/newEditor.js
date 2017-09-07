@@ -41,10 +41,13 @@ Template.newEditor.onRendered(function(){
   }
 
   if(this.data.type === 'edit' || this.data.type === 'draft'){
-    var post = this.data.type === 'edit' ? Posts.findOne({_id: this.data.id}) : SavedDrafts.findOne({_id: this.data.id});
+    var post = this.data.type === 'edit' ? Posts.findOne({_id: this.data.id}) : SavedDrafts.findOne({_id:this.data.id});
     if(!post){
-      history.go(-1);
-      return PUB.alert('没有找到此故事或草稿~');
+      post = Posts.findOne({_id: this.data.id})
+      if(!post){
+        history.go(-1);
+        return PUB.alert('没有找到此故事或草稿~');
+      }
     }
 
     Template.progressBar.__helpers.get('show')();
@@ -59,17 +62,24 @@ Template.newEditor.onRendered(function(){
     });
 
     if (this.data.type === 'draft'){
+      var draftMainImgUrl = post.pub[0].imgUrl;
+      var draftMainfilename = post.pub[0].filename;
+      var draftMainURI = post.pub[0].URI;
+      if(post.mainImage){
+        draftMainImgUrl = post.mainImage;
+        draftMainfilename = '';
+        draftMainURI = null;
+      }
       Session.set('newEditorMainImage', {
         _id: new Mongo.ObjectID()._str,
-        imgUrl: post.pub[0].imgUrl,
-        filename: post.pub[0].filename,
-        URI: post.pub[0].URI,
+        imgUrl: draftMainImgUrl,
+        filename: draftMainfilename,
+        URI: draftMainURI,
         title: post.title,
         addontitle: post.addontitle
       });
       post.pub.splice(0, 1);
     }
-
     if (post.editorVersion != 'simpleEditor'){
       post.pub.map(function(item, index){
         item.html = item.html || item.text;
