@@ -607,9 +607,7 @@ if Meteor.isClient
         else
           newLoadedCount = contentList.length
         if Session.get("content_loadedCount") isnt newLoadedCount
-          setTimeout(()->
-              Session.set("content_loadedCount", newLoadedCount)
-            , 0)
+          Session.set("content_loadedCount", newLoadedCount)
       contentList.slice(0, newLoadedCount)
     getPub2:->
       self = this
