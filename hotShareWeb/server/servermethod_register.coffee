@@ -53,6 +53,14 @@ if Meteor.isServer
       console.log(err, res)
     )
 
+    wechatPathgroup = 'http://'  +server_domain_name+'/posts/' + postId + '?from=groupmessage&isappinstalled=1';
+    cdn.refreshObjectCaches({
+      ObjectType: 'File',
+      ObjectPath: wechatPathgroup
+    }, (err, res)->
+      console.log(err, res)
+    )
+
     rawPath = 'http://'  +server_domain_name+'/raw/' + postId;
 
     # cdn.refreshObjectCaches({
