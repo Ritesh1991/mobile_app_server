@@ -332,6 +332,9 @@ if (Meteor.isCordova) {
       }
     }
     function eventResume(){
+        if ($('body').text().length === 0 || $('body').text().indexOf("Oops, looks like there's no route on the client or the server for url:") > -1 ) {
+          location.reload();
+        }
         if (Meteor.status().connected !== true)
           Meteor.reconnect();
         
