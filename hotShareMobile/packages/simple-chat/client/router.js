@@ -1592,17 +1592,17 @@ SimpleChat.onMqttMessage = function(topic, msg) {
     return;
 
   var msgObj = JSON.parse(msg);
-  var whereTime = new Date(format_date(new Date(), 'yyyy-MM-dd 00:00:00'));
-  var msgType = topic.split('/')[2];
-  var where = {
-    to_type: msgObj.to_type,
-    wait_lable: msgObj.wait_lable,
-    label_complete: {$ne: true},
-    'to.id': msgObj.to.id,
-    images: {$exists: true},
-    create_time: {$gte: whereTime},
-    type: 'text'
-  };
+  // var whereTime = new Date(format_date(new Date(), 'yyyy-MM-dd 00:00:00'));
+  // var msgType = topic.split('/')[2];
+  // var where = {
+  //   to_type: msgObj.to_type,
+  //   wait_lable: msgObj.wait_lable,
+  //   label_complete: {$ne: true},
+  //   'to.id': msgObj.to.id,
+  //   images: {$exists: true},
+  //   create_time: {$gte: whereTime},
+  //   type: 'text'
+  // };
 
   if (msgObj.to_type === 'user') {
     if (msgObj.type === 'haveReadMsg') {
@@ -1619,53 +1619,54 @@ SimpleChat.onMqttMessage = function(topic, msg) {
   }
 
   msgObj.create_time = msgObj.create_time ? new Date(msgObj.create_time) : new Date();
-  if (msgObj.images && msgObj.length > 0 && msgObj.is_people && msgObj.people_id){
-    for(var i=0;i<msgObj.images.length;i++)
-      msgObj.images[i].id = msgObj.people_id;
-  }
+  // if (msgObj.images && msgObj.length > 0 && msgObj.is_people && msgObj.people_id){
+  //   for(var i=0;i<msgObj.images.length;i++)
+  //     msgObj.images[i].id = msgObj.people_id;
+  // }
 
   if (Messages.find({_id: msgObj._id}).count() > 0)
     return console.log('已存在此消息:', msgObj._id);
 
-  if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
-  else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
-  else {return insertMsg(msgObj)}
-  // else {return Messages.insert(msgObj)}
+  // if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
+  // else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
+  // else {return insertMsg(msgObj)}
+  // // else {return Messages.insert(msgObj)}
 
-  console.log('SimpleChat.SimpleChat where:', where);
-  var targetMsg = Messages.findOne(where, {sort: {create_time: -1}});
+  // console.log('SimpleChat.SimpleChat where:', where);
+  // var targetMsg = Messages.findOne(where, {sort: {create_time: -1}});
 
-  if (!targetMsg || !targetMsg.images || targetMsg.images.length <= 0)
-    return insertMsg(msgObj, '无需合并消息');
-  if (!msgObj.images || msgObj.images.length <= 0)
-    return insertMsg(msgObj, '不是图片消息');
-  if (msgObj.to_type != 'group' || !msgObj.is_people)
-    return insertMsg(msgObj, '不是 Group 或人脸消息');
+  // if (!targetMsg || !targetMsg.images || targetMsg.images.length <= 0)
+  //   return insertMsg(msgObj, '无需合并消息');
+  // if (!msgObj.images || msgObj.images.length <= 0)
+  //   return insertMsg(msgObj, '不是图片消息');
+  // if (msgObj.to_type != 'group' || !msgObj.is_people)
+  //   return insertMsg(msgObj, '不是 Group 或人脸消息');
 
-  var setObj = {create_time: new Date(), 'form.name': msgObj.form.name};
-  if (msgObj.wait_lable){
-    var count = 0;
-    for(var i=0;i<targetMsg.images.length;i++){
-      if (!targetMsg.images[i].label && !targetMsg.images[i].remove && !targetMsg.images[i].error)
-        count += 1;
-    }
-    for(var i=0;i<msgObj.images.length;i++){
-      if (!msgObj.images[i].label && !msgObj.images[i].remove && !msgObj.images[i].error)
-        count += 1;
-    }
-    if (count > 0)
-      setObj.text = count + ' 张照片需要标注';
-  } else {
-    setObj.text = msgObj.images[0].label + ' 加入了聊天室';
-  }
+  // var setObj = {create_time: new Date(), 'form.name': msgObj.form.name};
+  // if (msgObj.wait_lable){
+  //   var count = 0;
+  //   for(var i=0;i<targetMsg.images.length;i++){
+  //     if (!targetMsg.images[i].label && !targetMsg.images[i].remove && !targetMsg.images[i].error)
+  //       count += 1;
+  //   }
+  //   for(var i=0;i<msgObj.images.length;i++){
+  //     if (!msgObj.images[i].label && !msgObj.images[i].remove && !msgObj.images[i].error)
+  //       count += 1;
+  //   }
+  //   if (count > 0)
+  //     setObj.text = count + ' 张照片需要标注';
+  // } else {
+  //   setObj.text = msgObj.images[0].label + ' 加入了聊天室';
+  // }
 
-  Messages.update({_id: targetMsg._id}, {
-    $set: setObj,
-    $push: {images: {$each: msgObj.images}}
-  }, function(err, num){
-    if (err || num <= 0)
-      insertMsg(msgObj, 'update 失败');
-  });
+  // Messages.update({_id: targetMsg._id}, {
+  //   $set: setObj,
+  //   $push: {images: {$each: msgObj.images}}
+  // }, function(err, num){
+  //   if (err || num <= 0)
+  //     insertMsg(msgObj, 'update 失败');
+  // });
+  insertMsg(msgObj);
 };
 
 // SimpleChat.onMqttMessage('/t/msg/g/b82cc56c599e4c143442c6d0', JSON.stringify({
