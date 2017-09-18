@@ -547,6 +547,22 @@ cloneWithoutSibling=(parentNode, node)->
               p = document.createElement("P")
               p.appendChild(node)
             ###
+          else if node.tagName is 'BR'
+            flag = 0
+            level = 0
+            tmpNode = node.parentNode;
+            if parentPNode
+              while level < 6 and tmpNode
+                if tmpNode is parentPNode
+                  flag = 1
+                  break
+                tmpNode = tmpNode.parentNode
+                level++
+            if flag
+              newrow = document.createElement('newrow')
+              parentPNode.appendChild(newrow)
+            else
+              newRoot.appendChild(node)
           else
             newRoot.appendChild(node)
         else if node.tagName is 'P'

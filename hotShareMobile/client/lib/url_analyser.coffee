@@ -1010,6 +1010,8 @@ if Meteor.isClient
             if videoInfo.imageUrl
               data.imageArray.push videoInfo.imageUrl
             return true
+        
+        $(node).html($(node).html().replace(new RegExp('<newrow></newrow>', 'g'), '\r\n'))
         text = $(node).text()
         if text and text isnt ''
           # text = text.replace(/\s\s\s+/g, '')
