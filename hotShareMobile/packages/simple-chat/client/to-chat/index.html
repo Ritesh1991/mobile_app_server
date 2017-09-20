@@ -16,6 +16,7 @@
         <div class="left back"><i class="fa fa-angle-left fa-fw"></i></div>
         <script type="text/javascript">
         $('.header .back').click(function(){
+          $('.input-text').blur();
           var sender = Session.get('msgFormUser');
           var userId = Meteor.userId();
           if (sender && sender.id) {
@@ -31,7 +32,9 @@
               Session.set('formSimpleChatPage', 'group')
             }
           }
-          PUB.back();
+          Meteor.setTimeout(function() {
+            PUB.back();
+          }, 50);
         })
         </script>
         <span>{{title}}{{#if isGroups}}{{else}}(私聊){{/if}}</span>
