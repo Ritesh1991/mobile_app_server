@@ -82,6 +82,9 @@ if Meteor.isClient
   imageMarginPixel=5
   @layoutHelperInit = ()->
     layoutHelper=[0,0,0,0,0,0]
+  simpleEditorIOSstyle = ()->
+    if $('.simpleEditorPost .textDiv1Link div') and $('.simpleEditorPost .textDiv1Link div').length > 0
+      $('.simpleEditorPost .textDiv1Link').css('white-space','normal')
   getLayoutTop=(helper,col,sizeX)->
     max=0
     for i in [col..(col+sizeX-1)]
@@ -154,6 +157,7 @@ if Meteor.isClient
     element=this.find('.element')
     myData=this.data
     parentNode=element.parentNode
+    simpleEditorIOSstyle()
     if myData.index is 0
       #Initial the layoutHelper
       #msgBoxHeight = if Feeds.find({followby: Meteor.userId(), isRead:{$ne: true}, checked:{$ne: true}}).count() > 0 then 65 else 0

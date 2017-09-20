@@ -151,6 +151,9 @@ if Meteor.isClient
   updateLayoutData=(helper,col,sizeX,bottom)->
     for i in [col..(col+sizeX-1)]
       helper[(i-1)]=bottom
+  simpleEditorIOSstyle = ()->
+    if $('.simpleEditorPost .textDiv1Link div') and $('.simpleEditorPost .textDiv1Link div').length > 0
+      $('.simpleEditorPost .textDiv1Link').css('white-space','normal')
   Template.postItem.onRendered ()->
     # if this.data.type is 'music' and !window._music
     #   window._music = this.data.musicInfo.playUrl
@@ -184,6 +187,7 @@ if Meteor.isClient
     element=this.find('.element')
     myData=this.data
     parentNode=element.parentNode
+    simpleEditorIOSstyle()
     if myData.index is 0
       #Initial the layoutHelper
       updateLayoutData(layoutHelper,1,6,parentNode.offsetTop)

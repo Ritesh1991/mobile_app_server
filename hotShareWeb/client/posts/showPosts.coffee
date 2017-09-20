@@ -110,7 +110,7 @@ if Meteor.isClient
   Template.showPosts.onRendered ->
     postId = this.data._id
     ownerId = this.data.ownerId
-    $.rippleButton();
+    $.rippleButton()
     # showFollowTips = ()->
     #   owner = Meteor.users.findOne({_id: ownerId})
 
