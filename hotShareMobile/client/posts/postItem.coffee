@@ -210,6 +210,7 @@ if Meteor.isClient
     this.$('.textDiv1Link').linkify();
     this.$('.textDiv1Link a').each ()->
       $(this).addClass('_post_item_a')
+      $(this).attr('target', '_blank')
     element.style.visibility = '';
     #console.log('['+this.data.index+']'+' '+myData.type+' col '+myData.data_col+
     #    ' row '+myData.data_row+' h '+myData.data_sizey+' w '+myData.data_sizex+
