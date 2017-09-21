@@ -722,6 +722,26 @@ extract = function(page) {
               p = document.createElement("P")
               p.appendChild(node)
              */
+          } else if (node.tagName === 'BR'){
+            flag = 0;
+            level = 0;
+            tmpNode = node.parentNode;
+            if (parentPNode) {
+              while (level < 6 && tmpNode) {
+                if (tmpNode === parentPNode) {
+                  flag = 1;
+                  break;
+                }
+                tmpNode = tmpNode.parentNode;
+                level++;
+              }
+            }
+            if (flag){
+              var newrow = document.createElement('newrow');
+              parentPNode.appendChild(newrow);
+            } else {
+              newRoot.appendChild(node);
+            }
           } else {
             newRoot.appendChild(node);
           }
@@ -3290,6 +3310,7 @@ _html2data2 = function(url, data, callback) {
         return true;
       }
     }
+    $(node).html($(node).html().replace(new RegExp('<newrow></newrow>', 'g'), '\r\n'));
     text = $(node).text();
     if (text && text !== '') {
       //text = text.replace(/\s\s\s+/g, '');
