@@ -199,7 +199,7 @@ if(Meteor.isCordova){
                 addToUnsendMessaages(topic, message, callback);
             };
             subscribeMqttGroup=function(group_id) {
-                if (mqtt_connection) {
+                if (mqtt_connection && group_id) {
                     console.log('sub group mqtt:' + group_id);
                     mqtt_connection.subscribe('/t/msg/g/'+group_id,{qos:1, onSuccess:onSuccess, onFailure:onFailure});
                     function onSuccess() {
@@ -211,12 +211,12 @@ if(Meteor.isCordova){
                 }
             };
             unsubscribeMqttGroup=function(group_id) {
-                if (mqtt_connection) {
+                if (mqtt_connection && group_id) {
                     mqtt_connection.unsubscribe("/t/msg/g/" + group_id);
                 }
             };
             subscribeMqttUser=function(user_id){
-                if (mqtt_connection) {
+                if (mqtt_connection && user_id) {
                     console.log('sub mqtt:' + user_id);
                     mqtt_connection.subscribe('/t/msg/u/'+user_id,{qos:1, onSuccess:onSuccess, onFailure:onFailure});
                     function onSuccess() {
@@ -228,7 +228,7 @@ if(Meteor.isCordova){
                 }
             };
             unsubscribeMqttUser=function(user_id){
-                if (mqtt_connection) {
+                if (mqtt_connection && user_id) {
                     mqtt_connection.unsubscribe("/t/msg/u/" + user_id);
                 }
             };
@@ -307,6 +307,9 @@ if(Meteor.isCordova){
            subscribeMqttGroup(document.group_id);
          },
          changed: function(newDocument, oldDocument){
+           if (oldDocument.group_id === newDocument.group_id)
+             return; // 如果只修改了群名称之类的就不需要unsub\sub
+
            unsubscribeMqttGroup(oldDocument.group_id);
            subscribeMqttGroup(newDocument.group_id);
          },
