@@ -340,6 +340,9 @@ Template._simpleChatToChat.onDestroyed(function(){
     Meteor.clearInterval(fix_data_timeInterval);
     fix_data_timeInterval = null;
   }
+  if(slef.data.type != 'user'){
+    Session.set('chat_group_title',page_title.get());
+  }
 });
 
 var setMsgList = function(where, action){
@@ -437,7 +440,7 @@ Template._simpleChatToChat.onRendered(function(){
     console.log('get-messages ready');
     if(slef.data.type != 'user'){
       // page_title.set(Groups.findOne({_id: slef.data.id}) ? Groups.findOne({_id: slef.data.id}).name : '聊天室');
-      page_title.set(AppConfig.get_post_title());
+      page_title.set(AppConfig.get_group_title());
     }else{
       var user = Meteor.users.findOne({_id: slef.data.id});
       page_title.set(AppConfig.get_user_name(user));

@@ -13,5 +13,12 @@ AppConfig = {
       title += ':'+post.title;
     return title;
   },
+  get_group_title: function(){
+    var title = '群聊';
+    if(Session.get('chat_group_title')){
+      title = Session.get('chat_group_title');
+    }
+    return title;
+  },
   upload_cordova_image: function(file, callback){}
 };
