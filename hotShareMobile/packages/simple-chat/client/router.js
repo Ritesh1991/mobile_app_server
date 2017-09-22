@@ -61,6 +61,11 @@ Router.route(AppConfig.path + '/to/:type', {
       },
       loading: is_loading.get()
     };
+  },
+  action: function(){
+    if (this.params.type === 'group')
+      Meteor.call('joinGroup', this.params.query['id']);
+    this.render();
   }
 });
 
@@ -421,7 +426,7 @@ Template._simpleChatToChat.onRendered(function(){
   fix_data_timeInterval = Meteor.setInterval(fix_data, 1000*60);
   Meteor.subscribe('people_new', function(){});
 
-  window.group_sub = Meteor.subscribe('get-messages', slef.data.type, slef.data.id, {onStop: function(err){
+  window.group_sub = Meteor.subscribe('get-messages-new', slef.data.type, slef.data.id, {onStop: function(err){
     err && console.log('get-messages error:', err);
     !err && console.log('get-messages stop');
     setToUsers(slef.data);

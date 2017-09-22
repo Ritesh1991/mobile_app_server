@@ -43,6 +43,11 @@ Router.route(AppConfig.path + '/to/:type', {
       },
       loading: is_loading.get()
     };
+  },
+  action: function(){
+    if (this.params.type === 'group')
+      Meteor.call('joinGroup', this.params.query['id']);
+    this.render();
   }
 });
 
@@ -254,7 +259,7 @@ Template._simpleChatToChat.onRendered(function(){
 
   Meteor.subscribe('get-group',slef.data.id, function(){});
 
-  Meteor.subscribe('get-messages', slef.data.type, slef.data.id, function(){
+  Meteor.subscribe('get-messages-new', slef.data.type, slef.data.id, function(){
     if(slef.data.type != 'user'){
       // page_title.set(Groups.findOne({_id: slef.data.id}) ? Groups.findOne({_id: slef.data.id}).name : '聊天室');
       page_title.set(AppConfig.get_post_title());

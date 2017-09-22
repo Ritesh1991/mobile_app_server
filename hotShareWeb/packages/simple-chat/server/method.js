@@ -229,6 +229,11 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
 SimpleChat.upsertGroup = upsertGroup;
 
 Meteor.methods({
+  'joinGroup': function(groupId){
+    console.log('join group:', this.userId, groupId);
+    var group = Groups.findOne({_id: groupId});
+    Meteor.call('create-group', groupId, group && group.name ? group.name : null, [this.userId]);
+  },
   'create-group': function(id, name, ids){
     this.unblock();
     if (!ids || ids.length <= 0 && this.userId)

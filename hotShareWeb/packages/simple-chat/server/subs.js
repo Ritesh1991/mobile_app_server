@@ -33,6 +33,41 @@ Meteor.publish('get-messages', function(type, to){
   }
 });
 
+Meteor.publish('get-messages-new', function(type, to){
+  var slef = this;
+  var user = Meteor.users.findOne(slef.userId);
+  var where = null;
+
+  if(type === 'group')
+    where = {'to.id': to, to_type: type}; // 没有判断是否在群的处理。自动加群
+  else
+    where = {
+      $or: [
+        {'form.id': slef.userId, 'to.id': to, to_type: type}, // me -> ta
+        {'form.id': to, 'to.id': slef.userId, to_type: type}  // ta -> me
+      ]
+    };
+
+  switch(type){
+    case 'user':
+      return [
+        Meteor.users.find({_id: to}),
+        // Messages.find(where, {limit: limit || 20, sort: {create_time: -1}})
+      ];
+    case 'group':
+      var group = Groups.findOne({_id: to});
+      var groupName = null;
+      if(group){
+        groupName = group.name;
+      }
+      // Meteor.call('create-group', to, groupName, [slef.userId]);
+      return [
+        Groups.find({_id: to}, {limit: 1}),
+        // Messages.find(where, {limit: limit || 20, sort: {create_time: -1}})
+      ];
+  }
+});
+
 Meteor.publish('get-msg-session', function(limit){
   if (!this.userId)
     return this.ready();
