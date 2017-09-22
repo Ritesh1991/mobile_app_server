@@ -12,6 +12,13 @@ if Meteor.isClient
     return if val then 'checked' else ''
   )
   Template.groupInformation.helpers
+    mutePushNotification: ->
+      if Meteor.user() and Meteor.user().profile and Meteor.user().profile.mutenotification
+          return Meteor.user().profile.mutenotification isnt false
+      else
+          false
+    withMutePushNotification: ()->
+      return withMutePushNotification
     rejectLabelMsg: ()->
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       return group.rejectLabelMsg
@@ -63,6 +70,11 @@ if Meteor.isClient
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       return group.announcement.length > 2
   Template.groupInformation.events
+    'click .readFollowTips': ->
+      Meteor.users.update(
+        {_id: Meteor.userId()}
+        {$set: {'profile.mutenotification': !(Meteor.user().profile.mutenotification isnt false)}}
+      )
     'click #groupsProfilePageback':(event)->
       groupid = Session.get('groupsId')
       type = Session.get('groupsType')
