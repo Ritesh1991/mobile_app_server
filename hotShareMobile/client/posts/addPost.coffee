@@ -732,12 +732,21 @@ if Meteor.isClient
                 postId
               )
               Tracker.autorun (handler)->
+                # update 快速导入的版本
+                editorVersion = 'fullEditor'
+                if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                  editorVersion = 'simpleEditor'
+                SavedDrafts.update({_id:postId}, {$set: {editorVersion:editorVersion}})
+                Posts.update({_id:postId}, {$set: {editorVersion:editorVersion}})
+
                 postObj = Posts.findOne({_id: postId})
                 Session.set('postContent', postObj)
                 console.log('Tracker.autorun update publicPosts '+postId)
                 console.log('postObj='+JSON.stringify(postObj))
                 if postObj? and postObj.import_status is "imported"
                   console.log('Tracker.autorun import_status is imported')
+                  postObj.editorVersion = editorVersion
+                  Session.set('postContent', postObj)
                   handler.stop()
             else
               navigator.notification.confirm(
