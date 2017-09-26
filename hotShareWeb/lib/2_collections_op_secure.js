@@ -133,6 +133,18 @@ if(Meteor.isServer){
         }
     });
 
+    MuteNotification.allow({
+        insert: function(userId, doc) {
+            return doc.userId === userId;
+        },
+        update: function(userId, doc) {
+            return doc.userId === userId;
+        },
+        remove: function(userId, doc) {
+            return doc.userId === userId;
+        }
+    });
+
     Meets.allow({
         update: function (userId,doc) {
             return doc.me===userId;

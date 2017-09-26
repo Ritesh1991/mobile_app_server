@@ -21,6 +21,7 @@ BlackList = new Meteor.Collection('blackList');
 AssociatedUsers = new Meteor.Collection('associatedusers');
 UserRelation = new Meteor.Collection('userrelation'); // 用户关系，为了不和以前的产生冲突，使用新表
 PushMessages = new Meteor.Collection('pushmessages');
+MuteNotification = new Meteor.Collection('mutenotification');
 
 Recommends = new Meteor.Collection('recommends');
 Series = new Meteor.Collection('series');
@@ -1785,6 +1786,10 @@ if(Meteor.isServer){
 
     Meteor.publish('seriesFollow', function(seriesId) {
       return SeriesFollow.find({owner: this.userId, seriesId: seriesId}, {limit: 1});
+    });
+
+    Meteor.publish('muteNotificationByGroup', function(groupId) {
+      return MuteNotification.find({groupId: groupId});
     });
 
     Meteor.publish("followSeries", function(limit){

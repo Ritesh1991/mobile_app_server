@@ -8,13 +8,15 @@ if Meteor.isClient
     groupid = Session.get('groupsId')
     Meteor.subscribe("get-group",groupid)
     Meteor.subscribe('group-user-counter',groupid)
+    Meteor.subscribe('muteNotificationByGroup',groupid)
   UI.registerHelper('checkedIf',(val)->
     return if val then 'checked' else ''
   )
   Template.groupInformation.helpers
-    mutePushNotification: ->
-      if Meteor.user() and Meteor.user().profile and Meteor.user().profile.mutenotification
-          return Meteor.user().profile.mutenotification isnt false
+    mutePushNotification: ()->
+      mutenotification = MuteNotification.findOne({groupId: groupId,userId:Meteor.userId()})
+      if mutenotification and mutenotification.mutestatus and mutenotification.mutestatus is true
+          true
       else
           false
     withMutePushNotification: ()->
@@ -70,11 +72,22 @@ if Meteor.isClient
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       return group.announcement.length > 2
   Template.groupInformation.events
-    'click .readFollowTips': ->
-      Meteor.users.update(
-        {_id: Meteor.userId()}
-        {$set: {'profile.mutenotification': !(Meteor.user().profile.mutenotification isnt false)}}
-      )
+    'click .swich-mute': ->
+      groupid = Session.get('groupsId')
+      mutenotification = MuteNotification.findOne({groupId: groupId,userId:Meteor.userId()})
+      if mutenotification and mutenotification.mutestatus
+        MuteNotification.update(
+          {groupId: groupid, userId: Meteor.userId()}
+          {$set: {'mutestatus': !(mutenotification.mutestatus isnt false)}}
+        )
+      else
+        MuteNotification.insert(
+          {
+            userId: Meteor.userId(),
+            groupId: groupid,
+            mutestatus: true
+          }
+        )
     'click #groupsProfilePageback':(event)->
       groupid = Session.get('groupsId')
       type = Session.get('groupsType')
