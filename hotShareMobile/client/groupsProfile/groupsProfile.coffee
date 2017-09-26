@@ -14,7 +14,8 @@ if Meteor.isClient
   )
   Template.groupInformation.helpers
     mutePushNotification: ()->
-      mutenotification = MuteNotification.findOne({groupId: groupId,userId:Meteor.userId()})
+      groupid = Session.get('groupsId')
+      mutenotification = MuteNotification.findOne({groupId: groupid,userId:Meteor.userId()})
       if mutenotification and mutenotification.mutestatus and mutenotification.mutestatus is true
           true
       else
@@ -74,10 +75,10 @@ if Meteor.isClient
   Template.groupInformation.events
     'click .swich-mute': ->
       groupid = Session.get('groupsId')
-      mutenotification = MuteNotification.findOne({groupId: groupId,userId:Meteor.userId()})
-      if mutenotification and mutenotification.mutestatus
+      mutenotification = MuteNotification.findOne({groupId: groupid,userId:Meteor.userId()})
+      if mutenotification and mutenotification.mutestatus and mutenotification._id
         MuteNotification.update(
-          {groupId: groupid, userId: Meteor.userId()}
+          {_id: mutenotification._id}
           {$set: {'mutestatus': !(mutenotification.mutestatus isnt false)}}
         )
       else
