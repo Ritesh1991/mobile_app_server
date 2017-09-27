@@ -341,7 +341,7 @@ Template._simpleChatToChat.onDestroyed(function(){
     fix_data_timeInterval = null;
   }
   var self = this;
-  if(slef.data.type != 'user'){
+  if(self.data.type != 'user'){
     Session.set('chat_group_title',page_title.get());
   }
 });
