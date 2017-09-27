@@ -46,4 +46,4 @@
 @withSectionRateToOwner = true #点评消息更新到Feed里
 @withPostGroupChat = true #点评、赞踩、转发贴子时产生故事群
 @withShowGroupsUserMaxCount = 29
-@withMutePushNotification = false #屏蔽群聊推送
+@withMutePushNotification = true #屏蔽群聊推送

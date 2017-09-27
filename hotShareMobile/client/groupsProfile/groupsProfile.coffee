@@ -75,20 +75,39 @@ if Meteor.isClient
   Template.groupInformation.events
     'click .swich-mute': ->
       groupid = Session.get('groupsId')
-      mutenotification = MuteNotification.findOne({groupId: groupid,userId:Meteor.userId()})
-      if mutenotification and mutenotification.mutestatus and mutenotification._id
-        MuteNotification.update(
-          {_id: mutenotification._id}
-          {$set: {'mutestatus': !(mutenotification.mutestatus isnt false)}}
-        )
-      else
-        MuteNotification.insert(
-          {
-            userId: Meteor.userId(),
-            groupId: groupid,
-            mutestatus: true
-          }
-        )
+      Meteor.subscribe('muteNotificationByGroup',groupid,{
+        onStop:()->
+          mutenotification = MuteNotification.findOne({groupId: groupid,userId:Meteor.userId()})
+          if mutenotification and mutenotification.mutestatus and mutenotification._id
+            MuteNotification.update(
+              {_id: mutenotification._id}
+              {$set: {'mutestatus': !(mutenotification.mutestatus isnt false)}}
+            )
+          else
+            MuteNotification.insert(
+              {
+                userId: Meteor.userId(),
+                groupId: groupid,
+                mutestatus: true
+              }
+            )
+      },
+        onReady: ()->
+          mutenotification = MuteNotification.findOne({groupId: groupid,userId:Meteor.userId()})
+          if mutenotification and mutenotification.mutestatus and mutenotification._id
+            MuteNotification.update(
+              {_id: mutenotification._id}
+              {$set: {'mutestatus': !(mutenotification.mutestatus isnt false)}}
+            )
+          else
+            MuteNotification.insert(
+              {
+                userId: Meteor.userId(),
+                groupId: groupid,
+                mutestatus: true
+              }
+            )
+      )
     'click #groupsProfilePageback':(event)->
       groupid = Session.get('groupsId')
       type = Session.get('groupsType')
