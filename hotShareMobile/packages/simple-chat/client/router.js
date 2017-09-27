@@ -1183,61 +1183,66 @@ Template._simpleChatToChatLayout.events({
     // }, 500);
   },
   'submit .input-form': function(e, t){
-    $('.input-text').focus();
-    try{
-      var data = t.data;
-      var text = $('.input-text').val();
-      var to = toUsers[data.type+'.'+data.id];
-      if (!to || !to.name){
-        to = {
-          name: data.name,
-          icon: data.icon
+    setTimeout(function(){
+      $('.input-text').focus();
+      try{
+        var data = t.data;
+        var text = $('.input-text').val();
+        var to = toUsers[data.type+'.'+data.id];
+        if (!to || !to.name){
+          to = {
+            name: data.name,
+            icon: data.icon
+          };
+        }
+        to.id = data.id;
+        console.log('发送消息给:', to);
+
+        if(!text){
+          $('.box').scrollTop($('.box ul').height());
+          return false;
+        }
+        // if(data.type === 'group'){
+        //   var obj = Groups.findOne({_id: data.id});
+        //   to = {
+        //     id: data.id,
+        //     name: obj.name,
+        //     icon: obj.icon
+        //   };
+        // }else{
+        //   var obj = Meteor.users.findOne({_id: data.id});
+        //   to = {
+        //     id: t.data.id,
+        //     name: AppConfig.get_user_name(obj),
+        //     icon: AppConfig.get_user_icon(obj)
+        //   };
+        // }
+
+        var msg = {
+          _id: new Mongo.ObjectID()._str,
+          form:page_data.sender,
+          to: to,
+          to_type: data.type,
+          type: 'text',
+          text: text,
+          create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+          is_read: false,
+          send_status: 'sending'
         };
-      }
-      to.id = data.id;
-      console.log('发送消息给:', to);
-
-      if(!text){
-        $('.box').scrollTop($('.box ul').height());
+        Messages.insert(msg, function(){
+          console.log('send message...');
+          sendMqttMsg(msg);
+          Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
+        });
+        trackEvent("socialBar","AuthorReply")
+        $('.input-text').val('');
+        var $text = $('#simple-chat-text');
+        if ($text.length > 0 && $text.get(0) && $text.get(0).updateAutogrow)
+          $text.get(0).updateAutogrow();
         return false;
-      }
-      // if(data.type === 'group'){
-      //   var obj = Groups.findOne({_id: data.id});
-      //   to = {
-      //     id: data.id,
-      //     name: obj.name,
-      //     icon: obj.icon
-      //   };
-      // }else{
-      //   var obj = Meteor.users.findOne({_id: data.id});
-      //   to = {
-      //     id: t.data.id,
-      //     name: AppConfig.get_user_name(obj),
-      //     icon: AppConfig.get_user_icon(obj)
-      //   };
-      // }
-
-      var msg = {
-        _id: new Mongo.ObjectID()._str,
-        form:page_data.sender,
-        to: to,
-        to_type: data.type,
-        type: 'text',
-        text: text,
-        create_time: new Date(Date.now() + MQTT_TIME_DIFF),
-        is_read: false,
-        send_status: 'sending'
-      };
-      Messages.insert(msg, function(){
-        console.log('send message...');
-        sendMqttMsg(msg);
-        Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
-      });
-      trackEvent("socialBar","AuthorReply")
-      $('.input-text').val('');
-      $('#simple-chat-text').get(0).updateAutogrow();
-      return false;
-    }catch(ex){console.log(ex); return false;}
+      }catch(ex){console.log(ex); alert('error'); return false;}
+    }, 50);
+    return false;
   },
   'click .groupsProfile':function(e,t){
     var data = page_data;
