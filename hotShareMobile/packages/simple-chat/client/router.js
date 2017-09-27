@@ -340,6 +340,7 @@ Template._simpleChatToChat.onDestroyed(function(){
     Meteor.clearInterval(fix_data_timeInterval);
     fix_data_timeInterval = null;
   }
+  var self = this;
   if(slef.data.type != 'user'){
     Session.set('chat_group_title',page_title.get());
   }
@@ -429,7 +430,7 @@ Template._simpleChatToChat.onRendered(function(){
   fix_data_timeInterval = Meteor.setInterval(fix_data, 1000*60);
   Meteor.subscribe('people_new', function(){});
 
-  window.group_sub = Meteor.subscribe('get-messages-new', slef.data.type, slef.data.id, {onStop: function(err){
+  Meteor.subscribe('get-messages-new', slef.data.type, slef.data.id, {onStop: function(err){
     err && console.log('get-messages error:', err);
     !err && console.log('get-messages stop');
     setToUsers(slef.data);
