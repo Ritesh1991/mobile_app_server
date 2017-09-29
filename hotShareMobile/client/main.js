@@ -699,7 +699,8 @@ Deps.autorun(function(){
 Deps.autorun(function(){
   if (Meteor.userId()){
     Meteor.setTimeout(function(){
-      Meteor.subscribe('get-msg-session');
+      SyncMsgSessionFromServer(Meteor.userId());
+      // Meteor.subscribe('get-msg-session');
     }, 1000*2);
   }
 });

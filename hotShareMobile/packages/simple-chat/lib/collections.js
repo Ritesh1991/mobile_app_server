@@ -70,9 +70,24 @@ if(Meteor.isServer){
     //Ground.Collection(Messages, 'gdb');
 
     Messages = new Ground.Collection(PRFIX + 'messages', { connection: null })
-    MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
+    // MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
+    MsgSession = new Ground.Collection(PRFIX + 'msg_session_v2', { connection: null })
     Messages.after.insert(function (userId, doc) {updateMsgSession(doc);});
     Messages.after.update(function (userId, doc, fieldNames, modifier, options) {updateMsgSession(doc);});
+
+    MsgSession.after.insert(function (userId, doc) {
+      if (doc._id.endsWith('_sync'))
+        return;
+      Meteor.call('upMsgSess', doc);
+    });
+    MsgSession.after.update(function (userId, doc, fieldNames, modifier, options) {
+      if (doc._id.endsWith('_sync'))
+        doc._id = doc._id.substr(0, doc._id.length - 5)
+      Meteor.call('upMsgSess', doc);
+    });
+    MsgSession.after.remove(function (userId, doc) {
+      Meteor.call('rmMsgSess', doc);
+    });
 
     SimpleChat.Messages = Messages;
     SimpleChat.MsgSession = MsgSession;
@@ -179,6 +194,20 @@ if(Meteor.isServer){
       MsgSession.insert(msgObj);
       console.log('insert chat session:', msgObj);
     }
+  };
+
+  SyncMsgSessionFromServer = function(userId){
+    Meteor.call('getMsgSess', userId, function(err, res){
+      if (err || !res || res.length <= 0)
+        return;
+
+      res.map(function(doc){
+        if (MsgSession.find({userId: doc.userId, toUserId: doc.toUserId}).count() <= 0) {
+          doc._id += '_sync';
+          MsgSession.insert(doc);
+        }
+      });
+    });
   };
 }
 

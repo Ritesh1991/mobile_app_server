@@ -229,6 +229,29 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
 SimpleChat.upsertGroup = upsertGroup;
 
 Meteor.methods({
+  'upMsgSess': function(doc){
+    if (doc.sessionType === 'group'){
+      var group = Groups.findOne({_id: doc.toUserId});
+      if (group && group.name)
+        doc.toUserName = group.name;
+      if (group && group.icon)
+        doc.toUserIcon = group.icon;
+    }
+
+    var msgSession = MsgSession.findOne({userId: doc.userId, toUserId: doc.toUserId});
+    if (msgSession){
+      delete doc._id;
+      return MsgSession.update({_id: msgSession._id}, {$set: doc});
+    } else {
+      return MsgSession.insert(doc);
+    }
+  },
+  'rmMsgSess': function(doc){
+    return MsgSession.remove({userId: doc.userId, toUserId: doc.toUserId});
+  },
+  'getMsgSess': function(userId){
+    return MsgSession.find({userId: userId}, {sort: {createAt: -1}, limit: 100}).fetch();
+  },
   'joinGroup': function(groupId){
     console.log('join group:', this.userId, groupId);
     var group = Groups.findOne({_id: groupId});

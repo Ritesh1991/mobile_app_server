@@ -100,6 +100,10 @@ Router.route(AppConfig.path + '/user-list/:_user',{
       isGroups: false,
       lists: lists
     };
+  },
+  action: function(){
+    SyncMsgSessionFromServer(Meteor.userId());
+    this.render();
   }
 });
 
