@@ -316,6 +316,7 @@ function sendUserNotification(db, message, type){
 
 function sendGroupNotification2(db, message, type){
   var groupUsers = db.collection('simple_chat_groups_users');
+  var MuteNotification = db.collection('mutenotification');
 
   var groupId = message.to.id;
   groupUsers.find({group_id:  groupId, is_post_group: true}).toArray(function(err, docs) {
@@ -323,7 +324,10 @@ function sendGroupNotification2(db, message, type){
       return
     }
     forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
-      if(message.form.id != doc.user_id && doc.user_id) {
+      var userMuteStatus = MuteNotification.findOne({'groupId':groupId,'userId':doc.user_id});
+      if(userMuteStatus && userMuteStatus.mutestatus == true){
+        return;
+      } else if(message.form.id != doc.user_id && doc.user_id) {
         sendNotification(message, doc.user_id, type, function(err) {
             if(err){
                 console.log('sendGroupNotification: err=' + err);
