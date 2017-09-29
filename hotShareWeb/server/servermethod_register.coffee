@@ -162,6 +162,21 @@ if Meteor.isServer
         postCounts = Posts.find({owner: userId}).count()
         draftsCounts = SavedDrafts.find({owner: userId}).count()
         return (postCounts + draftsCounts)
+      'updateMuteNotification':(data)->
+        mutenotification = MuteNotification.findOne({groupId: data.groupId,userId:data.userId})
+        if mutenotification and mutenotification._id
+          MuteNotification.update(
+            {_id: mutenotification._id}
+            {$set: {'mutestatus': data.mutestatus}}
+          )
+        else
+          MuteNotification.insert(
+            {
+              userId: data.userId,
+              groupId: data.groupId,
+              mutestatus: data.mutestatus
+            }
+          )
       'updateFollowSeriesInfo':(userId,options)->
         Meteor.defer ()->
           try 
