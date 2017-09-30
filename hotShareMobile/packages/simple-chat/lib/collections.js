@@ -196,17 +196,30 @@ if(Meteor.isServer){
     }
   };
 
-  SyncMsgSessionFromServer = function(userId){
-    Meteor.call('getMsgSess', userId, function(err, res){
-      if (err || !res || res.length <= 0)
+  var syncMsgSessionLastTime = null;
+  SyncMsgSessionFromServer = function(userId, autoStart, callback){
+    if (!autoStart)
+      syncMsgSessionLastTime = null;
+
+    Meteor.call('getMsgSess', userId, autoStart, function(err, res){
+      if (err || !res || res.length <= 0){
+        callback && callback(err, res);
         return;
+      }
 
       res.map(function(doc){
         if (MsgSession.find({userId: doc.userId, toUserId: doc.toUserId}).count() <= 0) {
           doc._id += '_sync';
+          doc.count = 0;
           MsgSession.insert(doc);
         }
+
+        if (autoStart)
+          syncMsgSessionLastTime = doc.updateAt;
       });
+
+      console.log('SyncMsgSessionFromServer', res.length);
+      callback && callback(err, res);
     });
   };
 }

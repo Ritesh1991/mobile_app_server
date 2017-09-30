@@ -248,8 +248,11 @@ Meteor.methods({
   'rmMsgSess': function(doc){
     return MsgSession.remove({userId: doc.userId, toUserId: doc.toUserId});
   },
-  'getMsgSess': function(userId){
-    return MsgSession.find({userId: userId}, {sort: {createAt: -1}, limit: 100}).fetch();
+  'getMsgSess': function(userId, autoStart){
+    var limit = autoStart ? 20 : 40;
+    if (!autoStart)
+      return MsgSession.find({userId: userId}, {sort: {updateAt: -1}, limit: limit}).fetch();
+    return MsgSession.find({userId: userId, updateAt: {$lte: autoStart}}, {sort: {updateAt: -1}, limit: limit}).fetch();    
   },
   'joinGroup': function(groupId){
     console.log('join group:', this.userId, groupId);

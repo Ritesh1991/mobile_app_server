@@ -93,7 +93,7 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     }
     ids.push(Meteor.userId());
     // var lists = MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
-    var lists = withPostGroupChat ? MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}}) : MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}});
+    var lists = withPostGroupChat ? MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}, limit: Session.get('msgSessionLimit')}) : MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}, limit: Session.get('msgSessionLimit')});
     Session.set('channel','simple-chat/user-list/'+Meteor.userId());
     return {
       title: '消息',
@@ -102,6 +102,7 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     };
   },
   action: function(){
+    Session.set('msgSessionLimit', 40);
     SyncMsgSessionFromServer(Meteor.userId());
     this.render();
   }
@@ -1906,7 +1907,7 @@ Template._simpleChatListLayout.events({
   }
 });
 Template._groupMessageList.onRendered(function(){
-  Session.set('msgSessionLimit',60);
+  Session.set('msgSessionLimit',40);
   var medialistHeight = 0;
   $('.container-box').scroll(function(){
     var height = $('.simple-chat-medialist').height();
@@ -1917,21 +1918,25 @@ Template._groupMessageList.onRendered(function(){
     var is_loading_more = false;
 
     if((contentHeight + contentTop + 50 ) >= height && !is_loading_more){
-      if (height === medialistHeight) {
-        return;
-      }
-      var limit = Session.get('msgSessionLimit') + 10;
+      // if (height === medialistHeight) {
+      //   return;
+      // }
+      var limit = Session.get('msgSessionLimit') + 20;
+      Session.set('msgSessionLimit', limit);
       console.log('loadMore and limit = ',limit);
       is_loading_more = true;
-      Meteor.subscribe('device-timeline-with-hour',limit,{onStop:function(){
+      SyncMsgSessionFromServer(Meteor.userId(), true, function(){
         is_loading_more = false;
-        medialistHeight = $('.simple-chat-medialist').height();
+        // medialistHeight = $('.simple-chat-medialist').height();
+      });
+      // Meteor.subscribe('device-timeline-with-hour',limit,{onStop:function(){
+      //   is_loading_more = false;
+      //   medialistHeight = $('.simple-chat-medialist').height();
 
-      },onReady:function(){
-        is_loading_more = false;
-        medialistHeight = $('.simple-chat-medialist').height();
-      }});
-      Session.set('msgSessionLimit',limit);
+      // },onReady:function(){
+      //   is_loading_more = false;
+      //   medialistHeight = $('.simple-chat-medialist').height();
+      // }});
     }
   });
 });
