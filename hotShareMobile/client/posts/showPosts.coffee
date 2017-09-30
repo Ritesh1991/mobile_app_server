@@ -1518,10 +1518,13 @@ if Meteor.isClient
                 console.log 'error:' + e
             postItem.removeClass 'post-pcomment-current-pub-item'
       )
+      $('.delbubblestyle').removeClass('delbubblestyle')
       $('.pcommentInputPromptPage').hide()
     'click .bg, click .cancleBtn':->
+      $('.delbubblestyle').removeClass('delbubblestyle')
       $('.pcommentInputPromptPage').hide()
     'click .reply':->
+      $('.delbubblestyle').removeClass('delbubblestyle')
       $('.pcommentInputPromptPage').hide()
       Session.set("pcommetsReply",true)
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50

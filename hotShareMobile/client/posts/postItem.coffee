@@ -294,6 +294,7 @@ if Meteor.isClient
       pcommentSelectedIndex = $(e.currentTarget).parent().index()
       console.log 'pcommentSelectedIndex >>>'+pcommentSelectedIndex
       Session.set('pcommentSelectedIndex', pcommentSelectedIndex)
+      $(e.currentTarget).addClass('delbubblestyle')
       $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
       Session.set 'pcommentInputPromptPageUserId', this.userId
       #if this.userId is Meteor.userId()
