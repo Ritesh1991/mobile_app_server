@@ -324,21 +324,37 @@ function sendGroupNotification2(db, message, type){
       return
     }
     forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
-      var userMuteStatus = MuteNotification.findOne({'groupId':groupId,'userId':doc.user_id});
-      if(userMuteStatus && userMuteStatus.mutestatus == true){
-        return;
-      } else if(message.form.id != doc.user_id && doc.user_id) {
-        sendNotification(message, doc.user_id, type, function(err) {
-            if(err){
-                console.log('sendGroupNotification: err=' + err);
-            } else {
-              updateSucc()
-            }
+      MuteNotification.findOne({'groupId':groupId,'userId':doc.user_id},function(err, result){
+        if (err){
+          console.log('mongo MuteNotification Error:',err);
+          if(message.form.id != doc.user_id && doc.user_id) {
+            sendNotification(message, doc.user_id, type, function(err) {
+                if(err){
+                    console.log('sendGroupNotification: err=' + err);
+                } else {
+                  updateSucc()
+                }
+                return callback && callback();
+            });
+          } else {
             return callback && callback();
-        });
-      } else {
-        return callback && callback();
-      }
+          }
+        }
+        if(result && result.mutestatus == true){
+          return;
+        } else if(message.form.id != doc.user_id && doc.user_id) {
+          sendNotification(message, doc.user_id, type, function(err) {
+              if(err){
+                  console.log('sendGroupNotification: err=' + err);
+              } else {
+                updateSucc()
+              }
+              return callback && callback();
+          });
+        } else {
+          return callback && callback();
+        }
+      });
     }, function() {
       console.log('send GroupNotification complete, messageForm:',JSON.stringify(message.form));
     });
