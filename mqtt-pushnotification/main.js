@@ -323,50 +323,25 @@ function sendGroupNotification2(db, message, type){
     if(err){
       return
     }
-
-    var usersMute = MuteNotification.find({'groupId':groupId,'mutestatus':true}).fetch();
-    if(usersMute && usersMute.length > 0){
-      muteusersString = JSON.stringify(usersMute);
-      forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
-        if(muteusersString.indexOf(doc.user_id) != -1){
-          return;
-        } else if(message.form.id != doc.user_id && doc.user_id) {
-          sendNotification(message, doc.user_id, type, function(err) {
-              if(err){
-                  console.log('sendGroupNotification: err=' + err);
-              } else {
-                updateSucc()
-              }
-              return callback && callback();
-          });
-        } else {
-          return callback && callback();
-        }
-      }, function() {
-        console.log('send GroupNotification complete, messageForm:',JSON.stringify(message.form));
-      });
-
-    }else{
-      forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
-      
-        if(userMuteStatus && userMuteStatus.mutestatus == true){
-          return;
-        } else if(message.form.id != doc.user_id && doc.user_id) {
-          sendNotification(message, doc.user_id, type, function(err) {
-              if(err){
-                  console.log('sendGroupNotification: err=' + err);
-              } else {
-                updateSucc()
-              }
-              return callback && callback();
-          });
-        } else {
-          return callback && callback();
-        }
-      }, function() {
-        console.log('send GroupNotification complete, messageForm:',JSON.stringify(message.form));
-      });
-    }
+    forEachAsynSeriesWait(docs, 5, 10, function(doc, index, callback) {
+      var userMuteStatus = MuteNotification.findOne({'groupId':groupId,'userId':doc.user_id});
+      if(userMuteStatus && userMuteStatus.mutestatus == true){
+        return;
+      } else if(message.form.id != doc.user_id && doc.user_id) {
+        sendNotification(message, doc.user_id, type, function(err) {
+            if(err){
+                console.log('sendGroupNotification: err=' + err);
+            } else {
+              updateSucc()
+            }
+            return callback && callback();
+        });
+      } else {
+        return callback && callback();
+      }
+    }, function() {
+      console.log('send GroupNotification complete, messageForm:',JSON.stringify(message.form));
+    });
   });
 };
 
