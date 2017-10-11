@@ -1,0 +1,9 @@
+.registerTopic h5{color: gray}
+.registerTopic hr{border-color: gray}
+.registerTopic .user_head{position: relative}
+.registerTopic .user_head i{font-size: 38px; position: absolute;top: 30px;right: 20px;}
+.registerTopic .user_head img{border: none;border-radius:50%;}
+.registerTopic .topic_title{font-size: 19px;}
+.registerTopic .container{border:none}
+.registerTopic .container #continue{width: 100%;text-align: center;border: none;border-radius: 8px;padding: 5px;background-color: #00c4ff;font-size: 18px;}
+.registerTopic #continue{margin-top: 8px;}

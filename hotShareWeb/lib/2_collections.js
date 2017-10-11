@@ -73,6 +73,9 @@ if(Meteor.isServer){
   Meteor.publish('themes', function(){
     return Themes.find({}, {limit: 40});
   });
+  Meteor.publish('registerTopic', function(){
+    return Topics.find({"isFollowTopic":true},{sort: {index: 1}});
+  });
   Meteor.publish('post-example', function(){
     if(withFromExample){
       return Posts.find({_id: 'zwmXLe5tuWDKCZQM8'}, {limit: 1});

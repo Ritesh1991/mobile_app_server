@@ -252,6 +252,11 @@ if Meteor.isClient
         this.render 'registerFollow'
         Session.set 'channel','registerFollow'
         return
+    Router.route '/registerTopic',()->
+      if Meteor.isCordova is true
+        this.render 'registerTopic'
+        Session.set 'channel','registerTopic'
+        return
     Router.route '/authOverlay',()->
       if Meteor.isCordova is true
         this.render 'authOverlay'
