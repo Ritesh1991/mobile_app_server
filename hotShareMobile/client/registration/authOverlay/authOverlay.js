@@ -73,7 +73,7 @@ if (Meteor.isClient) {
                 console.log('Registration Error is ' + JSON.stringify(error));
                 if (!error){
                     console.log('Registration Succ, goto Follow page');
-                    Router.go('/registerFollow');
+                    Router.go('/registerTopic');
                 } else {
                     $('.agreeDeal').css('display',"none");
                     PUB.toast ('匿名服务暂时不可用，请稍后重试');
@@ -123,7 +123,7 @@ if (Meteor.isClient) {
           if(Meteor.user().profile.new === undefined || Meteor.user().profile.new === true)
           {
               Meteor.users.update({_id: Meteor.userId()}, {$set: {"profile.new": true}});
-              return Router.go('/registerFollow');
+              return Router.go('/registerTopic');
           }
           else
             return Router.go('/');
