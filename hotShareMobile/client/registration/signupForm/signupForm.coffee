@@ -101,7 +101,10 @@ Template.signupForm.events
               , ->
                 console.log 'setUserInfo was Error!'
                 return
-            Router.go '/registerTopic'
+            if withFollowTopic
+              Router.go '/registerTopic'
+            else
+              Router.go '/registerFollow'
             return
     false
 
