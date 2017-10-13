@@ -13,6 +13,7 @@ Template.topic_title_list.helpers
       false
 Template.registerTopic.onCreated ()->
   Meteor.subscribe("registerTopic")
+  Meteor.subscribe("followTopicUser")
 Template.registerTopic.helpers
   followCount: ->
     Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
@@ -37,11 +38,12 @@ Template.registerTopic.events
                       'userId': Meteor.userId(),
                       'followId': @_id
                     })._id
-      Topics.remove({'_id':followId})
+      Meteor.call('removeTopicFollow', followId)
     else
       json = {
         'type':'follow',
         'userId': Meteor.userId(),
+        'text':@text,
         'followId': @_id
       }
-      Topics.insert(json)
+      Meteor.call('updateTopicFollow', jsondata)

@@ -177,6 +177,14 @@ if Meteor.isServer
               mutestatus: data.mutestatus
             }
           )
+      'removeTopicFollow':(id)->
+        Topics.remove({_id:id})
+      'updateTopicFollow':(data)->
+        topicFollow = Topics.find({'type':'follow',"userId":data.userId,"followId":data.followId})
+        if topicFollow
+          return
+        else
+          Topics.insert(data)
       'updateFollowSeriesInfo':(userId,options)->
         Meteor.defer ()->
           try 
