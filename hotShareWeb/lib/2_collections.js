@@ -76,6 +76,9 @@ if(Meteor.isServer){
   Meteor.publish('registerTopic', function(){
     return Topics.find({"isFollowTopic":true},{sort: {index: 1}});
   });
+  Meteor.publish('followTopicUser', function(){
+    return Topics.find({'type':'follow',"userId":this.userId});
+  });
   Meteor.publish('post-example', function(){
     if(withFromExample){
       return Posts.find({_id: 'zwmXLe5tuWDKCZQM8'}, {limit: 1});

@@ -495,7 +495,13 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
     });
     Topics.allow({
         insert: function (userId, doc) {
-            return doc.text !== null && doc.type === "topic";
+            return doc.owner === userId;
+        },
+        remove: function (userId, doc) {
+            return doc.owner === userId;
+        },
+        update: function (userId, doc) {
+            return doc.owner === userId;
         }
     });
     Drafts.allow({

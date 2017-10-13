@@ -1,16 +1,17 @@
 .registerTopic {color: #333;}
 .registerTopic .topic-title{padding-left: 10px;position: relative;}
-.registerTopic .next-step{position: absolute;top: 0;right: 10px;font-weight: bold;background: #eee;padding: 5px 8px;border-radius: 5px;color: #aaa;}
-.registerTopic h3{font-weight: bold;}
+.registerTopic .next-step{position: absolute;top: 20px;right: 10px;font-weight: bold;background: #eee;padding: 5px 8px;border-radius: 5px;color: #aaa;z-index: 10;}
+.registerTopic .continue{color:#00c4ff !important;}
+.registerTopic h3{font-weight: bold;margin:0;padding-top: 20px;}
 .registerTopic h5{color: gray;font-weight: bold;}
 .registerTopic hr{border-color: gray;}
 .registerTopic #topic{text-align: center;}
-.registerTopic .topic_head{position: relative;}
-.registerTopic .topic_head i{font-size: 26px;position: absolute;color: white;top: 2px;right: 2px;}
-.registerTopic .topic_head img{border: none;border-radius:8px;}
-.registerTopic .topic_head .name{position: absolute;font-size: 14px;color: #fff;bottom: 10px;left: 10px;font-weight: bold;}
+.registerTopic .topic_head{position: relative;background-repeat: no-repeat;background-size: cover;border-radius: 8px;height: 99px;}
+.registerTopic .layer i{font-size: 26px;position: absolute;color: white;top: 2px;right: 2px;z-index: 11;}
+.registerTopic .layer .bg{position: absolute;top: 0;height: 99px;width: 100%;border-radius: 8px;background: rgba(2, 2, 2, .5)}
+.registerTopic .layer .name{z-index: 11;position: absolute;font-size: 14px;color: #fff;bottom: 10px;left: 10px;font-weight: bold;text-shadow: 1px 1px 5px grey, 1px 1px 3px grey;}
 .registerTopic .topic_title{font-size: 19px;}
-.registerTopic .topic_title .layer{width: 30%;display: inline-block;margin: 1%;}
+.registerTopic .topic_title .layer{width: 30%;display: inline-block;margin: 1%;position: relative;}
 .registerTopic .container{border:none;}
 .registerTopic .container #continue{width: 100%;text-align: center;border: none;border-radius: 8px;padding: 5px;background-color: #00c4ff;font-size: 18px;}
 .registerTopic #continue{margin-top: 8px;}

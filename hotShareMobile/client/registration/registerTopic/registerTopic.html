@@ -1,6 +1,13 @@
 <template name="registerTopic">
 <div class="registerTopic">
-  <div class="topic-title"><h3>关注您喜欢的话题</h3><div class="next-step">下一步</div></div>
+  <div class="topic-title">
+    <h3>关注您喜欢的话题</h3>
+    {{#if larger followCount 3}}
+    <div class="next-step continue">下一步</div>
+    {{else}}
+    <div class="next-step">下一步</div>
+    {{/if}}
+  </div>
   <div class="topic-title"><h5>及时了解话题的动态</h5></div>
   {{> topic_title}}
 </div>
@@ -19,10 +26,11 @@
 </template>
 <template name="topic_title_list">
     <div class="layer" id="{{_id}}">
-        <div class="topic_head">
-            <img class="topic_pic" src="{{topicUrl}}" width="99" height="99"/>
-            <span class="name">{{text}}</span>
-            <i id="{{_id}}" class="rightButton del fa fa-check-circle-o"></i>
-        </div>
+        <div class="topic_head" style="background: url('{{topicUrl}}');background-size: cover;"></div>
+        <span class="name">{{text}}</span>
+        {{#if isFollowed this}}
+        <i id="{{_id}}" class="rightButton del fa fa-check-circle-o"></i>
+        <div class="bg"></div>
+        {{/if}}
     </div>
 </template>
