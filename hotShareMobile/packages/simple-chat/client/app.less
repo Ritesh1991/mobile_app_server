@@ -37,7 +37,7 @@
     > .box{
       position: absolute; left: 0px; top: 40px; right: 0px; bottom: 48px; overflow-y: auto; overflow-x: hidden; background-color: rgb(238, 238, 243);
       ul{
-        padding: 10px;
+        padding: 5px 10px;
         li{
           margin: 10px 0px; position: relative;
           > .text,> .img{
@@ -130,6 +130,7 @@
         }
       }
       ul.group-list{
+        margin-bottom: 0px;
         li{
           .name{display: block; font-size: 12px; color: #616161; margin-bottom: 3px;}
         }
@@ -142,7 +143,23 @@
       }
     }
     > .footer{
-      height: 48px; line-height: 48px; position: absolute; left: 0; bottom: 0; right: 0; background-color: #fff; border-top: 1px solid rgb(189, 190, 196); box-sizing: border-box;
+      textarea.new-input{
+        resize: none;
+        border: 1px solid rgb(229, 229, 230);
+        border-radius: 4px;
+        max-height: 90px;
+        line-height: 26px;
+        padding: 5px;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+        -webkit-appearance:none;
+        color: #000;
+        display: block;
+        width: 100%;
+        height: 38px;
+      }
+      height: 48px; line-height: 48px; position: absolute; left: 0; bottom: 0; right: 0; background-color: rgba(243, 243, 246, 1); border-top: 1px solid rgba(219, 219, 220, 1); box-sizing: border-box; z-index: 2;
       .btn-box{width: 50px; height: 36px; line-height: 36px; position: absolute; top: 5px; left: 5px; box-sizing: border-box;}
       .btn-box.image{background-image: url(/packages/feiwu_simple-chat/images/image.png); background-size: auto 90%; background-position: center center; background-repeat: no-repeat;}
       .center{
@@ -153,6 +170,39 @@
         width: 75px; height: 48px; line-height: 48px; position: absolute; right: 0px; top: 0px; z-index: 999;
         box-sizing: border-box; padding-left: 10px; padding-right: 10px; padding-top: 6px;
         .btn{display: block; -webkit-appearance: none;width: 100%; height: 34px; margin: 0; padding: 0; border:none; line-height: 34px; text-align: center; border-radius: 5px; background-color: @master_color; color: #fff; text-align: center;}
+      }
+
+      .new-btns{
+        width: 96px;position: absolute;right: 0px; top: 0px;height: 48px; text-align: center;
+        .new-btn{
+          width: 50%;float: left;box-sizing: border-box;height: 48px;padding: 9px 0px; position: relative; z-index: 3; line-height: 0;
+          i{color: rgba(116, 120, 126, 1);text-align: center;border-radius: 50%;border: 1px solid rgba(191, 193, 196, 1);width: 30px;height: 30px;line-height: 28px;font-size: 20px;display: inline-block;box-sizing: border-box;overflow: hidden;}
+          i.fa-send,i.fa-send-o{font-size: 17px;color: #38a6fe;border-color: #38a6fe;}
+          .new-send-btn{width: 30px;height: 30px;line-height: 30px;color: #fff;border-radius: 50%;position: absolute;left: 50%;top: 50%;margin-left: -15px; margin-top: -15px;background-color: #38a6fe;}
+        }
+        .new-btn:first-child{text-align: right;}
+      }
+      .new-other-box{
+        padding: 0px; margin: 5px; margin-top: 10px; margin-right: -76px;
+        ul,li{margin: 0px; padding: 0px; list-style: none;}
+        ul.new-tools{
+          li{
+            float: left; padding: 5px; color: rgb(146, 146, 146); line-height: 24px; text-align: center;
+            i{display: block; width: 50px; height: 50px; line-height: 50px; font-size: 26px; background-color: #fff; border-radius: 10px; color: rgb(100, 104, 109); border: 1px solid rgba(229, 229, 230, 1);}
+          }
+        }
+        ul.new-icons{
+          li{
+            padding: 5px;
+            float: left;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 20px;
+            box-sizing: border-box;
+          }
+        }
       }
     }
   }

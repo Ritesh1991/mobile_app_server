@@ -67,23 +67,38 @@
           {{> yield}}
         </ul>
       </div>
-      <div class="footer footbar"><form class="input-form">
-        <div id="container"></div>
-        <style type="text/css">
-          #container{width: 60px; display: block;position: absolute;left: 0px;bottom: 0;height: 48px;z-index: 998;}
-          #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
-        </style>
-        <div class="btn-box image" id="selectfiles"></div>
-        <table>
-          <tr>
-            <td class="center" style=" width: calc(100% - 135px);right: 75px;position: absolute;">
-              <textarea dir="auto" name="msg" id="simple-chat-text" maxlength="5000" class="input-text input-message autogrow-short text" placeholder="说点什么" style="width: 100%; padding: 5px;border:1px solid #bdbec4;line-height: 25px; color:black; font-size:16px;"></textarea>
-            </td>
-          </tr>
-        </table>
-        <!--div class="input"><input class="input-text autogrow-short" type="text"  id="simple-chat-text" placeholder="说点什么" /></div-->
-        <div class="send-btn"><input class="btn" type="submit" value="发送" style="border-radius: 5px;" /></div>
-      </form></div>
+      <div class="footer footbar" style="    min-width: 48px;height: auto;padding: 5px; padding-right: 86px;">
+        <form class="input-form">
+          <!-- <div id="container"></div>
+          <style type="text/css">
+            #container{width: 60px; display: block;position: absolute;left: 0px;bottom: 0;height: 48px;z-index: 998;}
+            #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
+          </style>
+          <div class="btn-box image" id="selectfiles"></div> -->
+          <textarea dir="auto" name="msg" id="simple-chat-text" class="new-input input-text" maxlength="5000" placeholder="说点什么"></textarea>
+          <script type="text/javascript">autosize($('#simple-chat-text'));</script>
+          <!-- <table>
+            <tr>
+              <td class="center" style="right: 86px;position: absolute; left: 5px; z-index: 4;">
+                <textarea dir="auto" name="msg" id="simple-chat-text" maxlength="5000" class="input-text input-message autogrow-short text" placeholder="说点什么" style="width: 100%; padding: 5px;border:1px solid rgba(225, 225, 226, 1);line-height: 25px; color:black; font-size:14px;border-radius: 5px;"></textarea>
+              </td>
+            </tr>
+          </table> -->
+          <div class="new-btns">
+            <div class="new-btn from-smile-btn"><i class="fa fa-smile-o" aria-hidden="true"></i></div>
+            {{#if hasInputing}}
+            <!-- <div class="new-btn"><div class="new-send-btn">发</div></div> -->
+            <div class="new-btn from-submit-btn"><i class="fa fa-send-o" aria-hidden="true"></i></div>
+            {{else}}
+            <div class="new-btn from-other-btn"><i class="fa fa-plus" aria-hidden="true"></i></div>
+            {{/if}}
+          </div>
+          {{#if hasFooterView}}
+          <div class="new-other-box">{{> Template.dynamic template=footerView}}</div>
+          {{/if}}
+          <!-- <div class="send-btn"><input class="btn" type="submit" value="发送" style="border-radius: 5px;" /></div> -->
+        </form>
+      </div>
     </div>
   </div>
   <div class="popUpBox">
@@ -365,4 +380,20 @@
     <div class="btn-no" style="top: 5px;"><i class="fa fa-circle-o" aria-hidden="true"></i><i class="fa fa-close" aria-hidden="true"></i></div>
     {{/if}}
   </div>
+</template>
+
+<template name="__simpleChatToChatFooterIcons">
+  <!-- {{> emojiKeyboard}} -->
+  <ul class="new-icons">
+    {{#each emojis}}
+    <li data-name="{{name}}" data-unicode="{{unicode}}">{{wechat}}</li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="__simpleChatToChatFooterTools">
+  <ul class="new-tools">
+    <li class="new-btn-photo"><i class="fa fa-picture-o" aria-hidden="true"></i>照片</li>
+    <li class="new-btn-camera"><i class="fa fa-camera" aria-hidden="true"></i>拍照</li>
+  </ul>
 </template>
