@@ -180,7 +180,7 @@ if Meteor.isServer
       'removeTopicFollow':(id)->
         Topics.remove({_id:id})
       'updateTopicFollow':(data)->
-        topicFollow = Topics.find({'type':'follow',"userId":data.userId,"followId":data.followId})
+        topicFollow = Topics.findOne({'type':'follow',"userId":data.userId,"followId":data.followId})
         if topicFollow
           return
         else

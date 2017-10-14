@@ -40,7 +40,7 @@ Template.registerTopic.events
                     })._id
       Meteor.call('removeTopicFollow', followId)
     else
-      json = {
+      jsondata = {
         'type':'follow',
         'userId': Meteor.userId(),
         'text':@text,
