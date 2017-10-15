@@ -70,7 +70,10 @@ if Meteor.isClient
       else
         0
     myPosts:()->
-      FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+      if withFollowTopic
+        FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+      else
+        FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
     # isfollowerpost:(postId)->
     #   if FollowPosts.find({postId:postId}).count() > 1 and postId isnt null
     #     followPostsId = FollowPosts.findOne({postId: postId})._id

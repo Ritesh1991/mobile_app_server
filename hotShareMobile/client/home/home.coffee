@@ -96,6 +96,20 @@ if Meteor.isClient
     else
       cordova.InAppBrowser.open('http://a.app.qq.com/o/simple.jsp?pkgname=org.hotshare.everywhere', '_system')
   Template.home.helpers
+    myfollow:()->
+      count = Follower.find({"userId":Meteor.userId()}).count()
+      if count > 0
+        return true
+      else
+        return false
+    topiclist:()->
+      count = Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
+      if count > 0
+        return Topics.find({'type':'follow',"userId":Meteor.userId()})
+      else
+        return Topics.find({"isFollowTopic":true},{sort: {index: 1}})
+    withFollowTopic:()->
+      return withFollowTopic
     wasLogon:()->
       Session.get('persistentLoginStatus')
     isCordova:()->

@@ -12,6 +12,18 @@
         </div>
         <div class="rightButton clickHelp"><i class="fa fa-question-circle fa-fw"></i></div>
       </div>
+      {{#if withFollowTopic}}
+      <div id="slide-banner">
+        <ul>
+          {{#if myfollow}}
+          <li id="my-follow">我的关注</li>
+          {{/if}}
+          {{#each topiclist}}
+          <li id="{{followId}}">{{text}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
       <div class="content">
         {{> listPosts}}
       </div>

@@ -4,8 +4,6 @@ Template.topic_title.helpers
     Topics.find({"isFollowTopic":true},{sort: {index: 1}})
 Template.topic_title_list.helpers
   isFollowed:(follow)->
-    console.log 'isFollowed ========='
-    console.log follow
     tcount = Topics.find({'type':'follow',"userId":Meteor.userId(),"followId":follow._id}).count()
     if tcount > 0
       true
