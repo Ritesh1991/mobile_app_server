@@ -7,7 +7,26 @@ body{background-color: #111;min-height: 100%;height: auto;color: #fff}
 .home .content #list .footer .icon{border: none;border-radius:50%;margin-bottom: 2.5px;object-fit: cover;}
 .home .content #list .footer .right{float: right;color: gray;}
 .home .content #list .footer .right i{margin: 0 2px}
-
+.home .swiper-container{
+	position: absolute;
+	left: 0;
+	color: #333;
+	top: 40px;
+	z-index: 999;
+	width: 100%;
+	height: 40px;
+	overflow: hidden;
+	background: #fdfdfc;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+	.swiper-wrapper{
+		transition-duration: 0ms;
+		transform: translate3d(0px, 0px, 0px);
+		.swiper-slide{
+			padding: 0 20px;
+			width: auto;
+		}
+	}
+}
 body.modal-open {overflow: auto;}
 
 .app-rate{

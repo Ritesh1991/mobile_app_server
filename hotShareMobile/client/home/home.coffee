@@ -95,6 +95,13 @@ if Meteor.isClient
       cordova.InAppBrowser.open('https://itunes.apple.com/app/gu-shi-tie/id957024953', '_system')
     else
       cordova.InAppBrowser.open('http://a.app.qq.com/o/simple.jsp?pkgname=org.hotshare.everywhere', '_system')
+
+  Template.home.onCreated ()->
+    Meteor.subscribe("follows")
+    Meteor.subscribe("follower")
+    Meteor.subscribe("registerTopic")
+    Meteor.subscribe("followTopicUser")
+    
   Template.home.helpers
     myfollow:()->
       count = Follower.find({"userId":Meteor.userId()}).count()

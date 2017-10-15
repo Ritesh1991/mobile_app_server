@@ -13,16 +13,23 @@
         <div class="rightButton clickHelp"><i class="fa fa-question-circle fa-fw"></i></div>
       </div>
       {{#if withFollowTopic}}
-      <div id="slide-banner">
-        <ul>
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
           {{#if myfollow}}
-          <li id="my-follow">我的关注</li>
+          <div class="swiper-slide" id="my-follow">我的关注</div>
           {{/if}}
           {{#each topiclist}}
-          <li id="{{followId}}">{{text}}</li>
+          <div class="swiper-slide" id="{{followId}}">{{text}}</div>
           {{/each}}
-        </ul>
+        </div>
       </div>
+      <script>
+      var mySwiper = new Swiper('.swiper-container', {
+        freeMode: true,
+        slidesPerView: 'auto',
+        freeModeSticky: true
+      });
+      </script>
       {{/if}}
       <div class="content">
         {{> listPosts}}
