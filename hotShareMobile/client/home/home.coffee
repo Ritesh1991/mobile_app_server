@@ -95,12 +95,24 @@ if Meteor.isClient
       cordova.InAppBrowser.open('https://itunes.apple.com/app/gu-shi-tie/id957024953', '_system')
     else
       cordova.InAppBrowser.open('http://a.app.qq.com/o/simple.jsp?pkgname=org.hotshare.everywhere', '_system')
+  @getTopicFollowId = ->
+    count = Follower.find({"userId":Meteor.userId()}).count()
+    topicCount = Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
+    if count > 0 and !Session.get 'followTopicNow'
+      Session.set 'followTopicNow', 'my-follow'
+    if count is 0 and !Session.get 'followTopicNow'
+      if topicCount > 0
+        Session.set 'followTopicNow', Topics.findOne({'type':'follow',"userId":Meteor.userId()}).followId
+      else
+        Session.set 'followTopicNow', Topics.findOne({"isFollowTopic":true},{sort: {index: 1}})._id
 
   Template.home.onCreated ()->
-    Meteor.subscribe("follows")
-    Meteor.subscribe("follower")
-    Meteor.subscribe("registerTopic")
-    Meteor.subscribe("followTopicUser")
+    if withFollowTopic
+      Meteor.subscribe("follows")
+      Meteor.subscribe("follower")
+      Meteor.subscribe("registerTopic")
+      Meteor.subscribe("followTopicUser")
+      getTopicFollowId()
     
   Template.home.helpers
     myfollow:()->
@@ -124,16 +136,19 @@ if Meteor.isClient
     isFirstLog:()->
       Session.get('isFlag');
   Template.home.events
+    'click .swiper-slide': (event)->
+      followId = event.currentTarget.id
+      Session.set 'followTopicNow' , followId
     'click .top-series-btn': (event)->
-       Router.go '/seriesList'
+      Router.go '/seriesList'
     'click #follow': (event)->
-       history = Session.get('history_view') || [];
-       history.push {
+      history = Session.get('history_view') || [];
+      history.push {
         view: 'home',
         scrollTop: document.body.scrollTop
-       }
-       Session.set('history_view',history);
-       Router.go '/searchFollow'
+      }
+      Session.set('history_view',history);
+      Router.go '/searchFollow'
     'click .clickHelp':(event)->
       PUB.page '/help'
     'click .closebtn':()->
@@ -148,6 +163,12 @@ if Meteor.isClient
   Template.home.rendered=->
     flag = window.localStorage.getItem("firstLog") == 'first'
     Session.set('isFlag', !flag)
+    if withFollowTopic
+      mySwiper = new Swiper '.swiper-container', {
+        freeMode: true,
+        slidesPerView: 'auto',
+        freeModeSticky: true
+      }
     checkNewVersion()
 
 Tracker.autorun((t)->

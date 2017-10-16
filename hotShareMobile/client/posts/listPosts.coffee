@@ -25,8 +25,47 @@ if Meteor.isClient
       loadMoreHandler.container.removeEventListener('touchmove', loadMoreHandler.touchMove)
       loadMoreHandler.container.removeEventListener('touchend', loadMoreHandler.touchEnd)
       loadMoreHandler = null
+  Template.listPosts.onCreated ()->
+    if withFollowTopic
+      Meteor.subscribe("topics")
+      Session.set("topicPostLimit", 20)
+      Session.set('topicPostsCollection','loading')
+      if Session.get 'followTopicNow' and Session.get 'followTopicNow' isnt 'my-follow'
+        Meteor.subscribe 'topicposts', Session.get('followTopicNow'), 20, onReady: ->
+          if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('followTopicNow')}).count()
+            console.log 'topicPostsCollection loaded'
+            Meteor.setTimeout (->
+              Session.set 'topicPostsCollection', 'loaded'
+            ), 500
   Template.listPosts.rendered=->
     $('.content').css 'min-height',$(window).height()
+    $(window).scroll (event)->
+        tHeight = $('.home').height()
+        nHeight = $(window).scrollTop() + $(window).height() + 300
+        if nHeight > tHeight
+          Session.set('topicPostsCollection','loading')
+        target = $("#topicPostShowMoreResults");
+        TOPIC_POSTS_ITEMS_INCREMENT = 20;
+
+        if (!target.length)
+            return;
+        threshold = $(window).scrollTop() + $(window).height() - target.height()
+
+        if target.offset().top < threshold
+          if (!target.data("visible"))
+              Session.set("topicPostLimit",
+                          Session.get("topicPostLimit") + TOPIC_POSTS_ITEMS_INCREMENT)
+              Meteor.subscribe 'topicposts', Session.get('topicId'), Session.get("topicPostLimit"), onReady: ->
+                if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('topicId')}).count()
+                  console.log 'topicPostsCollection loaded'
+                  Meteor.setTimeout (->
+                    Session.set 'topicPostsCollection', 'loaded'
+                    return
+                  ), 500
+                return
+        else
+          if (target.data("visible"))
+              target.data("visible", false);
     if !$('.home #wrapper #list-post').data("plugin_xpull")
       $('.home #wrapper #list-post').xpull(
         {
@@ -71,7 +110,12 @@ if Meteor.isClient
         0
     myPosts:()->
       if withFollowTopic
-        FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+        getTopicFollowId()
+        if Session.get 'followTopicNow' is 'my-follow'
+          return FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+        else
+          # return topic follow posts.
+          return TopicPosts.find({topicId:Session.get('followTopicNow')}, {sort: {createdAt: -1}})
       else
         FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
     # isfollowerpost:(postId)->
@@ -83,6 +127,11 @@ if Meteor.isClient
     #     return true
     #   else
     #     return true
+    moreTopicResults:->
+      if Session.equals('topicPostsCollection','loaded')
+          false
+      else
+          true
     moreResults:->
       false
       #!(FollowPosts.find().count() < Session.get("followpostsitemsLimit"))
