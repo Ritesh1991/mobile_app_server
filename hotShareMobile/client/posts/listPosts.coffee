@@ -70,15 +70,15 @@ if Meteor.isClient
       else
         0
     myPosts:()->
-      if withFollowTopic
-        getTopicFollowId()
-        if Session.get 'followTopicNow' is 'my-follow'
-          return FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
-        else
-          # return topic follow posts.
-          return TopicPosts.find({topicId:Session.get('followTopicNow')}, {sort: {createdAt: -1}})
-      else
-        FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+      # if withFollowTopic
+      #   getTopicFollowId()
+      #   if Session.get 'followTopicNow' is 'my-follow'
+      #     return FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
+      #   else
+      #     # return topic follow posts.
+      #     return TopicPosts.find({topicId:Session.get('followTopicNow')}, {sort: {createdAt: -1}})
+      # else
+      FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
     # isfollowerpost:(postId)->
     #   if FollowPosts.find({postId:postId}).count() > 1 and postId isnt null
     #     followPostsId = FollowPosts.findOne({postId: postId})._id
@@ -88,11 +88,6 @@ if Meteor.isClient
     #     return true
     #   else
     #     return true
-    moreTopicResults:->
-      if Session.equals('topicPostsCollection','loaded')
-          false
-      else
-          true
     moreResults:->
       false
       #!(FollowPosts.find().count() < Session.get("followpostsitemsLimit"))
