@@ -115,6 +115,11 @@ if Meteor.isClient
       getTopicFollowId()
     
   Template.home.helpers
+    showMyfollowUserposts:()->
+      if Session.get('followTopicNow') is 'my-follow'
+        return true
+      else
+        return false
     myfollow:()->
       count = Follower.find({"userId":Meteor.userId()}).count()
       if count > 0
@@ -136,9 +141,13 @@ if Meteor.isClient
     isFirstLog:()->
       Session.get('isFlag');
   Template.home.events
+    'click #showFollowTopics':()->
+      Router.go '/registerTopic'
     'click .swiper-slide': (event)->
       followId = event.currentTarget.id
       Session.set 'followTopicNow' , followId
+      if followId isnt 'my-follow'
+        Meteor.subscribe 'topicposts', Session.get('followTopicNow'), 20
     'click .top-series-btn': (event)->
       Router.go '/seriesList'
     'click #follow': (event)->

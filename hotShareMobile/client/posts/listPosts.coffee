@@ -25,47 +25,8 @@ if Meteor.isClient
       loadMoreHandler.container.removeEventListener('touchmove', loadMoreHandler.touchMove)
       loadMoreHandler.container.removeEventListener('touchend', loadMoreHandler.touchEnd)
       loadMoreHandler = null
-  Template.listPosts.onCreated ()->
-    if withFollowTopic
-      Meteor.subscribe("topics")
-      Session.set("topicPostLimit", 20)
-      Session.set('topicPostsCollection','loading')
-      if Session.get 'followTopicNow' and Session.get 'followTopicNow' isnt 'my-follow'
-        Meteor.subscribe 'topicposts', Session.get('followTopicNow'), 20, onReady: ->
-          if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('followTopicNow')}).count()
-            console.log 'topicPostsCollection loaded'
-            Meteor.setTimeout (->
-              Session.set 'topicPostsCollection', 'loaded'
-            ), 500
   Template.listPosts.rendered=->
     $('.content').css 'min-height',$(window).height()
-    $(window).scroll (event)->
-        tHeight = $('.home').height()
-        nHeight = $(window).scrollTop() + $(window).height() + 300
-        if nHeight > tHeight
-          Session.set('topicPostsCollection','loading')
-        target = $("#topicPostShowMoreResults");
-        TOPIC_POSTS_ITEMS_INCREMENT = 20;
-
-        if (!target.length)
-            return;
-        threshold = $(window).scrollTop() + $(window).height() - target.height()
-
-        if target.offset().top < threshold
-          if (!target.data("visible"))
-              Session.set("topicPostLimit",
-                          Session.get("topicPostLimit") + TOPIC_POSTS_ITEMS_INCREMENT)
-              Meteor.subscribe 'topicposts', Session.get('topicId'), Session.get("topicPostLimit"), onReady: ->
-                if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('topicId')}).count()
-                  console.log 'topicPostsCollection loaded'
-                  Meteor.setTimeout (->
-                    Session.set 'topicPostsCollection', 'loaded'
-                    return
-                  ), 500
-                return
-        else
-          if (target.data("visible"))
-              target.data("visible", false);
     if !$('.home #wrapper #list-post').data("plugin_xpull")
       $('.home #wrapper #list-post').xpull(
         {
@@ -81,7 +42,7 @@ if Meteor.isClient
     else
       $('.home #wrapper #list-post').data("plugin_xpull").init()
     Deps.autorun (h)->
-      if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3
+      if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3 and Session.get('followTopicNow') is 'my-follow'
         h.stop()
         loadMoreHandler = initLoadMoreForListPosts()
     #    $('.mainImage').css('height',$(window).height()*0.55)

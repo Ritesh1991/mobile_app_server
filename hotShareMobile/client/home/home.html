@@ -14,6 +14,7 @@
       </div>
       {{#if withFollowTopic}}
       <div class="swiper-container">
+        <span id="showFollowTopics" class="fa fa-plus"></span>
         <div class="swiper-wrapper">
           {{#if myfollow}}
           <div class="swiper-slide" id="my-follow">我的关注</div>
@@ -23,16 +24,17 @@
           {{/each}}
         </div>
       </div>
-      <script>
-      var mySwiper = new Swiper('.swiper-container', {
-        freeMode: true,
-        slidesPerView: 'auto',
-        freeModeSticky: true
-      });
-      </script>
       {{/if}}
       <div class="content">
-        {{> listPosts}}
+        {{#if withFollowTopic}}
+          {{#if showMyfollowUserposts}}
+            {{> listPosts}}
+          {{else}}
+            {{> topicFollowPosts}}
+          {{/if}}
+        {{else}}
+          {{> listPosts}}
+        {{/if}}
       </div>
       {{> footer}}
     {{else}}

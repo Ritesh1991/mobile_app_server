@@ -16,7 +16,7 @@ Template.registerTopic.helpers
   followCount: ->
     Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
   NeedMoreCount: ->
-    4 - Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
+    2 - Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
   larger:(a,b)->
     if a > b
       true

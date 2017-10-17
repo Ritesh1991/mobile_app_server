@@ -89,6 +89,96 @@ if Meteor.isClient
       Meteor.subscribe("recentPostsViewByUser", this.owner)
       onUserProfile()
 
+  Template.topicFollowPosts.onCreated ()->
+    Meteor.subscribe("topics")
+    Session.set("topicPostLimit", 20)
+    Session.set('topicPostsCollection','loading')
+    Meteor.subscribe 'topicposts', Session.get('followTopicNow'), 20, onReady: ->
+      if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('followTopicNow')}).count()
+        console.log 'topicPostsCollection loaded'
+        Meteor.setTimeout (->
+          Session.set 'topicPostsCollection', 'loaded'
+        ), 500
+    
+  Template.topicFollowPosts.rendered=->
+    $('.content').css 'min-height',$(window).height()
+    $(window).scroll (event)->
+        tHeight = $('.home').height()
+        nHeight = $(window).scrollTop() + $(window).height() + 300
+        if nHeight > tHeight
+          Session.set('topicPostsCollection','loading')
+        target = $("#topicPostShowMoreResults");
+        TOPIC_POSTS_ITEMS_INCREMENT = 20;
+
+        if (!target.length)
+            return;
+        threshold = $(window).scrollTop() + $(window).height() - target.height()
+
+        if target.offset().top < threshold
+          if (!target.data("visible"))
+              Session.set("topicPostLimit",
+                          Session.get("topicPostLimit") + TOPIC_POSTS_ITEMS_INCREMENT)
+              Meteor.subscribe 'topicposts', Session.get('followTopicNow'), Session.get("topicPostLimit"), onReady: ->
+                if Session.get("topicPostLimit") >= TopicPosts.find({topicId:Session.get('followTopicNow')}).count()
+                  console.log 'topicPostsCollection loaded'
+                  Meteor.setTimeout (->
+                    Session.set 'topicPostsCollection', 'loaded'
+                    return
+                  ), 500
+                return
+        else
+          if (target.data("visible"))
+              target.data("visible", false);
+  Template.topicFollowPosts.helpers
+    TopicTitle:()->
+      Session.get('topicTitle')
+    getBrowseCount:(browse)->
+      if (browse)
+        browse
+      else
+        0
+    Posts:()->
+      TopicPosts.find({topicId:Session.get('followTopicNow')}, {sort: {createdAt: -1}})
+    moreResults:->
+      if Session.equals('topicPostsCollection','loaded')
+          false
+      else
+          true
+  Template.topicFollowPosts.events
+    'click .back':(event)->
+      $('.home').addClass('animated ' + animateOutUpperEffect);
+      Meteor.setTimeout ()->
+        PUB.back()
+      ,animatePageTrasitionTimeout
+    'click .mainImage': (event)->
+      Session.set("postPageScrollTop", 0)
+      if isIOS
+        if (event.clientY + $('#footer').height()) >=  $(window).height()
+          console.log 'should be triggered in scrolling'
+          return false
+      postId = this.postId
+      $('.home').addClass('animated ' + animateOutUpperEffect);
+      Meteor.setTimeout ()->
+        PUB.page '/posts/'+postId
+      ,animatePageTrasitionTimeout
+      Session.set 'followTopicNow',this._id
+      return
+    'click .footer .icon': (e)->
+      console.log 'i clicked a icon'
+      console.log "owner is: " + this.owner
+      Session.set("ProfileUserId1", this.owner)
+      Session.set("currentPageIndex",-1)
+      Meteor.subscribe("usersById", this.owner)
+      Meteor.subscribe("recentPostsViewByUser", this.owner)
+      onUserProfile()
+    'click .footer .name': (e)->
+      console.log 'i clicked a name'
+      Session.set("ProfileUserId1", this.owner)
+      Session.set("currentPageIndex",-1)
+      Meteor.subscribe("usersById", this.owner)
+      Meteor.subscribe("recentPostsViewByUser", this.owner)
+      onUserProfile()
+
   getFollowerArr = ()->
     userId = Meteor.userId()
     followerData = Follower.find().fetch()
