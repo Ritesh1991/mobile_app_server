@@ -108,11 +108,8 @@ if Meteor.isClient
 
   Template.home.onCreated ()->
     if withFollowTopic
-      Meteor.subscribe("follows")
-      Meteor.subscribe("follower")
       Meteor.subscribe("registerTopic")
       Meteor.subscribe("followTopicUser")
-      getTopicFollowId()
     
   Template.home.helpers
     showMyfollowUserposts:()->
@@ -179,6 +176,7 @@ if Meteor.isClient
         freeModeSticky: true
       }
     checkNewVersion()
+    getTopicFollowId()
 
 Tracker.autorun((t)->
   if Session.get('latestVersionAlert')
