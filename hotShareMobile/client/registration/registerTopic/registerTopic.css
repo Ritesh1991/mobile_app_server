@@ -1,5 +1,6 @@
 .registerTopic {color: #333;}
 .registerTopic .topic-title{padding-left: 10px;position: relative;}
+.registerTopic .topic-title .need-more{position: absolute;right: 10px;color: gray;top: 0;}
 .registerTopic .next-step{position: absolute;top: 20px;right: 10px;font-weight: bold;background: #eee;padding: 5px 8px;border-radius: 5px;color: #aaa;z-index: 10;}
 .registerTopic .continue{color:#00c4ff !important;}
 .registerTopic h3{font-weight: bold;margin:0;padding-top: 20px;}
