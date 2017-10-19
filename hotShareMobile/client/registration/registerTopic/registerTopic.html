@@ -11,11 +11,12 @@
   <div class="topic-title">
       <h5>及时了解话题的动态</h5>
       {{#if larger followCount 1}}
-        {{#if larger followCount -1}}
-        <div class="need-more">至少选两个话题</div>
-        {{/if}}
         {{#if larger followCount 0}}
         <div class="need-more">至少再选一个话题</div>
+        {{else}}
+            {{#if larger followCount -1}}
+            <div class="need-more">至少选两个话题</div>
+            {{/if}}
         {{/if}}
       {{else}}
       {{/if}}
