@@ -176,7 +176,8 @@ if Meteor.isClient
         freeModeSticky: true
       }
     checkNewVersion()
-    getTopicFollowId()
+    if withFollowTopic
+      getTopicFollowId()
 
 Tracker.autorun((t)->
   if Session.get('latestVersionAlert')
