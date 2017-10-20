@@ -170,14 +170,14 @@ if Meteor.isClient
     flag = window.localStorage.getItem("firstLog") == 'first'
     Session.set('isFlag', !flag)
     if withFollowTopic
+      getTopicFollowId()
       mySwiper = new Swiper '.swiper-container', {
         freeMode: true,
         slidesPerView: 'auto',
         freeModeSticky: true
       }
     checkNewVersion()
-    if withFollowTopic
-      getTopicFollowId()
+      
 
 Tracker.autorun((t)->
   if Session.get('latestVersionAlert')

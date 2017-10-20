@@ -47,4 +47,4 @@
 @withPostGroupChat = true #点评、赞踩、转发贴子时产生故事群
 @withShowGroupsUserMaxCount = 29
 @withMutePushNotification = true #屏蔽群聊推送
-@withFollowTopic = true #新注册用户首页进入关注页面
+@withFollowTopic = false #新注册用户首页进入关注页面

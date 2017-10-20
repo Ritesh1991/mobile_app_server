@@ -42,7 +42,7 @@ if Meteor.isClient
     else
       $('.home #wrapper #list-post').data("plugin_xpull").init()
     Deps.autorun (h)->
-      if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3 and Session.get('followTopicNow') is 'my-follow'
+      if Meteor.userId() and FollowPosts.find({followby:Meteor.userId()}).count()>3
         h.stop()
         loadMoreHandler = initLoadMoreForListPosts()
     #    $('.mainImage').css('height',$(window).height()*0.55)
@@ -70,24 +70,7 @@ if Meteor.isClient
       else
         0
     myPosts:()->
-      # if withFollowTopic
-      #   getTopicFollowId()
-      #   if Session.get 'followTopicNow' is 'my-follow'
-      #     return FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
-      #   else
-      #     # return topic follow posts.
-      #     return TopicPosts.find({topicId:Session.get('followTopicNow')}, {sort: {createdAt: -1}})
-      # else
       FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1},limit:Session.get("followpostsitemsLimit")})
-    # isfollowerpost:(postId)->
-    #   if FollowPosts.find({postId:postId}).count() > 1 and postId isnt null
-    #     followPostsId = FollowPosts.findOne({postId: postId})._id
-    #     FollowPosts.remove({_id:followPostsId})
-    #     myFollowedPosts = FollowPosts.find({followby:Meteor.userId(),publish:{"$ne":false}}, {sort: {createdAt: -1}})
-    #     #Session.setPersistent('persistentMyFollowedPosts',myFollowedPosts.fetch())
-    #     return true
-    #   else
-    #     return true
     moreResults:->
       false
       #!(FollowPosts.find().count() < Session.get("followpostsitemsLimit"))
