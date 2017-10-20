@@ -5,6 +5,7 @@ var page_title = new ReactiveVar('聊天室');
 var list_data = new ReactiveVar([]);
 var message_list = new ReactiveVar([]);
 var page_data = null;
+var timeStyles = new ReactiveVar([]);
 
 Router.route(AppConfig.path + '/to/:type', {
   layoutTemplate: '_simpleChatToChatLayout',
@@ -66,6 +67,7 @@ Router.route(AppConfig.path + '/to/:type', {
     hasInputing.set(false);
     hasFooterView.set(false);
     footerView.set('');
+    timeStyles.set([]);
 
     if (this.params.type === 'group')
       Meteor.call('joinGroup', this.params.query['id']);
@@ -436,7 +438,7 @@ Template._simpleChatToChat.onRendered(function(){
     Meteor.clearInterval(fix_data_timeInterval);
     fix_data_timeInterval = null;
   }
-  fix_data_timeInterval = Meteor.setInterval(fix_data, 1000*60);
+  // fix_data_timeInterval = Meteor.setInterval(fix_data, 1000*60);
   Meteor.subscribe('people_new', function(){});
 
   Meteor.subscribe('get-messages-new', slef.data.type, slef.data.id, {onStop: function(err){
@@ -2164,10 +2166,60 @@ Template._simpleChatToChatLayout.helpers({
   },
   footerView: function(){
     return footerView.get();
+  },
+  formatChatTime: function(time){
+    return formatChatTime(time);
+  },
+  timeStyles: function(){
+    var result = '.my-new-time{text-align: center;}';
+    result += '.my-new-time span{background-color: #ccc; color: #fff; font-size: 12px; border-radius: 5px; padding: 3px 10px;}\r\n';
+    timeStyles.get().map(function(item){
+      result += item + '{display:none;}\r\n'; 
+      result += item + ':nth-of-type(1){display:block;}\r\n'; 
+    });
+    return result;
   }
 });
 Template.__simpleChatToChatFooterIcons.helpers({
   emojis: function(){
     return EMOJI2.packages
   }
-})
+});
+
+
+Template._simpleChatToChatItem.helpers({
+  formatChatTimeHtml: function(time){
+    var styles = timeStyles.get();
+    var timeRes = formatChatTime(time);
+
+    if (!timeRes)
+      return '';
+    if (styles.indexOf('time_' + timeRes[0]) === -1)
+      styles.push('time_' + timeRes[0]);
+
+      timeStyles.set(styles);
+    return '<time_'+timeRes[0]+' class="my-new-time"><span>'+timeRes[1].trim()+'</span></'+timeRes[0]+'>';
+  }
+});
+
+var formatChatTime = function(time){
+  if (!time || !time.format)
+    return;
+  
+  var result = '';
+  var now = new Date();
+
+  // 当天
+  if (time.format('yyyy-MM-dd') === now.format('yyyy-MM-dd'))
+    return [time.format('hhmm'), time.format('hh:mm')];
+  
+  // 三天内
+  if (now.getTime() - time.getTime() >= 1000*60*60*24*3)
+  return [time.format('eehhmm'), time.format('ee hh:mm')];
+
+  // 今年
+  if (time.format('yyyy') === now.format('yyyy'))
+    return [time.format('MMddhhmm'), time.format('MM-dd hh:mm')];
+  
+  return [time.format('yyyyMMddhhmm'), time.format('yyyy-MM-dd hh:mm')];
+};

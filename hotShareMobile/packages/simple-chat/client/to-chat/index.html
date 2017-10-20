@@ -1,14 +1,17 @@
 <template name="_simpleChatToChatLayout">
   <style>
-  html,body{
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-  }
-  body{height: 100% !important;}
+    html,body{
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+    }
+    body{height: 100% !important;}
+  </style>
+  <style>
+    {{timeStyles}}
   </style>
   <div class="simple-chat">
     <div class="msg-box">
@@ -119,9 +122,10 @@
 </template>
 
 <template name="_simpleChatToChatItem">
-  {{#if is_show_time _id}}
+  <!-- {{#if is_show_time _id}}
   <li id="{{_id}}" class="time">{{get_time _id}}</li>
-  {{/if}}
+  {{/if}} -->
+  {{{formatChatTimeHtml create_time}}}
   {{#if to.isPostAbstract}}
   <li id="{{_id}}" class="{{ta_me form.id}}">
     <div class="icon {{postAbstractIconStyle to}}"><img src="{{form.icon}}" /></div>
