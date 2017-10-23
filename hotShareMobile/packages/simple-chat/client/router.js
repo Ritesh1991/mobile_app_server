@@ -2033,7 +2033,7 @@ var renderFootBody = function(){
 };
 var scrollToBottom = function(){
   var $body = $('.msg-box .box');
-  $body.scrollTop(999999999999999);
+  $body.scrollTop($body[0].scrollHeight);
 };
 
 Template._simpleChatToChatLayout.onRendered(function(){
@@ -2055,7 +2055,7 @@ Template._simpleChatToChatLayout.events({
       $(e.currentTarget).css('line-height', '26px');
     }
     renderFootBody();
-    scrollToBottom();
+    setTimeout(scrollToBottom, 100);
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
@@ -2063,29 +2063,32 @@ Template._simpleChatToChatLayout.events({
     footerView.set('');
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
     }, 100);
   },
   'blur #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
   },
   'click .from-submit-btn': function(){
+    console.log('click .from-submit-btn');
     $('.input-form').submit();
   },
   'click .from-smile-btn': function(){
+    console.log('click .from-smile-btn');
     footerView.set('__simpleChatToChatFooterIcons');
     hasFooterView.set(true);
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
     }, 100);
   },
   'click .from-other-btn': function(){
+    console.log('click .from-other-btn');
     footerView.set('__simpleChatToChatFooterTools');
     hasFooterView.set(true);
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
     }, 100);
   },
   'click .msg-box .box': function(){
@@ -2093,7 +2096,7 @@ Template._simpleChatToChatLayout.events({
     hasFooterView.set(false);
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      // setTimeout(scrollToBottom, 100);
     }, 100);
   },
   'click ul.new-icons li':function(e){
@@ -2114,7 +2117,7 @@ Template._simpleChatToChatLayout.events({
     hasFooterView.set(false);
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
     }, 100);
 
     selectMediaFromAblum(9, function(cancel, res,currentCount,totalCount){
@@ -2138,7 +2141,7 @@ Template._simpleChatToChatLayout.events({
     hasFooterView.set(false);
     setTimeout(function(){
       renderFootBody();
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
     }, 100);
 
     window.takePhoto(function(res){
@@ -2158,6 +2161,9 @@ Template._simpleChatToChatLayout.events({
   },
 });
 Template._simpleChatToChatLayout.helpers({
+  getInputClass: function(){
+    return hasInputing.get() ? 'inputing' : '';
+  },
   hasInputing: function(){
     return hasInputing.get();
   },

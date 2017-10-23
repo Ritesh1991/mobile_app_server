@@ -70,7 +70,7 @@
           {{> yield}}
         </ul>
       </div>
-      <div class="footer footbar" style="    min-width: 48px;height: auto;padding: 5px; padding-right: 86px;">
+      <div class="footer footbar new-footerbar {{getInputClass}}">
         <form class="input-form">
           <!-- <div id="container"></div>
           <style type="text/css">
@@ -91,7 +91,7 @@
             <div class="new-btn from-smile-btn"><i class="fa fa-smile-o" aria-hidden="true"></i></div>
             {{#if hasInputing}}
             <!-- <div class="new-btn"><div class="new-send-btn">发</div></div> -->
-            <div class="new-btn from-submit-btn"><i class="fa fa-send-o" aria-hidden="true"></i></div>
+            <div class="new-btn from-submit-btn"><div>发送</div></div>
             {{else}}
             <div class="new-btn from-other-btn"><i class="fa fa-plus" aria-hidden="true"></i></div>
             {{/if}}
