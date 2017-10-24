@@ -2046,6 +2046,8 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
   hasFooterView.set(false);
   footerView.set('');
 });
+
+var resizeTime = null;
 Template._simpleChatToChatLayout.events({
   'keyup #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
@@ -2055,7 +2057,7 @@ Template._simpleChatToChatLayout.events({
       $(e.currentTarget).css('line-height', '26px');
     }
     renderFootBody();
-    setTimeout(scrollToBottom, 100);
+    setTimeout(scrollToBottom, CHAT_RENDER_TIME);
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
@@ -2063,15 +2065,26 @@ Template._simpleChatToChatLayout.events({
     footerView.set('');
     setTimeout(function(){
       renderFootBody();
-      setTimeout(scrollToBottom, 100);
-    }, 100);
+      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
   },
   'blur #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
+    setTimeout(function(){
+      renderFootBody();
+      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
   },
   'click .from-submit-btn': function(){
     console.log('click .from-submit-btn');
     $('.input-form').submit();
+
+    if ($('.input-text').val()){
+      setTimeout(function(){
+        renderFootBody();
+        setTimeout(scrollToBottom, CHAT_RENDER_TIME+100);
+      }, CHAT_RENDER_TIME+200);
+    }
   },
   'click .from-smile-btn': function(){
     console.log('click .from-smile-btn');
@@ -2079,8 +2092,8 @@ Template._simpleChatToChatLayout.events({
     hasFooterView.set(true);
     setTimeout(function(){
       renderFootBody();
-      setTimeout(scrollToBottom, 100);
-    }, 100);
+      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
   },
   'click .from-other-btn': function(){
     console.log('click .from-other-btn');
@@ -2088,16 +2101,16 @@ Template._simpleChatToChatLayout.events({
     hasFooterView.set(true);
     setTimeout(function(){
       renderFootBody();
-      setTimeout(scrollToBottom, 100);
-    }, 100);
+      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
   },
   'click .msg-box .box': function(){
     footerView.set('');
     hasFooterView.set(false);
     setTimeout(function(){
       renderFootBody();
-      // setTimeout(scrollToBottom, 100);
-    }, 100);
+      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
   },
   'click ul.new-icons li':function(e){
     var inputText = $('#simple-chat-text').val();
