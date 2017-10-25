@@ -39,14 +39,11 @@
     </ul>
   </div>
   <script src="http://qzonestyle.gtimg.cn/qzone/app/qzlike/qzopensl.js#jsdate=20111201" charset="utf-8"></script>
-  {{> pcommentInput}}
+  {{> pcommentInputPage}}
   {{> pcommentInputPrompt}}
   {{#if isMynewpost}}
     {{> shareRoom}}
   {{/if}}
-<!--   <div class="showUserProfile" style="display: none;">
-    {{> showUserProfile}}
-  </div> -->
   <div class="showBgColor post-detail-page">
     <div class="showPostsBox">
     <div class="showPosts">
@@ -383,6 +380,26 @@
       </div>
   </div>
   <div class="alertBackground"></div>
+</template>
+
+<template name='pcommentInputPage'>
+  <div class="pcommentInputPages">
+    <div class="bg disable-scroll-mask"></div>
+    <div class="content">
+        <div class="header">
+          <div class="left hidePcommentsNew">关闭</div>
+          <div class="right" onclick="pcommitReport()">发布</div>
+          <div class="title">编辑文字</div>
+        </div>
+        <div class="body" id="pcommentInputPageBody">
+        </div>
+    </div>
+  </div>
+  <script>
+  $('.disable-scroll-mask,.pcommentInputPages').on('touchmove',function(e){
+    e.preventDefault();
+  });
+  </script>
 </template>
 
 <template name="pcommentInput">

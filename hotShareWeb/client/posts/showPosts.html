@@ -493,7 +493,6 @@
           <div class="title">编辑文字</div>
         </div>
         <div class="body" id="pcommentInputPageBody">
-          <!-- <textarea placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea> -->
         </div>
     </div>
   </div>
@@ -502,19 +501,6 @@
     e.preventDefault();
   });
   </script>
-  
-  <!--<div class="pcommentInput" style="display:none;height: auto;width: 100%;top: 0;bottom: auto;">
-      <div class="head">
-        <strong>编辑文字</strong>
-        <div  onclick="hidePcommentsNew()" class="leftButton back">
-          <i class="fa fa-angle-left fa-fw"></i>
-        </div>
-        <div class="rightButton" style="font-weight:bold;color: #fff;" onclick="pcommitReport()">发送</div>
-      </div>
-      <div class="input-group" style="height: 100%;padding-top: 50px;">
-      <textarea style="width: 100%;height: 100%;margin: 0;border: none;font-size: 120%;" placeholder="{{placeHolder}}" name="pcommentInput-form" id="pcommitReport" autofocus="autofocus" cols="30" rows="10"></textarea>
-      </div>
-  </div>-->
 </template>
 
 <template name="pcommentInput">
@@ -571,12 +557,6 @@
           post = Session.get("postContent").pub;
           var mqtt_msg = {"type": "postcomment", "message": ' 评论了此段 "' + Session.get("postContent").pub[i].text + '": ' + content, "postid": Session.get('postContent')._id};
           mqtt_msg.message = Meteor.user().profile.fullname + mqtt_msg.message;
-          //mqtt_connection=mqtt.connect('ws://rpcserver.raidcdn.com:80');
-          /*mqtt_connection=mqtt.connect('ws://tmq.tiegushi.com:80');
-          mqtt_connection.on('connect',function() {
-            mqtt_connection.publish('all', JSON.stringify(mqtt_msg));
-          });*/
-
           if (favp = FavouritePosts.findOne({postId: postId, userId: Meteor.userId()})) {
             FavouritePosts.update({_id: favp._id}, {$set: {updateAt: new Date()}});
           }

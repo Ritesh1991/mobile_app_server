@@ -154,35 +154,31 @@ if Meteor.isClient
   simpleEditorIOSstyle = ()->
     if $('.simpleEditorPost .textDiv1Link div') and $('.simpleEditorPost .textDiv1Link div').length > 0
       $('.simpleEditorPost .textDiv1Link').css('white-space','normal')
+  getPcommentPlaceHolder=()->
+    placeHolderText = '评论'
+    if Session.get("pcommetsReply")
+       i = Session.get "pcommentIndexNum"
+       post = Session.get("postContent").pub
+       selectedIndex = Session.get("pcommentSelectedIndex")
+       if post and post[i] and post[i].pcomments isnt undefined
+          pcomments = post[i].pcomments
+          if pcomments[selectedIndex] isnt undefined
+            toUsername = pcomments[selectedIndex].username
+            placeHolderText = '回复'+toUsername+':'
+     return placeHolderText
+  showPcommentInputTextarea=()->
+    pcommentPlaceHolderText = getPcommentPlaceHolder()
+    textField = document.createElement("textarea")
+    textField.setAttribute("name","pcommentInput-form")
+    textField.setAttribute("cols",30)
+    textField.setAttribute("rows",10)
+    textField.setAttribute("placeholder",pcommentPlaceHolderText)
+    textField.setAttribute("autofocus",'autofocus')
+    textField.setAttribute("id","pcommitReport")
+    document.getElementById('pcommentInputPageBody').appendChild(textField)
+    $('.pcommentInputPages').fadeIn 300, ()->
+      $('#pcommitReport').focus()
   Template.postItem.onRendered ()->
-    # if this.data.type is 'music' and !window._music
-    #   window._music = this.data.musicInfo.playUrl
-    #   window._music_id = this.data._id
-    #   audio = document.getElementById('audio_' + this.data._id)
-    #   $node=$('#'+this.data._id+' .play_area')
-
-    #   if Media?
-    #     media = new Media(this.data.musicInfo.playUrl)
-    #     window._media = media
-    #     media.play()
-    #     $audio=$node.find('audio')
-    #     $node.addClass('music_playing')
-    #     $audio.trigger('play')
-    #   else
-    #     auto_fun = (e)->
-    #       $('.showBgColor')[0].removeEventListener('touchstart', auto_fun)
-    #       touches = e.targetTouches
-    #       if touches.length > 0
-    #         for i in [0..touches.length-1]
-    #           touch = touches.item(i)
-    #           if touch.target.id is 'music_switch_'+window._music_id
-    #             return
-    #       audio.play()
-    #       $audio=$node.find('audio')
-    #       $node.addClass('music_playing')
-    #       $audio.trigger('play')
-    #     $('.showBgColor')[0].addEventListener('touchstart', auto_fun, false)
-
     this.$('img.lazy').lazyload()
     element=this.find('.element')
     myData=this.data
@@ -205,17 +201,11 @@ if Meteor.isClient
     elementBottom=element.offsetTop+element.offsetHeight
     updateLayoutData(layoutHelper,myData.data_col,myData.data_sizex,elementBottom)
     parentNode.style.height=getLayoutTop(layoutHelper,1,6)-parentNode.offsetTop+'px'
-
-    #$('#'+myData._id).linkify()
     this.$('.textDiv1Link').linkify();
     this.$('.textDiv1Link a').each ()->
       $(this).addClass('_post_item_a')
       $(this).attr('target', '_blank')
     element.style.visibility = '';
-    #console.log('['+this.data.index+']'+' '+myData.type+' col '+myData.data_col+
-    #    ' row '+myData.data_row+' h '+myData.data_sizey+' w '+myData.data_sizex+
-    #    ' H '+element.offsetHeight+'/'+element.clientHeight+' W '+element.offsetWidth+' Top '+element.offsetTop
-    #)
     $('#'+myData._id).attr('data-height': $('#'+myData._id).height())
     $('#'+myData._id).bind 'DOMNodeInserted', (e) ->
       console.log 'element now contains '
@@ -237,7 +227,6 @@ if Meteor.isClient
   Template.postItem.events
     'click ._post_item_a': (e)->
       url = $(e.currentTarget).attr('href')
-      console.log('url is ==== ' + url)
       handleAddedLink(url)
     'click .thumbsUp': (e)->
       i = this.index
@@ -278,10 +267,24 @@ if Meteor.isClient
     'click .pcomments': (e)->
       Session.set("pcommetsClicked",true)
       Session.set("pcommetsReply",false)
-      #bgheight = $(window).height() + $(window).scrollTop()
       $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
-      # $('.showBgColor').css('overflow','hidden')
+      Session.set("pcommetsId","")
+      backgroundTop = 0-$(window).scrollTop()
+      Session.set('backgroundTop', backgroundTop);
+      Meteor.setTimeout ()->
+          if Session.get('pcommentsValue') isnt ''
+            $('#pcommitReport').val(Session.get('pcommentsValue'))
+        ,100
+      pcommentPlaceHolderText = getPcommentPlaceHolder()
+      Session.set "pcommentIndexNum", this.index
+      Session.set 'pcommentPlaceHolderText', pcommentPlaceHolderText
+      showPcommentInputTextarea()
+    'click .pcommentsold': (e)->
+      Session.set("pcommetsClicked",true)
+      Session.set("pcommetsReply",false)
+      $(e.currentTarget).parent().parent().parent().addClass('post-pcomment-current-pub-item').attr('data-height': $(e.currentTarget).parent().parent().parent().height())
+      bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
       $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
@@ -306,17 +309,11 @@ if Meteor.isClient
         $('.pcommentInputPromptPage').show()
         return
       Session.set("pcommetsReply",true)
-      #bgheight = $(window).height() + $(window).scrollTop()
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
-      # $('.showBgColor').css('overflow','hidden')
-      $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
       Session.set('backgroundTop', backgroundTop);
-      #$('body').attr('style','position:fixed;top:'+Session.get('backgroundTop')+'px;')
-      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
-        $('#pcommitReport').focus()
-      $('#pcommitReport').focus()
+      showPcommentInputTextarea()
 
     'click .play_area': (e)->
       if window._media

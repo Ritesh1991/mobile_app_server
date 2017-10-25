@@ -1250,6 +1250,130 @@ if Meteor.isClient
           Posts.update {_id: postId},{$set: {retweet: arr}}
           FollowPosts.update {_id: FollowPostsId},{$inc: {retweet: -1}}
           return
+  Template.pcommentInputPage.helpers
+      placeHolder:->
+        placeHolderText = '评论'
+        if Session.get("pcommetsReply")
+           i = Session.get "pcommentIndexNum"
+           post = Session.get("postContent").pub
+           selectedIndex = Session.get("pcommentSelectedIndex")
+           if post and post[i] and post[i].pcomments isnt undefined
+              pcomments = post[i].pcomments
+              if pcomments[selectedIndex] isnt undefined
+                toUsername = pcomments[selectedIndex].username
+                placeHolderText = '回复'+toUsername+':'
+         return placeHolderText
+  Template.pcommentInputPage.events
+    'click .hidePcommentsNew':->
+      Session.set('pcommentsValue', $('#pcommitReport').val())
+      $('.show-or-hidden').show()
+      $('.showPostsBox').show()
+      $(window).scrollTop(0-Session.get('backgroundTop'))
+      $('.pcommentInputPages').hide()
+      Session.set('backgroundTop','')
+      postItem = $('.post-pcomment-current-pub-item')
+      console.log(postItem)
+      postItem.removeClass('post-pcomment-current-pub-item')
+      $('#pcommitReport').remove()
+    'click #pcommitReportBtn':(e, t)->
+      i = Session.get "pcommentIndexNum"
+      content = $('#pcommitReport').val()
+      postId = Session.get("postContent")._id
+      post = Session.get("postContent").pub
+      if (favp = FavouritePosts.findOne({postId: postId, userId: Meteor.userId()}))
+        FavouritePosts.update({_id: favp._id}, {$set: {updateAt: new Date()}})
+      else
+        FavouritePosts.insert({postId: postId, userId: Meteor.userId(), createdAt: new Date(), updateAt: new Date()})
+      if content is ""
+        $('body').removeAttr('style')
+        $('.showBgColor').removeAttr('style')
+        $(window).scrollTop(0-Session.get('backgroundTop'))
+        $('.pcommentInputPages').fadeOut()
+        return false
+      if Meteor.user()
+        if Meteor.user().profile.fullname
+          username = Meteor.user().profile.fullname
+        else
+          username = Meteor.user().username
+        userId = Meteor.user()._id
+        userIcon = Meteor.user().profile.icon
+      else
+        username = '匿名'
+        userId = 0
+        userIcon = ''
+      if not post[i].pcomments or post[i].pcomments is undefined
+        pcomments = []
+        post[i].pcomments = pcomments
+
+      toUsername = ''
+      toUserId = ''
+      if Session.get("pcommetsReply")
+          selectedIndex = Session.get("pcommentSelectedIndex")
+          pcomments = post[i].pcomments
+          toUsername = pcomments[selectedIndex].username
+          toUserId = pcomments[selectedIndex].userId
+      console.log 'toUserId>>>>>>>'+toUserId
+      pcommentJson = {
+        content:content
+        toUsername:toUsername
+        toUserId:toUserId
+        username:username
+        userId:userId
+        userIcon:userIcon
+        createdAt: new Date()
+      }
+      post[i].pcomments.push(pcommentJson)
+      updatePostsContentSession(post,"pcomments",i);
+      popUpObj = {}
+      objHelp = 'pub.'+i+'.pcomments';
+      popUpObj[objHelp] = pcommentJson;
+      Posts.update({_id: postId},{
+        $push: popUpObj
+        $set:
+          'ptype': 'pcomments'
+          'pindex': i
+      }, (error, result)->
+        if error
+          console.log(error.reason);
+        else
+          postItem = $('.post-pcomment-current-pub-item')
+          offsetHeight = postItem.height() - parseInt(postItem.attr('data-height'))
+          console.log(offsetHeight)
+          testDivHeight = parseInt($('#test').css('height'))
+          $('#test').css('height',testDivHeight + offsetHeight + 'px')
+          # resize nex node top
+          postItem.nextAll().each ()->
+            try
+              item = $(this)
+              top = offsetHeight + item.position().top
+              item.css('top', top + 'px')
+            catch
+          postItem.removeClass('post-pcomment-current-pub-item')
+
+          console.log("success");
+      )
+      type = 'pcomments'
+      postData = Session.get('postContent')
+      pcommentContent = content
+      to = {
+        id: toUserId || postData.owner,
+        name: toUsername || postData.ownerName,
+        icon: postData.ownerIcon,
+        pcommentContent: pcommentContent,
+        pcommentIndexNum: Session.get("pcommentIndexNum"),
+        pcomment: Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '')
+      }
+      if to.id isnt '' and to.id isnt Meteor.userId()
+        sendMqttMessageToUser(type,to,postData)
+      $('#pcommitReport').val("")
+      Session.set('pcommentsValue', '')
+      $("#pcommitReport").attr("placeholder", "评论")
+      $('.showBgColor').removeAttr('style')
+      $(window).scrollTop(0-Session.get('backgroundTop'))
+      $('.pcommentInputPages').fadeOut();
+      $('#pcommitReport').remove();
+      false
+
   Template.pCommentsList.helpers
       time_diff: (created)->
         GetTime0(new Date() - created)
@@ -1374,24 +1498,10 @@ if Meteor.isClient
         content = $('#pcommitReport').val()
         postId = Session.get("postContent")._id
         post = Session.get("postContent").pub
-        ###
-        mqtt_msg = {"type": "postcomment", "message": " 评论了此段 \"" + Session.get("postContent").pub[i].text.replace(/<(?:.|\n)*?>/gm, '') + '": ' + content, "postid": Session.get('postContent')._id}
-        mqtt_msg.message = Meteor.user().profile.fullname + mqtt_msg.message
-        mqtt_connection=mqtt.connect('ws://rpcserver.raidcdn.com:80')
-        mqtt_connection.on('connect',()->
-          console.log('Connected to server')
-          #mqtt_connection.subscribe(Session.get('postContent')._id)
-          mqtt_connection.publish('all', JSON.stringify(mqtt_msg))
-        )
-        ###
-
         if (favp = FavouritePosts.findOne({postId: postId, userId: Meteor.userId()}))
           FavouritePosts.update({_id: favp._id}, {$set: {updateAt: new Date()}})
         else
           FavouritePosts.insert({postId: postId, userId: Meteor.userId(), createdAt: new Date(), updateAt: new Date()})
-#        if withSponserLinkAds
-#          position = 1+(post.length/2)
-#        if i > position then i -= 1 else i = i
         if content is ""
           $('body').removeAttr('style')
           $('.showBgColor').removeAttr('style')
@@ -1475,11 +1585,9 @@ if Meteor.isClient
           sendMqttMessageToUser(type,to,postData)
         $('#pcommitReport').val("")
         $("#pcommitReport").attr("placeholder", "评论")
-        #$('body').removeAttr('style')
         $('.showBgColor').removeAttr('style')
         $(window).scrollTop(0-Session.get('backgroundTop'))
         $('.pcommentInput,.alertBackground').fadeOut 300
-        #refreshPostContent()
         false
   Template.pcommentInputPrompt.helpers
     isMyPcomment:->
