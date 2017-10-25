@@ -68,10 +68,20 @@
                 {{/if}}
               </div>
               <div class="post-user-right">
+                {{#if hasFollowerOwner}}
                 <div class="post-user-right-content">
                   <span class="post-user-name name">{{ownerName}}</span>
                   <div class="post-user-create createAt">{{time_diff_str createdAt}}</div>
                 </div>
+                {{else}}
+                <div class="post-user-right-content" style="position: relative;padding-right: 60px;">
+                    <span class="post-user-name name">{{ownerName}}</span>
+                    <div class="post-user-create createAt">{{time_diff_str createdAt}}</div>
+                    <div style="position: absolute;right: 0;top: 50%;width: 50px;font-size: 12px;color:#03a9f7;height:26px; line-height:26px;border:1px #03a9f7 solid;border-radius:5px; margin-top: -13px;">
+                        <i class="fa fa-plus-square" style="padding-right: 3px;color: #03a9f4 !important;"></i>关注
+                    </div>
+                  </div>
+                {{/if}}
               </div>
             </div>
           </div>

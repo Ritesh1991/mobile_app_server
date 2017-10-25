@@ -1679,6 +1679,8 @@ if Meteor.isClient
           return $theme.attr('href', theme_host_url + style)
         $('head').append('<link id="post-theme" rel="stylesheet" type="text/css" href="'+theme_host_url + style+'">')
     Template.showPosts.helpers
+      hasFollowerOwner: ()->
+        return Follower.find({userId: Meteor.userId(), followerId: Session.get('postContent').owner}).count() > 0
       withPinImage: ()->
         return withPinImage
       is_owner: ()->
