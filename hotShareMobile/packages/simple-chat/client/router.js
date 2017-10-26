@@ -2077,14 +2077,22 @@ Template._simpleChatToChatLayout.events({
   },
   'click .from-submit-btn': function(){
     console.log('click .from-submit-btn');
-    $('.input-form').submit();
-
     if ($('.input-text').val()){
+      var $body = $('.msg-box .box');
+      $body.css({
+        'bottom': '48px'
+      });
+      hasFooterView.set(false);
+      hasInputing.set(false);
+      renderFootBody();
+      scrollToBottom();
+
       setTimeout(function(){
         renderFootBody();
-        setTimeout(scrollToBottom, CHAT_RENDER_TIME+100);
-      }, CHAT_RENDER_TIME+200);
+        setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+      }, CHAT_RENDER_TIME);
     }
+    $('.input-form').submit();    
   },
   'click .from-smile-btn': function(){
     console.log('click .from-smile-btn');
