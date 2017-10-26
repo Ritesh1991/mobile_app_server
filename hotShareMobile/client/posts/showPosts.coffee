@@ -1636,13 +1636,14 @@ if Meteor.isClient
       $('.pcommentInputPromptPage').hide()
       Session.set("pcommetsReply",true)
       bgheight = $('.post-pcomment-current-pub-item').offset().top+parseInt($('.post-pcomment-current-pub-item').attr('data-height'))+50
-      $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
+      # $('.showBgColor').attr('style','overflow:hidden;min-width:' + $(window).width() + 'px;' + 'height:' + bgheight + 'px;')
       Session.set("pcommetsId","")
       backgroundTop = 0-$(window).scrollTop()
-      Session.set('backgroundTop', backgroundTop);
-      $('.pcommentInput,.alertBackground').fadeIn 300, ()->
-        $('#pcommitReport').focus()
-      $('#pcommitReport').focus()
+      Session.set('backgroundTop', backgroundTop)
+      showPcommentInputTextarea()
+      # $('.pcommentInput,.alertBackground').fadeIn 300, ()->
+      #   $('#pcommitReport').focus()
+      # $('#pcommitReport').focus()
       
 
   Template.shareReaderClub.helpers

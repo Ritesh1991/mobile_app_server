@@ -154,7 +154,7 @@ if Meteor.isClient
   simpleEditorIOSstyle = ()->
     if $('.simpleEditorPost .textDiv1Link div') and $('.simpleEditorPost .textDiv1Link div').length > 0
       $('.simpleEditorPost .textDiv1Link').css('white-space','normal')
-  getPcommentPlaceHolder=()->
+  @getPcommentPlaceHolder=()->
     placeHolderText = '评论'
     if Session.get("pcommetsReply")
        i = Session.get "pcommentIndexNum"
@@ -166,7 +166,7 @@ if Meteor.isClient
             toUsername = pcomments[selectedIndex].username
             placeHolderText = '回复'+toUsername+':'
      return placeHolderText
-  showPcommentInputTextarea=()->
+  @showPcommentInputTextarea=()->
     pcommentPlaceHolderText = getPcommentPlaceHolder()
     textField = document.createElement("textarea")
     textField.setAttribute("name","pcommentInput-form")
