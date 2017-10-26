@@ -392,6 +392,17 @@ var setToUsers = function(data){
 Template._simpleChatToChat.onRendered(function(){
   Session.set('currentWindowHeight',$(window).height());
 
+  $('.box').on('touchstart',function(e) {
+    $('.input-text').blur();
+    footerView.set('');
+    // hasInputing.set(false);
+    hasFooterView.set(false);
+    setTimeout(function(){
+      renderFootBody();
+      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    }, CHAT_RENDER_TIME);
+  });
+
   console.log('=====emplate._simpleChatToChat.onRendered=====');
   is_loading.set(true);
   list_limit.set(list_limit_val);
@@ -2114,6 +2125,7 @@ Template._simpleChatToChatLayout.events({
   },
   'click .msg-box .box': function(){
     footerView.set('');
+    hasInputing.set(false);
     hasFooterView.set(false);
     setTimeout(function(){
       renderFootBody();
