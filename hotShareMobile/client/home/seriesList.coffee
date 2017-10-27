@@ -5,7 +5,7 @@ Template.seriesList.rendered=->
     Session.set('followSeriesScrollTop',0)
   $(window).scroll (event)->
       target = $("#showMoreResults");
-      FOLLOW_SERIES_INCREMENT = 6;
+      FOLLOW_SERIES_INCREMENT = 8;
       if (!target.length)
           return;
       threshold = $(window).scrollTop() + $(window).height() - target.height();
