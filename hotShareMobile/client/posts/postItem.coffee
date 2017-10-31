@@ -226,8 +226,12 @@ if Meteor.isClient
           console.log  error
   Template.postItem.events
     'click ._post_item_a': (e)->
-      url = $(e.currentTarget).attr('href')
-      handleAddedLink(url)
+      url = $(e.currentTarget).attr('href').replaceAll(/"/, "")
+      if url.startsWith('http://') or url.startsWith('https://')
+        handleAddedLink(url)
+      else
+        url = 'http://' + url
+        handleAddedLink(url)
     'click .thumbsUp': (e)->
       i = this.index
       Session.set("pcommetsId","")

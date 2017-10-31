@@ -190,9 +190,14 @@ if Meteor.isClient
     #)
   Template.postItem.events
     'click .textDiv1Link a':(e)->
-      url =  $(e.currentTarget).attr('href')
+      url =  $(e.currentTarget).attr('href').replaceAll(/"/, "")
       console.log('url is ==== ' + url)
-      window.location.href=url
+      if url.startsWith('http://') or url.startsWith('https://')
+        window.location.href=url
+      else
+        url = 'http://' + url
+        window.location.href=url
+      
     'click .thumbsUp': (e)->
       i = this.index
       Session.set("pcommetsId","")
