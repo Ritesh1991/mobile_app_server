@@ -116,6 +116,13 @@ Template.newEditor.onDestroyed(function(){
 });
 
 Template.newEditor.helpers({
+  openSavingDraft: function(){
+    if(Session.get('SavingDraftStatus') == true){
+      return true;
+    }else{
+      return false;
+    }
+  },
   isEdit: function(){
     return pageData.get().type === 'edit';
   },
@@ -169,13 +176,17 @@ Template.newEditor.events({
   'click .back': function(e,t){
     if (t.data.type === 'edit' || t.data.type === 'draft') {
       navigator.notification.confirm('您要放弃未保存的修改吗？', function(index) {
-        if (index === 1)
+        if (index === 1){
+          Session.set('SavingDraftStatus',false);
           return history.go(-1);
+        }
       }, '提示', ['放弃修改', '继续编辑']);
     } else {
       navigator.notification.confirm('您要删除未保存的草稿吗？', function(index) {
-        if (index === 1)
+        if (index === 1){
+          Session.set('SavingDraftStatus',false);
           return history.go(-1);
+        }
       }, '提示', ['删除故事', '继续创作']);
     }
   },
@@ -187,6 +198,9 @@ Template.newEditor.events({
       return PUB.toast('请为您的故事加个标题');
     }
     $('#chooseAssociatedUser').modal('show');
+  },
+  'click .save-post':function(e){
+    Session.set('SavingDraftStatus',true);
   },
   'click #save, click #drafts, click #modalPublish': function(e, t){
     Session.set('terminateUpload', false);
@@ -209,6 +223,7 @@ Template.newEditor.events({
 
     if(!Meteor.user()){
       //Template.progressBar.__helpers.get('close')();
+      Session.set('SavingDraftStatus',false);
       return PUB.toast('请登录后发表您的故事');
     }
     if(!Meteor.status().connected && Meteor.status().status != 'connecting')
@@ -220,6 +235,7 @@ Template.newEditor.events({
     var titleImg = t.$('.mainImage').data('imgurl');
     if (!title || title === '[空标题]'){
       //Template.progressBar.__helpers.get('close')();
+      Session.set('SavingDraftStatus',false);
       return PUB.toast('请为您的故事加个标题');
     }
 
@@ -341,6 +357,7 @@ Template.newEditor.events({
           Meteor.call('updateTopicPostsAfterUpdatePost', t.data.id);
           Meteor.call('refreshPostCDN', t.data.id);
           Session.set('isServerImport', false);
+          Session.set('SavingDraftStatus',false);
           Router.go('/posts/' + t.data.id);
         });
       };
@@ -384,9 +401,10 @@ Template.newEditor.events({
               Template.progressBar.__helpers.get('close')()
               if (err){
                 console.log(err);
+                Session.set('SavingDraftStatus',false);
                 return PUB.toast('存草稿失败，请重试~');
               }
-
+              Session.set('SavingDraftStatus',false);
               PUB.toast('存草稿成功~');
               PUB.back();
             });
@@ -403,9 +421,10 @@ Template.newEditor.events({
               Template.progressBar.__helpers.get('close')()
               if (err || !_id){
                 console.log(err);
+                Session.set('SavingDraftStatus',false);
                 return PUB.toast('存草稿失败，请重试~');
               }
-
+              Session.set('SavingDraftStatus',false);
               PUB.toast('存草稿成功~');
               PUB.back();
             });
@@ -422,6 +441,7 @@ Template.newEditor.events({
             Template.progressBar.__helpers.get('close')();
             console.log(err);
             if (err || !_id)
+              Session.set('SavingDraftStatus',false);
               return PUB.toast('发表失败，请重试~');
 
             post._id = _id;
@@ -438,6 +458,7 @@ Template.newEditor.events({
             Session.set("TopicTitle", post.title);
             Session.set("TopicAddonTitle", post.addontitle);
             Session.set("TopicMainImage", post.mainImage);
+            Session.set('SavingDraftStatus',false);
             Router.go('addTopicComment');
           });
         }

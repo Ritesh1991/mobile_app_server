@@ -1,9 +1,18 @@
+<template name="savingDraft">
+  <div id="savingDraftBg">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <div class="saving-alert">存储中...</div>
+  </div>
+</template>
 <template name="newEditor">
 <div class="newEditor">
+  {{#if openSavingDraft}}
+  {{> savingDraft}}
+  {{/if}}
   <div class="head">
         <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
         {{#if isEdit}}
-        <div id="save" class="rightButton" style="color: #fff;padding-top: 0;">存储</div>
+        <div id="save" class="rightButton save-post" style="color: #fff;padding-top: 0;">存储</div>
         {{else}}
         <div id="drafts" class="rightButton drafts-btn" style="color: #fff;padding-top: 0;">存草稿</div>
           {{#if hasAssocaitedUsers}}
