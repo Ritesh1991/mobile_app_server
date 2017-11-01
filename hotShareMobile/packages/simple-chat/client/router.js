@@ -6,6 +6,27 @@ var list_data = new ReactiveVar([]);
 var message_list = new ReactiveVar([]);
 var page_data = null;
 var timeStyles = new ReactiveVar([]);
+var $chat_box = null;
+
+// wait 时间内执一次，每 mustRun 至少执行一次，单位毫秒
+function throttleClass(wait, mustRun){
+  var timeout = null;
+  var startTime = null;
+  var obj = new Object;
+
+  obj.run = function(func){
+    timeout && clearTimeout(timeout);
+    if (!startTime)
+      startTime = new Date();
+    if (new Date() - startTime >= mustRun){
+      func();
+      startTime = new Date();
+    } else {
+      timeout = setTimeout(func, wait);
+    }
+  };
+  return obj;
+};
 
 Router.route(AppConfig.path + '/to/:type', {
   layoutTemplate: '_simpleChatToChatLayout',
@@ -64,6 +85,7 @@ Router.route(AppConfig.path + '/to/:type', {
     };
   },
   action: function(){
+    $chat_box = null;
     hasInputing.set(false);
     hasFooterView.set(false);
     footerView.set('');
@@ -143,28 +165,34 @@ var sendHaveReadMsg = function(page_data){
   sendMqttUserMessage(msg.to.id, msg, callback);
 }
 
+var keyboardHeightHandleThrottle = new throttleClass(200, 800);
 var keyboardHeightHandle = function(event){
-  console.log ('Keyboard height is: ' + event.keyboardHeight);
-  Session.set('keyboardHeight',event.keyboardHeight);
-  if (event.keyboardHeight === 0) {
-    $('.simple-chat').height('100%');
-  }
+  keyboardHeightHandleThrottle.run(function(){
+    console.log ('Keyboard height is: ' + event.keyboardHeight);
+    Session.set('keyboardHeight',event.keyboardHeight);
+    if (event.keyboardHeight === 0) {
+      $('.simple-chat').height('100%');
+    }
+  });
 };
 
+var winResizeThrottle = new throttleClass(200, 800);
 window.onresize = function(){
-  console.log('window height:'+$(window).height());
-  if(Meteor.isCordova && device.platform === 'iOS'){
-    Meteor.setTimeout(function(){
-      var keyboardHeight = Session.get('keyboardHeight');
-      var maxWindowHeight = Session.get('currentWindowHeight'); //不弹键盘时的高度;
-      if ((maxWindowHeight - $(window).height() <= 20 ) && keyboardHeight > 0) {
-        $('.simple-chat').height($(window).height()-keyboardHeight);
-      }
-      if (keyboardHeight === 0) {
-        $('.simple-chat').height('100%');
-      }
-    },100);
-  }
+  winResizeThrottle.run(function(){
+    console.log('window height:'+$(window).height());
+    if(Meteor.isCordova && device.platform === 'iOS'){
+      // Meteor.setTimeout(function(){
+        var keyboardHeight = Session.get('keyboardHeight');
+        var maxWindowHeight = Session.get('currentWindowHeight'); //不弹键盘时的高度;
+        if ((maxWindowHeight - $(window).height() <= 20 ) && keyboardHeight > 0) {
+          $('.simple-chat').height($(window).height()-keyboardHeight);
+        }
+        if (keyboardHeight === 0) {
+          $('.simple-chat').height('100%');
+        }
+      // },100);
+    }
+  });
 };
 
 Template._simpleChatToChatLayout.onRendered(function(){
@@ -397,10 +425,10 @@ Template._simpleChatToChat.onRendered(function(){
     footerView.set('');
     // hasInputing.set(false);
     hasFooterView.set(false);
-    setTimeout(function(){
-      renderFootBody();
-      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    // setTimeout(function(){
+    //   renderFootBody();
+    //   // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    // }, CHAT_RENDER_TIME);
   });
 
   console.log('=====emplate._simpleChatToChat.onRendered=====');
@@ -490,27 +518,30 @@ Template._simpleChatToChat.onRendered(function(){
     }, 300);
   };
 
+  var boxScrollThrottle = new throttleClass(500, 1000);
   var before = $_box.scrollTop();
   $_box.scroll(function () {
-    if($('.box').scrollTop() === 0 && !is_loading.get()){
-      // if(slef.data.messages.count() >= list_limit.get())
-      is_loading.set(true);
-      list_limit.set(list_limit.get()+list_limit_val);
-      Meteor.setTimeout(function(){is_loading.set(false);}, 500);
-    }
-
-    // 滚动方向
-    var after = $_box.scrollTop();
-    var direction = '';
-    if (before>after)
-      direction = 'up';
-    if (before<after)
-      direction = 'down';
-     before = after;
-
-    // 处理新消息（滚动条后面的未读）
-    // if (direction === 'down')
-    //   getLastMsg();
+    boxScrollThrottle.run(function(){
+      if($('.box').scrollTop() === 0 && !is_loading.get()){
+        // if(slef.data.messages.count() >= list_limit.get())
+        is_loading.set(true);
+        list_limit.set(list_limit.get()+list_limit_val);
+        Meteor.setTimeout(function(){is_loading.set(false);}, 500);
+      }
+  
+      // 滚动方向
+      var after = $_box.scrollTop();
+      var direction = '';
+      if (before>after)
+        direction = 'up';
+      if (before<after)
+        direction = 'down';
+       before = after;
+  
+      // 处理新消息（滚动条后面的未读）
+      // if (direction === 'down')
+      //   getLastMsg();
+    });
   });
 });
 
@@ -1965,15 +1996,21 @@ var hasInputing = new ReactiveVar(false);
 var hasFooterView = new ReactiveVar(false);
 var footerView = new ReactiveVar('');
 var renderFootBody = function(){
-  var $foot = $('.msg-box .footer');
-  var $body = $('.msg-box .box');
-  $body.css({
-    'bottom': $foot[0].clientHeight + 'px'
-  });
+  // var $foot = $('.msg-box .footer');
+  // var $body = $('.msg-box .box');
+  // $body.css({
+  //   'bottom': $foot[0].clientHeight + 'px'
+  // });
 };
+
+var scrollToBottomThrottle = new throttleClass(100, 500);
 var scrollToBottom = function(){
-  var $body = $('.msg-box .box');
-  $body.scrollTop($body[0].scrollHeight);
+  scrollToBottomThrottle.run(function(){
+    if (!$chat_box)
+      $chat_box = $('.msg-box .box');
+    $chat_box.smoothScroll('+=' + $body[0].scrollHeight);
+    // $chat_box.scrollTop($body[0].scrollHeight);
+  });
 };
 
 Template._simpleChatToChatLayout.onRendered(function(){
@@ -1996,42 +2033,29 @@ Template._simpleChatToChatLayout.events({
     } else {
       $(e.currentTarget).css('line-height', '26px');
     }
-    renderFootBody();
-    setTimeout(scrollToBottom, CHAT_RENDER_TIME);
+    // setTimeout(scrollToBottom, 100);
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
     hasFooterView.set(false);
     footerView.set('');
-    setTimeout(function(){
-      renderFootBody();
-      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    setTimeout(scrollToBottom, 1000);
   },
   'blur #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
-    setTimeout(function(){
-      renderFootBody();
-      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    // setTimeout(scrollToBottom, 100);
   },
   'click .from-submit-btn': function(e ,t){
     console.log('click .from-submit-btn');
     $('.input-text').focus();
     if ($('.input-text').val()){
       var $body = $('.msg-box .box');
-      $body.css({
-        'bottom': '48px'
-      });
+      // $body.css({
+      //   'bottom': '48px'
+      // });
       hasFooterView.set(false);
       hasInputing.set(false);
-      renderFootBody();
-      scrollToBottom();
-
-      setTimeout(function(){
-        renderFootBody();
-        setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-      }, CHAT_RENDER_TIME);
+      setTimeout(scrollToBottom, 800);
     }
     setTimeout(function(){
       try{
@@ -2066,15 +2090,12 @@ Template._simpleChatToChatLayout.events({
         Messages.insert(msg, function(){
           console.log('send message...');
           sendMqttMsg(msg);
-          Meteor.setTimeout(function(){$('.box').scrollTop($('.box ul').height());}, 200);
+          setTimeout(scrollToBottom, 100);
         });
         trackEvent("socialBar","AuthorReply")
         hasInputing.set(false);
         autosize.update($('#simple-chat-text'));
-        setTimeout(function(){
-          renderFootBody();
-          scrollToBottom();
-        }, 100);
+        setTimeout(scrollToBottom, 100);
         var $text = $('#simple-chat-text');
         $('.input-text').val('');
         if ($text.length > 0 && $text.get(0) && $text.get(0).updateAutogrow)
@@ -2088,28 +2109,19 @@ Template._simpleChatToChatLayout.events({
     console.log('click .from-smile-btn');
     footerView.set('__simpleChatToChatFooterIcons');
     hasFooterView.set(true);
-    setTimeout(function(){
-      renderFootBody();
-      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    setTimeout(scrollToBottom, 800);
   },
   'click .from-other-btn': function(){
     console.log('click .from-other-btn');
     footerView.set('__simpleChatToChatFooterTools');
     hasFooterView.set(true);
-    setTimeout(function(){
-      renderFootBody();
-      setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    setTimeout(scrollToBottom, 800);
   },
   'click .msg-box .box': function(){
     footerView.set('');
     hasInputing.set(false);
     hasFooterView.set(false);
-    setTimeout(function(){
-      renderFootBody();
-      // setTimeout(scrollToBottom, CHAT_RENDER_TIME);
-    }, CHAT_RENDER_TIME);
+    setTimeout(scrollToBottom, 800);
   },
   'click ul.new-icons li':function(e){
     var inputText = $('#simple-chat-text').val();
@@ -2127,10 +2139,7 @@ Template._simpleChatToChatLayout.events({
   'click .new-btn-photo': function(){
     footerView.set('');
     hasFooterView.set(false);
-    setTimeout(function(){
-      renderFootBody();
-      setTimeout(scrollToBottom, 100);
-    }, 100);
+    setTimeout(scrollToBottom, 500);
 
     selectMediaFromAblum(9, function(cancel, res,currentCount,totalCount){
       if (cancel || !res)
@@ -2144,6 +2153,7 @@ Template._simpleChatToChatLayout.events({
         window.uploadToAliyun_new(filename, res.URI, function(status, result){
           if (status === 'done' && result){
             window.___message.update(id, result);
+            setTimeout(scrollToBottom, 100);
           }
         });
     });
@@ -2151,10 +2161,7 @@ Template._simpleChatToChatLayout.events({
   'click .new-btn-camera': function(){
     footerView.set('');
     hasFooterView.set(false);
-    setTimeout(function(){
-      renderFootBody();
-      setTimeout(scrollToBottom, 100);
-    }, 100);
+    setTimeout(scrollToBottom, 800);
 
     window.takePhoto(function(res){
       if (res){
@@ -2166,6 +2173,7 @@ Template._simpleChatToChatLayout.events({
         window.uploadToAliyun_new(filename, res.URI, function(status, result){
           if (status === 'done' && result){
             window.___message.update(id, result);
+            setTimeout(scrollToBottom, 100);
           }
         });
       }
