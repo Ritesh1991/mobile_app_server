@@ -1,7 +1,13 @@
 <template name="userProfile">
   <div class="wrapper">
+    {{> showUserIconBigPic}}
     {{>swipe Swiper=Swiper}}
   </div>
+</template>
+<template name="showUserIconBigPic">
+    <div id="showUserIconBigPic">
+        <img src="{{iconUrl}}">
+    </div>
 </template>
 <template name="userProfilePage1">
   <div class="userProfile userProfileMarginTop">

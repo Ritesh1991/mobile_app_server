@@ -342,6 +342,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage1.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       ta = Session.get("ProfileUserId1")
       $(window).children().off()
@@ -500,6 +504,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage2.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       ta = Session.get("ProfileUserId2")
       $(window).children().off()
@@ -657,6 +665,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage3.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       ta = Session.get("ProfileUserId3")
       $(window).children().off()
@@ -814,6 +826,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       ta = Session.get("ProfileUserId")
       $(window).children().off()
@@ -1085,3 +1101,10 @@ if Meteor.isClient
       Session.equals('momentsCollection','loading')
     loadError:()->
       Session.equals('momentsCollection','error')
+
+  Template.showUserIconBigPic.helpers
+    iconUrl:()->
+      return Session.get('thisIconUrl')
+  Template.showUserIconBigPic.events
+    'click #showUserIconBigPic':(e)->
+      $('#showUserIconBigPic').hide()

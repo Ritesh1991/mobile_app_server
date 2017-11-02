@@ -347,6 +347,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage1.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
@@ -490,6 +494,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage2.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
@@ -634,6 +642,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage3.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
@@ -758,6 +770,10 @@ if Meteor.isClient
       else
         false
   Template.userProfilePage.events
+    'click .userProfileTop .icon':(e)->
+      iconUrl = $(e.currentTarget).attr('src')
+      Session.set('thisIconUrl',iconUrl)
+      $('#showUserIconBigPic').show()
     'click .chatToUser':(e)->
       user = Meteor.user()
       if withQRTips
@@ -968,3 +984,10 @@ if Meteor.isClient
       Session.equals('momentsCollection','loading')
     loadError:()->
       Session.equals('momentsCollection','error')
+
+  Template.showUserIconBigPic.helpers
+    iconUrl:()->
+      return Session.get('thisIconUrl')
+  Template.showUserIconBigPic.events
+    'click #showUserIconBigPic':(e)->
+      $('#showUserIconBigPic').hide()
