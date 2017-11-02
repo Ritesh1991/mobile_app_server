@@ -7,6 +7,7 @@ var message_list = new ReactiveVar([]);
 var page_data = null;
 var timeStyles = new ReactiveVar([]);
 var $chat_box = null;
+var $simple_chat = null;
 
 // wait 时间内执一次，每 mustRun 至少执行一次，单位毫秒
 function throttleClass(wait, mustRun){
@@ -86,6 +87,7 @@ Router.route(AppConfig.path + '/to/:type', {
   },
   action: function(){
     $chat_box = null;
+    $simple_chat = null;
     hasInputing.set(false);
     hasFooterView.set(false);
     footerView.set('');
@@ -167,16 +169,18 @@ var sendHaveReadMsg = function(page_data){
 
 var keyboardHeightHandleThrottle = new throttleClass(200, 800);
 var keyboardHeightHandle = function(event){
-  keyboardHeightHandleThrottle.run(function(){
+  // keyboardHeightHandleThrottle.run(function(){
     console.log ('Keyboard height is: ' + event.keyboardHeight);
     Session.set('keyboardHeight',event.keyboardHeight);
     if (event.keyboardHeight === 0) {
-      $('.simple-chat').height('100%');
+      if (!$simple_chat)
+        $simple_chat = $('.simple-chat');
+      $simple_chat.height('100%');
     }
-  });
+  // });
 };
 
-var winResizeThrottle = new throttleClass(200, 800);
+var winResizeThrottle = new throttleClass(500, 1000);
 window.onresize = function(){
   winResizeThrottle.run(function(){
     console.log('window height:'+$(window).height());
@@ -185,10 +189,14 @@ window.onresize = function(){
         var keyboardHeight = Session.get('keyboardHeight');
         var maxWindowHeight = Session.get('currentWindowHeight'); //不弹键盘时的高度;
         if ((maxWindowHeight - $(window).height() <= 20 ) && keyboardHeight > 0) {
-          $('.simple-chat').height($(window).height()-keyboardHeight);
+          if (!$simple_chat)
+            $simple_chat = $('.simple-chat');
+          $simple_chat.height($(window).height()-keyboardHeight);
         }
         if (keyboardHeight === 0) {
-          $('.simple-chat').height('100%');
+          if (!$simple_chat)
+            $simple_chat = $('.simple-chat');
+          $simple_chat.height('100%');
         }
       // },100);
     }
@@ -221,7 +229,9 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
       Keyboard.shrinkView(false);
       Keyboard.disableScrollingInShrinkView(false);
       window.removeEventListener('keyboardHeightWillChange', keyboardHeightHandle);
-      $('.simple-chat').height('100%');
+      if (!$simple_chat)
+        $simple_chat = $('.simple-chat');
+      $simple_chat.height('100%');
     } catch (err){
       console.log(err)
     }
@@ -518,11 +528,13 @@ Template._simpleChatToChat.onRendered(function(){
     }, 300);
   };
 
-  var boxScrollThrottle = new throttleClass(500, 1000);
+  var boxScrollThrottle = new throttleClass(1000, 2000);
   var before = $_box.scrollTop();
   $_box.scroll(function () {
     boxScrollThrottle.run(function(){
-      if($('.box').scrollTop() === 0 && !is_loading.get()){
+      if (!$chat_box)
+        $chat_box = $('.msg-box .box');
+      if($chat_box.scrollTop() === 0 && !is_loading.get()){
         // if(slef.data.messages.count() >= list_limit.get())
         is_loading.set(true);
         list_limit.set(list_limit.get()+list_limit_val);
@@ -1587,10 +1599,11 @@ SimpleChat.onMqttMessage = function(topic, msg) {
       if (err)
         return console.log('insert msg error:', err);
       if (auto_to_bottom === true){
-        Meteor.setTimeout(function(){
-          $('.box').scrollTop($('.box ul').height());
-          console.log('==聊天自动滚动==');
-        }, 600);
+        setTimeout(scrollToBottom, 800);        
+        // Meteor.setTimeout(function(){
+        //   $('.box').scrollTop($('.box ul').height());
+        //   console.log('==聊天自动滚动==');
+        // }, 600);
       }
     });
   };
@@ -2008,8 +2021,8 @@ var scrollToBottom = function(){
   scrollToBottomThrottle.run(function(){
     if (!$chat_box)
       $chat_box = $('.msg-box .box');
-    $chat_box.smoothScroll('+=' + $body[0].scrollHeight);
-    // $chat_box.scrollTop($body[0].scrollHeight);
+    // $chat_box.smoothScroll('+=' + $chat_box.scrollHeight);
+    $chat_box.scrollTop($chat_box[0].scrollHeight);
   });
 };
 
@@ -2139,7 +2152,7 @@ Template._simpleChatToChatLayout.events({
   'click .new-btn-photo': function(){
     footerView.set('');
     hasFooterView.set(false);
-    setTimeout(scrollToBottom, 500);
+    setTimeout(scrollToBottom, 800);
 
     selectMediaFromAblum(9, function(cancel, res,currentCount,totalCount){
       if (cancel || !res)

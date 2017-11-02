@@ -9,12 +9,18 @@
       -webkit-user-select: none;
     }
     body{height: 100% !important;}
+    #_chat_box{
+      display: -webkit-box;display: -webkit-flex;display: -moz-box;display: -ms-flexbox;display: flex; 
+      -webkit-flex-direction: column;-moz-flex-direction: column;-ms-flex-direction: column;flex-direction: column;
+    }
+    #_chat_box > div{display: block;}
+    #_chat_box > div.box{-webkit-flex: 1;-moz-flex-flex: 1;-ms-flex-flex: 1;flex: 1;}
   </style>
   <style>
     {{timeStyles}}
   </style>
   <div class="simple-chat">
-    <div class="msg-box" flex="dir:top">
+    <div class="msg-box" id="_chat_box">
       <div class="header" style="position: relative; left: auto; right: auto; bottom: auto; top: auto;">
         <div class="left back"><i class="fa fa-angle-left fa-fw"></i></div>
         <script type="text/javascript">
@@ -65,7 +71,7 @@
         <div class="loading"></div>
         {{/if}}
       </div>
-      <div class="box" flex-box="1" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">
+      <div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">
         <ul class="group-list">
           {{> yield}}
         </ul>
