@@ -1348,6 +1348,23 @@ Template._simpleChatToChatItem.onRendered(function(){
 //     // sendMqttMsg(this.data);
 // });
 
+Template._simpleChatToChatItemText.onRendered(function(){
+  this.$('a').click(function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    try{cordova.InAppBrowser.open(e.currentTarget.href, '_blank');}
+    catch(e){window.open(e.currentTarget.href, '_blank');}
+    return false;
+  });
+});
+Template._simpleChatToChatItemText.helpers({
+  convertLink: function(str){
+    var html = str.convertLink("_blank");
+    // html = EMOJI.parseShortNAME(html);
+    return html;
+  }
+});
+
 Template._simpleChatToChatItem.helpers({
   convertLink: function(str){
     var html = str.convertLink("_blank");

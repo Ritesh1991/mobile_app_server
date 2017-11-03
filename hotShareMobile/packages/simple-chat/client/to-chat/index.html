@@ -128,6 +128,7 @@
   {{/each}}
 </template>
 
+<template name="_simpleChatToChatItemText">{{{convertLink this}}}</template>
 <template name="_simpleChatToChatItem">
   <!-- {{#if is_show_time _id}}
   <li id="{{_id}}" class="time">{{get_time _id}}</li>
@@ -198,7 +199,9 @@
       </div>
     {{else}}-->
       {{#if text}}
-        <div class="text">{{{convertLink text}}}
+        <div class="text">
+          {{> Template.dynamic template='_simpleChatToChatItemText' data=text }}
+          <!-- {{{convertLink text}}} -->
           {{#if is_me form.id}}
             {{#if status_sending send_status}}
             <div class="status"><img src="/loading.gif" /></div>
