@@ -439,11 +439,11 @@ Template.newEditor.events({
           post.ownerIcon = ownerIcon;
           Posts.insert(post, function(err, _id){
             Template.progressBar.__helpers.get('close')();
-            console.log(err);
-            if (err || !_id)
+            if (err || !_id){
+              console.log(err)
               Session.set('SavingDraftStatus',false);
               return PUB.toast('发表失败，请重试~');
-
+            }
             post._id = _id;
             post.browse = 1;
             insertPostOnTheHomePage(post._id, post);
