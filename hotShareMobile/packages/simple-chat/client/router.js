@@ -2077,7 +2077,9 @@ Template._simpleChatToChatLayout.events({
   },
   'click .from-submit-btn': function(e ,t){
     console.log('click .from-submit-btn');
-    $('.input-text').focus();
+    if($('.new-other-box').length === 0){
+      $('.input-text').focus();
+    }
     if ($('.input-text').val()){
       var $body = $('.msg-box .box');
       // $body.css({
@@ -2127,7 +2129,9 @@ Template._simpleChatToChatLayout.events({
         autosize.update($('#simple-chat-text'));
         setTimeout(scrollToBottom, 100);
         var $text = $('#simple-chat-text');
-        $('.input-text').val('');
+        if($('.new-other-box').length === 0){
+          $('.input-text').val('');
+        }
         if ($text.length > 0 && $text.get(0) && $text.get(0).updateAutogrow)
           $text.get(0).updateAutogrow();
         return false;
