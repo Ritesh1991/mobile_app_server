@@ -2004,7 +2004,7 @@ Template._groupMessageList.events({
     currentType = e.currentTarget.id;
     Session.set('bellType', currentType);
     return Router.go('/bellcontent');
-  },
+  }
   // 'click li': function(e){
   //   msgid = $(e.currentTarget).attr('msgid')
   //   MsgSession.update({'_id':msgid},{$set:{count:0}})
