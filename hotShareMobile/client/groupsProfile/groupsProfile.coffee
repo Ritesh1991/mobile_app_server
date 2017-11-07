@@ -97,7 +97,9 @@ if Meteor.isClient
       Session.set('msgToUserName', groupName);
       url = '/simple-chat/to/'+type+'?id='+groupid
       # remove popUpBox
-      $('.popUpBox, .b-modal').remove()
+      if PopUpBox
+        PopUpBox.close()
+        $('.popUpBox, .b-modal').remove()
       Router.go(url)
     'click .name': (event)->
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})

@@ -113,7 +113,7 @@ if Meteor.isClient
         Meteor.subscribe "comment",Session.get("postContent")._id
       ,500
   onUserProfile = ->
-    @PopUpBox = $('.popUpBox').bPopup
+    PopUpBox = $('.popUpBox').bPopup
       positionStyle: 'fixed'
       position: [0, 0]
       onClose: ->
@@ -945,6 +945,9 @@ if Meteor.isClient
           PUB.page('/allDrafts')
         else if Session.get('fromUserProfile') is true and Session.get('pageToProfile')
           Session.set("fromUserProfile",false)
+          if PopUpBox
+            PopUpBox.close()
+            $('.popUpBox, .b-modal').remove()
           onUserProfile()
         else
           PUB.postPageBack()

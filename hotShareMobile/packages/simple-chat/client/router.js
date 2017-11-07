@@ -1250,6 +1250,12 @@ Template._simpleChatToChatLayout.events({
   },
   'click .groupsProfile':function(e,t){
     var data = page_data;
+    history = Session.get('history_view') || [];
+    history.push({
+      view: 'groupsProfile/'+data.type+'/'+data.id,
+      scrollTop: document.body.scrollTop
+    });
+    Session.set('history_view',history);
     Router.go('/groupsProfile/'+data.type+'/'+data.id);
   },
   // 'click .userProfile':function(e,t){
