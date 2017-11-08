@@ -948,7 +948,11 @@ if Meteor.isClient
           if PopUpBox
             PopUpBox.close()
             $('.popUpBox, .b-modal').remove()
-          onUserProfile()
+          # onUserProfile()
+          setTimeout ->
+              onUserProfile()
+            ,500
+          PUB.postPageBack()
         else
           PUB.postPageBack()
         if Session.get("Social.LevelOne.Menu") is 'userProfile'
