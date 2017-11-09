@@ -113,7 +113,7 @@ if Meteor.isClient
         Meteor.subscribe "comment",Session.get("postContent")._id
       ,500
   onUserProfile = ->
-    PopUpBox = $('.popUpBox').bPopup
+    @PopUpBox = $('.popUpBox').bPopup
       positionStyle: 'fixed'
       position: [0, 0]
       onClose: ->
