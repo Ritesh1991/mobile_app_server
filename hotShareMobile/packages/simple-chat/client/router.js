@@ -1378,7 +1378,7 @@ Template._simpleChatToChatItem.helpers({
     return html;
   },
   format_pcomment:function(pcomment){
-    return pcomment.replace(/<(?:.|\n)*?>/gm, '');
+    return pcomment.replace(/<(?:.|\n)*?>|[&nbsp;]/gm, '');
   },
   formatPIndex:function(index){
     if(index == 0){
