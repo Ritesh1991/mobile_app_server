@@ -1,13 +1,18 @@
 @onUserProfile = ->
-  @PopUpBox = $('.popUpBox').bPopup
+  Session.set("momentsitemsLimit", 10)
+  if $('.popUpBox').length is 1
+    $('.popUpBox').fadeIn(300)
+  else
+    PopUpBox = $('.popUpBox').bPopup
+      positionStyle: 'fixed'
+      position: [0, 0]
+      console.log "in user profile page"
+      Session.set('displayUserProfileBox',true)
+@PopUpBox = $('.popUpBox').bPopup
     positionStyle: 'fixed'
     position: [0, 0]
     console.log "in user profile page"
     Session.set('displayUserProfileBox',true)
-    #onClose: ->
-    #  Session.set('displayUserProfileBox',false)
-    #onOpen: ->
-    #  Session.set('displayUserProfileBox',true)
     
 if Meteor.isClient
   xpull = null

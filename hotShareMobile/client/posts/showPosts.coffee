@@ -112,14 +112,6 @@ if Meteor.isClient
       setTimeout ()->
         Meteor.subscribe "comment",Session.get("postContent")._id
       ,500
-  onUserProfile = ->
-    @PopUpBox = $('.popUpBox').bPopup
-      positionStyle: 'fixed'
-      position: [0, 0]
-      onClose: ->
-        Session.set('displayUserProfileBox',false)
-      onOpen: ->
-        Session.set('displayUserProfileBox',true)
   @toNextPost = ->
     id = $('.newLayout_element').attr('id')
     console.log('ID' + id);

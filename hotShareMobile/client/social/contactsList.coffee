@@ -1,20 +1,6 @@
 if Meteor.isClient
   Meteor.startup ()->
     Session.setDefault 'newfriends_data',[]
-  onUserProfile = ->
-    #Router.go '/userProfilePage'
-    Session.set("momentsitemsLimit", 10)
-    #Meteor.subscribe("userfavouriteposts", Session.get("ProfileUserId"), Session.get("momentsitemsLimit"))
-    #Meteor.subscribe("userfavouriteposts", Session.get("ProfileUserId1"), Session.get("momentsitemsLimit"))
-    #Meteor.subscribe("userfavouriteposts", Session.get("ProfileUserId2"), Session.get("momentsitemsLimit"))
-    #Meteor.subscribe("userfavouriteposts", Session.get("ProfileUserId3"), Session.get("momentsitemsLimit"))
-    @PopUpBox = $('.popUpBox').bPopup
-      positionStyle: 'fixed'
-      position: [0, 0]
-      onClose: ->
-        Session.set('displayUserProfileBox',false)
-      onOpen: ->
-        Session.set('displayUserProfileBox',true)
   Template.contactsList.helpers
     follower:()->
       Follower.find({"userId":Meteor.userId()},{sort: {createdAt: -1}})
