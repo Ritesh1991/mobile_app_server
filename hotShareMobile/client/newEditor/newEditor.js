@@ -199,7 +199,7 @@ Template.newEditor.events({
     }
     $('#chooseAssociatedUser').modal('show');
   },
-  'click .save-post':function(e){
+  'click .save-post, click .drafts-btn':function(e){
     Session.set('SavingDraftStatus',true);
   },
   'click #save, click #drafts, click #modalPublish': function(e, t){
