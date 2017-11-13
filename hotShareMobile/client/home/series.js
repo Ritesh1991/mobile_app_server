@@ -297,6 +297,10 @@ Template.series.events({
   },
   'click .imageToolBtn': function(e,t){
     $('.mainImageTools').hide();
+    var title = $('#seriesTitle').val();
+    var seriesContent = Session.get('seriesContent');
+    seriesContent.title = title;
+    Session.set('seriesContent',seriesContent);
     if(e.currentTarget.id === 'useOfficalImage'){
       $('#seriesTitle').hide();
       $('.mainImagesList').show();
