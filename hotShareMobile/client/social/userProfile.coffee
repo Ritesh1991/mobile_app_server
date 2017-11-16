@@ -425,13 +425,14 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
-      history = Session.get("history_view") || []
-      history.push {
-          view: 'posts/'+Session.get('postContent')._id
-          scrollTop: document.body.scrollTop
-          parent: 'postItem'
-      }
-      Session.set "history_view", history
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'posts/'+Session.get('postContent')._id
+            scrollTop: document.body.scrollTop
+            parent: 'postItem'
+        }
+        Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -593,13 +594,14 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
-      history = Session.get("history_view") || []
-      history.push {
-          view: 'posts/'+Session.get('postContent')._id
-          scrollTop: document.body.scrollTop
-          parent: 'postItem'
-      }
-      Session.set "history_view", history
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'posts/'+Session.get('postContent')._id
+            scrollTop: document.body.scrollTop
+            parent: 'postItem'
+        }
+        Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -759,13 +761,14 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
-      history = Session.get("history_view") || []
-      history.push {
-          view: 'posts/'+Session.get('postContent')._id
-          scrollTop: document.body.scrollTop
-          parent: 'postItem'
-      }
-      Session.set "history_view", history
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'posts/'+Session.get('postContent')._id
+            scrollTop: document.body.scrollTop
+            parent: 'postItem'
+        }
+        Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -929,13 +932,14 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
-      history = Session.get("history_view") || []
-      history.push {
-          view: 'posts/'+Session.get('postContent')._id
-          scrollTop: document.body.scrollTop
-          parent: 'postItem'
-      }
-      Session.set "history_view", history
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'posts/'+Session.get('postContent')._id
+            scrollTop: document.body.scrollTop
+            parent: 'postItem'
+        }
+        Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
