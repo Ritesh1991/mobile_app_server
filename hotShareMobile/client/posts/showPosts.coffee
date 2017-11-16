@@ -947,11 +947,11 @@ if Meteor.isClient
           Session.set("fromUserProfile",false)
           if PopUpBox
             PopUpBox.close()
-            $('.popUpBox, .b-modal').remove()
+            $('.popUpBox, .b-modal').hide()
           # onUserProfile()
           setTimeout ->
               onUserProfile()
-            ,500
+            ,150
           PUB.postPageBack()
         else
           PUB.postPageBack()

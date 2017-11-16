@@ -12,7 +12,7 @@
 <template name="userProfilePage1">
   <div class="userProfile userProfileMarginTop">
     <div class="head">
-      <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+      <div id="userProfileBack" class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
       {{#if profile.profile.fullname}}
         <div>{{profile.profile.fullname}}</div>
       {{else}}
@@ -82,7 +82,7 @@
 <template name="userProfilePage2">
   <div class="userProfile userProfileMarginTop">
     <div class="head">
-      <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+      <div id='userProfileBack' class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
       {{#if profile.profile.fullname}}
         <div>{{profile.profile.fullname}}</div>
       {{else}}
@@ -152,7 +152,7 @@
 <template name="userProfilePage3">
   <div class="userProfile userProfileMarginTop">
     <div class="head">
-      <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+      <div id='userProfileBack' class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
       {{#if profile.profile.fullname}}
         <div>{{profile.profile.fullname}}</div>
       {{else}}
@@ -222,7 +222,7 @@
 <template name="userProfilePage">
     <div class="userProfile userProfileMarginTop">
         <div class="head">
-            <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+            <div id='userProfileBack' class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
           {{#if profile.profile.fullname}}
               <div>{{profile.profile.fullname}}</div>
           {{else}}

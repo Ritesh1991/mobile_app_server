@@ -395,7 +395,7 @@ if Meteor.isClient
     'click #unFollowAuthor': (e)->
       followId = Follower.findOne({followerId: Session.get("ProfileUserId1"), userId: Meteor.userId()})._id
       removeFollower(followId)
-    'click .userProfile .back':()->
+    'click #userProfileBack':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
         window.userProfileTrackerHandler = null
@@ -425,7 +425,13 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
-        
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'posts/'+Session.get('postContent')._id
+          scrollTop: document.body.scrollTop
+          parent: 'postItem'
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -557,7 +563,7 @@ if Meteor.isClient
     'click #unFollowAuthor': (e)->
       followId = Follower.findOne({followerId: Session.get("ProfileUserId2"), userId: Meteor.userId()})._id
       removeFollower(followId)
-    'click .userProfile .back':()->
+    'click #userProfileBack':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
         window.userProfileTrackerHandler = null
@@ -587,6 +593,13 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'posts/'+Session.get('postContent')._id
+          scrollTop: document.body.scrollTop
+          parent: 'postItem'
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -716,7 +729,7 @@ if Meteor.isClient
     'click #unFollowAuthor': (e)->
       followId = Follower.findOne({followerId: Session.get("ProfileUserId3"), userId: Meteor.userId()})._id
       removeFollower(followId)
-    'click .userProfile .back':()->
+    'click #userProfileBack':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
         window.userProfileTrackerHandler = null
@@ -746,6 +759,13 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'posts/'+Session.get('postContent')._id
+          scrollTop: document.body.scrollTop
+          parent: 'postItem'
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
@@ -879,7 +899,7 @@ if Meteor.isClient
     'click #unFollowAuthor': (e)->
       followId = Follower.findOne({followerId: Session.get("ProfileUserId"), userId: Meteor.userId()})._id
       removeFollower(followId)
-    'click .userProfile .back':()->
+    'click #userProfileBack':()->
       if window.userProfileTrackerHandler
         window.userProfileTrackerHandler.stop()
         window.userProfileTrackerHandler = null
@@ -909,6 +929,13 @@ if Meteor.isClient
       if PopUpBox
         PopUpBox.close()
         $('.popUpBox, .b-modal').hide()
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'posts/'+Session.get('postContent')._id
+          scrollTop: document.body.scrollTop
+          parent: 'postItem'
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         Session.set("Social.LevelOne.Menu",'contactsList')
         Session.set('fromUserProfile',true)
