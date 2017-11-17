@@ -162,6 +162,14 @@ Template.newLayoutContainer.events =
     if typeof PopUpBox isnt "undefined"
       PopUpBox.close()
       # $('.popUpBox, .b-modal').hide()
+    if Session.get('postContent')
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'posts/'+Session.get('postContent')._id
+          scrollTop: document.body.scrollTop
+          parent: 'postItem'
+      }
+      Session.set "history_view", history
     Session.set("readMomentsPost",true);
     Router.go '/posts/'+postId
 Template.newLayoutContainer.helpers =

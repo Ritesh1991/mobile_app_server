@@ -158,6 +158,7 @@ if Meteor.isClient
       $('.div_contactsList').css('display',"none")
       $('.div_discover').css('display',"block")
       $('.div_me').css('display',"none")
+      newLayout.initContainer('moments',Session.get("postContent")._id)
       document.body.scrollTop = $(".showPostsBox").height()
     'click .meBtn':->
       trackEvent("socialBar","Me")
