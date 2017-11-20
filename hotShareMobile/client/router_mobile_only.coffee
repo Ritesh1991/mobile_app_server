@@ -494,6 +494,15 @@ if Meteor.isClient
         this.render 'myPosts'
         Session.set 'channel','myPosts'
         return
+    Router.route '/userProfilePageOnly/:_id', {
+      action: ->
+        this.render 'userProfilePageOnly'
+        Meteor.subscribe("userinfo", this.params._id)
+        Meteor.subscribe("recentPostsViewByUser", this.params._id)
+        Meteor.subscribe("usersById", this.params._id)
+        Meteor.subscribe("userfavouriteposts", this.params._id, 10)
+        Session.set("profilePageUser",this.params._id)
+    }
     Router.route '/my_email',()->
       if Meteor.isCordova is true
         this.render 'my_email'

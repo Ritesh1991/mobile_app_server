@@ -58,11 +58,10 @@ if Meteor.isClient
       # PUB.page('/simpleUserProfile/'+event.currentTarget.id);
       _id = event.currentTarget.id
       console.log('i clicked a chat userICON')
-      Session.set("ProfileUserId1", _id)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", _id)
-      Meteor.subscribe("recentPostsViewByUser", _id)
-
-      Session.set('pageToProfile',Router.current().url)
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + _id

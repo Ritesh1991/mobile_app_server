@@ -119,21 +119,23 @@ if Meteor.isClient
       userId = e.currentTarget.id
       console.log 'i clicked a icon'
       console.log "owner is: " + userId
-      Session.set("ProfileUserId1", userId)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", userId)
-      Meteor.subscribe("recentPostsViewByUser", userId)
-      Session.set('pageToProfile','/followers')
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'followers'
+            scrollTop: $(window).scrollTop()
+        }
+        Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + userId
     'click .contentList .userName': (e)->
       userId = e.currentTarget.id
       console.log 'i clicked a icon'
       console.log "owner is: " + userId
-      Session.set("ProfileUserId1", userId)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", userId)
-      Meteor.subscribe("recentPostsViewByUser", userId)
-      Session.set('pageToProfile','/followers')
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'followers'
+            scrollTop: $(window).scrollTop()
+        }
+        Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + userId

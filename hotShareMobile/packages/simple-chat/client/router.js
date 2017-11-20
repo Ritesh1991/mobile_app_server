@@ -1193,10 +1193,6 @@ sendMqttMsg = function(){
 Template._simpleChatToChatLayout.events({
   'click .ta div.icon': function(e){
     console.log('i clicked a chat userICON');
-    Session.set("ProfileUserId1", this.form.id);
-    Session.set("currentPageIndex",-1);
-    Meteor.subscribe("usersById", this.form.id);
-    Meteor.subscribe("recentPostsViewByUser", this.form.id);
     var to_id = '';
     if (this.to_type === 'user') {
       to_id = this.form.id
@@ -1204,9 +1200,15 @@ Template._simpleChatToChatLayout.events({
     else{
       to_id = this.to.id
     }
-    Session.set('pageToProfile',AppConfig.path + '/to/'+this.to_type+'?id='+to_id);
-    Session.set('pageScrollTop',$(window).scrollTop());
-    onUserProfile()
+    // Session.set('pageToProfile',AppConfig.path + '/to/'+this.to_type+'?id='+to_id);
+    var backpath = AppConfig.path + '/to/'+this.to_type+'?id='+to_id;
+    var history = Session.get("history_view") || [];
+    history.push({
+        view: backpath.substr(1),
+        scrollTop: $(window).scrollTop()
+    });
+    Session.set("history_view", history);
+    Router.go('/userProfilePageOnly/' + this.form.id);
   },
   'click #subscribeUser': function(e){
     var user  = Meteor.user();

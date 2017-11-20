@@ -96,10 +96,6 @@ if Meteor.isClient
       groupName = Template.groupInformation.__helpers.get('groupName')()
       Session.set('msgToUserName', groupName);
       url = '/simple-chat/to/'+type+'?id='+groupid
-      # remove popUpBox
-      if PopUpBox
-        PopUpBox.close()
-        $('.popUpBox, .b-modal').remove()
       Router.go(url)
     'click .name': (event)->
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
@@ -298,20 +294,16 @@ if Meteor.isClient
     'click .userItem': (event)->
       event.preventDefault()
       event.stopPropagation()
-      #Session.set("groupsProfileMenu","setGroupname")
       console.log event.currentTarget.id
       _id = event.currentTarget.id
-      # PUB.page('/simpleUserProfile/'+event.currentTarget.id);
       console.log('i clicked a chat userICON')
-      Session.set("ProfileUserId1", _id)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", _id)
-      Meteor.subscribe("recentPostsViewByUser", _id)
-
-      Session.set('pageToProfile',Router.current().url)
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
-
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + _id
   Template.setGroupname.helpers
     placeholderText:()->
       if Session.equals('fromCreateNewGroups',true)

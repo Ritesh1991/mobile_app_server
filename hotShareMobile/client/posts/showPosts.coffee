@@ -832,15 +832,15 @@ if Meteor.isClient
         else
           window.location.href=Session.get("postContent").fromUrl
     'click .post-user':->
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("userinfo", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
-      # $('.showUserProfile').fadeIn()
-      # $('.showBgColor').fadeOut()
+      if Session.get('postContent')
+        history = Session.get("history_view") || []
+        history.push {
+            view: 'posts/'+Session.get('postContent')._id
+            scrollTop: document.body.scrollTop
+            parent: 'postItem'
+        }
+        Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
     "click .showPostsFollowMe span a":->
       if Meteor.isCordova
         cordova.plugins.clipboard.copy('故事贴')
@@ -945,13 +945,6 @@ if Meteor.isClient
           PUB.page('/allDrafts')
         else if Session.get('fromUserProfile') is true and Session.get('pageToProfile')
           Session.set("fromUserProfile",false)
-          if PopUpBox
-            PopUpBox.close()
-            $('.popUpBox, .b-modal').hide()
-          # onUserProfile()
-          setTimeout ->
-              onUserProfile()
-            ,150
           PUB.postPageBack()
         else
           PUB.postPageBack()

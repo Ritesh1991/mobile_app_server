@@ -4,11 +4,6 @@
     position: [0, 0]
     console.log "in user profile page"
     Session.set('displayUserProfileBox',true)
-    #onClose: ->
-    #  Session.set('displayUserProfileBox',false)
-    #onOpen: ->
-    #  Session.set('displayUserProfileBox',true)
-    
 if Meteor.isClient
   xpull = null
   loadMoreHandler = null
@@ -98,20 +93,20 @@ if Meteor.isClient
       # console.log 'i clicked a icon'
       # console.log "owner is: " + this.owner
       prepareToEditorMode()
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      Session.set('pageToProfile','/')
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'home'
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
       # console.log 'i clicked a name'
       prepareToEditorMode()
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      Session.set('pageToProfile','/')
-      Session.set('pageScrollTop',$(window).scrollTop())
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: 'home'
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner

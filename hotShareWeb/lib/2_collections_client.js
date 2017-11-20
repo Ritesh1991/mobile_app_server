@@ -28,6 +28,7 @@ if(Meteor.isClient){
     var MYPOSTS_ITEMS_INCREMENT = 15;
     var MOMENTS_ITEMS_INCREMENT = 10;
     var FAVOURITE_POSTS_INCREMENT = 10;
+    var FAVOURITE_ONLY_POSTS_INCREMENT = 10;
     var POSTFRIENDS_ITEMS_INCREMENT = 10;
     var SERIES_ITEMS_INCREMENT = 10;
     var SUGGEST_POSTS_INCREMENT = 15;
@@ -40,6 +41,7 @@ if(Meteor.isClient){
     Session.setDefault('mypostsitemsLimit', MYPOSTS_ITEMS_INCREMENT);
     Session.setDefault('momentsitemsLimit', MOMENTS_ITEMS_INCREMENT);
     Session.setDefault('favouritepostsLimit', FAVOURITE_POSTS_INCREMENT);
+    Session.setDefault('favoritePostsOnlyLimit', FAVOURITE_ONLY_POSTS_INCREMENT);
     Session.setDefault('favouritepostsLimit1', FAVOURITE_POSTS_INCREMENT);
     Session.setDefault('favouritepostsLimit2', FAVOURITE_POSTS_INCREMENT);
     Session.setDefault('favouritepostsLimit3', FAVOURITE_POSTS_INCREMENT);
@@ -407,6 +409,25 @@ if(Meteor.isClient){
     Tracker.autorun(function() {
         if (Session.get("ProfileUserId1")) {
             Meteor.subscribe('userfavouriteposts', Session.get("ProfileUserId1"), Session.get('favouritepostsLimit1'), {
+                onReady: function(){
+                    console.log('Favourite Posts Collection loaded');
+                    window.favouritepostsCollection1_getmore = 'done';
+                    Session.set('favouritepostsCollection1','loaded');
+                    Session.set('favouritepostsCollection1_getmore','done');
+                },
+                onError: function(){
+                    console.log('Favourite Posts Collection Error');
+                    window.favouritepostsCollection1_getmore = 'done';
+                    Session.set('favouritepostsCollection1','loaded');
+                    Session.set('favouritepostsCollection1_getmore','done');
+                }
+            });
+        }
+    });
+
+    Tracker.autorun(function() {
+        if (Session.get("profilePageUser")) {
+            Meteor.subscribe('userfavouriteposts', Session.get("profilePageUser"), Session.get('favoritePostsOnlyLimit'), {
                 onReady: function(){
                     console.log('Favourite Posts Collection loaded');
                     window.favouritepostsCollection1_getmore = 'done';

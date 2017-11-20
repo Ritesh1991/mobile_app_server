@@ -180,8 +180,8 @@ pages = ['/user', newBell, '/search']
           if postPageArr.length is 0
             $(window).children().off()
             $(window).unbind('scroll')
-            $('.showPosts').addClass('animated ' + animateOutUpperEffect)
-            $('.showPostsFooter').addClass('animated ' + animateOutUpperEffect)
+            # $('.showPosts').addClass('animated ' + animateOutUpperEffect)
+            # $('.showPostsFooter').addClass('animated ' + animateOutUpperEffect)
             setTimeout ()->
               PUB.back()
               if Session.get("Social.LevelOne.Menu") is 'userProfile'
