@@ -165,9 +165,8 @@ Template.newLayoutContainer.events =
     if Session.get('postContent')
       history = Session.get("history_view") || []
       history.push {
-          view: 'posts/'+Session.get('postContent')._id
+          view: Router.current().url.substr(1)
           scrollTop: document.body.scrollTop
-          parent: 'postItem'
       }
       Session.set "history_view", history
     Session.set("readMomentsPost",true);

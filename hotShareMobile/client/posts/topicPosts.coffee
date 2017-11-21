@@ -74,20 +74,23 @@ if Meteor.isClient
       Session.set 'FollowPostsId',this._id
       return
     'click .footer .icon': (e)->
-      console.log 'i clicked a icon'
-      console.log "owner is: " + this.owner
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      prepareToEditorMode()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
       console.log 'i clicked a name'
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
 
   Template.topicFollowPosts.onCreated ()->
     Meteor.subscribe("topics")
@@ -164,20 +167,21 @@ if Meteor.isClient
       Session.set 'followTopicNow',this._id
       return
     'click .footer .icon': (e)->
-      console.log 'i clicked a icon'
-      console.log "owner is: " + this.owner
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
-      console.log 'i clicked a name'
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("usersById", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
 
   getFollowerArr = ()->
     userId = Meteor.userId()
@@ -275,17 +279,18 @@ if Meteor.isClient
       # Session.set 'FollowPostsId',this._id
       return
     'click .footer .icon': (e)->
-      console.log 'i clicked a icon'
-      console.log "owner is: " + this.owner
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("userinfo", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
-      console.log 'i clicked a name'
-      Session.set("ProfileUserId1", this.owner)
-      Session.set("currentPageIndex",-1)
-      Meteor.subscribe("userinfo", this.owner)
-      Meteor.subscribe("recentPostsViewByUser", this.owner)
-      onUserProfile()
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
+      Router.go '/userProfilePageOnly/' + this.owner

@@ -91,12 +91,13 @@ if Meteor.isClient
       }
       Meteor.call('updateMuteNotification', jsondata)
     'click #groupsProfilePageback':(event)->
-      groupid = Session.get('groupsId')
-      type = Session.get('groupsType')
-      groupName = Template.groupInformation.__helpers.get('groupName')()
-      Session.set('msgToUserName', groupName);
-      url = '/simple-chat/to/'+type+'?id='+groupid
-      Router.go(url)
+      # groupid = Session.get('groupsId')
+      # type = Session.get('groupsType')
+      # groupName = Template.groupInformation.__helpers.get('groupName')()
+      # Session.set('msgToUserName', groupName);
+      # url = '/simple-chat/to/'+type+'?id='+groupid
+      # Router.go(url)
+      PUB.back()
     'click .name': (event)->
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
 
