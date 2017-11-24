@@ -1,20 +1,9 @@
 <template name="addTopicComment">
 <style type="text/css">
-  #publishto {
-    /*position: absolute;*/
-    /*top: 420px;*/
-    /*left: 2%;*/
-    /*right: 2%;*/
-  }
 
   #publishto .publish-readers-list {
     list-style: none;
     padding-left: 0;
-  }
-
-  #publishto .publish-reader-group {
-    /*border-bottom: 1px solid #ededed;*/
-    /*margin-bottom: 10px;*/
   }
 
   #publishto .publish-reader-group label.selected {
@@ -78,6 +67,12 @@
           &nbsp;
           </span>
       {{/each}}
+      {{#if isShowAllowComment}}
+      <div id="allowComment">
+        <span class="title">允许评论</span>
+        <input id="allowCommentInput" checked ='checked' name="allowCommentInput" type="checkbox" />
+      </div>
+      {{/if}}
       {{#if isShowPublish}}
       <div id="pubdivide"></div> 
       <ul  class="publish-readers-list1" style="padding:0; margin: 10px auto; text-align:center">

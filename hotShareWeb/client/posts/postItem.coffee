@@ -433,12 +433,15 @@ if Meteor.isClient
       else
         calcTextItemStyle(this.layout)
     isTextLength:(text)->
-      if(text.trim().length>20)
-        return true
-      else if  text.split(/\r\n|\r|\n/).length > 1
-        return true
-      else
+      if Session.get("postContent").allowComment is false
         return false
+      else 
+        if(text.trim().length>20)
+          return true
+        else if  text.split(/\r\n|\r|\n/).length > 1
+          return true
+        else
+          return false
     pcIndex:->
       pcindex = parseInt(Session.get("pcurrentIndex"))
       index = parseInt(this.index)

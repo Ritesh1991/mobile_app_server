@@ -57,6 +57,8 @@ if Meteor.isClient
       # return true
     has_share_push: ()->
       return Meteor.user().profile and Meteor.user().profile.web_follower_count and Meteor.user().profile.web_follower_count > 0
+    isShowAllowComment: ()->
+      return isShowAllowComment
 
   Template.addTopicComment.events
     "click #share-follower": ()->
@@ -117,6 +119,13 @@ if Meteor.isClient
         Session.set('postContent',post)
         Router.go('/draftposts/'+topicPostId+'?server_import=true')
     "click #save, click #publish":(event, t)->
+       allowComment = document.getElementById("allowCommentInput").checked
+       console.log 'allowComment is ' + allowComment
+       newAllowComment = true
+       if allowComment is false
+        newAllowComment = false
+       else
+        newAllowComment = true
        if Template.addTopicComment.__helpers.get('is_server_import')() is true
          console.log('click #publish is_server_import is true')
          postId = Session.get("TopicPostId")
@@ -125,6 +134,7 @@ if Meteor.isClient
             publish:true,
             isReview:true,
             editorVersion: "simpleEditor",
+            allowComment: newAllowComment,
             createdAt: new Date()
            }
          else
@@ -132,6 +142,7 @@ if Meteor.isClient
             publish:true,
             isReview:true,
             editorVersion: "fullEditor",
+            allowComment: newAllowComment,
             createdAt: new Date()
            }
          Posts.update(
@@ -153,11 +164,6 @@ if Meteor.isClient
          return
        else
          $save.html($save.html() + '<i style="font-size:18px; margin-left: 10px;" class="fa fa-refresh fa-spin fa-3x fa-fw"></i>')
-         # return
-
-      #  if($('#share-follower').prop('checked'))
-      #    Meteor.call('sendEmailByWebFollower', Session.get('TopicPostId'), 'push')
-
        topicPostId = Session.get("TopicPostId")
        Meteor.defer ()->
           TopicTitle = Session.get("TopicTitle")
@@ -231,18 +237,6 @@ if Meteor.isClient
                 if haveSpace > 0
                     topic = topic[...haveSpace]
                 #console.log topic
-
-                #  if Topics.find({text:topic}).count() > 0
-                #     topicData = Topics.find({text:topic}).fetch()[0]
-                #     topicId = topicData._id
-                #     #console.log topicData._id
-                #  else
-                #     topicId = Topics.insert {
-                #       type:"topic",
-                #       text:topic,
-                #       imgUrl: ""
-                #     }
-                #console.log "topicId:" + topicId
                 if user
                   if user.profile.fullname
                     username = user.profile.fullname
@@ -268,23 +262,6 @@ if Meteor.isClient
                   createdAt: new Date()
                 }
                 Meteor.call('updateTopicPostsAfterComment', topicPostId, topic, topicPostObj)
-                #  unless TopicPosts.findOne({postId:topicPostId,topicId: topicId})
-                #    TopicPosts.insert {
-                #      postId:topicPostId,
-                #      title:TopicTitle,
-                #      addontitle:TopicAddonTitle,
-                #      mainImage:TopicMainImage,
-                #      heart:0,
-                #      retweet:0,
-                #      comment:1,
-                #      owner:userId,
-                #      ownerName:username,
-                #      ownerIcon:userIcon,
-                #      createdAt: new Date(),
-                #      topicId: topicId
-                #    }
-          #added for reader group
-
        groups = []
        #  $(".publish-reader-group").find("input:checked").each(()->
        t.$(".waterfall .select").each(()->
@@ -348,19 +325,6 @@ if Meteor.isClient
       $('.newLayout_element').imagesLoaded ()->
         Session.set('publish-readers-list-loading',false)
         handler.wookmark(options)
-
-  # Template.publishReadersList.helpers
-    # groups: ()->
-    #   # ReaderPopularPosts.find({userId: Meteor.userId()})
-    #   # TopicPosts.find({},{limit: 6})
-    #   # posts = []
-    #   # ReaderPopularPosts.find({}).forEach (item)->
-    #   #   item.mainImage = Posts.findOne({_id: item.postId}).mainImage
-    #   #   posts.push(item)
-    #   # return posts
-    #   ReaderPopularPosts.find({})
-    # isLoading: ()->
-    #   return Session.get('publish-readers-list-loading')
 
   Template.publishReadersList.events
     'click .newLayout_element': (e)->

@@ -453,11 +453,9 @@ if Meteor.isClient
           $('head link[tag=m3u8]').remove()
         if $('head script[tag=mp4]').length > 0
           return true
-
         $('head').append('<link tag="mp4" href="http://data.tiegushi.com/video-js.min.css" rel="stylesheet">')
         $('head').append('<script tag="mp4">token = "7gFCGdcqXw4mSc252"; trafficDisplay = false; </script>')
         $('head').append('<script tag="mp4" src="http://data.tiegushi.com/bundle-raidcdn-mini-2.21.4.js"></script>')
-
       return true
     myselfClickedUp:->
       userId = Meteor.userId()
@@ -478,12 +476,15 @@ if Meteor.isClient
       else
         calcTextItemStyle(this.layout)
     isTextLength:(text)->
-      if(text.trim().length>20)
-        return true
-      else if  text.split(/\r\n|\r|\n/).length > 1
-        return true
-      else
+      if Session.get("postContent").allowComment is false
         return false
+      else 
+        if(text.trim().length>20)
+          return true
+        else if  text.split(/\r\n|\r|\n/).length > 1
+          return true
+        else
+          return false
     pcIndex:->
       pcindex = Session.get("pcurrentIndex")
       if this.index is pcindex
