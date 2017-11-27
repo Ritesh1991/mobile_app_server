@@ -238,6 +238,8 @@ if(Meteor.isCordova){
             //     })
             // };
             sendMqttGroupMessage=function(group_id, message, callback) {
+                // 记录在群组中的最后发言时间
+                Meteor.call('update_latest_active_time', group_id, message.form.id);
                 sendMqttMessage("/t/msg/g/" + group_id, message, callback);
             };
 
@@ -398,6 +400,8 @@ if(Meteor.isCordova){
         })
     };
     sendMqttGroupMessage=function(group_id, message, callback) {
+        // 记录在群组中的最后发言时间
+        Meteor.call('update_latest_active_time', group_id, message.form.id);
         sendMqttMessage("/t/msg/g/" + group_id, message, callback);
     };
     sendMqttUserMessage=function(user_id, message, callback) {

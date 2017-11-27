@@ -228,6 +228,21 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
 SimpleChat.upsertGroup = upsertGroup;
 
 Meteor.methods({
+  'update_latest_active_time': function(group_id, user_id){
+    console.log('update_latest_active_time');
+    GroupUsers.update({
+      group_id: group_id,
+      user_id: user_id
+    },{
+      $set: {latest_active_time: new Date()}
+    }, function(err, res){
+      if(err){
+        console.log('update_latest_active_time Err:'+ err);
+      } else {
+        console.log('update_latest_active_time res = '+ res);
+      }
+    })
+  },
   'upMsgSess': function(doc){
     if (doc.sessionType === 'group'){
       var group = Groups.findOne({_id: doc.toUserId});

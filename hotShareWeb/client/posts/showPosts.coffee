@@ -265,6 +265,12 @@ if Meteor.isClient
           $("html,body").animate({scrollTop: $('#'+pub_pcom+' .pcomment').offset().top-50}, 300);
       600
     )
+    # 设置读者最后一次活跃时间， 关联到groupUsers
+    console.log(Session.get('postContent'))
+    if Session.get('postContent') and Session.get('postContent').owner
+      group_id = Session.get('postContent').owner+ '_group'
+      Meteor.call('update_latest_active_time', group_id, Meteor.userId())
+
   Template.showPosts.onRendered ->
     Meteor.call 'getHottestPosts', (err,res)->
       unless err

@@ -340,6 +340,13 @@ if Meteor.isClient
       $('.div_me').css('display',"none")
       document.body.scrollTop = $(".showPostsBox").height()
       Session.set('formSimpleChatPage',false)
+    
+    # 设置读者最后一次活跃时间， 关联到groupUsers
+    console.log(Session.get('postContent'))
+    if Session.get('postContent') and Session.get('postContent').owner
+      group_id = Session.get('postContent').owner+ '_group'
+      Meteor.call('update_latest_active_time', group_id, Meteor.userId())
+
   Template.showPosts.onDestroyed ->
     document.body.scrollTop = 0
     Session.set("postPageScrollTop", 0)
