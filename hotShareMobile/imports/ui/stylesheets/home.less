@@ -8,7 +8,8 @@ body{background-color: #111;min-height: 100%;height: auto;color: #fff}
 .home .content #list .footer .right{float: right;color: gray;}
 .home .content #list .footer .right i{margin: 0 2px}
 .home .swiper-container{
-	position: absolute;
+	// position: absolute;
+	position: fixed;
 	left: 0;
 	color: #333;
 	top: 40px;
@@ -18,23 +19,50 @@ body{background-color: #111;min-height: 100%;height: auto;color: #fff}
 	overflow: hidden;
 	background: #fdfdfc;
 	box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+	transition: top .25s;
 	#showFollowTopics{
 		position: absolute;
-		top: 8px;
+		top: 0px;
 		right: 0px;
 		font-size: 25px;
 		z-index: 666666666;
-		background: #fff;
-		padding: 0 8px;
+		background: #eee;
+		padding: 0;
 		height: 40px;
+		width: 40px;
 		text-align: center;
+	}
+	#showFollowTopics:before,#showFollowTopics:after{
+		content: "";
+		position: absolute;
+		background: #39a8fe;
+		cursor: pointer;
+	}
+	#showFollowTopics:before{
+		width: 20px;
+		height: 2px;
+		top: 19px;
+		left: 10px;
+	}
+	#showFollowTopics:after{
+		width: 2px;
+		height: 20px;
+		top: 10px;
+		left: 19px;
 	}
 	.swiper-wrapper{
 		transition-duration: 0ms;
 		transform: translate3d(0px, 0px, 0px);
+		border-bottom: 2px solid #eee;
+		box-sizing: border-box;
 		.swiper-slide{
 			padding: 0 20px;
 			width: auto;
+		}
+		.active-topic{
+			color: #39a8fe;
+			border-bottom: 2px solid #39a8fe;
+			height: 40px;
 		}
 	}
 }
@@ -115,4 +143,8 @@ body.modal-open {overflow: auto;}
 		    text-align: center;
 		}
     }
+}
+
+.topic-lists-show-head{
+	top: 0px !important;
 }

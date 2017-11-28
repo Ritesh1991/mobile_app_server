@@ -15,13 +15,14 @@
       {{#if withFollowTopic}}
       <div class="swiper-container">
         <span id="showFollowTopics" class="fa fa-plus"></span>
-        <div class="swiper-wrapper">
+        <div class="swiper-wrapper topic-lists-wrapper">
           {{#if myfollow}}
-          <div class="swiper-slide" id="my-follow">我的关注</div>
+          <div class="swiper-slide {{activeTopicClass myfollow}}" id="my-follow">我的关注</div>
           {{/if}}
           {{#each topiclist}}
-          <div class="swiper-slide" id="{{_id}}">{{text}}</div>
+          <div class="swiper-slide {{activeTopicClass _id}}" id="{{_id}}">{{text}}</div>
           {{/each}}
+          <div class="swiper-slide" style="width: 40px"></div>
         </div>
       </div>
       {{/if}}

@@ -105,10 +105,25 @@ if Meteor.isClient
         Session.set 'followTopicNow', Topics.findOne({'type':'follow',"userId":Meteor.userId()}).followId
       else
         Session.set 'followTopicNow', Topics.findOne({"isFollowTopic":true},{sort: {index: 1}})._id
-
+ 
+  scrollEventCallback = ()->
+    st = $(window).scrollTop()
+    if st <= 40
+      $('.home .swiper-container').removeClass('topic-lists-show-head')
+    if Session.equals('topicPostsCollection','loading')
+      window.lastTopicPostsScroll = st
+      return
+    if window.lastTopicPostsScroll - st > 5
+      $('.home .swiper-container').removeClass('topic-lists-show-head')
+    if window.lastTopicPostsScroll - st < -5
+      $('.home .swiper-container').addClass('topic-lists-show-head')
+    window.lastTopicPostsScroll = st
   Template.home.onCreated ()->
+    Session.set('topicsIsReady', false)
     if withFollowTopic
-      Meteor.subscribe("registerTopic")
+      Meteor.subscribe("registerTopic",()->
+        Session.set('topicsIsReady', true)
+      )
       Meteor.subscribe("followTopicUser")
     
   Template.home.helpers
@@ -129,6 +144,10 @@ if Meteor.isClient
         return Topics.find({'type':'follow',"userId":Meteor.userId()})
       else
         return Topics.find({"isFollowTopic":true},{sort: {index: 1}})
+    activeTopicClass:(topicId)->
+      if Session.equals('followTopicNow', topicId)
+        return 'active-topic'
+      return ''
     withFollowTopic:()->
       return withFollowTopic
     wasLogon:()->
@@ -169,13 +188,17 @@ if Meteor.isClient
   Template.home.rendered=->
     flag = window.localStorage.getItem("firstLog") == 'first'
     Session.set('isFlag', !flag)
-    if withFollowTopic
-      getTopicFollowId()
-      mySwiper = new Swiper '.swiper-container', {
-        freeMode: true,
-        slidesPerView: 'auto',
-        freeModeSticky: true
-      }
+    Tracker.autorun((t)->
+      if withFollowTopic and Session.get('topicsIsReady')
+        t.stop()
+        getTopicFollowId()
+        mySwiper = new Swiper '.swiper-container', {
+          freeMode: true,
+          slidesPerView: 'auto',
+          freeModeSticky: true
+        }
+        $(window).scroll(scrollEventCallback)
+    )
     checkNewVersion()
       
 
