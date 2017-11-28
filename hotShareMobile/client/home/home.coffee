@@ -110,9 +110,6 @@ if Meteor.isClient
     st = $(window).scrollTop()
     if st <= 40
       $('.home .swiper-container').removeClass('topic-lists-show-head')
-    if Session.equals('topicPostsCollection','loading')
-      window.lastTopicPostsScroll = st
-      return
     if window.lastTopicPostsScroll - st > 5
       $('.home .swiper-container').removeClass('topic-lists-show-head')
     if window.lastTopicPostsScroll - st < -5
