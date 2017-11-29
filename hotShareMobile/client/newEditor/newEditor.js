@@ -151,6 +151,9 @@ Template.newEditor.helpers({
 })
 
 Template.newEditor.events({
+  'click #editHelp': function(e){
+    return Tips.popPage('editorInstrucations',{editor:'simple'});
+  },
   'click .simpleEditorEditingTIP':function (){
     target = '#'+Session.get('targetBeforeEditorEditingTIP')+' .text';
     localStorage.setItem('showSimpleEditorEditingTIP','false');

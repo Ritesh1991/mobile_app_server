@@ -6,6 +6,9 @@
                 <textarea id="title" name="textareatitle" rows="1" class="title" placeholder="{{_ 'mainTitle'}}"  oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; ">{{draftTitles.title}}</textarea>
                 <textarea id="addontitle" name="textareatitle" rows="1" class="addontitle" placeholder="{{_ 'subTitle'}}" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; ">{{draftTitles.addontitle}}</textarea>
             </header>
+            <div class="fullEditHelp" onclick="Tips.popPage('editorInstrucations',{editor:'full'});">
+                <div><i class="fa fa-question fa-fw"></i></div>
+            </div>
         </div>
         <div id="crop{{mainImage._id}}" class="crop" style="z-index: 12; display:none">
             <div id="default{{mainImage._id}}" class="default"></div>
