@@ -243,14 +243,20 @@ if Meteor.isClient
               saveHotPosts()
             $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
             $('.importInformationBar').remove()
-            Tips.show('_tips_addPost')
+            if localStorage.getItem('_tips__tips_addPost')
+              Tips.show('_tips_importPost')
+            else
+              Tips.show('_tips_addPost')
           '提示'
           ['暂不','保存']
         )
         return
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
       $('.importInformationBar').remove()
-      Tips.show('_tips_addPost')
+      if localStorage.getItem('_tips__tips_addPost')
+        Tips.show('_tips_importPost')
+      else
+        Tips.show('_tips_addPost')
       if Session.get('persistentLoginStatus') and !Meteor.userId() and !Meteor.loggingIn()
         window.plugins.toast.showLongCenter("登录超时，需要重新登录~");
         e.stopPropagation()
