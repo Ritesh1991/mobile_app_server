@@ -19,9 +19,15 @@
           {{#if myfollow}}
           <div class="swiper-slide {{activeTopicClass myfollow}}" id="my-follow">我的关注</div>
           {{/if}}
+          {{#if haveTopicsFollow}}
+          {{#each topiclist}}
+          <div class="swiper-slide {{activeTopicClass followId}}" id="{{followId}}">{{text}}</div>
+          {{/each}}
+          {{else}}
           {{#each topiclist}}
           <div class="swiper-slide {{activeTopicClass _id}}" id="{{_id}}">{{text}}</div>
           {{/each}}
+          {{/if}}
           <div class="swiper-slide" style="width: 40px"></div>
         </div>
       </div>

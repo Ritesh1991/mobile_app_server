@@ -141,6 +141,12 @@ if Meteor.isClient
         return Topics.find({'type':'follow',"userId":Meteor.userId()})
       else
         return Topics.find({"isFollowTopic":true},{sort: {index: 1}})
+    haveTopicsFollow:()->
+      count = Topics.find({'type':'follow',"userId":Meteor.userId()}).count()
+      if count > 0
+        return true
+      else
+        return false
     activeTopicClass:(topicId)->
       if Session.equals('followTopicNow', topicId)
         return 'active-topic'
