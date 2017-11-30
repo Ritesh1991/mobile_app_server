@@ -157,6 +157,18 @@ if Meteor.isClient
          #Delete the Drafts
          Drafts.remove({})
          TempDrafts.remove({})
+       else
+         postId = Session.get("TopicPostId")
+         Posts.update(
+            {
+              _id:postId
+            },
+            {
+              $set: {
+                allowComment: newAllowComment
+              }
+            }
+          )
        if topicsCountIsBeyond(Session.get("comment"))
         return
        $save = $(event.currentTarget)
