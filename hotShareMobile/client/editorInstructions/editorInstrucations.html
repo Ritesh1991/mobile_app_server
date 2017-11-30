@@ -6,7 +6,19 @@
   <div class="container">
     <div class="editorInstrucations swiper-container">
       <div class="swiper-wrapper">
-      {{#each simpleLists}}
+      {{#if isSimpleEditor}}
+        {{#each simpleLists}}
+          <div class="swiper-slide">
+            <div>
+              <h2>{{text}}</h2>
+              <div class="imgContainer">
+                <img src="{{imgUrl}}"/>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        {{#each fullLists}}
         <div class="swiper-slide">
           <div>
             <h2>{{text}}</h2>
@@ -15,7 +27,17 @@
             </div>
           </div>
         </div>
-      {{/each}}
+        {{/each}}
+      {{/if}}
+        <div class="swiper-slide">
+          <div>
+            <div class="imgContainer">
+              <img class="tip-complete" src="/editor_help/e_help_done.png"/>
+              <p>已完成全部步骤</p>
+            </div>
+            <div id="backToFirstStep">重新阅读</div>
+          </div>
+        </div>
       </div>
       <!-- 如果需要导航按钮 -->
       <div class="swiper-button-prev"></div>
