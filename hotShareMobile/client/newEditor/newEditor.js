@@ -209,7 +209,13 @@ Template.newEditor.events({
   },
   'click #save, click #drafts, click #modalPublish': function(e, t){
     Session.set('terminateUpload', false);
-    if (e.currentTarget.id === 'drafts')
+    currentTargetId = e.currentTarget.id;
+    if(currentTargetId === 'modalPublish'){
+      var obj = document.getElementById(currentTargetId);
+      obj.innerHTML = '发表中...';
+      obj.id = 'newbtnId';
+    }
+    if (currentTargetId === 'drafts')
       Session.set("isDelayPublish", false);
     else
       Session.set("isDelayPublish", true);
@@ -219,7 +225,7 @@ Template.newEditor.events({
     var owner = Meteor.userId();
     var ownerName = Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username;
     var ownerIcon = Meteor.user().profile && Meteor.user().profile.icon ? Meteor.user().profile.icon : '/userPicture.png';
-    if (e.currentTarget.id === 'modalPublish'){
+    if (currentTargetId === 'modalPublish'){
       owner = $('#chooseAssociatedUser .modal-body dt.active').attr('userId');
       ownerName = $('#chooseAssociatedUser .modal-body dt.active').next().text().trim();
       ownerIcon = $('#chooseAssociatedUser .modal-body dt.active img').attr('src');
@@ -371,7 +377,7 @@ Template.newEditor.events({
         updatePost();
       } else {
         if(Session.equals('terminateUpload', true)){return}
-        if (e.currentTarget.id === 'drafts'){
+        if (currentTargetId === 'drafts'){
           post.pub.unshift({
             _id: t.data.id,
             type: "image",

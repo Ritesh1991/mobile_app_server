@@ -2043,7 +2043,12 @@ if Meteor.isClient
       #   )
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
       Session.set('fromDraftPost',false)
-      if Session.get('isReviewMode') is '0' and e.currentTarget.id is "publish" and Template.addPost.__helpers.get('hasAssocaitedUsers')()
+      currentTargetId = e.currentTarget.id
+      if currentTargetId is 'modalPublish'
+        obj = document.getElementById(currentTargetId)
+        obj.innerHTML = '发表中...'
+        obj.id = 'newbtnId'
+      if Session.get('isReviewMode') is '0' and currentTargetId is "publish" and Template.addPost.__helpers.get('hasAssocaitedUsers')()
         return
 
       Meteor.defer ()->
@@ -2090,7 +2095,7 @@ if Meteor.isClient
         #uploadFileWhenPublishInCordova(draftToBeUploadedImageData, postId)
         #Don't add addpost page into history
 
-        if e.currentTarget.id is "modalPublish"
+        if currentTargetId is "modalPublish"
           $('#chooseAssociatedUser').modal('hide')
 
         Session.set('terminateUpload', false)
