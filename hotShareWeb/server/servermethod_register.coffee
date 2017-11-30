@@ -599,6 +599,7 @@ if Meteor.isServer
           # remove
           RePosts.remove(postId)
           Posts.remove(postId)
+          TopicPosts.remove({"postId":postId})
           refreshPostsCDNCaches(postId)
       'delectPostWithUserAndBackUp': (postId,userId)->
         if !confirmReporterAuth(userId)
