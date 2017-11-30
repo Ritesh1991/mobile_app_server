@@ -168,3 +168,5 @@ if Meteor.isClient
       getImagePath(path,uri,id)
     getMainImageHeight:()->
       $(window).height()*0.55
+    showfullEditorHelpIntros: ()->
+      return !localStorage.getItem('hidefullEditorHelpIntros')

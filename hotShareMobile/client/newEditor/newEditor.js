@@ -173,8 +173,10 @@ Template.newEditor.events({
     });
   },
   'click .simpleEditorFirstTip': function (){
-    localStorage.setItem('hideSimpleEditorFirstTip','true');
+    // localStorage.setItem('hideSimpleEditorFirstTip','true');
     $('.simpleEditorFirstTip').remove();
+    $('body').addClass('intros-html-body');
+    $('.simpleEditorHelpIntros').fadeIn();
   },
   'click .back': function(e,t){
     if (t.data.type === 'edit' || t.data.type === 'draft') {
