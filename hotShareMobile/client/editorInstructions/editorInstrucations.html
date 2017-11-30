@@ -4,6 +4,22 @@
     <div class="title">写作教程{{editorModel}}</div>
   </div>
   <div class="container">
-
+    <div class="editorInstrucations swiper-container">
+      <div class="swiper-wrapper">
+      {{#each simpleLists}}
+        <div class="swiper-slide">
+          <div>
+            <h2>{{text}}</h2>
+            <div class="imgContainer">
+              <img src="{{imgUrl}}"/>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+      </div>
+      <!-- 如果需要导航按钮 -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
   </div>
 </template>
