@@ -307,6 +307,9 @@ if Meteor.isClient
         Session.set 'isServerImport', false
         Router.go('/posts/'+topicPostId)
        else
+        newpostdata = Session.get('newpostsdata')
+        newpostdata.allowComment = newAllowComment
+        Session.set('newpostsdata',newpostdata)
         Router.go('/newposts/'+topicPostId)
        # Router.go('/newposts/'+topicPostId)
        false
