@@ -1360,8 +1360,8 @@ Template._simpleChatToChatItemText.onRendered(function(){
   this.$('a').click(function(e){
     e.preventDefault();
     e.stopImmediatePropagation();
-    try{cordova.InAppBrowser.open(e.currentTarget.href, '_blank');}
-    catch(e){window.open(e.currentTarget.href, '_blank');}
+    console.log('_simpleChatToChatItemText onrenderd');
+    handleAddedLink(e.currentTarget.href);
     return false;
   });
 });
@@ -1370,6 +1370,13 @@ Template._simpleChatToChatItemText.helpers({
     var html = str.convertLink("_blank");
     // html = EMOJI.parseShortNAME(html);
     return html;
+  }
+});
+
+Template._simpleChatToChatItemText.events({
+  'click a': function(e, t){
+    console.log('_simpleChatToChatItemText events')
+    handleAddedLink(e.currentTarget.href);
   }
 });
 
