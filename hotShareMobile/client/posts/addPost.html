@@ -66,7 +66,16 @@
             <div class="pullright">
               <div id="saveDraft" class="secondRightButton ripple-btn" style="color: #00c4ff;margin-top:0px;">{{_ "saveDraft"}}</div>
               {{#if hasAssocaitedUsers}}
-                <div id="publish" class="rightButton" data-toggle="modal" data-target="#chooseAssociatedUser" style="font-weight:bold;color: #00c4ff;margin-top:0px;">{{_ "publish"}}</div>            
+                <div id="publish" class="rightButton" data-toggle="modal" data-target="#chooseAssociatedUser" onclick="resetModolPublishId()" style="font-weight:bold;color: #00c4ff;margin-top:0px;">{{_ "publish"}}</div>
+                <script>
+                  function resetModolPublishId(){
+                    if($('#newbtnId').length > 0){
+                      obj = document.getElementById('newbtnId');
+                      obj.innerHTML = '发表';
+                      obj.id = 'modalPublish';
+                    }
+                  }
+                </script>            
               {{else}}
                 <div id="publish" class="rightButton" style="font-weight:bold;color: #00c4ff;margin-top:0px;">{{_ "publish"}}</div>
               {{/if}}

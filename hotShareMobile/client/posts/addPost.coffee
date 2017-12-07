@@ -1206,7 +1206,6 @@ if Meteor.isClient
     pub=[]
     addontitle = $("#addontitle").val()
     title = $("#title").val()
-
     modalUserId = $('#chooseAssociatedUser .modal-body dt.active').attr('userId')
     ownerUser = null
     # wechat = Session.get 'userWechatInfo'
