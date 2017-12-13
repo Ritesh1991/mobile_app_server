@@ -30,23 +30,6 @@ if Meteor.isClient
        return Session.get('searchLoading')
     groupUsers:()->
       return SimpleChat.GroupUsers.find({group_id:Session.get('groupsId')},{sort: {createdAt: 1}})
-    # getGroupsUsers:()->
-    #     groupUsersSearchData = GroupUsersSearch.getData(
-    #       transform: (matchText, regExp) ->
-    #         #return matchText.replace(regExp, "<b>$&</b>")
-    #         matchText
-    #       sort: createdAt: -1)
-    #     if GroupUsersSearch.getStatus().loaded == true
-    #       if groupUsersSearchData.length == 0
-    #         Meteor.setTimeout (->
-    #           Session.set 'noSearchResult', true
-    #           Session.set 'searchLoading', false
-    #           return
-    #         ), 500
-    #       else
-    #         Session.set 'noSearchResult', false
-    #         Session.set 'searchLoading', false
-    #     return groupUsersSearchData
   Template.groupAllUser.events
     'click #groupAllUserPageback':(event)->
       Session.set("groupsProfileMenu","groupInformation")

@@ -111,6 +111,9 @@
       </div>
     </div>
   </div>
+  <div class="thisGroupUsersList">
+    {{> _simpleChatGroupUsersList}}
+  </div>
   <!--<script type="text/javascript" src="/packages/feiwu_simple-chat/client/lib/crypto1/crypto/crypto.js"></script>
   <script type="text/javascript" src="/packages/feiwu_simple-chat/client/lib/crypto1/hmac/hmac.js"></script>
   <script type="text/javascript" src="/packages/feiwu_simple-chat/client/lib/crypto1/sha1/sha1.js"></script>
@@ -408,3 +411,23 @@
     <li class="new-btn-camera"><i class="fa fa-camera" aria-hidden="true"></i>拍照</li>
   </ul>
 </template>
+<template name="_simpleChatGroupUsersList">
+    <div class="groupUsersList">
+        <div class="head">
+            <div class="leftButton back groupUsersListCancle">取消</div>
+            <div class="socialTitle">
+                <span class="Contacts">选择提醒的人</span>
+            </div>
+        </div>
+        <div id="wrapper">
+          {{#each groupUsers}}
+                <div id="{{user_id}}" username='{{user_name}}' class="eachGroupUser">
+                  <!--列出浏览人-->
+                  <img class="icon" src="{{user_icon}}" width="40" height="40">
+                  <span class="userName" style="left: 60px; top: 10px;">{{user_name}}</span>
+                </div>
+                <div class="chatContentLine"></div>
+          {{/each}}
+        </div>
+    </div>
+  </template>

@@ -1913,6 +1913,7 @@ Template._simpleChatListLayout.events({
 
     Session.set("history_view", history);
     if(this.sessionType === 'group'){
+      Session.set('groupsId', _id)
       Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
     } else {
       Router.go(AppConfig.path + '/to/user?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
@@ -2072,11 +2073,20 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
 var resizeTime = null;
 Template._simpleChatToChatLayout.events({
   'keyup #simple-chat-text': function(e){
+    console.log('keyup value is ' + e.currentTarget.value);
+    console.log('keyup code is ' + e.keyCode);
     hasInputing.set(e.currentTarget.value ? true : false);
     if ($(e.currentTarget).height() > 38) {
       $(e.currentTarget).css('line-height', '20px');
     } else {
       $(e.currentTarget).css('line-height', '26px');
+    }
+    var str = e.currentTarget.value;
+    var lastStr = str.charAt(str.length - 1);
+    if(lastStr == '@' && e.keyCode == 50){
+      Session.set('simple-chat-text-val', $('.input-text').val());
+      $('.input-text').blur();
+      $(".thisGroupUsersList").slideDown('slow');
     }
     // setTimeout(scrollToBottom, 100);
   },
@@ -2227,7 +2237,21 @@ Template._simpleChatToChatLayout.events({
         });
       }
     });
+  }
+});
+Template._simpleChatGroupUsersList.events({
+  'click .groupUsersListCancle': function(e){
+    $(".thisGroupUsersList").slideUp('slow');
+    $('.input-text').focus();
   },
+  'click .eachGroupUser': function(e){
+    console.log('=====================');
+    var username = e.currentTarget.username;
+    var userId = e.currentTarget.id;
+    $('.input-text').val(Session.get('simple-chat-text-val') + username + ' ');
+    $(".thisGroupUsersList").slideUp('slow');
+    $('.input-text').focus();
+  }
 });
 Template._simpleChatToChatLayout.helpers({
   getInputClass: function(){
@@ -2260,7 +2284,17 @@ Template.__simpleChatToChatFooterIcons.helpers({
     return EMOJI2.packages
   }
 });
-
+Template._simpleChatGroupUsersList.onRendered(function(){
+  groupid = Session.get('groupsId');
+  console.log('groupsId ========== ' + groupid);
+  Meteor.subscribe("get-group-user",groupid);
+});
+Template._simpleChatGroupUsersList.helpers({
+  groupUsers: function(str){
+    console.log('groupUsersList ========== ' + SimpleChat.GroupUsers.find({group_id:Session.get('groupsId')},{sort: {createdAt: 1}}).count());
+    return SimpleChat.GroupUsers.find({group_id:Session.get('groupsId')},{sort: {createdAt: 1}});
+  }
+});
 
 Template._simpleChatToChatItem.helpers({
   formatChatTimeHtml: function(time){
