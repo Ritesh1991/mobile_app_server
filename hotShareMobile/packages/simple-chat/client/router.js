@@ -2246,11 +2246,13 @@ Template._simpleChatGroupUsersList.events({
   },
   'click .eachGroupUser': function(e){
     console.log('=====================');
-    var username = e.currentTarget.username;
+    var username = $(e.currentTarget).attr('username');
     var userId = e.currentTarget.id;
     $('.input-text').val(Session.get('simple-chat-text-val') + username + ' ');
     $(".thisGroupUsersList").slideUp('slow');
-    $('.input-text').focus();
+    Meteor.setTimeout(function(){
+      $('.input-text').focus();
+    }, 50);
   }
 });
 Template._simpleChatToChatLayout.helpers({
