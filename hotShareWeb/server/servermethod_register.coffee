@@ -121,6 +121,8 @@ if Meteor.isServer
       FavouritePosts.insert({postId: postId, userId: userId, createdAt: new Date(), updateAt: new Date()})
   Meteor.startup ()->
     Meteor.methods
+      'sendOneUserPushNotification':(doc)->
+        pushnotification(doc.type, doc, doc.userId);
       'sendMsgToallusers':(text)->
         console.log 'preparing users data.'
         Meteor.users.find({'profile.browser':{'$ne':true}}).observeChanges({

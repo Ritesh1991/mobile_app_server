@@ -78,6 +78,12 @@ if Meteor.isServer
         postId: doc._id
       }
       toUserId = doc.owner
+    else if type is "sendOnePushNotification"
+      content = doc.content
+      extras = {
+        type: "sendOnePushNotification"
+      }
+      toUserId = doc.toUserId
     else if type is "comment"
       post = Posts.findOne({_id: doc.postId});
       if post.owner == userId

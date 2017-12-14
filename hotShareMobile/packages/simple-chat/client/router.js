@@ -2083,7 +2083,8 @@ Template._simpleChatToChatLayout.events({
     }
     var str = e.currentTarget.value;
     var lastStr = str.charAt(str.length - 1);
-    if(lastStr == '@' && e.keyCode == 50){
+    var isGroups = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0])).is_group();
+    if(lastStr == '@' && e.keyCode == 50 && isGroups){
       Session.set('simple-chat-text-val', $('.input-text').val());
       $('.input-text').blur();
       $(".thisGroupUsersList").slideDown('slow');
@@ -2114,6 +2115,7 @@ Template._simpleChatToChatLayout.events({
       hasInputing.set(false);
       setTimeout(scrollToBottom, 800);
     }
+    var textval = $('.input-text').val();
     setTimeout(function(){
       try{
         var data = t.data;
@@ -2162,6 +2164,24 @@ Template._simpleChatToChatLayout.events({
         return false;
       }catch(ex){console.log(ex); return false;}
     }, 50);
+    var thisUserName = Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username;
+    if(Session.get('pushNotiUsers').length > 0){
+      var userArr = Session.get('pushNotiUsers');
+      var sendMsg = thisUserName + '在群聊中@了你'
+      userArr.forEach(function(item){
+        var sendUser = textval.indexOf('@' + item.name);
+        if(sendUser > -1){
+          var doc = {
+            _id: new Mongo.ObjectID()._str,
+            type:'sendOnePushNotification',
+            userId: Meteor.userId(),
+            toUserId: item.id,
+            content: sendMsg
+          }
+          Meteor.call('sendOneUserPushNotification',doc)
+        }
+    });
+    }
     return false;
   },
   'click .from-smile-btn': function(){
@@ -2241,18 +2261,29 @@ Template._simpleChatToChatLayout.events({
 });
 Template._simpleChatGroupUsersList.events({
   'click .groupUsersListCancle': function(e){
-    $(".thisGroupUsersList").slideUp('slow');
-    $('.input-text').focus();
-  },
-  'click .eachGroupUser': function(e){
-    console.log('=====================');
-    var username = $(e.currentTarget).attr('username');
-    var userId = e.currentTarget.id;
-    $('.input-text').val(Session.get('simple-chat-text-val') + username + ' ');
-    $(".thisGroupUsersList").slideUp('slow');
+    $(".thisGroupUsersList").slideUp();
     Meteor.setTimeout(function(){
       $('.input-text').focus();
-    }, 50);
+    }, 100);
+  },
+  'click .eachGroupUser': function(e){
+    var username = $(e.currentTarget).attr('username');
+    var userId = e.currentTarget.id;
+    var userData = {
+      id: userId,
+      name: username 
+    }
+    var userArr = [];
+    if(Session.get('pushNotiUsers')){
+      userArr = Session.get('pushNotiUsers');
+    }
+    userArr.push(userData)
+    Session.set('pushNotiUsers',userArr);
+    $(".thisGroupUsersList").slideUp('slow');
+    $('.input-text').val(Session.get('simple-chat-text-val') + username + ' ');
+    Meteor.setTimeout(function(){
+      $('#simple-chat-text').select();
+    }, 100);
   }
 });
 Template._simpleChatToChatLayout.helpers({
