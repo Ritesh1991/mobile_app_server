@@ -2084,12 +2084,20 @@ Template._simpleChatToChatLayout.events({
     var str = e.currentTarget.value;
     var lastStr = str.charAt(str.length - 1);
     var isGroups = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0])).is_group();
-    if(lastStr == '@' && e.keyCode == 50 && isGroups){
+    var notDelKey = true;
+    var keyuptextlength = $('#simple-chat-text').val().length;
+    if(keyuptextlength < Session.get('keydowntextlength')){
+      notDelKey = false;
+    }
+    if(lastStr == '@' && notDelKey && isGroups){
       Session.set('simple-chat-text-val', $('.input-text').val());
       $('.input-text').blur();
       $(".thisGroupUsersList").slideDown('slow');
     }
     // setTimeout(scrollToBottom, 100);
+  },
+  'keydown #simple-chat-text': function(e){
+    Session.set('keydowntextlength', $('#simple-chat-text').val().length)
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
