@@ -2326,8 +2326,9 @@ Template.__simpleChatToChatFooterIcons.helpers({
   }
 });
 Template._simpleChatGroupUsersList.onRendered(function(){
-  groupid = Session.get('groupsId');
-  console.log('groupsId ========== ' + groupid);
+  var groupid = Session.get('groupsId');
+  var windowheight = $(window).height();
+  $('.thisGroupUsersList #wrapper').css('height', windowheight + 'px'); 
   Meteor.subscribe("get-group-user",groupid);
 });
 Template._simpleChatGroupUsersList.helpers({
