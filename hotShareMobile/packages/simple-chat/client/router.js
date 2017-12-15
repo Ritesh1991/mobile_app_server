@@ -2328,7 +2328,7 @@ Template.__simpleChatToChatFooterIcons.helpers({
 Template._simpleChatGroupUsersList.onRendered(function(){
   var groupid = Session.get('groupsId');
   var windowheight = $(window).height();
-  $('.thisGroupUsersList #wrapper').css('height', windowheight + 'px'); 
+  $('.thisGroupUsersList #wrapper').css('min-height', windowheight + 'px'); 
   Meteor.subscribe("get-group-user",groupid);
 });
 Template._simpleChatGroupUsersList.helpers({
