@@ -1270,7 +1270,7 @@ Template._simpleChatToChatLayout.events({
 
 Template._simpleChatToChatItem.onRendered(function(){
   var data = this.data;
-
+  var isGroups = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0])).is_group();
   // if (data.form.id === Meteor.userId() && data.send_status === 'sending')
   //   sendMqttMsg(data);
   touch.on(this.$('li a'),'hold',function(ev){
@@ -1295,7 +1295,30 @@ Template._simpleChatToChatItem.onRendered(function(){
       }
     })
   });
-
+  if(isGroups){
+    touch.on(this.$('li .icon'),'hold',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      console.log('data is -----------')
+      console.log(data)
+      var username = data.form.name;
+      var userId = data.form.id;
+      var userData = {
+        id: userId,
+        name: username
+      }
+      var userArr = [];
+      if(Session.get('pushNotiUsers')){
+        userArr = Session.get('pushNotiUsers');
+      }
+      userArr.push(userData)
+      Session.set('pushNotiUsers',userArr);
+      $('.input-text').val($('.input-text').val() + '@' + username + ' ');
+      Meteor.setTimeout(function(){
+        $('#simple-chat-text').select();
+      }, 100);
+    });
+  }
   touch.on(this.$('li'),'hold',function(ev){
     ev.preventDefault();
     ev.stopPropagation();
@@ -2279,7 +2302,7 @@ Template._simpleChatGroupUsersList.events({
     var userId = e.currentTarget.id;
     var userData = {
       id: userId,
-      name: username 
+      name: username
     }
     var userArr = [];
     if(Session.get('pushNotiUsers')){
