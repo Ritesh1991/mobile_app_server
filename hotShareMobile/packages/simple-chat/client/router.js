@@ -2141,7 +2141,7 @@ Template._simpleChatToChatLayout.events({
     if($('.new-other-box').length === 0){
       $('.input-text').focus();
     }
-    if ($('.input-text').val()){
+    if ($('.input-text').val() && $('.new-other-box').length === 0){
       var $body = $('.msg-box .box');
       // $body.css({
       //   'bottom': '48px'
@@ -2191,9 +2191,7 @@ Template._simpleChatToChatLayout.events({
         autosize.update($('#simple-chat-text'));
         setTimeout(scrollToBottom, 100);
         var $text = $('#simple-chat-text');
-        if($('.new-other-box').length === 0){
-          $('.input-text').val('');
-        }
+        $('.input-text').val('');
         if ($text.length > 0 && $text.get(0) && $text.get(0).updateAutogrow)
           $text.get(0).updateAutogrow();
         return false;
