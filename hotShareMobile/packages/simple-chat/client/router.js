@@ -86,6 +86,7 @@ Router.route(AppConfig.path + '/to/:type', {
     };
   },
   action: function(){
+    var self = this;
     $chat_box = null;
     $simple_chat = null;
     hasInputing.set(false);
@@ -95,6 +96,9 @@ Router.route(AppConfig.path + '/to/:type', {
 
     if (this.params.type === 'group')
       Meteor.call('joinGroup', this.params.query['id']);
+      //Call from: Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
+      console.log('call update_latest_active_time: group_id='+self.params.query['id']+', userId='+Meteor.userId());
+      Meteor.call('update_latest_active_time', self.params.query['id'], Meteor.userId())
     this.render();
   }
 });
