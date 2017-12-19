@@ -1258,7 +1258,7 @@ Template._simpleChatToChatLayout.events({
     var data = page_data;
     history = Session.get('history_view') || [];
     history.push({
-      view: 'groupsProfile/'+data.type+'/'+data.id,
+      view: Router.current().url.substr(1),
       scrollTop: document.body.scrollTop
     });
     Session.set('history_view',history);
