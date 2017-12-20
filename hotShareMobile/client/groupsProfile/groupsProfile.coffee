@@ -254,6 +254,11 @@ if Meteor.isClient
           )
 
   Template.groupUsers.helpers
+    groupOwner:()->
+      if Meteor.userId() is Session.get('groupsId').replace('_group', '')
+        return true
+      else
+        return false
     isGroup:()->
       if Session.get('groupsType') is 'group'
         return true
@@ -288,8 +293,12 @@ if Meteor.isClient
       group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
       if group.is_post_group && Meteor.userId() isnt Session.get('groupsId').replace('_group', '')
         return PUB.toast('只能群主才能邀请新的群成员~')
-
       Session.set("groupsProfileMenu","inviteFriendIntoGroup")
+    'click #removeUserInGroup':(event)->
+      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
+      if group.is_post_group && Meteor.userId() isnt Session.get('groupsId').replace('_group', '')
+        return PUB.toast('只能群主才能删除群成员~')
+      Session.set("groupsProfileMenu","removeFriendFromGroup")
     'click #showAllResults':(event)->
       Session.set("groupsProfileMenu","groupAllUser")
     'click .userItem': (event)->

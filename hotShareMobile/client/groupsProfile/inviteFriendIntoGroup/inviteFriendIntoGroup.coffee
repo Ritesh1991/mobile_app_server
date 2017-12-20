@@ -98,3 +98,43 @@ if Meteor.isClient
       else
         selected.splice(_.pluck(selected, 'followerId').indexOf(this.followerId), 1)
       users.set(selected)
+
+  Template.removeFriendFromGroup.rendered=->
+    users.set([])
+    groupid = Session.get('groupsId')
+    if Session.get('groupsType') is 'group'
+       Meteor.subscribe("get-group-user",groupid)
+
+  Template.removeFriendFromGroup.helpers
+    groupUsers: ()->
+      return SimpleChat.GroupUsers.find({group_id:Session.get('groupsId')}, {sort: {create_time: -1}}).fetch()
+    is_selected: (userId)->
+      return _.pluck(users.get(), 'user_id').indexOf(userId) isnt -1
+    isOwner:(UserId)->
+      if Meteor.userId() is UserId
+        return true
+      else
+        return false
+
+  Template.removeFriendFromGroup.events
+    'click .leftButton':(event)->
+      Session.set("groupsProfileMenu","groupInformation")
+    'click .rightButton':(event)->
+      selected = users.get()
+      if selected.length <= 0
+        Session.set("groupsProfileMenu","groupInformation")
+        return 
+      if Session.get('groupsType') is 'group'
+        Meteor.call 'remove-group-user', Session.get('groupsId'), _.pluck(selected, 'user_id'), (err, id)->
+          console.log(err)
+          if err or !id
+            return PUB.toast('删除失败，请重试~')
+          Session.set("groupsProfileMenu","groupInformation")
+    'click .followItem': (event)->
+      $i = $(event.currentTarget).find('i');
+      selected = users.get()
+      if _.pluck(selected, 'user_id').indexOf(this.user_id) is -1
+        selected.push(this)
+      else
+        selected.splice(_.pluck(selected, 'user_id').indexOf(this.user_id), 1)
+      users.set(selected)

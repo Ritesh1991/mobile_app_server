@@ -15,6 +15,11 @@ if Meteor.isClient
     #    GroupUsersSearch.search text
     # )
   Template.groupAllUser.helpers
+    groupOwner:()->
+      if Meteor.userId() is Session.get('groupsId').replace('_group', '')
+        return true
+      else
+        return false
     userCount:->
       Counts.get('groupsUserCountBy-'+Session.get('groupsId'))
     isMobile:()->
@@ -35,6 +40,11 @@ if Meteor.isClient
       Session.set("groupsProfileMenu","groupInformation")
     'click #addUserInGroup':(event)->
       Session.set("groupsProfileMenu","inviteFriendIntoGroup")
+    'click #removeUserInGroup':(event)->
+      group =  SimpleChat.Groups.findOne({_id:Session.get('groupsId')})
+      if group.is_post_group && Meteor.userId() isnt Session.get('groupsId').replace('_group', '')
+        return PUB.toast('只能群主才能删除群成员~')
+      Session.set("groupsProfileMenu","removeFriendFromGroup")
     'click .userItem': (event)->
       #Session.set("groupsProfileMenu","setGroupname")
       console.log event.currentTarget.id

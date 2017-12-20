@@ -46,3 +46,36 @@
     </div>
   </div>
 </template>
+
+<template name="removeFriendFromGroup">
+  <div class="inviteFriendIntoGroup">
+    <div class="head">
+      <strong>删除成员</strong>
+      <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
+      <div class="rightButton back" style="margin-top:0px;">确定</div>
+    </div>
+    <div class="content">
+      <div id="wrapper">
+        <div class="contentList">
+          {{#each groupUsers}}
+            {{#if isOwner user_id}}
+            {{else}}
+            <div id="{{user_id}}" class="followItem eachViewer">
+              {{#if is_selected user_id}}
+                  <i class="fa fa-circle" aria-hidden="true"></i>
+              {{else}}
+                  <i class="fa fa-circle-o" aria-hidden="true"></i>
+              {{/if}}
+              <img class="icon" src="{{user_icon}}">
+              <span class="groupsName">{{user_name}}</span>
+            </div>
+            <div class="line">
+                <span></span>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
