@@ -125,7 +125,7 @@ if Meteor.isClient
         Session.set("groupsProfileMenu","groupInformation")
         return 
       if Session.get('groupsType') is 'group'
-        Meteor.call 'remove-group-user', Session.get('groupsId'), _.pluck(selected, 'user_id'), (err, id)->
+        Meteor.call 'remove-group-users-by-id', Session.get('groupsId'), _.pluck(selected, '_id'), (err, id)->
           console.log(err)
           if err or !id
             return PUB.toast('删除失败，请重试~')

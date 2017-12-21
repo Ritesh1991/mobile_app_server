@@ -379,5 +379,21 @@ Meteor.methods({
       });
     }
     return id;
+  },
+  'remove-group-users-by-id':function(groupId ,id){
+    var groupuser = GroupUsers.findOne({_id: id});
+    if (groupuser) {
+      GroupUsers.remove({_id:id},function(err,res){
+        if (err) {
+          return console.log ('GroupUsers remove failed');
+        }
+        if (GroupUsers.find({group_id: groupId}).count === 0){
+          Groups.remove({_id:groupId});
+        }
+        var toUserId = groupId.replace('_group', '')
+        MsgSession.remove({userId: groupuser.user_id, toUserId: toUserId, sessionType: 'group'});
+      });
+    }
+    return id;
   }
 });
