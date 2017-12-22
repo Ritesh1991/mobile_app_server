@@ -564,12 +564,12 @@ if Meteor.isClient
     Router.route '/topicPosts',()->
       if Meteor.isCordova is true
         this.render 'topicPosts'
-        Session.set 'channel','topicPosts'
+        Session.set 'channel','search'
         return
     Router.route '/topicPostsAll',()->
       if Meteor.isCordova is true
         this.render 'topicPostsAll'
-        Session.set 'channel','topicPostsAll'
+        Session.set 'channel','search'
         return
     Router.route '/addTopicComment',()->
       if Meteor.isCordova is true
