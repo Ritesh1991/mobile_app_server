@@ -125,10 +125,14 @@ if Meteor.isClient
         Session.set("groupsProfileMenu","groupInformation")
         return 
       if Session.get('groupsType') is 'group'
-        Meteor.call 'remove-group-users-by-id', Session.get('groupsId'), _.pluck(selected, '_id'), (err, id)->
-          console.log(err)
-          if err or !id
-            return PUB.toast('删除失败，请重试~')
+        userIdArr = _.pluck(selected, '_id')
+        groupId = Session.get('groupsId')
+        if userIdArr.length > 0
+          for i in [0..(userIdArr.length-1)]
+            Meteor.call 'removeGroupUsersById',groupId ,userIdArr[i], (err, id)->
+              console.log(err)
+              if err or !id
+                return PUB.toast('删除失败，请重试~')
           Session.set("groupsProfileMenu","groupInformation")
     'click .followItem': (event)->
       $i = $(event.currentTarget).find('i');
