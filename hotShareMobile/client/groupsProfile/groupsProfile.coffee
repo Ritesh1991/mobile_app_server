@@ -130,7 +130,8 @@ if Meteor.isClient
           catch e
             console.log 'remove-group-user err:'+e
           Meteor.setTimeout(()->
-            PUB.back()
+            Session.set "history_view", []
+            PUB.page('/simple-chat/user-list/'+Meteor.userId())
           ,100)
         )
       )
