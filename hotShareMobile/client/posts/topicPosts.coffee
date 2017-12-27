@@ -68,6 +68,12 @@ if Meteor.isClient
           return false
       postId = this.postId
       $('.home').addClass('animated ' + animateOutUpperEffect);
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
@@ -273,6 +279,12 @@ if Meteor.isClient
           return false
       postId = this._id
       $('.home').addClass('animated ' + animateOutUpperEffect);
+      history = Session.get("history_view") || []
+      history.push {
+          view: Router.current().url.substr(1)
+          scrollTop: $(window).scrollTop()
+      }
+      Session.set "history_view", history
       Meteor.setTimeout ()->
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
