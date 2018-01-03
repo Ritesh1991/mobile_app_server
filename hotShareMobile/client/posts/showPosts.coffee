@@ -954,7 +954,7 @@ if Meteor.isClient
           Session.set("fromUserProfile",false)
           PUB.postPageBack()
         else
-          PUB.postPageBack()
+          PUB.back()
         if Session.get("Social.LevelOne.Menu") is 'userProfile'
           Session.set("Social.LevelOne.Menu",'contactsList')
           return

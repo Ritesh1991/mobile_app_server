@@ -67,13 +67,14 @@ if Meteor.isClient
           console.log 'should be triggered in scrolling'
           return false
       postId = this.postId
-      $('.home').addClass('animated ' + animateOutUpperEffect);
-      history = Session.get("history_view") || []
-      history.push {
+      $('.home').addClass('animated ' + animateOutUpperEffect)
+      Session.set('channel','topicPosts')
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Meteor.setTimeout ()->
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
@@ -81,21 +82,21 @@ if Meteor.isClient
       return
     'click .footer .icon': (e)->
       prepareToEditorMode()
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
       console.log 'i clicked a name'
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
 
   Template.topicFollowPosts.onCreated ()->
@@ -173,20 +174,20 @@ if Meteor.isClient
       Session.set 'followTopicNow',this._id
       return
     'click .footer .icon': (e)->
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
 
   getFollowerArr = ()->
@@ -278,31 +279,32 @@ if Meteor.isClient
           console.log 'should be triggered in scrolling'
           return false
       postId = this._id
-      $('.home').addClass('animated ' + animateOutUpperEffect);
-      history = Session.get("history_view") || []
-      history.push {
+      $('.home').addClass('animated ' + animateOutUpperEffect)
+      Session.set('channel','topicPostsAll')
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Meteor.setTimeout ()->
         PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
       # Session.set 'FollowPostsId',this._id
       return
     'click .footer .icon': (e)->
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
     'click .footer .name': (e)->
-      history = Session.get("history_view") || []
-      history.push {
+      backview = Session.get("history_view") || []
+      backview.push {
           view: Router.current().url.substr(1)
           scrollTop: $(window).scrollTop()
       }
-      Session.set "history_view", history
+      Session.set "history_view", backview
       Router.go '/userProfilePageOnly/' + this.owner
