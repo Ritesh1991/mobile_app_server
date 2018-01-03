@@ -11,6 +11,7 @@ if Meteor.isClient
       if $('.contactsList .head').is(':visible')
         $('.contactsList .head').fadeOut 300
       document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
     ###
     'click .chatBtn': (e)->
       $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
@@ -36,6 +37,7 @@ if Meteor.isClient
       $('.div_discover').css('display',"none")
       $('.div_me').css('display',"none")
       document.body.scrollTop = $(".showPostsBox").height()
+      document.documentElement.scrollTop = $(".showPostsBox").height()
     'click .discoverBtn':->
       $('.showPostsBox,.showPostsLine,.superChatIntroduce').show()
       trackEvent("socialBar","Discover")
@@ -46,6 +48,7 @@ if Meteor.isClient
       $('.div_discover').css('display',"block")
       $('.div_me').css('display',"none")
       document.body.scrollTop = $(".showPostsBox").height()
+      document.documentElement.scrollTop = $(".showPostsBox").height()
     'click .meBtn':->
       if Session.equals('isInformationEditing',true)
         $('.showPostsBox,.showPostsLine,.superChatIntroduce').hide()
@@ -59,6 +62,7 @@ if Meteor.isClient
       $('.div_discover').css('display',"none")
       $('.div_me').css('display',"block")
       document.body.scrollTop = $(".showPostsBox").height()
+      document.documentElement.scrollTop = $(".showPostsBox").height()
       triggerScroll=()->
         $(window).trigger('scroll')
       setTimeout(triggerScroll, 500)
