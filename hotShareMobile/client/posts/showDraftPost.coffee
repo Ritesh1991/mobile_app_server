@@ -184,7 +184,11 @@ if Meteor.isClient
     return count
 
   Template.showDraftPosts.events
-    'click #modalPublish': (e)->
+    'click #publish, click #modalPublish': (e)->
+      currentTargetId = e.currentTarget.id
+      ispreviewed = currentTargetId is "publish" and Session.get(Session.get('postContent')._id) is true
+      if currentTargetId is "publish" and Session.get(Session.get('postContent')._id) isnt true
+        $('#chooseAssociatedUser').modal('show')
       history = []
       history.push {
           view: 'user'
@@ -222,20 +226,32 @@ if Meteor.isClient
 
         modalUserId = $('#chooseAssociatedUser .modal-body dt.active').attr('userId')
         ownerUser = null
-        
+        if ispreviewed
+          modalUserId = Session.get('post-publish-user-id')
         if modalUserId is Meteor.userId() or !modalUserId
           ownerUser = Meteor.user()
         else
-          ownerUser = {
-            _id: modalUserId
-            username: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
-            profile: {
-              icon: $('#chooseAssociatedUser .modal-body dt.active').attr('userIcon')
-              fullname: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
+          if ispreviewed
+            ownerUser = {
+              _id: modalUserId
+              username: Session.get('import-select-user-data').username
+              profile: {
+                icon: Session.get('import-select-user-data').userIcon
+                fullname: Session.get('import-select-user-data').fullname
+              }
             }
-          }
+          else
+            ownerUser = {
+              _id: modalUserId
+              username: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
+              profile: {
+                icon: $('#chooseAssociatedUser .modal-body dt.active').attr('userIcon')
+                fullname: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
+              }
+            }
             
         Session.set 'post-publish-user-id', ownerUser._id
+        Session.set Session.get('postContent')._id, false
         ownerName = if ownerUser.profile and ownerUser.profile.fullname then ownerUser.profile.fullname else ownerUser.username
         ownerIcon = if ownerUser.profile and ownerUser.profile.icon then ownerUser.profile.icon else '/userPicture.png'
 

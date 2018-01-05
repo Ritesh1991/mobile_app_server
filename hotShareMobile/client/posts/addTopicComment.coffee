@@ -368,6 +368,12 @@ if Meteor.isClient
       $('.server-import-select-user').hide()
       $('.addTopicComment .content').show()
       Session.set 'post-publish-user-id', user_id
+      Session.set Session.get('postContent')._id, true
+      Session.set('import-select-user-data',{
+        username: $('.server-import-select-user .c dd').html(),
+        userIcon: $('.server-import-select-user .c dt.active').attr('usericon'),
+        fullname: $('.server-import-select-user .c dt.active').attr('username')
+      })
       Meteor.subscribe "usersById", user_id
       Meteor.call('updatePostUser', Session.get('TopicPostId'), user_id)
       topicPostId = Session.get("TopicPostId")
