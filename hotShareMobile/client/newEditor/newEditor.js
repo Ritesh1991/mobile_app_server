@@ -296,7 +296,7 @@ Template.newEditor.events({
 
         if(index > 0){pub[index].data_row = pub[index-1].data_row + pub[index-1].data_sizey;}
         pub[index].index = index;
-        pub[index].owner = Meteor.userId();
+        pub[index].owner = owner;
         pub[index].data_wait_init = true;
       });
       if(Session.equals('terminateUpload', true)){return}
@@ -312,9 +312,9 @@ Template.newEditor.events({
         heart: [],
         retweet: [],
         comment: [],
-        owner: Meteor.userId(),
-        ownerName: Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username,
-        ownerIcon: Meteor.user().profile && Meteor.user().profile.icon ? Meteor.user().profile.icon : '/userPicture.png',
+        owner: owner,
+        ownerName: ownerName,
+        ownerIcon: ownerIcon,
         createdAt: new Date(),
         browse: 0,
         commentsCount: 0,
@@ -343,9 +343,9 @@ Template.newEditor.events({
           retweet: [],
           comment: [],
           publish: true,
-          owner: Meteor.userId(),
-          ownerName: Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username,
-          ownerIcon: Meteor.user().profile && Meteor.user().profile.icon ? Meteor.user().profile.icon : '/userPicture.png',
+          owner: owner,
+          ownerName: ownerName,
+          ownerIcon: ownerIcon,
           pub: post.pub,
           createdAt: new Date(),
           editorVersion: 'simpleEditor'
@@ -383,7 +383,7 @@ Template.newEditor.events({
             type: "image",
             isImage: true,
             url: mainImg.imgUrl,
-            owner: Meteor.userId(),
+            owner: owner,
             imgUrl: mainImg.imgUrl,
             filename: mainImg.filename,
             URI: mainImg.URI,
@@ -405,7 +405,7 @@ Template.newEditor.events({
               addontitle: post.addontitle,
               mainImage: post.mainImage,
               pub: post.pub,
-              owner: Meteor.userId(),
+              owner: owner,
               createdAt: new Date(),
               editorVersion: 'simpleEditor'
             }}, function(err, num){
@@ -425,7 +425,7 @@ Template.newEditor.events({
               addontitle: post.addontitle,
               mainImage: post.mainImage,
               pub: post.pub,
-              owner: Meteor.userId(),
+              owner: owner,
               createdAt: new Date(),
               editorVersion: 'simpleEditor'
             }, function(err, _id){
