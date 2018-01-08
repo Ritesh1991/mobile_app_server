@@ -573,6 +573,7 @@ if Meteor.isClient
     'click .showDraftback' :->
       Session.set('fromDraftPost',false)
       Session.set 'showDraft', false
+      Session.set Session.get('postContent')._id, false
       setTimeout ()->
         # if Session.get("backtoalldrafts") is true
         #   Session.set("backtoalldrafts",false)
@@ -617,7 +618,7 @@ if Meteor.isClient
           #   return Router.go('/newEditor?type=edit&id='+thispost._id)
         else
           return window.plugins.toast.showLongBottom('此故事的图片正在处理中，请稍后操作~')
-        
+      Session.set Session.get('postContent')._id, false
       editorVersion = thispost.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
         return Router.go('/newEditor?type=draft&id='+thispost._id)
