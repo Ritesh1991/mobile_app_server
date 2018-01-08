@@ -215,10 +215,11 @@ Template.newEditor.events({
       obj.innerHTML = '发表中...';
       obj.id = 'newbtnId';
     }
-    if (currentTargetId === 'drafts')
+    if (currentTargetId === 'drafts'){
       Session.set("isDelayPublish", false);
-    else
+    }else{
       Session.set("isDelayPublish", true);
+    }
     //Template.progressBar.__helpers.get('show')();
     Session.set("progressBarWidth", 1);
 
@@ -416,6 +417,12 @@ Template.newEditor.events({
                 return PUB.toast('存草稿失败，请重试~');
               }
               Session.set('SavingDraftStatus',false);
+              Meteor.setTimeout(function(){
+                var mySavedDrafts = SavedDrafts.find({owner: Meteor.userId()},{sort: {createdAt: -1},limit:2})
+                if (mySavedDrafts.count() > 0){
+                  Session.setPersistent('persistentMySavedDrafts',mySavedDrafts.fetch());
+                }
+              },50);
               PUB.toast('存草稿成功~');
               PUB.back();
             });
@@ -436,6 +443,12 @@ Template.newEditor.events({
                 return PUB.toast('存草稿失败，请重试~');
               }
               Session.set('SavingDraftStatus',false);
+              Meteor.setTimeout(function(){
+                var mySavedDrafts = SavedDrafts.find({owner: Meteor.userId()},{sort: {createdAt: -1},limit:2})
+                if (mySavedDrafts.count() > 0){
+                  Session.setPersistent('persistentMySavedDrafts',mySavedDrafts.fetch());
+                }
+              },50);
               PUB.toast('存草稿成功~');
               PUB.back();
             });
