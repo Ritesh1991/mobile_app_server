@@ -83,6 +83,7 @@ if Meteor.isClient
     console.log('open draft.')
     Session.set 'showDraft', true
     if Session.get('postContent') and Session.get('postContent')._id
+      Meteor.subscribe("savedDraftsWithID",Session.get('postContent')._id)
       unless Posts.find({_id:Session.get('postContent')._id}).count() > 0
         Meteor.subscribe("ViewPostsList",Session.get('postContent')._id)
     Session.setDefault "displayPostContent",true
@@ -189,6 +190,7 @@ if Meteor.isClient
       ispreviewed = currentTargetId is "publish" and Session.get(Session.get('postContent')._id) is true
       if currentTargetId is "publish" and Session.get(Session.get('postContent')._id) isnt true
         $('#chooseAssociatedUser').modal('show')
+        return
       history = []
       history.push {
           view: 'user'
@@ -612,6 +614,8 @@ if Meteor.isClient
       }
     'click #edit': (event)->
       thispost = Session.get('postContent')
+      draftId = thispost._id
+      Meteor.subscribe("savedDraftsWithID",draftId)
       if thispost.import_status
         if thispost.import_status is 'imported' or thispost.import_status is 'done'
           # if enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor'
@@ -622,9 +626,7 @@ if Meteor.isClient
       editorVersion = thispost.editorVersion || 'fullEditor'
       if (editorVersion is 'simpleEditor')
         return Router.go('/newEditor?type=draft&id='+thispost._id)
-
       cleanDraft()
-      draftId = Session.get("postContent")._id
       savedDraftData = SavedDrafts.findOne({_id:draftId})
       if savedDraftData
         editDraft(savedDraftData)
