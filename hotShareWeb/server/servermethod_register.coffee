@@ -1452,6 +1452,11 @@ if Meteor.isServer
         SimpleChat.GroupUsers.update({group_id: groupId}, {$set:{group_name:name}}, {multi: true})
         SimpleChat.MsgSession.update({toUserId: groupId}, {$set: {toUserName: name}}, {multi: true})
       "removeGroupUsersById": (groupId ,id)->
+        userId = this.userId
         groupuser = SimpleChat.GroupUsers.findOne({_id: id})
         if groupuser
           SimpleChat.GroupUsers.remove({_id:id})
+          removeUserId = groupuser.user_id
+          MsgSession = SimpleChat.MsgSession.findOne({sessionType: "group",userId: removeUserId,toUserId: userId})
+          if MsgSession
+            SimpleChat.MsgSession.remove({_id:MsgSession._id})
