@@ -35,7 +35,7 @@ if Meteor.isClient
           mainImage: savedDraftData.mainImage,
           mainText: savedDraftData.mainText,
           owner:savedDraftData.owner,
-          createdAt: savedDraftData.createdAt,
+          createdAt: savedDraftData.createdAt
         }
         # draft0 = {_id:savedDraftData._id, type:'image', isImage:true, url: savedDraftData.fromUrl, owner: Meteor.userId(), imgUrl:savedDraftData.mainImage, filename:savedDraftData.mainImage.replace(/^.*[\\\/]/, ''), URI:"", data_row:0,style:savedDraftData.mainImageStyle}
         # Drafts.insert(draft0)
@@ -199,6 +199,7 @@ if Meteor.isClient
       Session.set "history_view", history
       cleanDraft()
       Session.set('fromDraftPost',false)
+      Session.set("backtoalldrafts",false)
       Meteor.defer ()->
         $('.modal-backdrop.fade.in').remove()
       if Meteor.user() is null
