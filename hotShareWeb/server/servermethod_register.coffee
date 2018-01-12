@@ -61,6 +61,14 @@ if Meteor.isServer
       console.log(err, res)
     )
 
+    wechatPathtimeline = 'http://'  +server_domain_name+'/posts/' + postId + '?from=timeline';
+    cdn.refreshObjectCaches({
+      ObjectType: 'File',
+      ObjectPath: wechatPathtimeline
+    }, (err, res)->
+      console.log(err, res)
+    )
+
     rawPath = 'http://'  +server_domain_name+'/raw/' + postId;
 
     # cdn.refreshObjectCaches({
