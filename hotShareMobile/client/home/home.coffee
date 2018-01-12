@@ -1,6 +1,6 @@
 #space 2
 if Meteor.isClient
-  toNum = (a) ->
+  @toNum = (a) ->
     if a is null or a is undefined or a is ''
       return
       
@@ -42,11 +42,11 @@ if Meteor.isClient
           latestRelease = data.latest_release_android
         window.localStorage.setItem('stableVersion',stableVersion)
         window.localStorage.setItem('latestVersion',latestVersion)
-        if currentVersion < stableVersion
+        if toNum(currentVersion) < toNum(stableVersion)
           # 强制升级
           window.updateAPPVersion(data.stable_title,stableRelease, data.stable_styles,false)
           # navigator.notification.alert('建议升级到' + stableVersion+'\n主要更新'+stableRelease,goToUpdate,'您使用的故事贴版本太旧啦！', '立即升级')
-        else if currentVersion < latestVersion
+        else if toNum(currentVersion) < toNum(latestVersion)
           updateTipTimes = window.localStorage.getItem('stable_update_tip_times')
           # 推荐升级
           # navigator.notification.confirm('故事贴 V' + latestVersion+' 已经发布\n主要更新: \n'+latestRelease, (index)->
