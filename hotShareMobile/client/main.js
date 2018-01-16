@@ -338,7 +338,7 @@ if (Meteor.isCordova) {
         if (Meteor.status().connected !== true)
           Meteor.reconnect();
         
-        checkNewVersion2();
+        // checkNewVersion2();
         if (Meteor.user()) {
             console.log('Refresh Main Data Source when resume');
             if (Meteor.isCordova) {
