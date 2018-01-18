@@ -131,7 +131,7 @@ if Meteor.isClient
           for i in [0..(userIdArr.length-1)]
             Meteor.call 'removeGroupUsersById',groupId ,userIdArr[i], (err, id)->
               console.log(err)
-              if err or !id
+              if err
                 return PUB.toast('删除失败，请重试~')
           Session.set("groupsProfileMenu","groupInformation")
     'click .followItem': (event)->
