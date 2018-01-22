@@ -60,22 +60,10 @@ if Meteor.isClient
         if (user and user.profile and user.profile.associated)
           ids = _.pluck(user.profile.associated, 'id')
         ids.push(Meteor.userId())
-        lists = if withPostGroupChat then SimpleChat.MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}}).fetch() else SimpleChat.MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}}).fetch()
-
-        # lists = SimpleChat.MsgSession.find({userId: Meteor.userId(),sessionType:'user'}).fetch()
+        lists = if withPostGroupChat then SimpleChat.MsgSession.find({userId: {$in: ids}},{sort: {updateAt: -1}, limit: Session.get('msgSessionLimit')}).fetch() else SimpleChat.MsgSession.find({userId: {$in: ids},sessionType:'user'},{sort: {sessionType: 1, updateAt: -1}, limit: Session.get('msgSessionLimit')}).fetch()
         getLetterCounts = (item)->
           counts += item.count
         getLetterCounts item for item in lists
-          # waitReadCount = Session.get('waitReadCount')
-        #if me.profile and me.profile.waitReadCount
-          #waitReadCount = me.profile.waitReadCount
-          # if waitReadCount is undefined or isNaN(waitReadCount)
-          #   waitReadCount = 0
-          # if Session.get('channel') is 'bell' and waitReadCount > 0
-          #   waitReadCount = 0
-          #   Session.set('waitReadCount',0)
-          #   Meteor.users.update({_id: Meteor.user()._id}, {$set: {'profile.waitReadCount': 0}});
-          # return waitReadCount
       return counts
     wait_import_count:->
        return Session.get('wait_import_count')
