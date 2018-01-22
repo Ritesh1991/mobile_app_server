@@ -398,7 +398,7 @@
 
 <template name="__simpleChatToChatFooterIcons">
   <!-- {{> emojiKeyboard}} -->
-  <ul class="new-icons">
+  <ul class="new-icons" style="height: 150px;overflow-y: scroll;">
     {{#each emojis}}
     <li data-name="{{name}}" data-unicode="{{unicode}}">{{wechat}}</li>
     {{/each}}
