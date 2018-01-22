@@ -1444,6 +1444,9 @@ Template._simpleChatToChatItem.helpers({
     if(to.isPcomments){
       return 'schat_post_abstract_icon'
     }
+    if(to.isLinkText){
+      return 'schat_post_abstract_linkText'
+    }
   },
   isMoreThanHundredChar: function(text){
     if (text.length > 50)
