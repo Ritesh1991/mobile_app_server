@@ -571,12 +571,13 @@ Template._simpleChatToChatItem.events({
     }
   },
   'click li img.swipebox': function(e){
-    var imgs = []
+    var scrollTopbefore = $('.box').scrollTop();
+    var imgs = [];
     var index = 0;
     var selected = 0;
     var data = Blaze.getData($(e.currentTarget).attr('data-type') === 'images' ? $(e.currentTarget).parent().parent().parent()[0] : $('#'+this._id)[0]);
-
-    console.log('data:', data);
+    console.log('scrollTopbefore:', scrollTopbefore);
+    // console.log('data:', data);
     // $('li#' + data._id + ' img.swipebox').each(function(){
     //   imgs.push({
     //     href: $(this).attr('src'),
@@ -622,6 +623,9 @@ Template._simpleChatToChatItem.events({
         // }
       });
     }
+    Meteor.setTimeout(function(){
+      $('.box').scrollTop(scrollTopbefore)
+    }, 1800);
   },
   'click .sendfailed':function(e){
     sendMqttMsg(this);
