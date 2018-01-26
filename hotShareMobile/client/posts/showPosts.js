@@ -109,7 +109,7 @@ getPostSharingPath = function(){
     // 发布静态页面版本使用下面的url
     var url = "http://" + server_domain_name +'/t/'+Session.get('postContent')._id;
   }else{
-    var url = "http://" + server_domain_name +'/'+Session.get('channel');
+    var url = "http://" + server_domain_name +'/posts/'+Session.get('postContent')._id;
   }
   return url;
 };
