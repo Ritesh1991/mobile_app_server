@@ -1129,7 +1129,7 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
 });
 
 Template._simpleChatToChatLayout.helpers({
-  title: function(){
+  roomtitle: function(){
     if (Session.get('msgToUserName') && Session.get('msgToUserName') != '') {
       return Session.get('msgToUserName')
     }else{
@@ -1936,8 +1936,9 @@ Template._simpleChatListLayout.events({
 
     var msgid = $(e.currentTarget).attr('msgid')
     MsgSession.update({'_id':msgid},{$set:{count:0}})
-    console.log('this to user name is ' + this.toUserName);
-    Session.set('msgToUserName', this.toUserName);
+    var roomtitle = $('#' + _id + ' h2').html()
+    console.log('this to user name is ' + roomtitle);
+    Session.set('msgToUserName', roomtitle);
     var from = {
       id:this.userId,
       name:this.userName,
