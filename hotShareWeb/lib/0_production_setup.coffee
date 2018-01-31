@@ -50,3 +50,4 @@
 @withFollowTopic = false #新注册用户首页进入关注页面
 @CHAT_RENDER_TIME = 150
 @isShowAllowComment = true
+@withChatMessage = true #聊天server备份

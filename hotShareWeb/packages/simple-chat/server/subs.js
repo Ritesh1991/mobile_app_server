@@ -132,6 +132,10 @@ Meteor.publish('get-group', function(id){
   return Groups.find({_id: id});
 });
 
+Meteor.publish('get-chat-message', function(toid){
+  return ChatMessage.find({'to.id': toid});
+});
+
 // Meteor.publish('get-user-group',function(userId){
 //   return GroupUsers.find({user_id: userId});
 // });

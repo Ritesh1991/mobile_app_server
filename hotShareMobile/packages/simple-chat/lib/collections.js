@@ -15,7 +15,13 @@ if(Meteor.isServer){
   Groups = new Mongo.Collection(PRFIX + 'groups', options);
   GroupUsers = new Mongo.Collection(PRFIX + 'groups_users', options);
   MsgSession = new Mongo.Collection(PRFIX + 'msg_session');
+  ChatMessage = new Mongo.Collection(PRFIX + 'chat_message');
 
+  ChatMessage.allow({
+    insert: function (userId, doc) {
+      return true;
+    }
+  });
   MsgSession.allow({
     insert: function (userId, doc) {
       if (doc.userId != userId && doc.app_user_id != userId)
@@ -64,6 +70,7 @@ if(Meteor.isServer){
 }else{
   Groups = new Mongo.Collection(PRFIX + 'groups');
   GroupUsers = new Mongo.Collection(PRFIX + 'groups_users');
+  ChatMessage = new Mongo.Collection(PRFIX + 'chat_message');
 
   Meteor.startup(function() {
     //var LocalMessagesObservor = new PersistentMinimongo2(Messages, 'workai');
@@ -236,4 +243,5 @@ if(Meteor.isServer){
 SimpleChat.Groups = Groups;
 SimpleChat.GroupUsers = GroupUsers;
 SimpleChat.MsgSession = MsgSession;
+ƒ.ChatMessage = ChatMessage;
 

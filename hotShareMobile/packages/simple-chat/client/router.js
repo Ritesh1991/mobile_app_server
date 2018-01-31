@@ -1267,7 +1267,7 @@ Template._simpleChatToChatLayout.events({
     });
     Session.set('history_view',history);
     Router.go('/groupsProfile/'+data.type+'/'+data.id);
-  },
+  }
   // 'click .userProfile':function(e,t){
   //   var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
   //   Router.go('/groupsProfile/'+data.type+'/'+data.id);
@@ -2194,6 +2194,14 @@ Template._simpleChatToChatLayout.events({
           sendMqttMsg(msg);
           setTimeout(scrollToBottom, 100);
         });
+        if(withChatMessage){
+          ChatMessage.insert(msg,function(err){
+            if(err){
+              console.log('chat message insert ...====');
+              console.log(err);
+            }
+          });
+        }
         trackEvent("socialBar","AuthorReply")
         hasInputing.set(false);
         autosize.update($('#simple-chat-text'));
@@ -2206,7 +2214,7 @@ Template._simpleChatToChatLayout.events({
       }catch(ex){console.log(ex); return false;}
     }, 50);
     var thisUserName = Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username;
-    if(Session.get('pushNotiUsers').length > 0){
+    if(Session.get('pushNotiUsers') && Session.get('pushNotiUsers').length > 0){
       var userArr = Session.get('pushNotiUsers');
       var sendMsg = thisUserName + '在群聊中@了你'
       userArr.forEach(function(item){
