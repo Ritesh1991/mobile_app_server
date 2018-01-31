@@ -276,6 +276,18 @@ var get_people_names = function(){
   return result;
 };
 
+var check_message_miss = function(MsgSessionId){
+  var chatmsgIdArr = _.pluck(SimpleChat.ChatMessage.find({'to.id':MsgSessionId}).fetch(),'_id');
+  var localMsgIdArr = _.pluck(SimpleChat.Messages.find({'to.id':MsgSessionId}).fetch(),'_id');
+  var localMsgString = JSON.stringify(localMsgIdArr);
+  for(var i=0;i<chatmsgIdArr.length;i++){
+    if(localMsgString.indexOf(chatmsgIdArr[i]) === -1){
+      var msg = SimpleChat.ChatMessage.findOne({'_id':chatmsgIdArr[i]});
+      SimpleChat.Messages.insert(msg);
+    }
+  }
+};
+
 var onFixName = function(id, uuid, his_id, url, to, value, type){
   var user = Meteor.user();
   var images = [];
@@ -1933,7 +1945,7 @@ Template._simpleChatListLayout.events({
       view: 'simple-chat/user-list/'+Meteor.userId(),
       scrollTop: document.body.scrollTop
     });
-
+    Meteor.subscribe("get-chat-message",_id);
     var msgid = $(e.currentTarget).attr('msgid')
     MsgSession.update({'_id':msgid},{$set:{count:0}})
     var roomtitle = $('#' + _id + ' h2').html()
@@ -1945,7 +1957,7 @@ Template._simpleChatListLayout.events({
       icon:this.userIcon
     }
     Session.set('msgFormUser',from);
-
+    check_message_miss(_id);
     Session.set("history_view", history);
     if(this.sessionType === 'group'){
       Session.set('groupsId', _id)
