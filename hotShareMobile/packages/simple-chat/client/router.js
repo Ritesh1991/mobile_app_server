@@ -1945,7 +1945,6 @@ Template._simpleChatListLayout.events({
       view: 'simple-chat/user-list/'+Meteor.userId(),
       scrollTop: document.body.scrollTop
     });
-    Meteor.subscribe("get-chat-message",_id);
     var msgid = $(e.currentTarget).attr('msgid')
     MsgSession.update({'_id':msgid},{$set:{count:0}})
     var roomtitle = $('#' + _id + ' h2').html()
@@ -1957,7 +1956,10 @@ Template._simpleChatListLayout.events({
       icon:this.userIcon
     }
     Session.set('msgFormUser',from);
-    check_message_miss_observechange(_id);
+    if(withChatMessage){
+      Meteor.subscribe("get-chat-message",_id);
+      check_message_miss_observechange(_id);
+    }
     Session.set("history_view", history);
     if(this.sessionType === 'group'){
       Session.set('groupsId', _id)
