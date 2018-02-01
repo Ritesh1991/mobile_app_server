@@ -133,7 +133,7 @@ Meteor.publish('get-group', function(id){
 });
 
 Meteor.publish('get-chat-message', function(toid){
-  return ChatMessage.find({'to.id': toid}, {sort: {createAt: 1}, limit: 200});
+  return ChatMessage.find({'to.id': toid}, {sort: {createAt: -1}, limit: 200});
 });
 
 // Meteor.publish('get-user-group',function(userId){

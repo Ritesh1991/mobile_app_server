@@ -237,12 +237,12 @@ if(Meteor.isServer){
     GroupUsers._ensureIndex({'user_id': 1});
     GroupUsers._ensureIndex({'group_id': 1});
     GroupUsers._ensureIndex({'group_id': 1, 'user_id': 1});
-    ChatMessage._ensureIndex({'to.id': 1});
+    ChatMessage._ensureIndex({'to.id': 1, 'createAt': -1});
   });
 }
 
 SimpleChat.Groups = Groups;
 SimpleChat.GroupUsers = GroupUsers;
 SimpleChat.MsgSession = MsgSession;
-ƒ.ChatMessage = ChatMessage;
+SimpleChat.ChatMessage = ChatMessage;
 
