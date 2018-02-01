@@ -92,6 +92,7 @@ if(Meteor.isServer){
     GroupUsers._ensureIndex({'user_id': 1});
     GroupUsers._ensureIndex({'group_id': 1});
     GroupUsers._ensureIndex({'group_id': 1, 'user_id': 1});
+    ChatMessage._ensureIndex({'to.id': 1});
   });
 }
 
