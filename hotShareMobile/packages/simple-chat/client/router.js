@@ -279,10 +279,19 @@ var get_people_names = function(){
 var check_message_miss_observechange = function(MsgSessionId){
   SimpleChat.ChatMessage.find({'to.id':MsgSessionId}).observeChanges({
     added: function(id, fields){
-      var localMsgString = JSON.stringify(SimpleChat.Messages.find({'to.id':MsgSessionId}, {fields:{_id: 1}}, {sort: {createAt: -1}, limit: 210}).fetch());
+      var localMsgString = JSON.stringify(SimpleChat.Messages.find({'to.id':MsgSessionId}, {fields:{_id: 1}}, {sort: {createAt: -1}, limit: 200}).fetch());
       if(localMsgString.indexOf(id) === -1){
-        var msg = SimpleChat.ChatMessage.findOne({'_id':id});
-        SimpleChat.Messages.insert(msg);
+        Meteor.subscribe('get-chat-message-by-id', id, {onStop: function(err){
+          if(err){
+            console.log('get-chat-message-by-id error:', err);
+          }
+        }, onReady: function(){
+          console.log('get-chat-message-by-id ready');
+          var msg = SimpleChat.ChatMessage.findOne({'_id':id});
+          if(msg){
+            SimpleChat.Messages.insert(msg);
+          }
+        }});
       }
     }
   })
@@ -554,7 +563,7 @@ Template._simpleChatToChat.onRendered(function(){
         // if(slef.data.messages.count() >= list_limit.get())
         is_loading.set(true);
         list_limit.set(list_limit.get()+list_limit_val);
-        Meteor.setTimeout(function(){is_loading.set(false);}, 600);
+        Meteor.setTimeout(function(){is_loading.set(false);}, 1500);
       }
   
       // 滚动方向
