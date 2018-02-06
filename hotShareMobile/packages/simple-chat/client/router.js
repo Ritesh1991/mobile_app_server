@@ -550,11 +550,11 @@ Template._simpleChatToChat.onRendered(function(){
     boxScrollThrottle.run(function(){
       if (!$chat_box)
         $chat_box = $('.msg-box .box');
-      if($chat_box.scrollTop() === 0 && !is_loading.get()){
+      if($chat_box.scrollTop() < 150 && !is_loading.get()){
         // if(slef.data.messages.count() >= list_limit.get())
         is_loading.set(true);
         list_limit.set(list_limit.get()+list_limit_val);
-        Meteor.setTimeout(function(){is_loading.set(false);}, 500);
+        Meteor.setTimeout(function(){is_loading.set(false);}, 600);
       }
   
       // 滚动方向

@@ -67,32 +67,22 @@
         {{/if}}
 
         <!--<div class="right profile"></div>-->
-        {{#if loading}}
+        <!-- {{#if loading}}
         <div class="loading"></div>
-        {{/if}}
+        {{/if}} -->
       </div>
       <div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">
+        {{#if loading}}
+        <center style="color:gray;" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 12px;"></i>加载中...</center>
+        {{/if}}
         <ul class="group-list">
           {{> yield}}
         </ul>
       </div>
       <div class="footer footbar new-footerbar {{getInputClass}}" style="position: relative; left: auto; right: auto; bottom: auto; top: auto;">
         <form class="input-form">
-          <!-- <div id="container"></div>
-          <style type="text/css">
-            #container{width: 60px; display: block;position: absolute;left: 0px;bottom: 0;height: 48px;z-index: 998;}
-            #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
-          </style>
-          <div class="btn-box image" id="selectfiles"></div> -->
           <textarea dir="auto" name="msg" id="simple-chat-text" class="new-input input-text" maxlength="5000" placeholder="说点什么" style="-webkit-touch-callout: default; -webkit-user-select: text;"></textarea>
           <script type="text/javascript">autosize($('#simple-chat-text'));</script>
-          <!-- <table>
-            <tr>
-              <td class="center" style="right: 86px;position: absolute; left: 5px; z-index: 4;">
-                <textarea dir="auto" name="msg" id="simple-chat-text" maxlength="5000" class="input-text input-message autogrow-short text" placeholder="说点什么" style="width: 100%; padding: 5px;border:1px solid rgba(225, 225, 226, 1);line-height: 25px; color:black; font-size:14px;border-radius: 5px;"></textarea>
-              </td>
-            </tr>
-          </table> -->
           <div class="new-btns">
             <div class="new-btn from-smile-btn"><i class="fa fa-smile-o" aria-hidden="true"></i></div>
             {{#if hasInputing}}
