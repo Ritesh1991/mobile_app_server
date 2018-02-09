@@ -2231,6 +2231,7 @@ Template._simpleChatToChatLayout.events({
         setTimeout(scrollToBottom, 100);
         var $text = $('#simple-chat-text');
         $('.input-text').val('');
+        $('#simple-chat-text').css('height', '38px');
         if ($text.length > 0 && $text.get(0) && $text.get(0).updateAutogrow)
           $text.get(0).updateAutogrow();
         return false;
