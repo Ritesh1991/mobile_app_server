@@ -26,7 +26,8 @@ if(Meteor.isCordova){
                 keepAliveInterval: 10,
                 cleanSession: true,
                 onSuccess:onConnect,
-                onFailure:onFailure
+                onFailure:onFailure,
+                reconnect:true
             };
             //mqtt_connection=myMqtt.connect('ws://tmq.tiegushi.com:80',mqttOptions);
             mqtt_connection=new Paho.MQTT.Client('tmq.tiegushi.com', Number(80), clientId);
@@ -83,10 +84,10 @@ if(Meteor.isCordova){
             function onFailure(msg) {
                 console.log('mqtt onFailure: errorCode='+msg.errorCode);
                 clearUndeliveredMessages();
-                setTimeout(function(){
-                    console.log('MQTT onFailure, reconnecting...');
-                    mqtt_connection.connect(pahoMqttOptions);
-                }, 1000);
+                // setTimeout(function(){
+                //     console.log('MQTT onFailure, reconnecting...');
+                //     mqtt_connection.connect(pahoMqttOptions);
+                // }, 1000);
             };
             function onConnectionLost(responseObject) {
                 //mqtt_connected = false;
@@ -95,10 +96,10 @@ if(Meteor.isCordova){
                 if (responseObject.errorCode !== 0) {
                     console.log("onConnectionLost: "+responseObject.errorMessage);
                 }
-                setTimeout(function(){
-                    console.log('MQTT onConnectionLost, reconnecting...');
-                    mqtt_connection.connect(pahoMqttOptions);
-                }, 1000);
+                // setTimeout(function(){
+                //     console.log('MQTT onConnectionLost, reconnecting...');
+                //     mqtt_connection.connect(pahoMqttOptions);
+                // }, 1000);
             };
             function onMessageDelivered(message) {
                 console.log('MQTT onMessageDelivered: "' + message.payloadString + '" delivered');
