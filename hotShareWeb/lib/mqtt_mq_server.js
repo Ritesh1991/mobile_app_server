@@ -6,7 +6,7 @@ if(Meteor.isServer){
         var mqttOptions = {
             clean:false,
             keepalive:30,
-            reconnectPeriod:1*1000,
+            reconnectPeriod:10*1000,
             clientId:clientId
         }
         mqtt_connection=mqtt.connect('ws://tmq.tiegushi.com:80',mqttOptions);

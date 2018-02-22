@@ -23,7 +23,7 @@ if(Meteor.isCordova){
         if(!mqtt_connection){
             var pahoMqttOptions = {
                 timeout: 30,
-                keepAliveInterval: 10,
+                keepAliveInterval: 30,
                 cleanSession: false,
                 onSuccess:onConnect,
                 onFailure:onFailure,
@@ -334,8 +334,8 @@ if(Meteor.isCordova){
       console.log('##RDBG, mqttEventResume, reestablish mqtt connection');
       Meteor.setTimeout(function() {
         if(Meteor.userId()){
-        //   initMQTT(getMqttClientID());
-            initMQTT(Meteor.userId());
+            initMQTT(getMqttClientID());
+            //initMQTT(Meteor.userId());
         }
       }, 1000);
     };
@@ -346,7 +346,8 @@ if(Meteor.isCordova){
     Deps.autorun(function(){
         if(Meteor.user()){
             Meteor.setTimeout(function(){
-                initMQTT(Meteor.userId());
+                initMQTT(getMqttClientID());
+                //initMQTT(Meteor.userId());
             },1000)
         } else {
             uninitMQTT()
