@@ -2216,15 +2216,15 @@ Template._simpleChatToChatLayout.events({
           console.log('send message...');
           sendMqttMsg(msg);
           setTimeout(scrollToBottom, 100);
+          if(withChatMessage){
+            ChatMessage.insert(msg,function(err){
+              if(err){
+                console.log('chat message insert ...====');
+                console.log(err);
+              }
+            });
+          }
         });
-        if(withChatMessage){
-          ChatMessage.insert(msg,function(err){
-            if(err){
-              console.log('chat message insert ...====');
-              console.log(err);
-            }
-          });
-        }
         trackEvent("socialBar","AuthorReply")
         hasInputing.set(false);
         autosize.update($('#simple-chat-text'));
