@@ -74,6 +74,8 @@
       <div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">
         {{#if loading}}
         <center style="color:gray;" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 12px;"></i>加载中...</center>
+        {{else}}
+        <center style="color:gray;visibility: hidden;" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 12px;"></i>加载中...</center>
         {{/if}}
         <ul class="group-list">
           {{> yield}}
