@@ -1140,8 +1140,9 @@ Template._simpleChatToChatLayout.onRendered(function(){
   Meteor.setTimeout(function(){
     $('body').css('overflow', 'hidden');
     var DHeight = $('.group-list').outerHeight();
-    $('.box').scrollTop(DHeight);
-  }, 600);
+    $('.box').animate({scrollTop:DHeight}, 600);
+    // $('.box').scrollTop(DHeight);
+  }, 0);
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
