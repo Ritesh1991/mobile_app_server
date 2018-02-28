@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="jp.wasabeef.richeditor" android:versionCode="13"
+    android:versionName="1.3">
+
+  <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="23" />
+
+  <application>
+        <activity android:name="jp.wasabeef.richeditor.RichEditorActivity"
+            android:label="@string/editor_app_name"/>
+    </application>
+</manifest>

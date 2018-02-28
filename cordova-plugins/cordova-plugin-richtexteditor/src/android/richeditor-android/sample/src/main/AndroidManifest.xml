@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="jp.wasabeef.sample"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  >
+
+  <uses-permission android:name="android.permission.INTERNET"/>
+
+  <application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme"
+    android:textColor="@android:color/black"
+    >
+    <activity
+      android:name=".MainActivity"
+      android:label="@string/title_activity_main"
+      >
+      <span style="color:#ff0000;">android:windowSoftInputMode="adjustResize|stateHidden"</span>>
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+  </application>
+
+</manifest>
