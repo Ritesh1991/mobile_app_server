@@ -1667,7 +1667,14 @@ window.___message = {
   }
 };
 
-SimpleChat.onMqttMessage = function(topic, msg) {
+SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
+  var rmMsgKey = function(msgKey, log){
+    console.log('remove msg key ', log, msgKey);
+    if (msgKey){
+      localStorage.removeItem(msgKey); 
+    }
+  }
+  
   var insertMsg = function(msgObj, type){
     console.log(type, msgObj._id);
 
@@ -1683,6 +1690,7 @@ SimpleChat.onMqttMessage = function(topic, msg) {
     }
 
     Messages.insert(msgObj, function(err, _id){
+      rmMsgKey(msgKey, '#1691');
       if (err)
         return console.log('insert msg error:', err);
       if (auto_to_bottom === true){
@@ -1695,8 +1703,10 @@ SimpleChat.onMqttMessage = function(topic, msg) {
     });
   };
 
-  if (!(topic.startsWith('/t/msg/g/') || topic.startsWith('/t/msg/u/')))
+  if (!(topic.startsWith('/t/msg/g/') || topic.startsWith('/t/msg/u/'))){
+    rmMsgKey(msgKey, '#1705');
     return;
+  }
 
   var msgObj = JSON.parse(msg);
   // var whereTime = new Date(format_date(new Date(), 'yyyy-MM-dd 00:00:00'));
@@ -1716,11 +1726,13 @@ SimpleChat.onMqttMessage = function(topic, msg) {
       Messages.find({'form.id':msgObj.to.id,'to.id':msgObj.form.id,is_read:false}).forEach(function(item){
           Messages.update({_id:item._id},{$set:{is_read:true}});
       })
+      rmMsgKey(msgKey, '#1727');
       return;
     }
     //ta 被我拉黑
     if(BlackList.find({blackBy: msgObj.to.id, blacker:{$in: [msgObj.form.id]}}).count() > 0){
       console.log(msgObj.to.id+'被'+msgObj.to.id+'拉黑');
+      rmMsgKey(msgKey, '#1733');
       return;
     }
   }
@@ -1731,9 +1743,10 @@ SimpleChat.onMqttMessage = function(topic, msg) {
   //     msgObj.images[i].id = msgObj.people_id;
   // }
 
-  if (Messages.find({_id: msgObj._id}).count() > 0)
+  if (Messages.find({_id: msgObj._id}).count() > 0){
+    rmMsgKey(msgKey, '#1745');
     return console.log('已存在此消息:', msgObj._id);
-
+  }
   // if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
   // else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
   // else {return insertMsg(msgObj)}

@@ -7,14 +7,14 @@ if(Meteor.isCordova){
     var unsendMessages = [];
     mqtt_connection = null;
     //mqtt_connected = false;
-    var onMessageArrived = function(message) {
+    var onMessageArrived = function(message, msgKey) {
         console.log("onMessageArrived:"+message.payloadString);
         console.log('message.destinationName= '+message.destinationName);
-        console.log('message= '+JSON.stringify(message));
+        console.log('message= ', msgKey, JSON.stringify(message));
         try {
             var topic = message.destinationName;
             console.log('on mqtt message topic: ' + topic + ', message: ' + message.payloadString);
-            SimpleChat.onMqttMessage(topic, message.payloadString);
+            SimpleChat.onMqttMessage(topic, message.payloadString, msgKey);
         } catch (ex) {
             console.log('exception onMqttMessage: ' + ex);
         }
@@ -23,7 +23,7 @@ if(Meteor.isCordova){
         if(!mqtt_connection){
             var pahoMqttOptions = {
                 timeout: 30,
-                keepAliveInterval: 30,
+                keepAliveInterval: 10,
                 cleanSession: false,
                 onSuccess:onConnect,
                 onFailure:onFailure,
@@ -334,8 +334,8 @@ if(Meteor.isCordova){
       console.log('##RDBG, mqttEventResume, reestablish mqtt connection');
       Meteor.setTimeout(function() {
         if(Meteor.userId()){
-            initMQTT(getMqttClientID());
-            //initMQTT(Meteor.userId());
+        //   initMQTT(getMqttClientID());
+            initMQTT(Meteor.userId());
         }
       }, 1000);
     };
@@ -346,8 +346,7 @@ if(Meteor.isCordova){
     Deps.autorun(function(){
         if(Meteor.user()){
             Meteor.setTimeout(function(){
-                initMQTT(getMqttClientID());
-                //initMQTT(Meteor.userId());
+                initMQTT(Meteor.userId());
             },1000)
         } else {
             uninitMQTT()
