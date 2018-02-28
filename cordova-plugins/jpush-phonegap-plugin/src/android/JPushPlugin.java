@@ -4,8 +4,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -64,7 +67,8 @@ public class JPushPlugin extends CordovaPlugin {
                     "setTagsWithAlias",
                     "setSilenceTime",
                     "setStatisticsOpen",
-                    "stopPush"
+                    "stopPush",
+                    "goToSet"
             );
 
     private ExecutorService threadPool = Executors.newFixedThreadPool(1);
@@ -373,6 +377,24 @@ public class JPushPlugin extends CordovaPlugin {
         Context context = this.cordova.getActivity().getApplicationContext();
         String regID = JPushInterface.getRegistrationID(context);
         callbackContext.success(regID);
+    }
+
+    void goToSet(JSONArray data, CallbackContext callbackContext) {
+      Intent intent = new Intent();
+      if(android.os.Build.VERSION.SDK_INT > 25){
+          intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+          intent.putExtra("android.provider.extra.APP_PACKAGE", cordovaActivity.getPackageName());
+      }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+          intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+          intent.putExtra("app_package", cordovaActivity.getPackageName());
+          intent.putExtra("app_uid", cordovaActivity.getApplicationInfo().uid);
+      }else {
+          intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+          intent.addCategory(Intent.CATEGORY_DEFAULT);
+          intent.setData(Uri.parse("package:" + cordovaActivity.getPackageName()));
+      }
+
+      cordovaActivity.startActivity(intent);
     }
 
     void onResume(JSONArray data, CallbackContext callbackContext) {

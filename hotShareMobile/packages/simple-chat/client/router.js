@@ -1140,8 +1140,9 @@ Template._simpleChatToChatLayout.onRendered(function(){
   Meteor.setTimeout(function(){
     $('body').css('overflow', 'hidden');
     var DHeight = $('.group-list').outerHeight();
-    $('.box').scrollTop(DHeight);
-  }, 600);
+    $('.box').animate({scrollTop:DHeight}, 600);
+    // $('.box').scrollTop(DHeight);
+  }, 0);
 });
 Template._simpleChatToChatLayout.onDestroyed(function(){
   $('body').css('overflow', 'auto');
@@ -2229,15 +2230,15 @@ Template._simpleChatToChatLayout.events({
           console.log('send message...');
           sendMqttMsg(msg);
           setTimeout(scrollToBottom, 100);
+          if(withChatMessage){
+            ChatMessage.insert(msg,function(err){
+              if(err){
+                console.log('chat message insert ...====');
+                console.log(err);
+              }
+            });
+          }
         });
-        if(withChatMessage){
-          ChatMessage.insert(msg,function(err){
-            if(err){
-              console.log('chat message insert ...====');
-              console.log(err);
-            }
-          });
-        }
         trackEvent("socialBar","AuthorReply")
         hasInputing.set(false);
         autosize.update($('#simple-chat-text'));

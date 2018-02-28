@@ -157,14 +157,85 @@
 			</feature>
 		</config-file>
 
-    <framework src="src/android/hotshare_editor.gradle" custom="true" type="gradleReference" />
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity
+                android:name="jp.wasabeef.richeditor.RichEditorActivity"
+                android:label="编辑文字"
+                android:theme="@style/richEditorTheme" >
+            </activity>
+        </config-file>
 
-    <resource-file src="src/android/libs/editor-release.aar" target="libs/editor-release.aar" />
-    <resource-file src="src/android/libs/utils-1.11.0.aar" target="libs/utils-1.11.0.aar" />
-    <resource-file src="src/android/libs/design-23.4.0.aar" target="libs/design-23.4.0.aar" />
-    <resource-file src="src/android/libs/constraint-layout-1.0.2.aar" target="libs/constraint-layout-1.0.2.aar" />
+        <source-file src="src/android/richeditor-android/build-richeditor.gradle" target-dir="src/.." />
+        <framework src="src/android/hotshare_editor.gradle" custom="true" type="gradleReference" />
+        <framework src="com.android.support:appcompat-v7:23.4.0" />
 
-		<source-file src="src/android/RichTextEditor.java" target-dir="src/com/actiontec/tiegushi" />
+        <!--<resource-file src="src/android/libs/editor-release.aar" target="libs/editor-release.aar" />-->
+        <!--<resource-file src="src/android/libs/utils-1.11.0.aar" target="libs/utils-1.11.0.aar" />
+        <resource-file src="src/android/libs/design-23.4.0.aar" target="libs/design-23.4.0.aar" />
+        <resource-file src="src/android/libs/constraint-layout-1.0.2.aar" target="libs/constraint-layout-1.0.2.aar" />-->
+
+        <asset src="src/android/richeditor-android/richeditor/src/main/assets/" target="richeditor" />
+
+        <source-file src="src/android/richeditor-android/richeditor/src/main/java/jp/wasabeef/richeditor/RichEditorActivity.java" target-dir="src/jp/wasabeef/richeditor" />
+        <source-file src="src/android/richeditor-android/richeditor/src/main/java/jp/wasabeef/richeditor/RichEditor.java" target-dir="src/jp/wasabeef/richeditor" />
+        <source-file src="src/android/richeditor-android/richeditor/src/main/java/jp/wasabeef/richeditor/Utils.java" target-dir="src/jp/wasabeef/richeditor" />
+        <source-file src="src/android/RichTextEditor.java" target-dir="src/com/actiontec/tiegushi" />
+
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/bg.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/bg_color.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/blockquote.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/bold.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/bullets.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h1.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h2.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h3.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h4.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h5.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/h6.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/html_edit.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/indent.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/insert_image.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/insert_link.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/italic.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/justify_center.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/justify_left.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/justify_right.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/numbers.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/outdent.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/redo.png" target-dir="res/drawable-xxhdpi"/>
+
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/strikethrough.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/subscript.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/superscript.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/txt_color.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/underline.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/drawable-xxhdpi/undo.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/layout/richeditor_activity_main.xml" target-dir="res/layout"/>
+        <source-file src="src/android/richeditor-android/richeditor/src/main/res/menu/menu_titlebar_done.xml" target-dir="res/menu"/>
+
+        <resource-file src="src/android/richeditor-android/richeditor/src/main/res/values/colors.xml" target="res/values/richeditor-colors.xml"/>
+        <resource-file src="src/android/richeditor-android/richeditor/src/main/res/values/strings.xml" target="res/values/richeditor-strings.xml"/>
+        <resource-file src="src/android/richeditor-android/richeditor/src/main/res/values/styles.xml" target="res/values/richeditor-styles.xml"/>
+        <resource-file src="src/android/richeditor-android/richeditor/src/main/res/values-zh-rCN/strings.xml" target="res/values-zh-rCN/richeditor-strings.xml"/>
+        <!--<config-file target="res/values/strings.xml" parent="/resources">
+            <string name="editor_app_name">Editor</string>
+        </config-file>
+        <config-file target="res/values/styles.xml" parent="/resources">
+            <style name="richEditorTheme" parent="@style/Theme.AppCompat.Light">
+                <item name="android:textColor">#0033CC</item>
+                <item name="android:textSize">22sp</item>
+            </style>
+        </config-file>
+        <config-file target="res/values-zh-rCN/strings.xml" parent="/resources">
+            <string name="editor_app_name">编辑器</string>
+            <string name="app_name">richeditor-android</string>
+            <string name="launcher_name">@string/app_name</string>
+            <string name="activity_name">@string/launcher_name</string>
+        </config-file>
+        <config-file target="res/values/colors.xml" parent="/resources">
+            <color name="lightgray">#D3D3D3</color>
+            <color name="lightgrey">#D3D3D3</color>
+        </config-file>-->
 	</platform>
 
 </plugin>

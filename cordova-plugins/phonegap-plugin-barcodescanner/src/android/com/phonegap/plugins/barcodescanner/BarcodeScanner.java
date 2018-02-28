@@ -16,6 +16,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,6 +37,11 @@ import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+
 /**
  * This calls out to the ZXing barcode reader and returns the result.
  *
@@ -45,6 +51,7 @@ public class BarcodeScanner extends CordovaPlugin {
     public static final int REQUEST_CODE = 0x0ba7c0de;
 
     private static final String DECODEIMAGE = "decodeImage";
+    private static final String SAVEBARCODE = "saveBarCodeToPhotoAlum";
     private static final String SCAN = "scan";
     private static final String ENCODE = "encode";
     private static final String CANCELLED = "cancelled";
@@ -145,12 +152,59 @@ public class BarcodeScanner extends CordovaPlugin {
                 callbackContext.error("User did not specify data to encode");
                 return true;
             }
+        } else if (action.equals(SAVEBARCODE)) {
+            try {
+                String imgUrl = args.getString(0);
+                if (imgUrl != null) {
+                    saveImageBarcode(imgUrl);
+                } else {
+                    callbackContext.error("User did not specify imgUrl to save");
+                    return true;
+                }
+            }
+            catch (Exception ex) {
+                callbackContext.error("exception when save imgUrl to file");
+                return true;
+            }
         }
-        else
-        {
+        else {
             return false;
         }
         return true;
+    }
+    public void saveImageBarcode(final String imgUrl) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Bitmap image = BitmapFactory.decodeStream((InputStream) new URL(imgUrl).getContent());
+                    FileOutputStream out = null;
+                    File dir = new File(Environment.getExternalStorageDirectory() + "/Download");
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    String filename =  dir + "/hotshare_barcode_" + System.currentTimeMillis() + ".png";
+                    try {
+                        out = new FileOutputStream(filename);
+                        image.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try{
+                            if (out != null) {
+                                callbackContext.success("save ok");
+                                out.close();
+                            }
+                        } catch(Throwable ignore) {}
+                    }
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                    callbackContext.error("exception while saving barcode");
+                }
+            }
+        }).start();
+
     }
     public void decodeImage(final String filePath) {
         new Thread(new Runnable() {

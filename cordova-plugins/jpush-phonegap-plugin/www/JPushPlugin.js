@@ -46,6 +46,15 @@ JPushPlugin.prototype.getRegistrationID = function (callback) {
   }
 }
 
+JPushPlugin.prototype.goToSet = function (callback) {
+  try {
+    var data = []
+    this.call_native('goToSet', [data], callback)
+  } catch(exception) {
+    console.log(exception)
+  }
+}
+
 JPushPlugin.prototype.stopPush = function () {
   data = []
   this.call_native('stopPush', data, null)

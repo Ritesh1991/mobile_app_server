@@ -1616,6 +1616,10 @@ if Meteor.isClient
           console.log('Got error')
         ,'false','true');
     'click #addLink': ()->
+      $('#show_hyperlink').show()
+      $('#add_posts_content').hide()
+      window.trackEvent('addPost', 'addLink')
+    'click #addLinkOld': ()->
       console.log 'Add Link ' + Session.get('lastImportedUrl')
       cordova.plugins.clipboard.paste (text)->
         if text and text isnt '' and text.indexOf('http') > -1
