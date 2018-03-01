@@ -136,7 +136,7 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     };
   },
   action: function(){
-    Session.set('msgSessionLimit', 40);
+    Session.set('msgSessionLimit', 20);
     SyncMsgSessionFromServer(Meteor.userId());
     this.render();
   }
@@ -1140,7 +1140,7 @@ Template._simpleChatToChatLayout.onRendered(function(){
   Meteor.setTimeout(function(){
     $('body').css('overflow', 'hidden');
     var DHeight = $('.group-list').outerHeight();
-    $('.box').animate({scrollTop:DHeight}, 600);
+    $('.box').animate({scrollTop:DHeight}, 10);
     // $('.box').scrollTop(DHeight);
   }, 0);
 });
@@ -2013,7 +2013,7 @@ Template._simpleChatListLayout.events({
   }
 });
 Template._groupMessageList.onRendered(function(){
-  Session.set('msgSessionLimit',40);
+  Session.set('msgSessionLimit',20);
   var medialistHeight = 0;
   $('.container-box').scroll(function(){
     var height = $('.simple-chat-medialist').height();
