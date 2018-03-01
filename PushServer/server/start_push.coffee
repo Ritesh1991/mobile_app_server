@@ -7,7 +7,7 @@ if Meteor.isServer
           }
           client.push().setPlatform 'ios', 'android'
           .setAudience JPush.ALL
-          .setNotification '回复通知',JPush.ios(content,null,null,null,extras),JPush.android(content, null, 1,extras)
+          .setNotification '回复通知',JPush.ios(content,null,null,null,extras),JPush.android(content, null, 1,extras, 0, null, 0, null, 1)
           .setOptions null, 60
           .send (err, res)->
             if err
@@ -28,7 +28,7 @@ if Meteor.isServer
                 #console.log 'JPUSH to ' + pushToken.token
                 client.push().setPlatform 'ios', 'android'
                 .setAudience JPush.registration_id(token)
-                .setNotification '回复通知',JPush.ios(content,null,null,null,extras),JPush.android(content, null, 1,extras)
+                .setNotification '回复通知',JPush.ios(content,null,null,null,extras),JPush.android(content, null, 1,extras, 0, null, 0, null, 1)
                 .setOptions null, 60
                 .send (err, res)->
                   if err
