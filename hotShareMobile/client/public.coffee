@@ -4,6 +4,15 @@ pages = ['/user', newBell, '/search']
 
 #公共函数
 @PUB =
+    'showLoading': (str)->
+        if str
+            loading = '<div class="pub_loading"><div class="loading_con"><span><img src="/loading-2.gif" style="margin-right:6px;"/>'+str+'</span></div></div>'
+        else 
+            loading = '<div class="pub_loading"><div class="loading_con"><span><img src="/loading-2.gif" /></span></div></div>'
+        PUB.hideLoading();
+        return $('body').append(loading)
+    'hideLoading':->
+        return $('.pub_loading').remove()
     'isUrl':(str_url)->
         `
         var strRegex = '^((https|http|ftp|rtsp|mms)?://)'
