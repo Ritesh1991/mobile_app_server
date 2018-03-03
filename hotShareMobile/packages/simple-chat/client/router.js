@@ -1677,7 +1677,7 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
   }
   
   var insertMsg = function(msgObj, type){
-    console.log(type, msgObj._id);
+    console.log('insertMsg', type, msgObj._id);
 
     // 聊天窗口判断是否自动滚动
     var auto_to_bottom = false;
@@ -1691,7 +1691,9 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
     }
 
     Messages.insert(msgObj, function(err, _id){
-      rmMsgKey(msgKey, '#1691');
+      if (msgObj && msgObj._id == _id && _id != null){
+        rmMsgKey(msgKey, '#1691');
+      }
       if (err)
         return console.log('insert msg error:', err);
       if (auto_to_bottom === true){
