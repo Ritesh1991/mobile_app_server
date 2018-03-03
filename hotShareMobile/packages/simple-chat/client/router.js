@@ -1707,11 +1707,14 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
     }
 
     Messages.insert(msgObj, function(err, _id){
-      if (msgObj && msgObj._id == _id && _id != null){
-        rmMsgKey(msgKey, '#1691');
-      }
       if (err)
         return console.log('insert msg error:', err);
+        
+      if (msgObj && msgObj._id == _id && _id != null){
+        console.log('msgObj._id:'+ msgObj._id)
+        rmMsgKey(msgKey, '#1691');
+      }
+        
       if (auto_to_bottom === true){
         setTimeout(scrollToBottom, 800);        
         // Meteor.setTimeout(function(){
