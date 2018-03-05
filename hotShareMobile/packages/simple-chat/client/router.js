@@ -139,6 +139,24 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     Session.set('msgSessionLimit', 20);
     SyncMsgSessionFromServer(Meteor.userId());
     this.render();
+  },
+  onStop: function() {
+    console.log('user_list router onstop');
+    Meteor.defer(function() {
+      me = Meteor.user();
+      typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"];
+      Meteor.call('resetMessageReadCount', Meteor.userId(), typeArr);
+
+      user = Meteor.user();
+      ids =  [];
+      if (user && user.profile && user.profile.associated)
+        ids = _.pluck(user.profile.associated, 'id');
+      ids.push(Meteor.userId());
+      if (withPostGroupChat)
+        MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true});
+      else
+        MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true});
+    });
   }
 });
 
@@ -514,7 +532,7 @@ Template._simpleChatToChat.onRendered(function(){
   }
   // fix_data_timeInterval = Meteor.setInterval(fix_data, 1000*60);
   Meteor.subscribe('people_new', function(){});
-  // check message length 
+  // check message length
   if ( Messages.find(slef.data.where, {sort: {create_time: 1}}).count() <= 0 )  {
     PUB.showLoading();
 
@@ -575,7 +593,7 @@ Template._simpleChatToChat.onRendered(function(){
         list_limit.set(list_limit.get()+list_limit_val);
         Meteor.setTimeout(function(){is_loading.set(false);}, 1500);
       }
-  
+
       // 滚动方向
       var after = $_box.scrollTop();
       var direction = '';
@@ -584,7 +602,7 @@ Template._simpleChatToChat.onRendered(function(){
       if (before<after)
         direction = 'down';
        before = after;
-  
+
       // 处理新消息（滚动条后面的未读）
       // if (direction === 'down')
       //   getLastMsg();
@@ -1688,10 +1706,10 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
   var rmMsgKey = function(msgKey, log){
     console.log('remove msg key ', log, msgKey);
     if (msgKey){
-      localStorage.removeItem(msgKey); 
+      localStorage.removeItem(msgKey);
     }
   }
-  
+
   var insertMsg = function(msgObj, type){
     console.log('insertMsg', type, msgObj._id);
 
@@ -1709,14 +1727,14 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey) {
     Messages.insert(msgObj, function(err, _id){
       if (err)
         return console.log('insert msg error:', err);
-        
+
       if (msgObj && msgObj._id == _id && _id != null){
         console.log('msgObj._id:'+ msgObj._id)
         rmMsgKey(msgKey, '#1691');
       }
-        
+
       if (auto_to_bottom === true){
-        setTimeout(scrollToBottom, 800);        
+        setTimeout(scrollToBottom, 800);
         // Meteor.setTimeout(function(){
         //   $('.box').scrollTop($('.box ul').height());
         //   console.log('==聊天自动滚动==');
@@ -2005,7 +2023,7 @@ Template._simpleChatListLayout.events({
       check_message_miss_observechange(_id);
     }
     Session.set("history_view", history);
-    
+
     if(this.sessionType === 'group'){
       Session.set('groupsId', _id)
       Router.go(AppConfig.path + '/to/group?id='+_id+'&name='+encodeURIComponent(this.toUserName)+'&icon='+encodeURIComponent(this.toUserIcon));
@@ -2332,7 +2350,7 @@ Template._simpleChatToChatLayout.events({
     selectMediaFromAblum(9, function(cancel, res,currentCount,totalCount){
       if (cancel || !res)
         return;
-      
+
         var id = new Mongo.ObjectID()._str;
         var timestamp = new Date().getTime();
         var filename = Meteor.userId()+'_'+timestamp+'.jpg';
@@ -2415,8 +2433,8 @@ Template._simpleChatToChatLayout.helpers({
     var result = '.my-new-time{text-align: center;}';
     result += '.my-new-time span{background-color: #ccc; color: #fff; font-size: 12px; border-radius: 5px; padding: 3px 10px;}\r\n';
     timeStyles.get().map(function(item){
-      result += item + '{display:none;}\r\n'; 
-      result += item + ':nth-of-type(1){display:block;}\r\n'; 
+      result += item + '{display:none;}\r\n';
+      result += item + ':nth-of-type(1){display:block;}\r\n';
     });
     return result;
   }
@@ -2429,7 +2447,7 @@ Template.__simpleChatToChatFooterIcons.helpers({
 Template._simpleChatGroupUsersList.onRendered(function(){
   var groupid = Session.get('groupsId');
   var windowheight = $(window).height();
-  $('.thisGroupUsersList #wrapper').css('min-height', windowheight + 'px'); 
+  $('.thisGroupUsersList #wrapper').css('min-height', windowheight + 'px');
   Meteor.subscribe("get-group-user",groupid);
 });
 Template._simpleChatGroupUsersList.helpers({
@@ -2457,14 +2475,14 @@ Template._simpleChatToChatItem.helpers({
 var formatChatTime = function(time){
   if (!time || !time.format)
     return;
-  
+
   var result = '';
   var now = new Date();
 
   // 当天
   if (time.format('yyyy-MM-dd') === now.format('yyyy-MM-dd'))
     return [time.format('hhmm'), time.format('hh:mm')];
-  
+
   // 三天内
   if (now.getTime() - time.getTime() >= 1000*60*60*24*3)
   return [time.format('eehhmm'), time.format('ee hh:mm')];
@@ -2472,6 +2490,6 @@ var formatChatTime = function(time){
   // 今年
   if (time.format('yyyy') === now.format('yyyy'))
     return [time.format('MMddhhmm'), time.format('MM-dd hh:mm')];
-  
+
   return [time.format('yyyyMMddhhmm'), time.format('yyyy-MM-dd hh:mm')];
 };
