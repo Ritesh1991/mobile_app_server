@@ -198,7 +198,7 @@ if Meteor.isClient
         data_row:'1',
         data_col:'3',
         data_sizex:'6',
-        data_sizey:'6'} 
+        data_sizey:'6'}
   insertDownloadedImage = (linkInfo,imageExternalURL,found,inputUrl,file,width,height)->
     if file
       timestamp = new Date().getTime()
@@ -595,7 +595,7 @@ if Meteor.isClient
     popupProgressBar.close()
     handleAddedLink(url)
     window.plugins.toast.showWithOptions({message: '访问导入链接超时，请点击右上角"导入"再试一次。', duration: '6000', position: 'center'})
-  
+
   _handle = null
   _handleAutorun = null
   @hanldeDirectLinkServerImport = (url)->
@@ -787,7 +787,7 @@ if Meteor.isClient
                           Drafts.update({_id: id}, {$set: {imgUrl: _p.mainImage}})
                           for item in _p.pub
                             if item.souImgUrl and item.imgUrl
-                              Drafts.update({originImgUrl: item.souImgUrl, isPost: {$ne: true}}, {$set: {imgUrl: item.imgUrl}}, {multi: true}) 
+                              Drafts.update({originImgUrl: item.souImgUrl, isPost: {$ne: true}}, {$set: {imgUrl: item.imgUrl}}, {multi: true})
 
                       # if(err)
                       #   return popupProgressBar.close()
@@ -800,8 +800,8 @@ if Meteor.isClient
                       if pub.length > 0
                         deferedProcessAddPostItemsWithEditingProcessBar(pub)
                       Session.set 'isReviewMode','2'
-                      Router.go('/add')    
-                      popupProgressBar.close()                                      
+                      Router.go('/add')
+                      popupProgressBar.close()
                 '提示', ['编辑后发表','立即发表']
               )
           else
@@ -945,6 +945,8 @@ if Meteor.isClient
   @handleDirectLinkImport = (url, clientSide, type)->
     if url.match(/localhost/g)
       url = "about:blank"
+    console.log('wk==>clientSide',clientSide)
+    console.log('wk==>withServerImport',withServerImport)
     if withServerImport and clientSide is undefined
       console.log("Import url on server side...")
       if type is '2'
@@ -1150,7 +1152,7 @@ if Meteor.isClient
     else
       history_view = Session.get("history_view")
       history_view = history_view.reverse()
-      if history_view and history_view[0].view 
+      if history_view and history_view[0].view
         view = history_view[0].view
       if view is 'home' or view is 'search' or view is 'bell'
         PUB.page '/user'
@@ -1299,7 +1301,7 @@ if Meteor.isClient
     style = if !Session.get('addPostTheme') or Session.get('addPostTheme') is 'default' then '' else Session.get('addPostTheme')
 
     if Session.get('isReviewMode') is '2' or Posts.find({_id:postId}).count()>0
-      browseTimes = Posts.findOne({_id:postId}).browse 
+      browseTimes = Posts.findOne({_id:postId}).browse
       Posts.update(
         {
           _id:postId
@@ -1724,7 +1726,7 @@ if Meteor.isClient
                   #       data_col: '1',
                   #       data_sizex: '6',
                   #       data_sizey: '4'
-                  #     }                
+                  #     }
                   url = importVideo.getVideoUrlFromUrl(result.input1)
                   if (!url)
                     return window.plugins.toast.showShortCenter("导入视频失败，如有需要请重新尝试~")
@@ -1743,7 +1745,7 @@ if Meteor.isClient
                     data_col: '1',
                     data_sizex: '6',
                     data_sizey: if (result.input1.indexOf('http://www.meipai.com/') >= 0) then '8' else '4'
-                  }                
+                  }
               '提示'
               ['导入', '取消']
             )
@@ -2194,17 +2196,17 @@ if Meteor.isClient
     # Meteor.subscribe('associateduserdetails', userIds)
     t = this
     Meteor.subscribe 'userRelation'
-    height = $(window).height()*0.68		
-    height = height + 'px'		
-    $('.modal-dialog .modal-body').css({'max-height':height,'overflow-y':'auto'})		
-    $('#chooseAssociatedUser').on 'show.bs.modal', ->		
-      $('body,html').css 'overflow': 'hidden'		
-    $('#chooseAssociatedUser').on 'hide.bs.modal', ->		
-      $('body,html').css 'overflow': '' 
+    height = $(window).height()*0.68
+    height = height + 'px'
+    $('.modal-dialog .modal-body').css({'max-height':height,'overflow-y':'auto'})
+    $('#chooseAssociatedUser').on 'show.bs.modal', ->
+      $('body,html').css 'overflow': 'hidden'
+    $('#chooseAssociatedUser').on 'hide.bs.modal', ->
+      $('body,html').css 'overflow': ''
 
   Template.chooseAssociatedUser.onDestroyed ()->
-    $('body,html').css 'overflow': '' 
-    
+    $('body,html').css 'overflow': ''
+
   Template.chooseAssociatedUser.helpers
     accountList :->
       # userIds = []
@@ -2252,7 +2254,7 @@ if Meteor.isClient
       'click .btn-title': ()->
         $('.post-theme-box').hide()
         $('.post-theme-box-mask').hide()
-        
+
         pubImages=[]
         draftData = Drafts.find().fetch()
         for i in [0..(draftData.length-1)]
@@ -2276,8 +2278,7 @@ if Meteor.isClient
         $('.post-theme-box-mask').hide()
       'click .post-theme-box li': ()->
         Session.set('addPostTheme', this.style)
-        postThemeHepler(this.style)     
+        postThemeHepler(this.style)
       'click .post-theme-box .btn-succ': ()->
         $('.post-theme-box').hide()
         $('.post-theme-box-mask').hide()
-
