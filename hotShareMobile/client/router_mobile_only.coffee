@@ -1,5 +1,6 @@
 
 if Meteor.isClient
+  ajaxCDN = null
   subs = new SubsManager({
     #maximum number of cache subscriptions
     cacheLimit: 999,
