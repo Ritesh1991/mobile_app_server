@@ -57,8 +57,8 @@ specialClassNameForPopularMobileSite = [
   '.rich_media_content' # Wechat
   '.WBA_content' # Weibo
   '#cont-wrapper' # 豆瓣FM
-  '#j-body' # 企鹅FM 
-  '.article' # 悦读FM 
+  '#j-body' # 企鹅FM
+  '.article' # 悦读FM
   '.main_box' # QQ 音乐
   '#page-content'   #xueqiu
   '#BODYCON'        #tripadvisor
@@ -92,7 +92,7 @@ beforeExtractConfig = [
   #     $sction = $page.find(".rich_media_content > section > section:last > section > section:last > section > section")
   #     $sction.each ()->
   #       $(this).html('<p>'+$(this).text()+'</p>')
-      
+
   #     data.body = ''
   #     _.map $page[0].parentNode.childNodes, (node)->
   #       data.body += node.outerHTML
@@ -393,12 +393,12 @@ cloneWithoutSibling=(parentNode, node)->
         musicElement.setAttribute('image', musicInfo.image)
         musicElement.setAttribute('songName', musicInfo.songName)
         musicElement.setAttribute('singerName', musicInfo.singerName)
-          
+
         newRoot = document.createElement("div")
         newRoot.appendChild(musicElement)
         newRoot.id = 'hotshare_special_tag_will_not_hit_other'
         return newRoot
-  
+
   newRoot = document.createElement("div")
   newRoot.id = 'hotshare_special_tag_will_not_hit_other'
   return newRoot
@@ -417,7 +417,7 @@ cloneWithoutSibling=(parentNode, node)->
     if page.host in specialClassNameExcludeMobileSites
       break
     rootNode = null
-    
+
     if($(bodyParified).find(tag).length > 0) # 无法查找body下的第一层
       #item = $(bodyParified).find(tag)[0]
       #if item.tagName and item.tagName.toUpperCase() is 'IMG'
@@ -447,7 +447,7 @@ cloneWithoutSibling=(parentNode, node)->
             rootNode = item.parentNode
             break
 
-    console.log("rootNode =" + rootNode)
+    console.log("rootNode =" + rootNode) 
     if rootNode isnt null
       treeWalker = document.createTreeWalker(
         rootNode,
@@ -577,4 +577,3 @@ cloneWithoutSibling=(parentNode, node)->
   root = collectSiblings(top)
   removeFragments(root)
   root
-

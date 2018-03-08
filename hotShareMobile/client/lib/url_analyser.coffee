@@ -103,7 +103,7 @@ if Meteor.isClient
       cleanUp:(node)->
         if node and node.parentNode
           return $(node).html('')
-    }
+    },
     {
       nodeSelector: '.j-orientation-0'
       parentSelector: ''
@@ -123,7 +123,7 @@ if Meteor.isClient
             }
         return {}
       cleanUp:(node)->
-    }
+    },
     {
       nodeSelector: ''
       parentSelector: '.article'
@@ -143,7 +143,7 @@ if Meteor.isClient
             }
         return {}
       cleanUp:(node)->
-    }
+    },
     {
       nodeSelector: '.song_infosong_info' # QQ 音乐
       parentSelector: ''
@@ -156,7 +156,7 @@ if Meteor.isClient
         }
       cleanUp:(node)->
         $(node).html()
-    }
+    },
     {
       nodeSelector: '.kg_audio' # kg.qq.com
       parentSelector: ''
@@ -172,7 +172,7 @@ if Meteor.isClient
     }
   ]
   formatDocement = (data)->
-    if data.host is 'kg.qq.com'
+    if data.host is 'kg.qq.com' or data.host is 'kg3.qq.com'
       try
         kg_avideo = data.body.substr(data.body.indexOf('window.__DATA__ = {')+'window.__DATA__ = {'.length-1)
         kg_avideo = kg_avideo.substring(0, kg_avideo.indexOf('};')+1)
@@ -306,18 +306,18 @@ if Meteor.isClient
       videoUrlAttr: 'src',
       videoImgSelector: '.live-bg',
       videoImgAttr: 'src'
-    },
-    {
-      videoClass: '#player',
-      videoUrlSelector: '#player',
-      videoUrlAttr: 'src',
-      videoImgSelector: '#player',
-      videoImgAttr: 'data-image'
     }
+    #{
+    #  videoClass: '#player',
+    #  videoUrlSelector: '#player',
+    #  videoUrlAttr: 'src',
+    #  videoImgSelector: '#player',
+    #  videoImgAttr: 'data-image'
+    #}
   ]
   getPossibleVideo = (elem,data)->
     showDebug&&console.log 'data is  --------------'
-    if device.platform isnt 'iOS'
+    if device.platform isnt 'iOS' and data[0]
       data = data[0]
     showDebug&&console.log data.scripts
     # showDebug&&console.log data.host
@@ -490,6 +490,8 @@ if Meteor.isClient
       iabRef = undefined
   @seekOneUsableMainImage = (data,callback,minimal)->
     imageArray = []
+    console.log 'data article is'
+    console.log data.resortedArticle
     showDebug&&console.log 'Url Analyse result is ' + JSON.stringify(data)
     if data.imageArray
       for img in data.imageArray
@@ -983,7 +985,7 @@ if Meteor.isClient
             toBeInsertedStyleAlign = {}
             previousIsSpan = false
             return true
-        else if node.tagName is 'MUSICEXTRACTED'
+        else if node.tagName is 'MUSICEXTRACTED' or node.tagName is 'AUDIO'
           if toBeInsertedText and toBeInsertedText isnt ''
             appendParagraph(resortedArticle, toBeInsertedText, undefined)
             toBeInsertedText = ''
@@ -1010,7 +1012,7 @@ if Meteor.isClient
             if videoInfo.imageUrl
               data.imageArray.push videoInfo.imageUrl
             return true
-        
+
         $(node).html($(node).html().replace(new RegExp('<newrow></newrow>', 'g'), '\r\n'))
         text = $(node).text()
         if text and text isnt ''
@@ -1203,12 +1205,14 @@ if Meteor.isClient
         a = document.createElement('a')
         a.href = url
         data.host = a.hostname
-
-      if data.body
+      if data.host is 'kg.qq.com' or data.host is 'kg3.qq.com'
+        if data[0]
+          data = data[0]
         formatDocement(data)
+      if data.body
         data.body = data.body.replace(/(<video.*?)autoplay\s*=.*?(\w+\s*=|\s*>)/gim, '$1$2')
         data.bodyLength = data.body.length
-      
+
       console.log 'getContentListsFromUrl _html2data2 data is '
       console.log data.body
       console.log "scripts is " + data.scripts
