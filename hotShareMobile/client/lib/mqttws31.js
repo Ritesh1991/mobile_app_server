@@ -1540,7 +1540,7 @@ var PahoMQTT = (function (global) {
 			this._reconnecting = true;
 			this.sendPinger.cancel();
 			this.receivePinger.cancel();
-			if (this._reconnectInterval < 128)
+			if (this._reconnectInterval < 32)
 				this._reconnectInterval = this._reconnectInterval * 2;
 			if (this.connectOptions.uris) {
 				this.hostIndex = 0;
