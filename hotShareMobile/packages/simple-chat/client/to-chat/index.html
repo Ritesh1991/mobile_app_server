@@ -10,7 +10,7 @@
     }
     body{height: 100% !important;}
     #_chat_box{
-      display: -webkit-box;display: -webkit-flex;display: -moz-box;display: -ms-flexbox;display: flex; 
+      display: -webkit-box;display: -webkit-flex;display: -moz-box;display: -ms-flexbox;display: flex;
       -webkit-flex-direction: column;-moz-flex-direction: column;-ms-flex-direction: column;flex-direction: column;
     }
     #_chat_box > div{display: block;}
@@ -48,7 +48,7 @@
         </script>
         <span>{{roomtitle}}{{#if isGroups}}{{else}}(私聊){{/if}}</span>
         {{#if isGroups}}
-           <div class="right groupsProfile"></div> 
+           <div class="right groupsProfile"></div>
         {{else}}
         <div class="rightDropMenu dropdown">
             <div class="rightButton dropdown-toggle" id="btn-more" data-toggle="dropdown">
@@ -67,26 +67,39 @@
         {{/if}}
 
         <!--<div class="right profile"></div>-->
-        <!-- {{#if loading}}
-        <div class="loading"></div>
-        {{/if}} -->
-      </div>
-      <!-- scroll-behavior: smooth; css 平滑滚动 -->
-      <!--<div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">-->
-      <div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto;">
         {{#if loading}}
-        <center style="color:gray;" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 12px;"></i>加载中...</center>
-        {{else}}
-        <center style="color:gray;visibility: hidden;" class="loading"><i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size: 12px;"></i>加载中...</center>
+        <div class="loading"></div>
         {{/if}}
+      </div>
+      <div class="box" style="position: relative; left: auto; right: auto; bottom: auto; top: auto; scroll-behavior: smooth;">
         <ul class="group-list">
           {{> yield}}
         </ul>
       </div>
       <div class="footer footbar new-footerbar {{getInputClass}}" style="position: relative; left: auto; right: auto; bottom: auto; top: auto;">
         <form class="input-form">
+          <!-- <div id="container"></div>
+          <style type="text/css">
+            #container{width: 60px; display: block;position: absolute;left: 0px;bottom: 0;height: 48px;z-index: 998;}
+            #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
+          </style>
+          <div class="btn-box image" id="selectfiles"></div> -->
+
+          <div class="sendInfo">
+              <i class="fa fa-microphone fa1" ></i>
+              <i class="fa fa-keyboard-o fa2" style="display: none"></i>
+          </div>
+          <div class="new-input f3" style="display: none;text-align: center;color: #696161">按住说话</div>
           <textarea dir="auto" name="msg" id="simple-chat-text" class="new-input input-text" maxlength="5000" placeholder="说点什么" style="-webkit-touch-callout: default; -webkit-user-select: text;"></textarea>
+
           <script type="text/javascript">autosize($('#simple-chat-text'));</script>
+          <!-- <table>
+            <tr>
+              <td class="center" style="right: 86px;position: absolute; left: 5px; z-index: 4;">
+                <textarea dir="auto" name="msg" id="simple-chat-text" maxlength="5000" class="input-text input-message autogrow-short text" placeholder="说点什么" style="width: 100%; padding: 5px;border:1px solid rgba(225, 225, 226, 1);line-height: 25px; color:black; font-size:14px;border-radius: 5px;"></textarea>
+              </td>
+            </tr>
+          </table> -->
           <div class="new-btns">
             <div class="new-btn from-smile-btn"><i class="fa fa-smile-o" aria-hidden="true"></i></div>
             {{#if hasInputing}}
@@ -104,6 +117,14 @@
         </form>
       </div>
     </div>
+  </div>
+  <div class="model" style="display: none;">
+    <div class="model-icon">
+      <i class="fa fa-microphone icon1"></i>
+      <img src="">
+      <i class="fa fa-arrow icon2" style="display: none;"></i>
+    </div>
+    <div class="model-text">松开手指 发送语音</div>
   </div>
   <div class="thisGroupUsersList">
     {{> _simpleChatGroupUsersList}}
@@ -123,6 +144,8 @@
 </template>
 
 <template name="_simpleChatToChatItemText">{{{convertLink this}}}</template>
+
+
 <template name="_simpleChatToChatItem">
   <!-- {{#if is_show_time _id}}
   <li id="{{_id}}" class="time">{{get_time _id}}</li>
@@ -193,7 +216,7 @@
       </div>
     {{else}}-->
       {{#if text}}
-        <div class="text">
+      <div class="text">
           {{> Template.dynamic template='_simpleChatToChatItemText' data=text }}
           <!-- {{{convertLink text}}} -->
           {{#if is_me form.id}}
@@ -309,31 +332,57 @@
           {{/if}}
       </div>
       {{else}}
-      <div class="img">
-        {{#if is_me form.id}}
-          {{#if status_sending send_status}}
-          <div class="status"><img src="/loading.gif" /></div>
-          {{/if}}
-          {{#if status_failed send_status}}
-          <div class="status sendfailed"><img src="/failed.png" /></div>
-          {{/if}}
-          {{#if withEnableHaveReadMsg}}
-            {{#if is_read}}
-              <span class="status haveRead">已读</span>
+        {{#if audios}}
+          <div class="img">
+            {{#if is_me form.id}}
+            {{#if status_sending send_status}}
+            <div class="status"><img src="/loading.gif" /></div>
+            {{/if}}
+            {{#if status_failed send_status}}
+            <div class="status sendfailed"><img src="/failed.png" /></div>
+            {{/if}}
+            {{#if withEnableHaveReadMsg}}
+              {{#if is_read}}
+                <span class="status haveRead">已读</span>
+              {{/if}}
             {{/if}}
           {{/if}}
-        {{/if}}
-        <div class="imgs">
-          {{#each images}}
-            {{#if url}}
-              <img class="work-ai-img swipebox" data-type="images" data-peoplehisid="{{people_his_id}}" src="{{url}}" />
-            {{else}}
-              <img src="{{thumbnail}}" />
-            {{/if}}
+          </div>
+        <!-- <div class="status" style="width: 10px;height: 10px;"></div> -->
+          {{#each audios}}
+            <div class="text audio" data-type="audios" data-url="{{url}}" data-time="{{id}}">
+              <span style="text-align: left;">{{id}}"</span>
+              <!-- <span style="text-align: right;">10</span> -->
+            </div>
           {{/each}}
-        </div>
-        <!--<div class="line-label-box crop-lable-box"><div class="check">标记</div><div class="crop">裁剪</div><div class="remove">删除</div></div>-->
-      </div>
+        <!-- send image success -->
+        {{else}}
+          <div class="img">
+            {{#if is_me form.id}}
+              {{#if status_sending send_status}}
+              <div class="status"><img src="/loading.gif" /></div>
+              {{/if}}
+              {{#if status_failed send_status}}
+              <div class="status sendfailed"><img src="/failed.png" /></div>
+              {{/if}}
+              {{#if withEnableHaveReadMsg}}
+                {{#if is_read}}
+                  <span class="status haveRead">已读</span>
+                {{/if}}
+              {{/if}}
+            {{/if}}
+            <div class="imgs">
+              {{#each images}}
+                {{#if url}}
+                  <img class="work-ai-img swipebox" data-type="images" data-peoplehisid="{{people_his_id}}" src="{{url}}" />
+                {{else}}
+                  <img src="{{thumbnail}}" />
+                {{/if}}
+              {{/each}}
+            </div>
+            <!--<div class="line-label-box crop-lable-box"><div class="check">标记</div><div class="crop">裁剪</div><div class="remove">删除</div></div>-->
+          </div>
+        {{/if}}
       <!-- {{else}}
       <div class="img"><img src="{{thumbnail}}" /></div>
       {{/if}} -->
@@ -424,4 +473,5 @@
           {{/each}}
         </div>
     </div>
-  </template>
+</template>
+

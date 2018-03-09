@@ -275,7 +275,7 @@ if Meteor.isClient
       type:'music',
       owner: Meteor.userId(),
       toTheEnd: true,
-      text:'您当前程序不支持音频播放，请分享到微信中欣赏',
+      text:''#'您当前程序不支持音频播放，请分享到微信中欣赏',
       musicInfo: musicInfo
       data_row:'1',
       data_col:'3',

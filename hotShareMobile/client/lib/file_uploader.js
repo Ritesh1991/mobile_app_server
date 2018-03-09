@@ -5,6 +5,7 @@ if (Meteor.isCordova){
     var showDebug=false
     var uploadToAliyun_new = function(filename,URI, callback){
         Meteor.call('getAliyunWritePolicy',filename,URI,function(error,result){
+          console.log(result)
             if(error) {
                 showDebug && console.log('getAliyunWritePolicy error: ' + error);
                 if(callback){
@@ -13,15 +14,23 @@ if (Meteor.isCordova){
             }
             showDebug && console.log('File URI is ' + result.orignalURI);
             var options = new FileUploadOptions();
-            options.mimeType ="image/jpeg";
+            var contentType;
+            var filenames =filename.substr(filename.length-3);
+            if(filenames == "mp3"){
+               contentType = "audio/mp3";
+               options.mimeType ="audio/mp3";
+            }else{
+              contentType = "image/jpeg";
+              options.mimeType ="image/jpeg";
+            }
             options.chunkedMode = false;
             options.httpMethod = "PUT";
             options.fileName = filename;
-
+            console.log(result.orignalURI)
             var uri = encodeURI(result.acceccURI);
-
+            console.log(uri)
             var headers = {
-                "Content-Type": "image/jpeg",
+                "Content-Type": contentType,
                 "Content-Md5":"",
                 "Authorization": result.auth,
                 "Date": result.date
@@ -42,11 +51,13 @@ if (Meteor.isCordova){
             ft.upload(result.orignalURI, uri, function(e){
                 if(callback){
                     callback('done',result.readURI);
+                    console.log(result.readURI)
                 }
             }, function(e){
                 showDebug && console.log('upload error' + e.code );
                 if (callback) {
                     callback('error',null);
+                    console.log('upload error:' + e.code )
                 }
             }, options,true);
 
