@@ -15,7 +15,8 @@
               </a>
             </div>
             <div class="btn-group">
-                <div id="add" data-toggle="modal" data-target="#level2-popup-menu" class="foot-btn btn btn-default {{focus_style 'add'}}">
+                <div id="add" class="foot-btn btn btn-default {{focus_style 'add'}}">
+                <!-- <div id="add" data-toggle="modal" data-target="#level2-popup-menu" class="foot-btn btn btn-default {{focus_style 'add'}}"> -->
                   <!--<i class="fa fa-plus" style="font-size: 32px; color:#FFF;padding-top: 10px;"></i>-->
                   <!--<i class="fa fa-plus" style="font-size: 32px; padding-top: 10px;"></i>-->
                   <img src="/theme_blue/add.svg" style="height:50px;margin-top:-2px;"/>
@@ -67,9 +68,10 @@
         </div>
     </div>
   {{/if}}
-  {{#if display_select_import_way}}
+  {{> selectNewpostOptions}}
+  <!-- {{#if display_select_import_way}}
     {{> selectImportWay}}
-  {{/if}}
+  {{/if}} -->
   <script>
     $(document).ready(function(){
       $('#level2-popup-menu').on('hide.bs.modal', function(e) {
@@ -116,3 +118,14 @@
     </div>
   </div>
 </template>-->
+<template name='selectNewpostOptions'>
+  <div id='select_newpost_options'>
+    <div id="new_Mask"></div>
+    <div class="select_post_banner">
+      <img id="select_image" src="/addposticon/image.png" style="height:50px;width:50px;">
+      <img id="take_photo" src="/addposticon/photo.png" style="height:50px;width:50px;">
+      <img class="importWayBtn" id="serverImport" src="/addposticon/fastimport.png" style="height:50px;width:50px;">
+      <img class="importWayBtn" id="appImport" src="/addposticon/import.png" style="height:50px;width:50px;">
+    </div>
+  </div>
+</template>

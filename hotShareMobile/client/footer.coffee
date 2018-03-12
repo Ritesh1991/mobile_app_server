@@ -221,6 +221,9 @@ if Meteor.isClient
       prepareToEditorMode()
       PUB.page('/user')
     'click #add': (e)->
+      # PUB.page('/')
+      $('#select_newpost_options').fadeIn(300)
+    'click #addOld': (e)->
       # return Router.go('/newEditor')
       if (Session.get("myHotPostsChanged"))
         Session.set("myHotPostsChanged", false)
@@ -441,3 +444,115 @@ if Meteor.isClient
         localStorage.setItem('serverImport_method', '1')
       else
         localStorage.setItem('serverImport_method', '2')
+
+
+  Template.selectNewpostOptions.onRendered ()->
+    if localStorage.getItem('serverImport_method') is '2'
+      $('#fastImportSaveDraft').attr('checked','checked')
+    else
+      $('#fastImportDirectPublish').attr('checked','checked')
+  Template.selectNewpostOptions.helpers
+    hasAssocaitedUsers: ()->
+      (AssociatedUsers.find({}).count() > 0) or (UserRelation.find({userId: Meteor.userId()}).count() > 0)
+  serverImportClicknew = (e, t, type)->
+    Session.set('post_improt_way',e.currentTarget.id)
+    $('#select_newpost_options').fadeOut()
+    Meteor.defer ()->
+      $('.modal-backdrop.in').remove()
+    prepareToEditorMode()
+    PUB.page '/add'
+    cordova.plugins.clipboard.paste (link)->
+      regexToken = /\b(((http|https?)+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig
+      matchArray = regexToken.exec( link )
+      if matchArray isnt null
+        importLink = matchArray[0]
+        if matchArray[0].indexOf('http') is -1
+          importLink = "http://"+matchArray[0]
+        Meteor.setTimeout(()->
+          Session.set('newEditorFormURL',importLink)
+          if e.currentTarget.id is 'serverImport'
+            Session.set 'isServerImport', true
+            handleDirectLinkImport(importLink, undefined, type)
+          else
+            handleDirectLinkImport(importLink, 1)
+        ,100)
+      else
+        handleAddedLink(null)
+        window.plugins.toast.showLongCenter("粘贴板内容并非有效连接，请手动粘贴\n浏览器内容加载后，点击地址栏右侧\"导入\"按钮");
+    ,()->
+      handleAddedLink(null)
+      window.plugins.toast.showLongCenter("无法获得粘贴板数据，请手动粘贴\n浏览器内容加载后，点击地址栏右侧\"导入\"按钮");
+  Template.selectNewpostOptions.events
+    'click #new_Mask': ->
+      $('#select_newpost_options').fadeOut()
+    'click .importWayBtn':(e,t)->
+      value = $("input[name='groupFastImport']:checked").val()
+      serverImportClicknew(e, t, value)
+    'click #take_photo':(e)->
+      $('#select_newpost_options').fadeOut()
+      Meteor.defer ()->
+        $('.modal-backdrop.in').remove()
+      Session.set('newEditorFormURL',null)
+      if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        prepareToEditorMode()
+        PUB.page '/newEditor'
+      else
+        prepareToEditorMode()
+        PUB.page '/add'
+      Meteor.defer ()->
+        if window.takePhoto
+          window.takePhoto (result)->
+            console.log 'result from camera is ' + JSON.stringify(result)
+            if result
+              Session.set('newEditorMainImage',{
+                _id: new Mongo.ObjectID()._str,
+                imgUrl: result.smallImage,
+                filename: result.filename,
+                URI: result.URI
+              })
+              if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              else
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(), style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+                Meteor.setTimeout(()->
+                  Template.addPost.__helpers.get('saveDraft')()
+                ,100)
+            else
+              PUB.back()
+    'click #select_image':(e)->
+      $('#select_newpost_options').fadeOut()
+      Meteor.defer ()->
+        $('.modal-backdrop.in').remove()
+      Session.set('newEditorFormURL',null)
+      if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+        PUB.page '/newEditor'
+      else
+        prepareToEditorMode()
+        PUB.page '/add'
+      Meteor.defer ()->
+          selectMediaFromAblum(999, (cancel, result,currentCount,totalCount)->
+            if cancel
+              #$('#level2-popup-menu').modal('hide');
+              PUB.back()
+              return
+            if result
+              console.log 'Local is ' + result.smallImage
+              if currentCount is 1
+                Session.set('newEditorMainImage',{
+                  _id: new Mongo.ObjectID()._str,
+                  imgUrl: result.smallImage,
+                  filename: result.filename,
+                  URI: result.URI
+                })
+              if (enableSimpleEditor and enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                Template.newEditor.sortable().add {type:'image', isImage:true, owner: Meteor.userId(), imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              else
+                Drafts.insert {type:'image', isImage:true, owner: Meteor.userId(),style:'object-position: 0 0;', imgUrl:result.smallImage, filename:result.filename, URI:result.URI, layout:''}
+              if currentCount >= totalCount
+                if (enableSimpleEditor and Meteor.user().profile and Meteor.user().profile.defaultEditor isnt 'fullEditor')
+                  return
+                else
+                  Meteor.setTimeout(()->
+                    Template.addPost.__helpers.get('saveDraft')()
+                  ,100)
+          )

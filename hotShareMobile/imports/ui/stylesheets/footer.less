@@ -83,3 +83,37 @@
     position: absolute;
   }
 }
+
+#select_newpost_options{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  #new_Mask{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9990;
+    background: rgba(255, 255, 255, .6);
+  }
+  .select_post_banner{
+    position: relative;
+    top: 70%;
+    text-align: center;
+    img{
+      height: 60px;
+      width: 60px;
+      z-index: 9999;
+      position: relative;
+      margin: 10px;      
+    }
+  }
+}
