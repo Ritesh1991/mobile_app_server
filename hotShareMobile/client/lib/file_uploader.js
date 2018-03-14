@@ -2,7 +2,7 @@
 if (Meteor.isCordova){
     uploadingFilesInfo = {filesCount:0, files:[]};
     abortuploader = function(){}
-    var showDebug=false
+    var showDebug=true
     var uploadToAliyun_new = function(filename,URI, callback){
         Meteor.call('getAliyunWritePolicy',filename,URI,function(error,result){
           console.log(result)
@@ -26,7 +26,6 @@ if (Meteor.isCordova){
             options.chunkedMode = false;
             options.httpMethod = "PUT";
             options.fileName = filename;
-            console.log(result.orignalURI)
             var uri = encodeURI(result.acceccURI);
             console.log(uri)
             var headers = {
@@ -54,6 +53,7 @@ if (Meteor.isCordova){
                     console.log(result.readURI)
                 }
             }, function(e){
+                //错误码1：file not found
                 showDebug && console.log('upload error' + e.code );
                 if (callback) {
                     callback('error',null);

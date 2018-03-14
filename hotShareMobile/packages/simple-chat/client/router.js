@@ -581,6 +581,7 @@ Template._simpleChatToChatItem.events({
             console.log("playAudio():Audio Error: " + err);
         }
     );
+    console.log('播放语音');
     // Play audio
     my_media.play();
     var w = $(this).innerWidth();
@@ -1176,7 +1177,7 @@ Template._simpleChatToChatLayout.helpers({
 
 sendMqttMsg = function(){
   var msg = _.clone(arguments[0]);
-  alert(msg.type)
+  // alert(msg.type)
   delete msg.send_status
   var callback = function(err){
     if(timeout){
@@ -1188,6 +1189,26 @@ sendMqttMsg = function(){
       return Messages.update({_id: msg._id}, {$set: {send_status: 'failed'}});
     }
     Messages.update({_id: msg._id}, {$set: {send_status: 'success'}});
+  };
+  var sendToGroupOrUser = function(msg){
+      if (msg.to_type === 'group'){
+        sendMqttGroupMessage(msg.to.id, msg, function(err){
+          if(err){
+            console.log('cant send this group message');
+          }else{
+            console.log('this group message sent to server');
+          }
+        });
+      }
+      else{
+        sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}),function(err){
+          if(err){
+            console.log('Cant send this user message')
+          } else {
+            console.log('user message Sent to server')
+          }
+        });
+      }
   };
   var timeout = Meteor.setTimeout(function(){
     var obj = Messages.findOne({_id: msg._id});
@@ -1212,7 +1233,8 @@ sendMqttMsg = function(){
         }
         window.___message.update(id, res[0].imgUrl);
         msg = Messages.findOne({_id: msg.to.id});
-        sendMqttGroupMessage(msg.to.id, msg, callback);
+        // sendMqttGroupMessage(msg.to.id, msg, callback);
+        sendToGroupOrUser(msg);
       });
     }
   }
@@ -1225,20 +1247,22 @@ sendMqttMsg = function(){
       }], 1, function(err, res){
         if(err || res.length <= 0)
           return callback(new Error('upload error'));
-        // if(timeout){
-        //   Meteor.clearTimeout(timeout);
-        //   timeout = null;
-        // }
-        // window.___message.update(id, res[0].imgUrl);
-        // msg = Messages.findOne({_id: msg.to.id});
-        // sendMqttGroupMessage(msg.to.id, msg, callback);
+        if(timeout){
+          Meteor.clearTimeout(timeout);
+          timeout = null;
+        }
+        window.___message.update(id, res[0].imgUrl);
+        msg = Messages.findOne({_id: msg.to.id});
+        //sendMqttGroupMessage(msg.to.id, msg, callback);
+        sendToGroupOrUser(msg);
       });
     }
+  }else{
+    if(msg.to_type === 'group')
+      sendMqttGroupMessage(msg.to.id, msg, callback);
+    else
+      sendMqttUserMessage(msg.to.id, msg, callback);
   }
-  if(msg.to_type === 'group')
-    sendMqttGroupMessage(msg.to.id, msg, callback);
-  else
-    sendMqttUserMessage(msg.to.id, msg, callback);
 };
 
 var mediaRec = null;
@@ -1327,28 +1351,34 @@ Template._simpleChatToChatLayout.events({
     $(".model").show();
     $(".f3").text("松开 结束");
     $(".model-text").removeClass('toggle');
+    console.log('touch start');
     //录音文件名
-     var recName = new Date().getTime() + ".mp3";
+     var recName = Meteor.userId()+new Date().getTime() + ".mp3";
      mediaRec = new Media(recName,
         // success callback
         function() {
           console.log("recordAudio():Audio Success");
-          // console.log("录音中:"+recName)
+          console.log("录音中:"+recName);
         },
         // error callback
         function(err) {
+          console.log('录音失败');
+          console.log(err);
           console.log(err.code);
+          PUB.toast('请检查权限是否开启');
         }
      );
     // Record audio开始录音
     mediaRec.startRecord();
     index = 0;
     timer = setInterval(function(){
+      console.log('index:'+index);
       index++;
       if(index == 50){
         var count = 10;
         timer1 = setInterval(function(){
           count--;
+          console.log('count:'+count);
           $(".model-text").text("还可以说"+count+"秒");
           if(count == 0){
             clearInterval(timer1);
@@ -1358,6 +1388,7 @@ Template._simpleChatToChatLayout.events({
             $(".f3").text("按住说话");
             //stop结束录音
             mediaRec.stopRecord();
+            console.log('3 min end');
             var id = new Mongo.ObjectID()._str;
             var filename = recName;
             // window.___message.insert(id, filename, URI);
@@ -1380,11 +1411,14 @@ Template._simpleChatToChatLayout.events({
     clearInterval(timer1);
     $(".model").hide();
     $(".f3").text("按住说话");
+    console.log('touchend,flag:'+flag);
     //stop结束录音。
     if(mediaRec !== null){
       if(flag){
          mediaRec.stopRecord();
-         console.log(mediaRec)
+         console.log('停止录音');
+         console.log(mediaRec);
+         console.log(mediaRec.src);
          var id = new Mongo.ObjectID()._str;
          var filename = mediaRec.src;
          var url = null;
@@ -1395,6 +1429,7 @@ Template._simpleChatToChatLayout.events({
          }
          // console.log(id)
          // console.log(url)
+        //  mediaRec.release();
          window.___messageAudio.insert(id, filename, url,index);
          window.uploadToAliyun_new(filename, url, function(status, result){
             console.log('result:' + result + ',status:' + status);
@@ -1795,6 +1830,8 @@ window.___message = {
 window.___messageAudio = {
   insert: function(id, filename, uri,index){
     var data = Blaze.getData(Blaze.getView(document.getElementsByClassName('simple-chat')[0]));
+    console.log('simple-chat data:');
+    console.log(data);
     var to = toUsers[page_data.type+'.'+page_data.id];
     if (!to || !to.name){
       PUB.toast('正在加载数据，请稍后发送！');
@@ -1841,8 +1878,10 @@ window.___messageAudio = {
     Messages.update({_id: id}, {$set: {
       audios: audios
     }}, function(){
+      console.log('语音在oss的url更新');
       console.log('update id:', id);
       $('.box').scrollTop($('.box ul').height());
+      //把语音消息 发送 mqtt消息
       sendMqttMsg(msg);
     //   if (msg.to_type === 'group'){
     //     sendMqttGroupMessage(msg.to.id, Messages.findOne({_id: id}));
