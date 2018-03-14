@@ -51,8 +51,6 @@ vim ./AndroidManifest.xml
 
 cp /home/roger/hotShare/ShareExtension/Android/MainActivity.java ./src/org/hotshare/everywhere/
 
-cp /home/roger/hotShare/ShareExtension/Android/SystemWebViewClient.java ./CordovaLib/src/org/apache/cordova/engine/SystemWebViewClient.java
-
 修改Ａｐｐ的名字为中文：
 vim res/values/strings.xml
 把app_name那一项从ｈｏｔＳｈａｒｅ改为故事贴

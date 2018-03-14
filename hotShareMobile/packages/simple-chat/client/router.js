@@ -2182,6 +2182,10 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
   footerView.set('');
 });
 
+function jsSoftKeyboardEnterClicked() {
+  console.log('##RDBG jsSoftKeyboardEnterClicked');
+  $('.from-submit-btn').click();
+}
 var resizeTime = null;
 Template._simpleChatToChatLayout.events({
   'keyup #simple-chat-text': function(e){
@@ -2210,6 +2214,11 @@ Template._simpleChatToChatLayout.events({
   },
   'keydown #simple-chat-text': function(e){
     Session.set('keydowntextlength', $('#simple-chat-text').val().length)
+  },
+  'keypress #simple-chat-text': function(e){
+    if (e.keyCode == 13) {
+      $('.from-submit-btn').click();
+    }
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
