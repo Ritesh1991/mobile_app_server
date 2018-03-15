@@ -1371,40 +1371,40 @@ Template._simpleChatToChatLayout.events({
     // Record audio开始录音
     mediaRec.startRecord();
     index = 0;
-    timer = setInterval(function(){
-      console.log('index:'+index);
-      index++;
-      if(index == 50){
-        var count = 10;
-        timer1 = setInterval(function(){
-          count--;
-          console.log('count:'+count);
-          $(".model-text").text("还可以说"+count+"秒");
-          if(count == 0){
-            clearInterval(timer1);
-            flag = false;
-            $(".model").hide();
-            $(".model-text").text("松开手指 发送语音");
-            $(".f3").text("按住说话");
-            //stop结束录音
-            mediaRec.stopRecord();
-            console.log('3 min end');
-            var id = new Mongo.ObjectID()._str;
-            var filename = recName;
-            // window.___message.insert(id, filename, URI);
-            window.uploadToAliyun_new(filename, "file:///storage/emulated/0/"+filename, function(status, result){
-              if (status === 'done' && result){
-                // window.___message.update(id, result);
-                // setTimeout(scrollToBottom, 100);
-              }
-            });
-          }
-        },1000)
-      }
-      if(index >= 60){
-        clearInterval(timer);
-      }
-    },1000)
+    // timer = setInterval(function(){
+    //   console.log('index:'+index);
+    //   index++;
+    //   if(index == 50){
+    //     var count = 10;
+    //     timer1 = setInterval(function(){
+    //       count--;
+    //       console.log('count:'+count);
+    //       $(".model-text").text("还可以说"+count+"秒");
+    //       if(count == 0){
+    //         clearInterval(timer1);
+    //         flag = false;
+    //         $(".model").hide();
+    //         $(".model-text").text("松开手指 发送语音");
+    //         $(".f3").text("按住说话");
+    //         //stop结束录音
+    //         mediaRec.stopRecord();
+    //         console.log('1 min end');
+    //         var id = new Mongo.ObjectID()._str;
+    //         var filename = recName;
+    //         // window.___message.insert(id, filename, URI);
+    //         window.uploadToAliyun_new(filename, "file:///storage/emulated/0/"+filename, function(status, result){
+    //           if (status === 'done' && result){
+    //             // window.___message.update(id, result);
+    //             // setTimeout(scrollToBottom, 100);
+    //           }
+    //         });
+    //       }
+    //     },1000)
+    //   }
+    //   if(index >= 60){
+    //     clearInterval(timer);
+    //   }
+    // },1000)
   },
   'touchend .f3' :function(e){
     clearInterval(timer);
@@ -1430,6 +1430,7 @@ Template._simpleChatToChatLayout.events({
          // console.log(id)
          // console.log(url)
         //  mediaRec.release();
+        index = mediaRec.getDuration();
          window.___messageAudio.insert(id, filename, url,index);
          window.uploadToAliyun_new(filename, url, function(status, result){
             console.log('result:' + result + ',status:' + status);

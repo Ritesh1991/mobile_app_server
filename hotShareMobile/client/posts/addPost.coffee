@@ -945,10 +945,8 @@ if Meteor.isClient
   @handleDirectLinkImport = (url, clientSide, type)->
     if url.match(/localhost/g)
       url = "about:blank"
-    console.log('wk==>clientSide',clientSide)
-    console.log('wk==>withServerImport',withServerImport)
     if withServerImport and clientSide is undefined
-      console.log("Import url on server side...")
+      console.log("Import url on server side...,type is "+type);
       if type is '2'
         hanldeDirectLinkServerImportNew(url)
       else
