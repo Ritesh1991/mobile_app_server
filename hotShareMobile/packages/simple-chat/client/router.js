@@ -2217,6 +2217,8 @@ Template._simpleChatToChatLayout.events({
   },
   'keypress #simple-chat-text': function(e){
     if (e.keyCode == 13) {
+      e.preventDefault();
+      e.stopPropagation();
       $('.from-submit-btn').click();
     }
   },
