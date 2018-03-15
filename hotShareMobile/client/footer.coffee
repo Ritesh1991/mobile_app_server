@@ -106,9 +106,9 @@ if Meteor.isClient
           ids = _.pluck(user.profile.associated, 'id')
         ids.push(Meteor.userId())
         if withPostGroupChat
-          MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true})
+          SimpleChat.MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true})
         else
-          MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true})
+          SimpleChat.MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true})
         Session.set('resetAllMsg', false)
   @prepareToEditorMode = ()->
     TempDrafts.remove({})
