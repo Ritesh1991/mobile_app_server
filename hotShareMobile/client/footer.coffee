@@ -94,6 +94,22 @@ if Meteor.isClient
          ''
       else
          'fade'
+  @resetAllMsgcount = ()->
+    if Session.get('resetAllMsg') is true
+      Meteor.defer ()->
+        me = Meteor.user()
+        typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"]
+        Meteor.call('resetMessageReadCount', Meteor.userId(), typeArr)
+        user = Meteor.user()
+        ids =  []
+        if user and user.profile and user.profile.associated
+          ids = _.pluck(user.profile.associated, 'id')
+        ids.push(Meteor.userId())
+        if withPostGroupChat
+          MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true})
+        else
+          MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true})
+        Session.set('resetAllMsg', false)
   @prepareToEditorMode = ()->
     TempDrafts.remove({})
     $('body').removeClass('modal-open')
@@ -167,6 +183,7 @@ if Meteor.isClient
         )
         return
       prepareToEditorMode()
+      resetAllMsgcount()
       PUB.page('/')
     'click #search':(e)->
       if (Session.get("myHotPostsChanged"))
@@ -182,6 +199,7 @@ if Meteor.isClient
         )
         return
       prepareToEditorMode()
+      resetAllMsgcount()
       PUB.page('/search')
     'click #bell':(e)->
       Meteor.defer ()->
@@ -203,6 +221,7 @@ if Meteor.isClient
         return
       # PUB.page('/bell')
       prepareToEditorMode()
+      Session.set('resetAllMsg', true)
       PUB.page('/simple-chat/user-list/'+Meteor.userId())
     'click #user':(e)->
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
@@ -219,6 +238,7 @@ if Meteor.isClient
         )
         return
       prepareToEditorMode()
+      resetAllMsgcount()
       PUB.page('/user')
     'click #add': (e)->
       # PUB.page('/')

@@ -139,24 +139,24 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     Session.set('msgSessionLimit', 20);
     SyncMsgSessionFromServer(Meteor.userId());
     this.render();
-  },
-  onStop: function() {
-    console.log('user_list router onstop');
-    Meteor.defer(function() {
-      me = Meteor.user();
-      typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"];
-      Meteor.call('resetMessageReadCount', Meteor.userId(), typeArr);
+  // },
+  // onStop: function() {
+  //   console.log('user_list router onstop');
+  //   Meteor.defer(function() {
+  //     me = Meteor.user();
+  //     typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"];
+  //     Meteor.call('resetMessageReadCount', Meteor.userId(), typeArr);
 
-      user = Meteor.user();
-      ids =  [];
-      if (user && user.profile && user.profile.associated)
-        ids = _.pluck(user.profile.associated, 'id');
-      ids.push(Meteor.userId());
-      if (withPostGroupChat)
-        MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true});
-      else
-        MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true});
-    });
+  //     user = Meteor.user();
+  //     ids =  [];
+  //     if (user && user.profile && user.profile.associated)
+  //       ids = _.pluck(user.profile.associated, 'id');
+  //     ids.push(Meteor.userId());
+  //     if (withPostGroupChat)
+  //       MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true});
+  //     else
+  //       MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true});
+  //   });
   }
 });
 
