@@ -104,18 +104,96 @@
     z-index: 9990;
     background: rgba(100, 100, 100, .8);
   }
+}
+//web
+@media screen and (min-width: 769px) {
   .select_post_banner{
     position: relative;
-    top: 70%;
+    top: 700px;
     text-align: center;
     .select_post_item{
       display: inline-block;
+      padding: 40px;
       img{
         height: 60px;
         width: 60px;
         z-index: 9999;
+        position: relative;    
+      }
+      .disc{
+        font-weight: bold;
+        color: #fff;
+        font-size: .8em;
+        z-index: 9999;
         position: relative;
-        margin: 10px;      
+      }
+    }
+  }
+}
+//ipad pro && ipad mini
+@media screen and (max-width: 768px) and (min-width: 415px) {
+  .select_post_banner{
+    position: relative;
+    top: 700px;
+    text-align: center;
+    .select_post_item{
+      display: inline-block;
+      padding: 40px;
+      img{
+        height: 60px;
+        width: 60px;
+        z-index: 9999;
+        position: relative;    
+      }
+      .disc{
+        font-weight: bold;
+        color: #fff;
+        font-size: .8em;
+        z-index: 9999;
+        position: relative;
+      }
+    }
+  }
+}
+//iphone plus
+@media screen and (max-width: 414px) and (min-width: 321px) {
+  .select_post_banner{
+    position: relative;
+    top: 500px;
+    text-align: center;
+    .select_post_item{
+      display: inline-block;
+      padding: 10px;
+      img{
+        height: 60px;
+        width: 60px;
+        z-index: 9999;
+        position: relative;    
+      }
+      .disc{
+        font-weight: bold;
+        color: #fff;
+        font-size: .8em;
+        z-index: 9999;
+        position: relative;
+      }
+    }
+  }
+}
+//iphone
+@media screen and (max-width: 320px) {
+  .select_post_banner{
+    position: relative;
+    top: 400px;
+    text-align: center;
+    .select_post_item{
+      display: inline-block;
+      padding: 10px;
+      img{
+        height: 50px;
+        width: 50px;
+        z-index: 9999;
+        position: relative;   
       }
       .disc{
         font-weight: bold;
