@@ -69,6 +69,7 @@ specialClassNameForPopularMobileSite = [
   '.yaow > p'  #news.ifeng.com
   #'.pulse-article'    #Linkedin
   '#pageletArticleContent'
+  '.play_show'  #kg
 ]
 
 specialClassNameExcludeMobileSites = [
