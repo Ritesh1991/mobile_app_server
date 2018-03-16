@@ -7,7 +7,7 @@ var mongoid = require('mongoid-js');
 var filedownup = require('./file_downupload.js');
 var drafts = require('./post_drafts.js');
 
-var showDebug = false;
+var showDebug = true;
 var statusRecordInfo = null;
 
 process.addListener('uncaughtException', function (err) {
@@ -57,7 +57,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var port = process.env.PORT || 8080;        // set our port
-var hotshare_web = process.env.HOTSHARE_WEB_HOST || 'http://cdcdn.tiegushi.com';
+//test by wk
+var hotshare_web = 'http://172.16.10.28:9000';
+//var hotshare_web = process.env.HOTSHARE_WEB_HOST || 'http://cdcdn.tiegushi.com';
 var MongoClient = require('mongodb').MongoClient;
 var DB_CONN_STR = process.env.MONGO_URL || 'mongodb://hotShareAdmin:aei_19056@db1.tiegushi.com:27017,db2.tiegushi.com:27017/hotShare?replicaSet=hotShare&readPreference=primaryPreferred&connectTimeoutMS=30000&socketTimeoutMS=30000&poolSize=20';
 var posts = null;
@@ -206,9 +208,9 @@ router.route('/:_id/:url')
       }
       
       showDebug && console.log('_id=' + req.params._id + ' url=' + req.params.url);
-      var userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12D508 (5752533504)';   //iPhone 8.2 Safari UA
+      // var userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12D508 (5752533504)';   //iPhone 8.2 Safari UA
       //var userAgent = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 8_2 like Mac OS X; en) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/9B206 Safari/7534.48.3'; //Chrome UA on iPhone
-      //var userAgent = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Electron/1.2.5 Safari/537.36'; //Chrome on Macbook
+      var userAgent = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Electron/1.2.5 Safari/537.36'; //Chrome on Macbook
       
       // 获取标题和图片信息
       if(chunked){

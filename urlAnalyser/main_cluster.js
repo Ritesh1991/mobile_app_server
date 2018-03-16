@@ -76,14 +76,14 @@ function getFormatedDateTime() {
               ']:';
 }
 
-console.log = function (message) {
-    var dateTime = getFormatedDateTime();
-    Array.prototype.unshift.call(
-        arguments,
-        dateTime
-    );
-    origConsoleLog && origConsoleLog.apply(console, arguments);
-};
+// console.log = function (message) {
+//     var dateTime = getFormatedDateTime();
+//     Array.prototype.unshift.call(
+//         arguments,
+//         dateTime
+//     );
+//     origConsoleLog && origConsoleLog.apply(console, arguments);
+// };
 console.warn = function (message) {
     var dateTime = getFormatedDateTime();
     Array.prototype.unshift.call(
@@ -1057,6 +1057,7 @@ function getRandomDefaultImage() {
 }
 
 function importUrl(_id, url, server, unique_id, isMobile, chunked, callback, qVer) {
+  console.log('importUrl');
   switch (arguments.length) {
     case 2:
       chunked = false;

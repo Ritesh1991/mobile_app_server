@@ -173,7 +173,17 @@ if(Meteor.isServer){
       msgObj.userName = AppConfig.get_user_name(Meteor.user());
       msgObj.userIcon = AppConfig.get_user_icon(Meteor.user()); 
     }
-    msgObj.lastText = doc.type === 'text' ? doc.text : '[图片]';
+    // msgObj.lastText = doc.type === 'text' ? doc.text : '[图片]';
+    switch (doc.type){
+      case 'text':
+        msgObj.lastText = doc.text;
+        break;
+      case 'audio':
+        msgObj.lastText = '[语音]';
+        break;
+      default:
+        msgObj.lastText = '[图片]';
+    }
     msgObj.updateAt = new Date(Date.now() + MQTT_TIME_DIFF);
 
     // 不是故事群的聊天室，则不显示

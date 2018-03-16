@@ -41,7 +41,7 @@ if Meteor.isClient
         userName: to.name
       }
       SimpleChat.MsgSession.insert doc
-  
+
   @messageBasedOnPost = (type,desc,postData)->
       to = {
         id: postData.owner,
@@ -337,13 +337,13 @@ if Meteor.isClient
       if $node.hasClass('music_playing')
         $node.removeClass('music_playing')
         $audio.trigger('pause')
-        if window._media and $audio.attr('id') is window._music_id
-          document.getElementById('audio_' + window._music_id).pause()
+        #if window._media and $audio.attr('id') is window._music_id
+        #  document.getElementById('audio_' + window._music_id).pause()
       else
         $node.addClass('music_playing')
         $audio.trigger('play')
-        if window._media and $audio.attr('id') is window._music_id
-          document.getElementById('audio_' + window._music_id).play()
+        #if window._media and $audio.attr('id') is window._music_id
+        #  document.getElementById('audio_' + window._music_id).play()
 
       $video = $node.find("video")
       if $video.get(0)
@@ -353,9 +353,11 @@ if Meteor.isClient
         else
           $video.get(0).pause()
       return
-    'pause audio':()->
+    'pause audio':(e)->
+      e.currentTarget.pause()
       console.log('Audio Paused')
-    'playing audio':()->
+    'playing audio':(e)->
+      e.currentTarget.play()
       console.log('Audio playing')
     'ended audio': (e)->
       console.log('Audio End')
@@ -478,7 +480,7 @@ if Meteor.isClient
     isTextLength:(text)->
       if Session.get("postContent").allowComment is false
         return false
-      else 
+      else
         if(text.trim().length>20)
           return true
         else if  text.split(/\r\n|\r|\n/).length > 1
@@ -508,7 +510,7 @@ if Meteor.isClient
         return false
     pcomment:->
       return this.pcomments
-      
+
     isPcommentReply:->
       if this.toUsername and this.toUsername isnt ''
         return true

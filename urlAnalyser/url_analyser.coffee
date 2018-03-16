@@ -16,7 +16,9 @@ hostnameMapping = [
   {hostname:'www.zhihu.com',displayName:'知乎'},
   {hostname:'card.weibo.com',displayName:'微博'},
   {hostname:'mil.sohu.com',displayName:'搜狐军事'},
-  {hostname:'wap.koudaitong.com',displayName:'罗辑思维'}
+  {hostname:'wap.koudaitong.com',displayName:'罗辑思维'},
+  {hostname:'kg.qq.com',displayName:'全民k歌'},
+  {hostname:'kg3.qq.com',displayName:'全民k歌'}
 ]
 musicExtactorMapping = [
   {
@@ -154,6 +156,19 @@ musicExtactorMappingV2 = [
         image: $(node).find('.album_cover__img').attr('src')
         songName: $(node).find('.song_name__text').text()
         singerName: $(node).find('.singer_name__text').text()
+      }
+    cleanUp:(node)->
+      $(node).html()
+  }
+   {
+    nodeSelector: '.play_show' # kg 音乐
+    parentSelector: ''
+    getMusicInfo:(node, body)->
+      return {
+        playUrl: $(node).find('#player').attr('src')
+        image: $(node).find('.play_photo > img').attr('src')
+        songName: $(body).find('.play_name').text().replace(/^\s+|\s+$/g,'')
+        singerName: $(body).find('.singer_user__name').text()
       }
     cleanUp:(node)->
       $(node).html()
@@ -608,6 +623,14 @@ _html2data2 = (url, data, callback)->
   sortedImages = 0
   sortedVideos = 0
 
+  if documentBody.host is 'kg.qq.com' or 'kg3.qq.com'
+      resortedArticle.push {type:'music', musicInfo: {
+        playUrl: $(documentBody).find('#player').attr('src')
+        image: $(documentBody).find('.play_photo > img').attr('src')
+        songName: $(documentBody).find('.play_name').text().replace(/^\s+|\s+$/g,'')
+        singerName: $(documentBody).find('.singer_user__name').text()
+      }}
+  
 #      musics = getMusicFromScript(url, documentBody)
 #      if(musics.length > 0)
 #        for musicInfo in musics

@@ -275,7 +275,7 @@ if Meteor.isClient
       type:'music',
       owner: Meteor.userId(),
       toTheEnd: true,
-      text:'您当前程序不支持音频播放，请分享到微信中欣赏',
+      text:''#'您当前程序不支持音频播放，请分享到微信中欣赏',
       musicInfo: musicInfo
       data_row:'1',
       data_col:'3',
@@ -945,10 +945,8 @@ if Meteor.isClient
   @handleDirectLinkImport = (url, clientSide, type)->
     if url.match(/localhost/g)
       url = "about:blank"
-    console.log('wk==>clientSide',clientSide)
-    console.log('wk==>withServerImport',withServerImport)
     if withServerImport and clientSide is undefined
-      console.log("Import url on server side...")
+      console.log("Import url on server side...,type is "+type);
       if type is '2'
         hanldeDirectLinkServerImportNew(url)
       else
