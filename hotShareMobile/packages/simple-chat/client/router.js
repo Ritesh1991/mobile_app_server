@@ -139,6 +139,24 @@ Router.route(AppConfig.path + '/user-list/:_user',{
     Session.set('msgSessionLimit', 40);
     SyncMsgSessionFromServer(Meteor.userId());
     this.render();
+  // },
+  // onStop: function() {
+  //   console.log('user_list router onstop');
+  //   Meteor.defer(function() {
+  //     me = Meteor.user();
+  //     typeArr = ["pcomment","pcommentReply","pfavourite","pcommentowner","getrequest","sendrequest","recommand","recomment","comment"];
+  //     Meteor.call('resetMessageReadCount', Meteor.userId(), typeArr);
+
+  //     user = Meteor.user();
+  //     ids =  [];
+  //     if (user && user.profile && user.profile.associated)
+  //       ids = _.pluck(user.profile.associated, 'id');
+  //     ids.push(Meteor.userId());
+  //     if (withPostGroupChat)
+  //       MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true});
+  //     else
+  //       MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true});
+  //   });
   }
 });
 
@@ -2364,6 +2382,10 @@ Template._simpleChatToChatLayout.onDestroyed(function(){
   footerView.set('');
 });
 
+function jsSoftKeyboardEnterClicked() {
+  console.log('##RDBG jsSoftKeyboardEnterClicked');
+  $('.from-submit-btn').click();
+}
 var resizeTime = null;
 Template._simpleChatToChatLayout.events({
   'keyup #simple-chat-text': function(e){
@@ -2392,6 +2414,13 @@ Template._simpleChatToChatLayout.events({
   },
   'keydown #simple-chat-text': function(e){
     Session.set('keydowntextlength', $('#simple-chat-text').val().length)
+  },
+  'keypress #simple-chat-text': function(e){
+    if (e.keyCode == 13) {
+      e.preventDefault();
+      e.stopPropagation();
+      $('.from-submit-btn').click();
+    }
   },
   'focus #simple-chat-text': function(e){
     hasInputing.set(e.currentTarget.value ? true : false);
