@@ -623,6 +623,14 @@ _html2data2 = (url, data, callback)->
   sortedImages = 0
   sortedVideos = 0
 
+  if documentBody.host is 'kg.qq.com' or 'kg3.qq.com'
+      resortedArticle.push {type:'music', musicInfo: {
+        playUrl: $(documentBody).find('#player').attr('src')
+        image: $(documentBody).find('.play_photo > img').attr('src')
+        songName: $(documentBody).find('.play_name').text().replace(/^\s+|\s+$/g,'')
+        singerName: $(documentBody).find('.singer_user__name').text()
+      }}
+  
 #      musics = getMusicFromScript(url, documentBody)
 #      if(musics.length > 0)
 #        for musicInfo in musics

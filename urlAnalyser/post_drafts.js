@@ -63,7 +63,7 @@ function PostDrafts(_id, _user, threadsNumber) {
   var localImgs = [];
   var _mainImage = '';
   var id;
-  var download = new downloadImgsClass(threadsNumber.download);
+  var download = new downloadImgsClass(threadsNumber);
   var user = _user || {};
 
   var imageIndex = function () {

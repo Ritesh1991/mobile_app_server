@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
 var Log, REGEXPS, Score, _, asTop, beforeExtractConfig, classWeight, cloneWithoutSibling, collectNodeSibling, collectSiblings, countChars, deepInsideThislayer, ensureScore, extract, extractScript, fishy, getCalculatedStyle, getSpecialTag, isAcceptableSibling, keepImagesForSpecialMobileSite, linkDensityFor, parify, propagateScore, reduceScorable, removeFragments, removeStyle, removeUnwanted, scoreAndSelectTop, scoreNode, scoreSibling, specialClassNameExcludeMobileSites, specialClassNameForPopularMobileSite, specialMobileSiteForImages, storeStyleInItem, textContentFor,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -104,7 +104,7 @@ REGEXPS = {
   specialClass: /note-content|rich_media_content|WBA_content/i
 };
 
-specialClassNameForPopularMobileSite = ['.note-content', '.rich_media_content', '.WBA_content', '#cont-wrapper', '#j-body', '.article', '.main_box', '#page-content', '#BODYCON', '.yaow > p', '#pageletArticleContent', '.tc-card-imagetext-content'];
+specialClassNameForPopularMobileSite = ['.note-content', '.rich_media_content', '.WBA_content', '#cont-wrapper', '#j-body', '.article', '.main_box', '#page-content', '#BODYCON', '.yaow > p', '#pageletArticleContent', '.play_show'];
 
 specialClassNameExcludeMobileSites = ['techcrunch.com'];
 
@@ -485,7 +485,7 @@ collectNodeSibling = function(node) {
 };
 
 getCalculatedStyle = function(node, prop) {
-  var $node, attr, error, error1;
+  var $node, attr, error;
   try {
     $node = $(node);
     while ($node.parent().length > 0) {
@@ -503,7 +503,7 @@ getCalculatedStyle = function(node, prop) {
 };
 
 getSpecialTag = function(node, specialTagName) {
-  var $node, error, error1, tagName;
+  var $node, error, tagName;
   try {
     $node = $(node);
     while ($node.parent().length > 0) {
@@ -607,11 +607,11 @@ extract = function(page) {
         }
       }
     }
-    console.log("rootNode ==" + rootNode);
+    console.log("rootNode =" + rootNode);
     if (rootNode !== null) {
       treeWalker = document.createTreeWalker(rootNode, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
         acceptNode: function(node) {
-          var alignstyle, e, error, error1, error2, error3, musicInfo;
+          var alignstyle, e, error, musicInfo;
           try {
             try {
               musicInfo = getMusicFromNode(node, documentBody);
@@ -629,13 +629,8 @@ extract = function(page) {
               if ($(node).parent() && $(node).parent().css("display") === 'none') {
                 return NodeFilter.FILTER_REJECT;
               }
-              if (node.tagName === 'P' && $(node).css("text-indent") !== '0px') {
-                if (parseInt($(node).css("text-indent")) <= -50) {
-                  return NodeFilter.FILTER_REJECT;
-                }
-              }
-            } catch (error2) {
-              error = error2;
+            } catch (error1) {
+              error = error1;
               console.log('Get Display Exception');
             }
             if (!node.hasChildNodes()) {
@@ -652,8 +647,8 @@ extract = function(page) {
               }
             }
             return NodeFilter.FILTER_ACCEPT;
-          } catch (error3) {
-            e = error3;
+          } catch (error1) {
+            e = error1;
             return NodeFilter.FILTER_REJECT;
           }
           return NodeFilter.FILTER_REJECT;
@@ -722,26 +717,6 @@ extract = function(page) {
               p = document.createElement("P")
               p.appendChild(node)
              */
-          } else if (node.tagName === 'BR'){
-            flag = 0;
-            level = 0;
-            tmpNode = node.parentNode;
-            if (parentPNode) {
-              while (level < 6 && tmpNode) {
-                if (tmpNode === parentPNode) {
-                  flag = 1;
-                  break;
-                }
-                tmpNode = tmpNode.parentNode;
-                level++;
-              }
-            }
-            if (flag){
-              var newrow = document.createElement('newrow');
-              parentPNode.appendChild(newrow);
-            } else {
-              newRoot.appendChild(node);
-            }
           } else {
             newRoot.appendChild(node);
           }
@@ -759,7 +734,6 @@ extract = function(page) {
   top = scoreAndSelectTop(parified) || asTop(page);
   root = collectSiblings(top);
   removeFragments(root);
-  console.log('root:', root);
   return root;
 };
 
@@ -811,10 +785,8 @@ console.log('inject code');
         }else{
           analyserHTML(window.location.href,returnJson,function(result){
               //window.document.body.insertAdjacentHTML( 'beforeBegin', '<div id="detected_json_from_gushitie" style="color:blue;"> With some data...</div>' );
-              
               $('body').append('<div id="detected_json_from_gushitie" style="color:blue;"></div>');
               window.detected_json_from_gushitie=result;
-              
               /*const {ipcRenderer} = require('electron');
               //console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
 
@@ -2429,6 +2401,12 @@ hostnameMapping = [
   }, {
     hostname: 'wap.koudaitong.com',
     displayName: '罗辑思维'
+  }, {
+    hostname: 'kg.qq.com',
+    displayName: '全民k歌'
+  }, {
+    hostname: 'kg3.qq.com',
+    displayName: '全民k歌'
   }
 ];
 
@@ -2605,10 +2583,24 @@ musicExtactorMappingV2 = [
     cleanUp: function(node) {
       return $(node).html();
     }
+  }, {
+    nodeSelector: '.play_show',
+    parentSelector: '',
+    getMusicInfo: function(node, body) {
+      return {
+        playUrl: $(node).find('#player').attr('src'),
+        image: $(node).find('.play_photo > img').attr('src'),
+        songName: $(body).find('.play_name').text().replace(/^\s+|\s+$/g, ''),
+        singerName: $(body).find('.singer_user__name').text()
+      };
+    },
+    cleanUp: function(node) {
+      return $(node).html();
+    }
   }
 ];
 
-getMusicFromNode = function(node, body) {
+this.getMusicFromNode = function(node, body) {
   var findNone, isExist, j, len, musicElement, musicInfo, s;
   for (j = 0, len = musicExtactorMappingV2.length; j < len; j++) {
     s = musicExtactorMappingV2[j];
@@ -3247,6 +3239,17 @@ _html2data2 = function(url, data, callback) {
   resortedArticle = [];
   sortedImages = 0;
   sortedVideos = 0;
+  if (documentBody.host === 'kg.qq.com' || 'kg3.qq.com') {
+    resortedArticle.push({
+      type: 'music',
+      musicInfo: {
+        playUrl: $(documentBody).find('#player').attr('src'),
+        image: $(documentBody).find('.play_photo > img').attr('src'),
+        songName: $(documentBody).find('.play_name').text().replace(/^\s+|\s+$/g, ''),
+        singerName: $(documentBody).find('.singer_user__name').text()
+      }
+    });
+  }
   if (extracted.id === 'hotshare_special_tag_will_not_hit_other') {
     toBeProcessed = extracted;
   } else {
@@ -3255,7 +3258,7 @@ _html2data2 = function(url, data, callback) {
   console.log($(toBeProcessed));
   previousIsSpan = false;
   $(toBeProcessed).children().each(function(index, node) {
-    var count, dataLISrc, dataSrc, i, image, imageUrl, info, l, len2, len3, m, n, nodeBackgroundColor, nodeColor, playUrl, ref, ref1, ref2, singerName, songName, src, styleAlign, text, textArray, videoInfo;
+    var _text, count, dataLISrc, dataSrc, i, image, imageUrl, info, l, len2, len3, m, n, nodeBackgroundColor, nodeColor, playUrl, ref, ref1, ref2, singerName, songName, src, styleAlign, text, textArray, videoInfo;
     info = {};
     info.bgArray = [];
     info.imageArray = [];
@@ -3310,11 +3313,9 @@ _html2data2 = function(url, data, callback) {
         return true;
       }
     }
-    $(node).html($(node).html().replace(new RegExp('<newrow></newrow>', 'g'), '\r\n'));
     text = $(node).text();
     if (text && text !== '') {
-      //text = text.replace(/\s\s\s+/g, '');
-      text = text.replace(/\s{3,}/g, '\r\n\r\n').trim();
+      text = text.replace(/\s\s\s+/g, '');
     }
     console.log('text ' + text);
     if (node.tagName === 'IFRAME') {
@@ -3433,27 +3434,18 @@ _html2data2 = function(url, data, callback) {
         appendParagraph(resortedArticle, toBeInsertedText, toBeInsertedStyleAlign);
       }
       if (text && text !== '') {
-        // 清除头尾的换行
-        var _text = $(node).text();
-        if(_text.length >= 2 && _text.indexOf('\n') === 0)
+        _text = $(node).text();
+        if (_text.length >= 2 && _text.indexOf('\n') === 0) {
           _text = _text.substr(1);
-        if(_text.length >= 2 && _text.indexOf('\n') === _text.length-1)
-          _text = _text.substr(0, _text.length-1);
+        }
+        if (_text.length >= 2 && _text.indexOf('\n') === _text.length - 1) {
+          _text = _text.substr(0, _text.length - 1);
+        }
         toBeInsertedText = _text;
-        //toBeInsertedText = text;
       } else {
         toBeInsertedText = '';
       }
       return toBeInsertedStyleAlign = styleAlign;
-    }else if(node.tagName === 'HR'){
-      previousIsSpan = false;
-      if (toBeInsertedText.length > 0) {
-        appendParagraph(resortedArticle, toBeInsertedText, toBeInsertedStyleAlign);
-      }
-      if(resortedArticle.length > 0)
-        appendParagraph(resortedArticle, '&nbsp;', {});
-      toBeInsertedText = '';
-      return;
     } else if (text && text !== '') {
       if (node.tagName === 'OL') {
         textArray = text.split('\n');
