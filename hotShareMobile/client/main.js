@@ -364,11 +364,11 @@ if (Meteor.isCordova) {
         }
 
         try{
-          if(mqtt_connection){
+          //if(mqtt_connection){
             console.log('try reconnect mqtt')
             mqttEventResume();
             // mqtt_connection._reconnect();
-          }
+          //}
         } catch (error) {
           console.log('mqtt reconnect Error=',error);
         }
