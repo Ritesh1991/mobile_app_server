@@ -568,9 +568,9 @@ Template._simpleChatToChatItem.events({
     var url = $(".audio").data("url");
     var time = $(".audio").data("time");
 
-    console.log($(this));
-    console.log(url,time);
-    console.log($(".audio").data("url"));
+    // console.log($(this));
+    // console.log(url,time);
+    // console.log($(".audio").data("url"));
     var my_media = new Media(url,
         // success callback
         function () {
@@ -584,9 +584,9 @@ Template._simpleChatToChatItem.events({
     console.log('播放语音');
     // Play audio
     my_media.play();
-    var w = $(this).innerWidth();
-    var w1 = $(this).width();
-    console.log(w,w1)
+    // var w = $(this).innerWidth();
+    // var w1 = $(this).width();
+    // console.log(w,w1)
   },
   'click li .text a': function(e){
     var href = $(e.currentTarget).attr('href');
@@ -1190,24 +1190,12 @@ sendMqttMsg = function(){
     }
     Messages.update({_id: msg._id}, {$set: {send_status: 'success'}});
   };
-  var sendToGroupOrUser = function(msg){
+  var sendToGroupOrUser = function(msg,callback){
       if (msg.to_type === 'group'){
-        sendMqttGroupMessage(msg.to.id, msg, function(err){
-          if(err){
-            console.log('cant send this group message');
-          }else{
-            console.log('this group message sent to server');
-          }
-        });
+        sendMqttGroupMessage(msg.to.id, msg, callback);
       }
       else{
-        sendMqttUserMessage(msg.to.id, Messages.findOne({_id: id}),function(err){
-          if(err){
-            console.log('Cant send this user message')
-          } else {
-            console.log('user message Sent to server')
-          }
-        });
+        sendMqttUserMessage(msg.to.id, msg,callback);
       }
   };
   var timeout = Meteor.setTimeout(function(){
@@ -1234,7 +1222,7 @@ sendMqttMsg = function(){
         window.___message.update(id, res[0].imgUrl);
         msg = Messages.findOne({_id: msg.to.id});
         // sendMqttGroupMessage(msg.to.id, msg, callback);
-        sendToGroupOrUser(msg);
+        sendToGroupOrUser(msg,callback);
       });
     }
   }
@@ -1254,15 +1242,12 @@ sendMqttMsg = function(){
         window.___message.update(id, res[0].imgUrl);
         msg = Messages.findOne({_id: msg.to.id});
         //sendMqttGroupMessage(msg.to.id, msg, callback);
-        sendToGroupOrUser(msg);
+        sendToGroupOrUser(msg,callback);
       });
     }
-  }else{
-    if(msg.to_type === 'group')
-      sendMqttGroupMessage(msg.to.id, msg, callback);
-    else
-      sendMqttUserMessage(msg.to.id, msg, callback);
   }
+  sendToGroupOrUser(msg,callback);
+  
 };
 
 var mediaRec = null;
@@ -1371,9 +1356,9 @@ Template._simpleChatToChatLayout.events({
     // Record audio开始录音
     mediaRec.startRecord();
     index = 0;
-    // timer = setInterval(function(){
-    //   console.log('index:'+index);
-    //   index++;
+    timer = setInterval(function(){
+      console.log('index:'+index);
+      index++;
     //   if(index == 50){
     //     var count = 10;
     //     timer1 = setInterval(function(){
@@ -1404,7 +1389,7 @@ Template._simpleChatToChatLayout.events({
     //   if(index >= 60){
     //     clearInterval(timer);
     //   }
-    // },1000)
+    },1000)
   },
   'touchend .f3' :function(e){
     clearInterval(timer);
@@ -1430,7 +1415,7 @@ Template._simpleChatToChatLayout.events({
          // console.log(id)
          // console.log(url)
         //  mediaRec.release();
-        index = mediaRec.getDuration();
+        // index = mediaRec.getDuration();
          window.___messageAudio.insert(id, filename, url,index);
          window.uploadToAliyun_new(filename, url, function(status, result){
             console.log('result:' + result + ',status:' + status);
