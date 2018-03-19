@@ -581,10 +581,8 @@ Template._simpleChatToChat.onRendered(function(){
 
 Template._simpleChatToChatItem.events({
   'click .audio': function(e){
-    // var url = $(this).data("url");
-    // var time = $(this).data("time");
-    var url = e.currentTarget.data("url");
-    var time = e.currentTarget.data("time");
+    var url = $(e.currentTarget).data("url");
+    var time = $(e.currentTarget).data("time");
 
     // console.log($(this));
     // console.log(url,time);
