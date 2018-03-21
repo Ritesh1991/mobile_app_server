@@ -357,6 +357,12 @@ if Meteor.isClient
             return
           renderPost2(self, post)
       }
+    Router.route '/kgposts/:_id',{
+      action: ->
+        self = this
+        post = Posts.findOne({_id: this.params._id})
+        self.render 'kgPost',post
+      }
     Router.route '/newposts/:_id', {
         action: ->
           self = this

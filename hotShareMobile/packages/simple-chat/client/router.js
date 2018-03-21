@@ -1343,12 +1343,14 @@ Template._simpleChatToChatLayout.events({
   },
 
   'click .sendInfo':function(e,t){
+    e.preventDefault();
     $(".fa1").toggle();
     $(".fa2").toggle();
     $(".f3").toggle();
     $("textarea").toggle()
   },
    'touchstart .f3':function(e){
+    e.preventDefault();
     $(".model").show();
     $(".f3").text("松开 结束");
     $(".model-text").removeClass('toggle');
@@ -1408,6 +1410,7 @@ Template._simpleChatToChatLayout.events({
     },1000)
   },
   'touchend .f3' :function(e){
+    e.preventDefault();
     clearInterval(timer);
     clearInterval(timer1);
     $(".model").hide();

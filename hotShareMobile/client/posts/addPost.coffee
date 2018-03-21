@@ -538,6 +538,22 @@ if Meteor.isClient
           return
         console.log('Got data')
         Session.set('NewImgAdd',false)
+
+        reg = /kg[1-9]?.qq.com/g
+        if reg.test(data.host)
+          Session.set('kgLink',true);
+          setTimeout ()->
+            Session.set('importProcedure',100)
+          ,1000 
+          return Drafts.insert({
+            type:'kg',
+            url:inputUrl,
+            mainImageUrl:data.imageArray[0],
+            title:data.title,
+            owner:Meteor.userId()
+          })
+           
+           
         resortObj = {}
         seekOneUsableMainImage(data,(file,w,h,found,index,total,source)->
           console.log('found ' + found + ' index ' + index + ' total ' + total + ' fileObject ' + file + ' source ' + source )
@@ -1201,6 +1217,75 @@ if Meteor.isClient
             followby: Meteor.userId()
           }
         })
+  @publishKGPostHandle = ()->
+    draftData = Drafts.findOne({type:'kg'})
+    modalUserId = $('#chooseAssociatedUser .modal-body dt.active').attr('userId')
+    ownerUser = null
+    # wechat = Session.get 'userWechatInfo'
+    # console.log 'wechat info is ' + wechat
+    if modalUserId is Meteor.userId() or !modalUserId
+      ownerUser = Meteor.user()
+    else
+      ownerUser = {
+        _id: modalUserId
+        username: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
+        profile: {
+          icon: $('#chooseAssociatedUser .modal-body dt.active').attr('userIcon')
+          fullname: $('#chooseAssociatedUser .modal-body dt.active').attr('userName')
+        }
+      }
+    Session.set 'post-publish-user-id', ownerUser._id
+    #Meteor.subscribe "readerpopularpostsbyuid", ownerUser._id
+    ownerName = if ownerUser.profile and ownerUser.profile.fullname then ownerUser.profile.fullname else ownerUser.username
+    ownerIcon = if ownerUser.profile and ownerUser.profile.icon then ownerUser.profile.icon else '/userPicture.png'
+    postId = draftData._id;
+    fromUrl = draftData.url;
+    Posts.insert( {
+        _id:postId,
+        title:draftData.title,
+        browse:0,
+        heart:[],  #点赞
+        retweet:[],#转发
+        comment:[], #评论
+        commentsCount:0,
+        addontitle:'',
+        mainImage: draftData.mainImageUrl,
+        fromUrl: fromUrl,
+        publish:true,
+        owner:ownerUser._id,
+        ownerName:ownerName,
+        ownerIcon:ownerIcon,
+        createdAt: new Date(),
+        type:'kg'
+    })
+    newPostData = {
+        _id:postId,
+        title:draftData.title,
+        browse:1,
+        heart:[],  #点赞
+        retweet:[],#转发
+        comment:[], #评论
+        commentsCount:0,
+        addontitle:'',
+        mainImage: draftData.mainImageUrl,
+        fromUrl: fromUrl,
+        publish:true,
+        owner:ownerUser._id,
+        ownerName:ownerName,
+        ownerIcon:ownerIcon,
+        createdAt: new Date(),
+        type:'kg'
+    }
+    insertPostOnTheHomePage(postId,newPostData)
+    Session.set('newpostsdata', newPostData)
+    #Delete from SavedDrafts if it is a saved draft.  
+    #Delete the Drafts
+    Drafts.remove({})
+ 
+
+    Router.go('/kgposts/'+postId)
+ 
+ 
   @publishPostHandle = ()->
     layout = JSON.stringify(gridster.serialize())
     pub=[]
@@ -1397,6 +1482,10 @@ if Meteor.isClient
       Session.set("TopicMainImage", mainImage)
       Router.go('addTopicComment')
   Template.addPost.helpers
+    kgLink:->
+      Session.get('kgLink')
+    kgUrl:->
+      Drafts.findOne({type:'kg'}).url.replace(/^https/,'http')
     showContent:->
       Session.get('showContentInAddPost')
     mainImage:->
@@ -1878,6 +1967,27 @@ if Meteor.isClient
           ,animatePageTrasitionTimeout
           return
         , '您确定要删除未保存的草稿吗？', ['删除故事','继续创作']);
+    'click .kgcancle':->
+      navigator.notification.confirm('这个操作无法撤销', (r)->
+          console.log('r is ' + r)
+          if r isnt 1
+            return
+          Session.set 'isReviewMode','1'
+          #Delete it from SavedDrafts
+          draftData = Drafts.find().fetch()
+          if draftData[0] and draftData[0]._id
+            draftId = draftData[0]._id
+            SavedDrafts.remove draftId
+          #Clear Drafts
+          # draftImageData = Drafts.find({type:'kg'}).fetch()
+          # removeImagesFromCache(draftImageData)
+          Drafts.remove {owner: Meteor.userId()}
+          $('.kgBox').addClass('animated ' + animateOutUpperEffect);
+          setTimeout ()->
+            Router.go('/')
+          ,animatePageTrasitionTimeout
+          return
+        , '您确定要删除未保存的草稿吗？', ['删除故事','继续创作']);
     'click .cancleCrop':->
       $('#blur_overlay').css('height','')
       $('#blur_bottom').css('height','')
@@ -2023,7 +2133,6 @@ if Meteor.isClient
       #   history.back()
       #PUB.back()
 
-
     'click #publish, click #modalPublish': (e)->
       # if Meteor.user() and Meteor.user().services and Meteor.user().services.weixin or Meteor.user().profile.wechat
       #   if Meteor.user().services.weixin
@@ -2075,92 +2184,95 @@ if Meteor.isClient
         if $("#addontitle").val() and GetStringByteLength($("#addontitle").val()) > withPostSubTitleMaxLength
           window.plugins.toast.showShortBottom('副标题最大长度'+withPostSubTitleMaxLength+'字符（中文算2个）')
           return
-        #get the images to be uploaded
-        draftImageData = Drafts.find({type:'image'}).fetch()
-        draftMusicData = Drafts.find({type:'music'}).fetch()
-        draftVideoData = Drafts.find({type:'video'}).fetch()
-        draftToBeUploadedImageData = []
-        for i in [0..(draftImageData.length-1)]
-            if draftImageData[i].imgUrl is undefined or draftImageData[i].imgUrl.toLowerCase().indexOf("http://")>= 0 or draftImageData[i].imgUrl.toLowerCase().indexOf("https://")>= 0 or draftImageData[i].imgUrl.toLowerCase().indexOf("data:image/")>= 0
-                draftToBeUploadedImageData.unshift({})
-                continue
-            draftToBeUploadedImageData.push(draftImageData[i])
-        for music in draftMusicData
-          if music.musicInfo.playUrl.toLowerCase().indexOf("http://")>= 0 or music.musicInfo.playUrl.toLowerCase().indexOf("https://")>= 0
-            draftToBeUploadedImageData.unshift({})
-            continue
-          draftToBeUploadedImageData.push(music)
-        for video in draftVideoData
-          if !video.videoInfo.imageUrl or video.videoInfo.imageUrl.toLowerCase().indexOf("http://")>= 0 or video.videoInfo.imageUrl.toLowerCase().indexOf("https://")>= 0
-            draftToBeUploadedImageData.unshift({})
-            continue
-          draftToBeUploadedImageData.push(video)
-        #uploadFileWhenPublishInCordova(draftToBeUploadedImageData, postId)
-        #Don't add addpost page into history
+        if Session.get('kgLink')
+          publishKGPostHandle()
+        else
+          #get the images to be uploaded
+          draftImageData = Drafts.find({type:'image'}).fetch()
+          draftMusicData = Drafts.find({type:'music'}).fetch()
+          draftVideoData = Drafts.find({type:'video'}).fetch()
+          draftToBeUploadedImageData = []
+          for i in [0..(draftImageData.length-1)]
+              if draftImageData[i].imgUrl is undefined or draftImageData[i].imgUrl.toLowerCase().indexOf("http://")>= 0 or draftImageData[i].imgUrl.toLowerCase().indexOf("https://")>= 0 or draftImageData[i].imgUrl.toLowerCase().indexOf("data:image/")>= 0
+                  draftToBeUploadedImageData.unshift({})
+                  continue
+              draftToBeUploadedImageData.push(draftImageData[i])
+          for music in draftMusicData
+            if music.musicInfo.playUrl.toLowerCase().indexOf("http://")>= 0 or music.musicInfo.playUrl.toLowerCase().indexOf("https://")>= 0
+              draftToBeUploadedImageData.unshift({})
+              continue
+            draftToBeUploadedImageData.push(music)
+          for video in draftVideoData
+            if !video.videoInfo.imageUrl or video.videoInfo.imageUrl.toLowerCase().indexOf("http://")>= 0 or video.videoInfo.imageUrl.toLowerCase().indexOf("https://")>= 0
+              draftToBeUploadedImageData.unshift({})
+              continue
+            draftToBeUploadedImageData.push(video)
+          #uploadFileWhenPublishInCordova(draftToBeUploadedImageData, postId)
+          #Don't add addpost page into history
 
-        if currentTargetId is "modalPublish"
-          $('#chooseAssociatedUser').modal('hide')
+          if currentTargetId is "modalPublish"
+            $('#chooseAssociatedUser').modal('hide')
 
-        Session.set('terminateUpload', false)
-        Session.set("isDelayPublish",true)
-        if draftToBeUploadedImageData.length > 0
-          multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, (err, result)->
-            unless result
-              window.plugins.toast.showShortBottom('上传失败，请稍后重试')
-              return
-            if result.length < 1
-              window.plugins.toast.showShortBottom('上传失败，请稍后重试')
-              return
-            for item in result
-              if item.uploaded and item._id
-                if item.type is 'image' and item.imgUrl
-                  Drafts.update({_id: item._id}, {$set: {imgUrl:item.imgUrl}});
-                else if item.type is 'music' and item.musicInfo and item.musicInfo.playUrl
-                  Drafts.update({_id: item._id}, {$set: {"musicInfo.playUrl":item.musicInfo.playUrl}});
-                else if item.type is 'video' and item.videoInfo and item.videoInfo.imageUrl
-                  Drafts.update({_id: item._id}, {$set: {"videoInfo.imageUrl":item.videoInfo.imageUrl}});
-            if err
-              window.plugins.toast.showShortBottom('上传失败，请稍后重试')
-              return
+          Session.set('terminateUpload', false)
+          Session.set("isDelayPublish",true)
+          if draftToBeUploadedImageData.length > 0
+            multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, (err, result)->
+              unless result
+                window.plugins.toast.showShortBottom('上传失败，请稍后重试')
+                return
+              if result.length < 1
+                window.plugins.toast.showShortBottom('上传失败，请稍后重试')
+                return
+              for item in result
+                if item.uploaded and item._id
+                  if item.type is 'image' and item.imgUrl
+                    Drafts.update({_id: item._id}, {$set: {imgUrl:item.imgUrl}});
+                  else if item.type is 'music' and item.musicInfo and item.musicInfo.playUrl
+                    Drafts.update({_id: item._id}, {$set: {"musicInfo.playUrl":item.musicInfo.playUrl}});
+                  else if item.type is 'video' and item.videoInfo and item.videoInfo.imageUrl
+                    Drafts.update({_id: item._id}, {$set: {"videoInfo.imageUrl":item.videoInfo.imageUrl}});
+              if err
+                window.plugins.toast.showShortBottom('上传失败，请稍后重试')
+                return
+              #post_id = Drafts.findOne({})._id
+              publishPostHandle()
+              console.log 'draftToBeUploadedImageData length > 0'
+              removeImagesFromCache(draftImageData)
+              # Meteor.subscribe('publicPosts', post_id, {
+              #   onStop: ()->
+              #     Router.go('/posts/'+post_id)
+              #   onReady: ()->
+              #     postItem = Posts.findOne({_id: post_id})
+              #     if(postItem.insertHook != true)
+              #       Session.set("TopicPostId", post_id)
+              #       Session.set("TopicTitle", postItem.title)
+              #       Session.set("TopicAddonTitle", postItem.addontitle)
+              #       Session.set("TopicMainImage", postItem.mainImage)
+              #       Router.go('/addTopicComment/')
+              #       # cordovaHTTP.get Meteor.absoluteUrl('restapi/postInsertHook/'+Meteor.userId()+'/'+ post_id), {}, {}, null, null
+              #   onError: ()->
+              #     Router.go('/posts/'+post_id)
+              # })
+            )
+          else
             #post_id = Drafts.findOne({})._id
             publishPostHandle()
-            console.log 'draftToBeUploadedImageData length > 0'
-            removeImagesFromCache(draftImageData)
             # Meteor.subscribe('publicPosts', post_id, {
-            #   onStop: ()->
-            #     Router.go('/posts/'+post_id)
-            #   onReady: ()->
-            #     postItem = Posts.findOne({_id: post_id})
-            #     if(postItem.insertHook != true)
-            #       Session.set("TopicPostId", post_id)
-            #       Session.set("TopicTitle", postItem.title)
-            #       Session.set("TopicAddonTitle", postItem.addontitle)
-            #       Session.set("TopicMainImage", postItem.mainImage)
-            #       Router.go('/addTopicComment/')
-            #       # cordovaHTTP.get Meteor.absoluteUrl('restapi/postInsertHook/'+Meteor.userId()+'/'+ post_id), {}, {}, null, null
-            #   onError: ()->
-            #     Router.go('/posts/'+post_id)
-            # })
-          )
-        else
-          #post_id = Drafts.findOne({})._id
-          publishPostHandle()
-          # Meteor.subscribe('publicPosts', post_id, {
-          #     onStop: ()->
-          #       Router.go('/posts/'+post_id)
-          #     onReady: ()->
-          #       postItem = Posts.findOne({_id: post_id})
-          #       if(postItem.insertHook != true)
-          #         Session.set("TopicPostId", post_id)
-          #         Session.set("TopicTitle", postItem.title)
-          #         Session.set("TopicAddonTitle", postItem.addontitle)
-          #         Session.set("TopicMainImage", postItem.mainImage)
-          #         Router.go('/addTopicComment/')
-          #         # cordovaHTTP.get Meteor.absoluteUrl('restapi/postInsertHook/'+Meteor.userId()+'/'+post_id), {}, {}, null, null
-          #     onError: ()->
-          #       Router.go('/posts/'+post_id)
-          #   })
-        return
+            #     onStop: ()->
+            #       Router.go('/posts/'+post_id)
+            #     onReady: ()->
+            #       postItem = Posts.findOne({_id: post_id})
+            #       if(postItem.insertHook != true)
+            #         Session.set("TopicPostId", post_id)
+            #         Session.set("TopicTitle", postItem.title)
+            #         Session.set("TopicAddonTitle", postItem.addontitle)
+            #         Session.set("TopicMainImage", postItem.mainImage)
+            #         Router.go('/addTopicComment/')
+            #         # cordovaHTTP.get Meteor.absoluteUrl('restapi/postInsertHook/'+Meteor.userId()+'/'+post_id), {}, {}, null, null
+            #     onError: ()->
+            #       Router.go('/posts/'+post_id)
+            #   })
+          return
     'click .remove':(event)->
       Drafts.remove this._id
     'click .imgContainer': (e)->

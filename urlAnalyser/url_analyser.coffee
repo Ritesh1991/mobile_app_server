@@ -17,8 +17,7 @@ hostnameMapping = [
   {hostname:'card.weibo.com',displayName:'微博'},
   {hostname:'mil.sohu.com',displayName:'搜狐军事'},
   {hostname:'wap.koudaitong.com',displayName:'罗辑思维'},
-  {hostname:'kg.qq.com',displayName:'全民k歌'},
-  {hostname:'kg3.qq.com',displayName:'全民k歌'}
+  {hostname:'kg.qq.com',displayName:'全民k歌'}
 ]
 musicExtactorMapping = [
   {
@@ -606,6 +605,11 @@ _html2data2 = (url, data, callback)->
         data.title = realTitle
         break
   for item  in hostnameMapping
+    if item.hostname is 'kg.qq.com'
+      reg = /kg[1-9]?.qq.com/g
+      if reg.test(data.host)
+        data.host = '摘自 ' + item.displayName
+        break;
     if data.host is item.hostname
       data.host = '摘自 ' + item.displayName
       break
@@ -622,8 +626,8 @@ _html2data2 = (url, data, callback)->
   resortedArticle = []
   sortedImages = 0
   sortedVideos = 0
-
-  if documentBody.host is 'kg.qq.com' or 'kg3.qq.com'
+  reg = /kg[1-9]?.qq.com/g
+  if reg.test(documentBody.host)
       resortedArticle.push {type:'music', musicInfo: {
         playUrl: $(documentBody).find('#player').attr('src')
         image: $(documentBody).find('.play_photo > img').attr('src')

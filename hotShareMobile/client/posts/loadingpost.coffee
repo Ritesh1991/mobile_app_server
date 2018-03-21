@@ -7,3 +7,7 @@ if Meteor.isClient
     Template.loadingPost.helpers
       isMobile:->
         Meteor.isCordova
+
+    Template.kgPost.events
+      'click .back' :->
+        Router.go('/')
