@@ -25,6 +25,7 @@ if Meteor.isClient
        Session.set "topicTitle", "#"+ @text + "#"
        PUB.page '/topicPosts'
     'click #themeAll': (event)->
+       Session.set('isFromSearchPage', true)
        PUB.page '/topicPostsAll'
     'click .topic': (event)->
        Session.set "topicId", @_id

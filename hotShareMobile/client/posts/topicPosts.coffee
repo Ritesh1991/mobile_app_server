@@ -257,6 +257,11 @@ if Meteor.isClient
         return false
       else
         return true
+    fromSearchPage:()->
+      if Session.get('isFromSearchPage') is false
+        return false
+      else
+        return true
     newPosts:()->
       #getFollowerArr()
       #notShowArrId = Session.get('notShowPostUserIdArr')
@@ -267,6 +272,10 @@ if Meteor.isClient
       else
           true
   Template.topicPostsAll.events
+    'click .top-home-btn': (event)->
+      Router.go '/'
+    'click .top-series-btn': (event)->
+      Router.go '/seriesList'
     'click .back':(event)->
       $('.home').addClass('animated ' + animateOutUpperEffect);
       Meteor.setTimeout ()->

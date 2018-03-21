@@ -169,6 +169,9 @@ if Meteor.isClient
         Meteor.subscribe 'topicposts', Session.get('followTopicNow'), 20
     'click .top-series-btn': (event)->
       Router.go '/seriesList'
+    'click .themeAll': (event)->
+      Session.set('isFromSearchPage', false)
+      PUB.page '/topicPostsAll'
     'click #follow': (event)->
       history = Session.get('history_view') || [];
       history.push {

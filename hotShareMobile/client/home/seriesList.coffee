@@ -44,6 +44,9 @@ Template.seriesList.helpers
 Template.seriesList.events
     'click .top-home-btn': (event)->
       Router.go '/'
+    'click .themeAll': (event)->
+      Session.set('isFromSearchPage', false)
+      PUB.page '/topicPostsAll'
     'click #follow': (event)->
       Router.go '/searchFollow'
     'click .clickHelp':(event)->

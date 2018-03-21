@@ -167,6 +167,7 @@ if Meteor.isClient
     # ,100)
   Template.footer.events
     'click #home':(e)->
+      # alert(window.screen.width)
       Meteor.setTimeout ()->
         toLoadLatestFollowPost()
       ,100
