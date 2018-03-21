@@ -79,10 +79,22 @@
 
 <template name="topicPostsAll">
 <div class="home">
+  {{#if fromSearchPage}}
   <div class="head">
     <div>大家在看</div>
     <div class="leftButton back"><i class="fa fa-angle-left fa-fw"></i></div>
   </div>
+  {{else}}
+  <div class="head">
+    <strong class="top-home-btn">关注</strong>
+    <strong class="themeAll active">热门</strong>
+    <strong class="top-series-btn">合辑</strong>
+    <div id="follow" class="leftButton">
+      <span class="fa fa-plus"></span><i style="padding-right: 20px;" class="fa fa-user"></i>
+    </div>
+    <div class="rightButton clickHelp"><i class="fa fa-question-circle fa-fw"></i></div>
+  </div>
+  {{/if}}
   <div class="content">
 
   <div id="wrapper">
