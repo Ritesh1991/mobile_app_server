@@ -51,3 +51,4 @@
 @CHAT_RENDER_TIME = 150
 @isShowAllowComment = true
 @withChatMessage = true #聊天server备份
+@withVoiceMessage = false  #语音聊天开关

@@ -2602,6 +2602,9 @@ Template._simpleChatGroupUsersList.events({
   }
 });
 Template._simpleChatToChatLayout.helpers({
+  withVoiceMessage: function(){
+    return withVoiceMessage;
+  },
   getInputClass: function(){
     return hasInputing.get() ? 'inputing' : '';
   },

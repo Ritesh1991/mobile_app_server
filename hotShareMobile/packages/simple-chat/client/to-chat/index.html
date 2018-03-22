@@ -84,12 +84,13 @@
             #container > div{position: absolute !important;top: 0px !important;left: 0px !important;width: 60px !important;height: 48px !important;overflow: hidden !important;}
           </style>
           <div class="btn-box image" id="selectfiles"></div> -->
-
+          {{#if withVoiceMessage}}
           <div class="sendInfo">
               <i class="fa fa-microphone fa1" ></i>
               <i class="fa fa-keyboard-o fa2" style="display: none"></i>
           </div>
           <div class="new-input f3" style="display: none;text-align: center;color: #696161">按住说话</div>
+          {{/if}}
           <textarea dir="auto" name="msg" id="simple-chat-text" class="new-input input-text" maxlength="5000" placeholder="说点什么" style="-webkit-touch-callout: default; -webkit-user-select: text;"></textarea>
 
           <script type="text/javascript">autosize($('#simple-chat-text'));</script>
