@@ -493,6 +493,14 @@ if Meteor.isClient
     , 600
 
   Template.showPosts.helpers
+    haveNewFriends:->
+      count = PostFriends.find({meetOnPostId:Session.get("postContent")._id,ta:{$ne:null}},{sort:{createdAt:-1}}).count()
+      if count > 0
+        return true
+      else
+        return false
+    newFriends:->
+      return PostFriends.find({meetOnPostId:Session.get("postContent")._id,ta:{$ne:null}},{sort:{createdAt:-1},limit: 5}).fetch()
     is_server_import: ()->
       return location.search is '?server_import=true'
     isSimpleEditorPost:->
@@ -763,6 +771,42 @@ if Meteor.isClient
     else if action is 'post-tts'
       startPostTTS(self.index)
   Template.showPosts.events
+    "click .newfriends_icon":(e)->
+      currentId =  e.currentTarget.id
+      if $('#' + currentId + ' .red_spot').length > 0
+        $('#' + currentId + ' .red_spot').remove()
+        totalCount = parseInt($('#newFriendRedSpotReal').html()) - 1
+        if totalCount > 0
+          $('#newFriendRedSpot').html(totalCount.toString())
+          $('#newFriendRedSpot').show()
+          $('#newFriendRedSpotReal').hide()
+        else
+          $('#newFriendRedSpot').hide()
+          $('#newFriendRedSpotReal').hide()
+      clientMeetCount = ClientPostFriends.find({_id: this._id}).count()
+      if (this.count is 1 and clientMeetCount is 0)
+        ClientPostFriends.insert(this)
+      userProfileList = PostFriends.find({meetOnPostId:Session.get("postContent")._id,ta:{$ne:null}},{sort:{createdAt:-1}}).fetch()
+      Session.set("userProfileList", userProfileList)
+      Session.set("userProfileType", "newfriends")
+      Session.set("currentPageIndex", 1)
+      for i in [0..userProfileList.length-1]
+        if userProfileList[i].ta is this.ta
+          Session.set("currentProfileIndex", i)
+      prevProfileIndex = Session.get("currentProfileIndex")-1
+      nextProfileIndex = Session.get("currentProfileIndex")+1
+      if prevProfileIndex < 0
+         prevProfileIndex = userProfileList.length-1
+      if nextProfileIndex > userProfileList.length-1
+         nextProfileIndex = 0
+      Session.set("ProfileUserId", this.ta)
+      Session.set("ProfileUserId1", this.ta)
+      Session.set("ProfileUserId3", userProfileList[prevProfileIndex].ta)
+      Session.set("ProfileUserId2", userProfileList[nextProfileIndex].ta)
+      Session.set('pageToProfile','/posts/'+ Session.get('postContent')._id)
+      Session.set('pageScrollTop',$(window).scrollTop())
+      Session.set('fromContactsList',true)
+      onUserProfile()
     'click .postSeries': (e,t)->
       seriesId = e.currentTarget.id
       Router.go '/series/' + seriesId
