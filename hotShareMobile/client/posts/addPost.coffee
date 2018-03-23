@@ -1191,6 +1191,8 @@ if Meteor.isClient
         ownerName: postInfo.ownerName,
         ownerIcon: postInfo.ownerIcon,
         createdAt: postInfo.createdAt,
+        fromUrl:postInfo.fromUrl,
+        type:postInfo.type,
         followby: Meteor.userId()
       })
     else
@@ -1214,6 +1216,8 @@ if Meteor.isClient
             ownerName: postInfo.ownerName,
             ownerIcon: postInfo.ownerIcon,
             createdAt: postInfo.createdAt,
+            fromUrl:postInfo.fromUrl,
+            type:postInfo.type,
             followby: Meteor.userId()
           }
         })
@@ -1239,7 +1243,7 @@ if Meteor.isClient
     ownerName = if ownerUser.profile and ownerUser.profile.fullname then ownerUser.profile.fullname else ownerUser.username
     ownerIcon = if ownerUser.profile and ownerUser.profile.icon then ownerUser.profile.icon else '/userPicture.png'
     postId = draftData._id;
-    fromUrl = draftData.url;
+    fromUrl = draftData.url.replace(/^https/,'http');
     Posts.insert( {
         _id:postId,
         title:draftData.title,
@@ -1281,9 +1285,7 @@ if Meteor.isClient
     #Delete from SavedDrafts if it is a saved draft.  
     #Delete the Drafts
     Drafts.remove({})
- 
-
-    Router.go('/kgposts/'+postId)
+    Router.go('/')
  
  
   @publishPostHandle = ()->

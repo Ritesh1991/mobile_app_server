@@ -79,7 +79,9 @@ if(Meteor.isServer){
             addontitle:1,
             ownerName:1,
             owner:1,
-            mainImage:1
+            mainImage:1,
+            fromUrl:1,
+            type:1
         }})
         if(!doc)
             return;
@@ -90,7 +92,9 @@ if(Meteor.isServer){
             addonTitle: doc.addontitle,
             ownerName: doc.ownerName,
             ownerId: doc.owner,
-            mainImage: doc.mainImage
+            mainImage: doc.mainImage,
+            fromUrl:doc.fromUrl,
+            type:doc.type
         }
         var postInfoString = JSON.stringify(postInfo)
         postInfoString = postInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
@@ -110,7 +114,9 @@ if(Meteor.isServer){
             addonTitle: doc.addontitle,
             ownerName: doc.ownerName,
             ownerId: doc.owner,
-            mainImage: doc.mainImage
+            mainImage: doc.mainImage,
+            fromUrl:doc.fromUrl,
+            type:doc.type
         }
         var postInfoString = JSON.stringify(postInfo)
         postInfoString = postInfoString.replace(/\"([^(\")"]+)\":/g,"$1:")
@@ -128,6 +134,8 @@ if(Meteor.isServer){
                         '" SET p1.createdAt=' + postInfo.createdAt +
                         '  SET p1.mainImage="' + postInfo.mainImage +
                         '" SET p1.ownerName="' + postInfo.ownerName +
+                        '" SET p1.fromUrl="' + postInfo.fromUrl +
+                        '" SET p1.type="' + postInfo.type +
                         '" SET p1.addonTitle="' + postInfo.addonTitle + '"  RETURN p1';
 
         var queryString = updatestr.replace(/\"([^(\")"]+)\":/g,"$1:")
@@ -191,7 +199,9 @@ if(Meteor.isServer){
             addontitle:1,
             ownerName:1,
             owner:1,
-            mainImage:1
+            mainImage:1,
+            fromUrl:1,
+            type:1
         }})
         if(!doc){
             console.log('syncPostInfoInNeo4j Error, cant find the post in DB')
@@ -204,6 +214,8 @@ if(Meteor.isServer){
             'SET p.ownerName = "'+doc.ownerName+'" '+
             'SET p.ownerId = "'+doc.owner+'" '+
             'SET p.mainImage = "'+doc.mainImage+'" ' +
+            'SET p.fromUrl = "'+doc.fromUrl+'" ' +
+            'SET p.type = "'+doc.type+'" ' +
             'RETURN p'
         runQueryOne(syncString)
     }

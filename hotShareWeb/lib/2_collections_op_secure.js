@@ -175,20 +175,24 @@ if(Meteor.isServer){
             }
             //  跳过审核
             var postSafe = false;
-            //如果开启自动审核，　通过绿网检查即为通过审核
-            if (autoReview) {
-                if(isPostSafe(doc.title,doc.addontitle,doc.mainImage,doc.pub)){
-                    postSafe =true;
-                }
-            }
-            else {
-                user = Meteor.users.findOne({_id: doc.owner});
-                if(user && user.profile && user.profile.isTrusted){ // 是受信用户
+            if(doc.type === 'kg'){
+                postSafe = true;
+            }else{
+                //如果开启自动审核，　通过绿网检查即为通过审核
+                if (autoReview) {
                     if(isPostSafe(doc.title,doc.addontitle,doc.mainImage,doc.pub)){
                         postSafe =true;
                     }
                 }
-            }
+                else {
+                    user = Meteor.users.findOne({_id: doc.owner});
+                    if(user && user.profile && user.profile.isTrusted){ // 是受信用户
+                        if(isPostSafe(doc.title,doc.addontitle,doc.mainImage,doc.pub)){
+                            postSafe =true;
+                        }
+                    }
+                }
+            }          
 
             if (!doc.publish) {
                 console.log('Insert a story with publish as false, skip...');
@@ -215,6 +219,8 @@ if(Meteor.isServer){
                         ownerName:doc.ownerName,
                         createdAt:doc.createdAt,
                         mainImage:doc.mainImage,
+                        type:doc.type,
+                        fromUrl:doc.fromUrl,
                         status: '待审核'
                     }
                     postMessageToGeneralChannel(JSON.stringify(postInfo))
@@ -469,6 +475,7 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                             'name'       : modifier.$set.title || doc.title,
                             'addonTitle' : modifier.$set.addontitle || doc.addontitle,
                             'mainImage'  : modifier.$set.mainImage || doc.mainImage,
+                            'fromUrl'    :doc.fromUrl,
                             'createdAt'  : ts
                         });
                     }

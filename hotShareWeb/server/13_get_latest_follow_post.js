@@ -16,6 +16,8 @@ if(Meteor.isServer){
                 userId = this.userId;
                 ensureFollowInNeo4j(userId)
                 var queryResult = getLatestFollowPostFromNeo4J(userId,since,queryLimit)
+                console.log('from neo4j latest follow post')
+                console.log(queryResult)
                 var returnResult = []
                 try{
                     if(queryResult && queryResult.length > 0){

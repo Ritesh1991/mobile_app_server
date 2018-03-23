@@ -153,6 +153,7 @@ if Meteor.isClient
             console.log 'should be triggered in scrolling'
             return false
         postId = this._id
+        type = this.type
         if (Session.get("myHotPostsChanged"))
           Session.set("myHotPostsChanged", false)
           navigator.notification.confirm(
@@ -162,7 +163,10 @@ if Meteor.isClient
                        saveHotPosts()
                     $('.home').addClass('animated ' + animateOutUpperEffect);
                     setTimeout ()->
-                      PUB.page '/posts/'+postId
+                      if type is 'kg'
+                        PUB.page '/kgposts/'+postId
+                      else
+                        PUB.page '/posts/'+postId
                     ,animatePageTrasitionTimeout
                     Session.set 'FollowPostsId',this._id
                     Session.set 'backtoMyPosts', true
@@ -172,7 +176,10 @@ if Meteor.isClient
           return
         $('.home').addClass('animated ' + animateOutUpperEffect);
         setTimeout ()->
-          PUB.page '/posts/'+postId
+          if type is 'kg'
+            PUB.page '/kgposts/'+postId
+          else
+            PUB.page '/posts/'+postId
         ,animatePageTrasitionTimeout
         Session.set 'FollowPostsId',this._id
         Session.set 'backtoMyPosts', true

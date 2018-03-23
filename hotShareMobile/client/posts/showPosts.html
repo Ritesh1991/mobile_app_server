@@ -115,6 +115,9 @@
           </div>
         {{/if}}
       </div>
+      {{#if isKg}}
+        {{> kgPost}}
+      {{else}}
       <div class="content">
           {{#if getAbstractSentence}}
               <div class="post_header">
@@ -188,6 +191,7 @@
 
         {{> SubscribeAuthor}}
       </div>
+      {{/if}}
     </div>
     {{#if haveUrl}}
     <div id="ViewOnWeb"><i class="fa fa-globe"></i>{{_ "readOriginalText"}}</div>

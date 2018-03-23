@@ -10,4 +10,8 @@ if Meteor.isClient
 
     Template.kgPost.events
       'click .back' :->
-        Router.go('/')
+        console.log('kgposts===>back')
+        PUB.back()
+    Template.kgPost.helpers
+      isMobile:->
+        Meteor.isCordova

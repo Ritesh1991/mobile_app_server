@@ -446,6 +446,7 @@ if Meteor.isClient
     'click .postImages ul li':(e)->
       Session.set("postPageScrollTop", 0)
       postId = e.currentTarget.id
+      type = $(e.currentTarget).data("type")
       # $('.user').addClass('animated ' + animateOutLowerEffect);
       # history = []
       # history.push {
@@ -455,7 +456,10 @@ if Meteor.isClient
       # Session.set "history_view", history
       #Session.set('backtopageuser', true)
       Meteor.setTimeout ()->
-        PUB.page '/posts/'+postId
+        if type is 'kg'
+          PUB.page '/kgposts/'+postId
+        else
+          PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
     'click .postRight':(e)->
       # $('.user').addClass('animated ' + animateOutLowerEffect);
@@ -562,9 +566,13 @@ if Meteor.isClient
             console.log 'should be triggered in scrolling'
             return false
         postId = this._id
+        type = this.type
         $('.home').addClass('animated ' + animateOutUpperEffect);
         Meteor.setTimeout ()->
-          PUB.page '/posts/'+postId
+          if type is 'kg'
+            PUB.page '/kgposts/'+postId
+          else
+            PUB.page '/posts/'+postId
           history = []
           history.push {
               view: 'searchMyPosts'

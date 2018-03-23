@@ -660,6 +660,11 @@ if Meteor.isClient
         false
     isMobile:->
       Meteor.isCordova
+    isKg:->
+      if Session.get("postContent").type is 'kg'
+        true
+      else
+        false
     haveUrl:->
       if Session.get("postContent").fromUrl is undefined  or Session.get("postContent").fromUrl is ''
         false
