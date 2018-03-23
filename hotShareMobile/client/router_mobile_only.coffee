@@ -357,6 +357,37 @@ if Meteor.isClient
             return
           renderPost2(self, post)
       }
+    Router.route '/kgposts/:_id',{
+      action: ->
+        self = this
+        this.render 'loadingPost'
+        if ajaxCDN?
+            ajaxCDN.abort()
+            ajaxCDN = null
+        console.log(this.params._id);
+        subs.subscribe "publicPosts",this.params._id, ()->
+        console.log('subs loaded:', self.params._id);
+        subs.subscribe("postViewCounter",this.params._id)
+        subs.subscribe("postsAuthor",this.params._id)
+        subs.subscribe "pcomments" 
+        Meteor.subscribe('postInfoById', this.params._id)
+        post = Posts.findOne({_id: this.params._id})
+        if !post
+          return self.render 'postNotFound'
+        # else
+        Session.set('postContent',post)
+        Session.set('focusedIndex',undefined)
+        if post and post.addontitle and (post.addontitle isnt '')
+          documentTitle = "『故事贴』" + post.title + "：" + post.addontitle
+        else if post
+          documentTitle = "『故事贴』" + post.title
+        Session.set("DocumentTitle",documentTitle)
+        if post
+          self.render 'showPosts', {data: post}
+        else
+          self.render 'unpublish'
+        Session.set 'channel','kgposts/'+self.params._id
+      }
     Router.route '/newposts/:_id', {
         action: ->
           self = this

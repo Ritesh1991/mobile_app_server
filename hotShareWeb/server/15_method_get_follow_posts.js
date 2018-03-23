@@ -25,6 +25,8 @@ if(Meteor.isServer){
                             if(postInfo){
                                 var followedPost = formatFollowPost(userId, postInfo);
                                 followedPost._id = postInfo.postId
+                                console.log(followedPost.fromUrl)
+                                console.log(followedPost.type)
                                 returnResult.push(followedPost)
                             }
                         });

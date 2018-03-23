@@ -117,6 +117,7 @@ if Meteor.isClient
     Session.set('draftTitle', '');
     Session.set('draftAddontitle', '');
     Drafts.remove({})
+    Session.set('kgLink',false)
     Session.set 'NewImgAdd','true'
   @checkShareUrl = () ->
     if Meteor.user()

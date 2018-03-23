@@ -938,6 +938,8 @@ if(Meteor.isServer){
                     ownerName:doc.ownerName,
                     createdAt:doc.createdAt,
                     mainImage:doc.mainImage,
+                    type:doc.type,
+                    fromUrl:doc.fromUrl,
                     status: '已审核'
                 }
                 postMessageToGeneralChannel(JSON.stringify(postInfo))
@@ -1020,6 +1022,7 @@ if(Meteor.isServer){
                                     ownerName:doc.ownerName,
                                     ownerIcon:doc.ownerIcon,
                                     createdAt: doc.createdAt,
+                                    fromUrl:doc.fromUrl,
                                     followby: fields.userId
                                 });
                             }
@@ -2499,6 +2502,9 @@ if(Meteor.isServer){
           ownerName: postInfo.ownerName,
           ownerIcon: ownerIcon,
           createdAt: postInfo.createdAt,
+          type:postInfo.type,
+          fromUrl:postInfo.fromUrl,
+          type:postInfo.type,
           followby:userId
       };
       return fields;
@@ -3118,7 +3124,7 @@ if(Meteor.isServer){
       var cursorHandle=FavouritePosts.find({userId: userId}, {sort: {createdAt: -1}, limit: limit}).observeChanges({
           added: function(_id, record){
               deferSetImmediate(function(){
-                  var postInfo=Posts.findOne({_id: record.postId},{fields:{title:1,addontitle:1,mainImage:1,ownerName:1,owner:1}});
+                  var postInfo=Posts.findOne({_id: record.postId},{fields:{title:1,addontitle:1,mainImage:1,ownerName:1,owner:1,fromUrl:1,type:1}});
                   if(postInfo){
                       pub.added('favouriteposts', _id, record);
                       var postId=postInfo._id

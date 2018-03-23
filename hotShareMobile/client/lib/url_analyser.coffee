@@ -172,7 +172,8 @@ if Meteor.isClient
     }
   ]
   formatDocement = (data)->
-    if data.host is 'kg.qq.com' or data.host is 'kg3.qq.com'
+    reg = /kg[1-9]?.qq.com/g
+    if reg.test(data.host)
       try
         kg_avideo = data.body.substr(data.body.indexOf('window.__DATA__ = {')+'window.__DATA__ = {'.length-1)
         kg_avideo = kg_avideo.substring(0, kg_avideo.indexOf('};')+1)
@@ -1205,7 +1206,8 @@ if Meteor.isClient
         a = document.createElement('a')
         a.href = url
         data.host = a.hostname
-      if data.host is 'kg.qq.com' or data.host is 'kg3.qq.com'
+      reg = /kg[1-9]?.qq.com/g
+      if reg.test(data.host)
         if data[0]
           data = data[0]
         formatDocement(data)

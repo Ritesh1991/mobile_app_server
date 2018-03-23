@@ -1,4 +1,34 @@
 <template name="addPost">
+  {{#if kgLink}}
+  <div class="kgBox">
+    <div class="addPost post-add-page head">
+      <div class="leftButton kgcancle" style="color: #00c4ff;margin-top:0px;">{{_ "cancel"}}</div>
+      <div class="pullright">
+        <!-- <div id="kgsaveDraft" class="secondRightButton ripple-btn" style="color: #00c4ff;margin-top:0px;">{{_ "saveDraft"}}</div> -->
+        {{#if hasAssocaitedUsers}}
+          <div id="publish" class="rightButton" data-toggle="modal" data-target="#chooseAssociatedUser" onclick="resetModolPublishId()" style="font-weight:bold;color: #00c4ff;margin-top:0px;">{{_ "publish"}}</div>
+          <script>
+            function resetModolPublishId(){
+              if($('#newbtnId').length > 0){
+                obj = document.getElementById('newbtnId');
+                obj.innerHTML = '发表';
+                obj.id = 'modalPublish';
+              }
+            }
+          </script>            
+        {{else}}
+          <div id="publish" class="rightButton" style="font-weight:bold;color: #00c4ff;margin-top:0px;">{{_ "publish"}}</div>
+        {{/if}}
+      </div>
+    </div>
+    <!-- <div class="content">
+      <iframe height="100%" width="100%" src="{{kgUrl}}" frameborder="0" allowfullscreen></iframe>
+    </div> -->
+    <div style="overflow:auto;-webkit-overflow-scrolling:touch;width:100%;height:100%">
+        <iframe height="100%" width="100%" src="{{kgUrl}}" frameborder="0" scrolling='no' allowfullscreen style="width:1px;min-width:100%;*width: 100%"></iframe>
+    </div>
+  </div>
+  {{else}}
   <div class="post-theme-btn"><div>模板</div></div>
   <div class="post-theme-box-mask"></div>
   <div class="post-theme-box">
@@ -217,6 +247,7 @@
   {{> mainImagesList}}
 
   {{> chooseAssociatedUser}}
+  {{/if}}
 </template>
 
 <template name="chooseAssociatedUser">

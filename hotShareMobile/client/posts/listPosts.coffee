@@ -82,9 +82,13 @@ if Meteor.isClient
           return false
       $('.home').addClass('animated ' + animateOutLowerEffect);
       postId = this.postId
+      self = this
       prepareToEditorMode()
       setTimeout ()->
-        PUB.page '/posts/'+postId
+        if self.type is 'kg'
+          PUB.page '/kgposts/'+postId
+        else
+          PUB.page '/posts/'+postId
       ,animatePageTrasitionTimeout
       # console.log this.postId
       Session.set 'FollowPostsId',this._id
