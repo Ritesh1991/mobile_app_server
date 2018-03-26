@@ -812,6 +812,30 @@ if Meteor.isServer
             else
               removePostToNeo4j(postId)
           catch error
+      #删除kg 帖子
+      "deleteKg":(postId,userId)->
+        Meteor.defer ()->
+          Posts.remove({_id:postId})
+          FollowPosts.update({postId:postId},{$set:{publish:false}},{multi: true, upsert:true})
+          TPs=TopicPosts.find({postId:postId})
+          if TPs.count()>0
+            TPs.observeChanges({
+              added:  (id, fields)->
+                PostsCount = Topics.findOne({_id:fields.topicId}).posts
+                if PostsCount is 1
+                  Topics.remove({_id:fields.topicId})
+                else if PostsCount > 1
+                  Topics.update({_id: fields.topicId}, {$set: {'posts': PostsCount-1}})
+            })
+          TopicPosts.remove({postId:postId})
+          FavouritePosts.remove({postId:postId})
+          refreshPostsCDNCaches(postId)
+          try
+            if syncToNeo4jWithMqtt
+              mqttRemoveNewPostHook(userId,postId,null)
+            else
+              removePostToNeo4j(postId)
+          catch error
       # 取消发表并生成一个经典模式下的草稿
       "unpublishAndCopyNew":(postId,userId,drafts, draftId)->
         Meteor.defer ()->

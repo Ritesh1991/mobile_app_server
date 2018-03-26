@@ -93,8 +93,12 @@
             {{/if}}
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               {{#if isMyPost}}
+                {{#if isKg}}
+                <li role="presentation"><a id="kg_delete" role="menuitem" tabindex="-1" ><i class="fa fa-trash-o"></i>{{_ "delete"}}</a></li>
+                {{else}}
                 <li role="presentation"><a id="unpublish" role="menuitem" tabindex="-1" ><i class="fa fa-file-o fa-fw"></i>{{_ "cancelPublish"}}</a></li>
                 <li role="presentation"><a id="edit" role="menuitem" tabindex="-1" ><i class="fa fa-pencil fa-fw"></i>{{_ "edit"}}</a></li>
+                {{/if}}
                 {{#if isSimpleVer}}
                 <li role="presentation"><a id="editFullVer" role="menuitem" tabindex="-1" ><i class="fa fa-pencil fa-fw"></i>转换为经典模式编辑</a></li>
                 {{/if}}

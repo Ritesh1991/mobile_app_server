@@ -1091,8 +1091,29 @@ if Meteor.isClient
       Router.go('/user')
       return
       # , '取消发表故事', ['依然发表','存为草稿']);
-
-
+    'click #kg_delete': (event)->
+      self = this
+      #直接 删除kg 故事
+      navigator.notification.confirm('您是否要删除帖子？', (r)->
+        if r isnt 2
+          return
+        postId = self._id
+        userId = Meteor.userId()
+        Meteor.call 'deleteKg',postId,userId,(err,res)->
+          myHotPosts = Meteor.user().myHotPosts || []
+          if myHotPosts and myHotPosts.length > 0
+            newArray = []
+            for item in myHotPosts
+              itemPostId = item.postId or item._id
+              if itemPostId isnt postId
+                newArray.push(item)
+            myHotPosts = newArray
+            Meteor.users.update { _id: Meteor.userId() }, $set: 'myHotPosts': myHotPosts
+          FollowPosts.remove({_id:postId})
+        Router.go('/user')
+        return
+      ,'删除帖子',['取消','确定']);
+      return
     'click #report': (e)->
       # Router.go('reportPost')
       blackerId = Session.get("postContent").owner
