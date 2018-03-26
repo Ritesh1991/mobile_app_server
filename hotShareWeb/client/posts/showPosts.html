@@ -79,6 +79,13 @@
           </div>
         {{/if}}
       </div>
+      {{#if haveNewFriends}}
+      <div class="newfriends_top">
+        {{#each newFriends}}
+        <img id="{{ta}}" class="newfriends_icon" src="{{profile.icon}}">
+        {{/each}}
+       </div>
+      {{/if}}
       <div class="content">
           {{#if getAbstractSentence}}
               <div class="post_header">
