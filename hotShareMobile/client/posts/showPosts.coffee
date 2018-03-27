@@ -1865,6 +1865,13 @@ if Meteor.isClient
           return $theme.attr('href', theme_host_url + style)
         $('head').append('<link id="post-theme" rel="stylesheet" type="text/css" href="'+theme_host_url + style+'">')
     Template.showPosts.helpers
+      #kg下的赞/踩/评论
+      canComment: ()->
+        return false
+      pinKgselfClickedUp: ()->
+        userId = Meteor.userId()
+        postData = Session.get('postContent')
+        return true;
       hasFollowerOwner: ()->
         return Meteor.userId() is Session.get('postContent').owner or Follower.find({userId: Meteor.userId(), followerId: Session.get('postContent').owner}).count() > 0
       withPinImage: ()->

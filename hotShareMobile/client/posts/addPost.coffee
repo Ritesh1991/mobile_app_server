@@ -2155,6 +2155,8 @@ if Meteor.isClient
       #       console.log 'weixin logon failure.'
       #       callback("The Weixin logon failure.")
       #   )
+      e.preventDefault();
+      e.stopPropagation();
       $('.importProgressBar, .b-modal, .toEditingProgressBar').remove()
       Session.set('fromDraftPost',false)
       currentTargetId = e.currentTarget.id
