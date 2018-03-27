@@ -93,8 +93,12 @@
             {{/if}}
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               {{#if isMyPost}}
+                {{#if isKg}}
+                <li role="presentation"><a id="kg_delete" role="menuitem" tabindex="-1" ><i class="fa fa-trash-o"></i>{{_ "delete"}}</a></li>
+                {{else}}
                 <li role="presentation"><a id="unpublish" role="menuitem" tabindex="-1" ><i class="fa fa-file-o fa-fw"></i>{{_ "cancelPublish"}}</a></li>
                 <li role="presentation"><a id="edit" role="menuitem" tabindex="-1" ><i class="fa fa-pencil fa-fw"></i>{{_ "edit"}}</a></li>
+                {{/if}}
                 {{#if isSimpleVer}}
                 <li role="presentation"><a id="editFullVer" role="menuitem" tabindex="-1" ><i class="fa fa-pencil fa-fw"></i>转换为经典模式编辑</a></li>
                 {{/if}}
@@ -117,6 +121,21 @@
       </div>
       {{#if isKg}}
         {{> kgPost}}
+        {{#if canComment}}
+        <div class='inlineScoring' style="color:#1a1a1a;margin-left:10px;">
+          {{#if pinKgselfClickedUp}}
+          <i class="fa fa-thumbs-up thumbsUp" style="color:red;font-size: larger;margin-right:10px">&nbsp;{{pinImglike}}&nbsp;&nbsp;</i>
+          {{else}}
+          <i class="fa fa-thumbs-o-up thumbsUp" style="font-size: larger;margin-right:10px">&nbsp;{{pinImglike}}&nbsp;&nbsp;</i>
+          {{/if}} 
+          {{#if pinKgselfClickedDown}}
+          <i class="fa fa-thumbs-down thumbsDown" style="color:blue;font-size: larger;margin-right:10px">&nbsp;{{pinImgdislike}}&nbsp;&nbsp;</i>
+          {{else}}
+            <i class="fa fa-thumbs-o-down thumbsDown" style="font-size: larger;margin-right:10px">&nbsp;{{pinImgdislike}}&nbsp;&nbsp;</i>
+          {{/if}} 
+          <i class="fa fa-commenting-o comments" style="font-size: larger;margin-right:10px"></i>
+        </div>
+        {{/if}}
       {{else}}
       {{#if haveNewFriends}}
        <div class="newfriends_top">
