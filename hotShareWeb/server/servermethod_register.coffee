@@ -206,6 +206,19 @@ if Meteor.isServer
               SeriesFollow.update({creatorId: userId},{$set:{creatorIcon:options.icon}},{multi: true})
           catch error
             console.log('updateFollowSeriesInfo ERR=',error)
+      'resetMessageReadCount': (fbUserId, evtType)->
+        Feeds.update(
+          {
+            followby: fbUserId,
+            eventType:{"$in": evtType}
+          }
+          {
+            $set: {isRead: true, checked: true}
+          }
+          {
+            multi: true
+          }
+        )
       'clearDiscoverMSG': (userId,postId)->
         if !Match.test(userId, String) or !Match.test(postId, String)
           return {msg: 'failed'}
