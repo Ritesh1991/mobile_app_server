@@ -82,7 +82,9 @@
       {{#if haveNewFriends}}
       <div class="newfriends_top">
         {{#each newFriends}}
-        <img id="{{ta}}" class="newfriends_icon" src="{{profile.icon}}">
+        <div class="banner">
+          <img id="{{ta}}" class="newfriends_icon" src="{{profile.icon}}"><div class="username">{{username}}</div>
+        </div>
         {{/each}}
        </div>
       {{/if}}
