@@ -202,7 +202,8 @@ if Meteor.isClient
         return
       prepareToEditorMode()
       resetAllMsgcount()
-      PUB.page('/search')
+      Session.set('isFromSearchPage', true)
+      PUB.page '/topicPostsAll'
     'click #bell':(e)->
       Meteor.defer ()->
         me = Meteor.user()
