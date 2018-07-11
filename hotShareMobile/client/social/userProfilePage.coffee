@@ -7,6 +7,17 @@ if Meteor.isClient
       console.log('clientMeetCount=='+JSON.stringify(meetInfo)+',count=='+clientMeetCount)
       if(meetCount and meetCount is 1 and clientMeetCount is 0)
         ClientPostFriends.insert(meetInfo)
+  getLocationThirdParty = (ip, userId)->
+    $.getJSON "http://ip2l.tiegushi.com/ip/" + ip, (json , textStatus, jqXHR )->
+      if (textStatus is 'success') and json
+        address = ''
+        if json.location and json.location isnt ''
+          address += json.location
+        if address isnt ''
+          Session.set('userLocation_'+userId,address)
+          console.log 'Set user location to ' + address
+        else
+          Session.set('userLocation_'+userId,'未知')
   getLocation = (userId)->
     user = Meteor.users.findOne({'_id':userId})
     if user and user.profile
@@ -21,25 +32,23 @@ if Meteor.isClient
         unless Session.get('userLocation_'+userId)
           console.log 'Get Address from ' + userInfo.profile.lastLogonIP
           Session.set('userLocation_'+userId,'加载中...')
-          url = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip="+userInfo.profile.lastLogonIP
-          $.getScript url, (data, textStatus, jqxhr)->
+          url = "http://restapi.amap.com/v3/ip?output=json&key=b5204bfc0ffbe36db8f0c9254ef65e25&ip="+userInfo.profile.lastLogonIP
+          $.getJSON url, (json, textStatus, jqxhr)->
             console.log 'status is ' + textStatus
             address = ''
-            if textStatus is 'success' and remote_ip_info and remote_ip_info.ret is 1
-              console.log 'Remote IP Info is ' + JSON.stringify(remote_ip_info)
-              if remote_ip_info.country and remote_ip_info.country isnt '' and remote_ip_info.country isnt '中国'
-                address += remote_ip_info.country
-                address += ' '
-              if remote_ip_info.province and remote_ip_info.province isnt ''
-                address += remote_ip_info.province
-                address += ' '
-              if remote_ip_info.city and remote_ip_info.city isnt '' and remote_ip_info.city isnt remote_ip_info.province
-                address += remote_ip_info.city
+            if textStatus is 'success'
+              console.log 'Remote IP Info is ' + JSON.stringify(json)
+              if json.province and json.province isnt ''
+                address += '中国,' + json.province
+              if json.city and json.city isnt '' and json.city isnt json.province
+                address += ',' + json.city
               console.log 'Address is ' + address
               if address isnt ''
                 Session.set('userLocation_'+userId,address)
+              else
+                getLocationThirdParty(userInfo.profile.lastLogonIP, userId)
             else
-              Session.set('userLocation_'+userId,'未知')
+              getLocationThirdParty(userInfo.profile.lastLogonIP, userId)
       else
         Session.set('userLocation_'+userId,'未知')
       return Session.get('userLocation_'+userId)
@@ -309,7 +318,7 @@ if Meteor.isClient
       posts.sort((p1, p2)->
         return -(FavouritePosts.findOne({postId: p1._id, userId: Session.get("profilePageUser")}).createdAt - FavouritePosts.findOne({postId: p2._id, userId: Session.get("profilePageUser")}).createdAt)
       )
-      posts         
+      posts
     suggestPosts:()->
       SuggestPosts.find({},{sort: {createdAt: -1},limit:10})
     loading:()->
