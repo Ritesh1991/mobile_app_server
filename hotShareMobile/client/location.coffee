@@ -1,5 +1,5 @@
 updateFromThirdPartWebsite = ()->
-  $.getJSON "http://ip2l.tiegushi.com/ip",(json , textStatus, jqXHR )->
+  $.getJSON "http://ip2l.tiegushi.com/ip/",(json , textStatus, jqXHR )->
     if (textStatus is 'success') and json
       address = ''
       if json.location and json.location isnt ''
