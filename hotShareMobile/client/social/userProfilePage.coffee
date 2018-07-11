@@ -38,9 +38,9 @@ if Meteor.isClient
             address = ''
             if textStatus is 'success'
               console.log 'Remote IP Info is ' + JSON.stringify(json)
-              if json.province and json.province isnt ''
+              if (not $.isArray(json.province)) and json.province and json.province isnt ''
                 address += '中国,' + json.province
-              if json.city and json.city isnt '' and json.city isnt json.province
+              if (not $.isArray(json.city)) and json.city and json.city isnt '' and json.city isnt json.province
                 address += ',' + json.city
               console.log 'Address is ' + address
               if address isnt ''
