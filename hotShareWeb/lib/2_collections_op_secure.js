@@ -383,6 +383,7 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                           };
                           var formUser = Meteor.users.findOne({_id: userId});
                           var msgObj = {
+                            notifyId: new Mongo.ObjectID()._str, 
                             form: {
                               id: formUser._id,
                               icon: formUser.profile.icon || '/userPicture.png',

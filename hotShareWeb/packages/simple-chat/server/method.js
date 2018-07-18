@@ -36,7 +36,7 @@ var subscribeMQTT = function(userId, topic, callback){
       err && console.log('mqtt sub err:', err);
       !err && console.log('mqtt sub succ');
       client_end(err);
-      
+
       // client.unsubscribe(topic, function(err1){
       //   err1 && console.log('mqtt unsub err:', err1);
       //   console.log('mqtt sub && unsub succ', userId);
@@ -91,6 +91,7 @@ var sendMQTTMsg = function(users, group, callback){
   async.mapLimit(users, 10, function(user, re_cb){
     Fiber(function(){
       sendMqttGroupMessage(group._id, {
+        notifyId: new Mongo.ObjectID()._str,
         form: {
           id: 'AsK6G8FvBn525bgEC',
           name: '故事贴小秘',
@@ -123,6 +124,7 @@ var addGroupUserMsg = function(users, group, callback){
       var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
       if (!msgSession){
         MsgSession.insert({
+          notifyId : new Mongo.ObjectID()._str,
           toUserId : group._id,
           toUserName : group.name,
           toUserIcon : group.icon,
@@ -156,7 +158,7 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
   if(group){
     if (group.is_post_group)
       is_post_group = group.is_post_group;
-    
+
     var $set = {};
     if (!group.name){
       group.name = name;
@@ -268,7 +270,7 @@ Meteor.methods({
     var limit = autoStart ? 20 : 40;
     if (!autoStart)
       return MsgSession.find({userId: userId}, {sort: {updateAt: -1}, limit: limit}).fetch();
-    return MsgSession.find({userId: userId, updateAt: {$lte: autoStart}}, {sort: {updateAt: -1}, limit: limit}).fetch();    
+    return MsgSession.find({userId: userId, updateAt: {$lte: autoStart}}, {sort: {updateAt: -1}, limit: limit}).fetch();
   },
   'joinGroup': function(groupId){
     console.log('join group:', this.userId, groupId);
@@ -348,10 +350,10 @@ Meteor.methods({
         addGroupUserMsg(newUsers, group, function(err){
           err && console.log('mqtt sub group err:', err);
           !err && console.log('mqtt sub group succ');
-      
+
           if (err)
             return;
-      
+
           sendMQTTMsg(newUsers, group, function(err1){
             // TODO:
           });

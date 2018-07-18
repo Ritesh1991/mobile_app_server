@@ -1263,7 +1263,7 @@ sendMqttMsg = function(){
     }
   }
   sendToGroupOrUser(msg,callback);
-  
+
 };
 
 var mediaRec = null;
@@ -1444,7 +1444,7 @@ Template._simpleChatToChatLayout.events({
             }
          });
       }else{
-        flag = true;       
+        flag = true;
     }
       }
   },
@@ -1975,6 +1975,8 @@ SimpleChat.onMqttMessage = function(topic, msg) {
 
   if (Messages.find({_id: msgObj._id}).count() > 0)
     return console.log('已存在此消息:', msgObj._id);
+  if (Messages.find({notifyId: msgObj.notifyId}).count() > 0)
+    return console.log('已存在此通知消息:', msgObj.notifyId);
 
   // if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
   // else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
@@ -2687,4 +2689,3 @@ var formatChatTime = function(time){
 
   return [time.format('yyyyMMddhhmm'), time.format('yyyy-MM-dd hh:mm')];
 };
-

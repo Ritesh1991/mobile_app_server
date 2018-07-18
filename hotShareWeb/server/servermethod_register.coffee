@@ -1478,6 +1478,7 @@ if Meteor.isServer
             }
             formUser = Meteor.users.findOne({_id: userId})
             msgObj = {
+              notifyId: new Mongo.ObjectID._str,
               form: {
                 id: formUser._id,
                 icon: formUser.profile.icon || '/userPicture.png',
