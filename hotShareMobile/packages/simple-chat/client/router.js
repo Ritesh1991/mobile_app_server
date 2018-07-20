@@ -445,7 +445,7 @@ var setToUsers = function(data){
         icon: page_data.icon || '/userPicture.png'
       };
   }
-  console.log('==setToUsers==');
+  console.log('==setToUsers=='+JSON.stringify(toUsers));
   localStorage.setItem('_simple_chat_to_users', JSON.stringify(toUsers));
 };
 
@@ -1604,7 +1604,11 @@ Template._simpleChatToChatItem.helpers({
     return html;
   },
   format_pcomment:function(pcomment){
-    return pcomment.replace(/<(?:.|\n)*?>|[&nbsp;]/gm, '');
+    if (pcomment != null && pcomment != undefined) {
+        return pcomment.replace(/<(?:.|\n)*?>|[&nbsp;]/gm, '');
+    } else {
+        return pcomment;
+    }
   },
   formatPIndex:function(index){
     if(index == 0){
@@ -1975,8 +1979,8 @@ SimpleChat.onMqttMessage = function(topic, msg) {
 
   if (Messages.find({_id: msgObj._id}).count() > 0)
     return console.log('已存在此消息:', msgObj._id);
-  if (Messages.find({notifyId: msgObj.notifyId}).count() > 0)
-    return console.log('已存在此通知消息:', msgObj.notifyId);
+  //if (Messages.find({notifyId: msgObj.notifyId}).count() > 0)
+  //  return console.log('已存在此通知消息:', msgObj.notifyId);
 
   // if (msgObj.wait_lable){where.people_uuid = msgObj.people_uuid}
   // else if (!msgObj.wait_lable && msgObj.images && msgObj.images.length > 0) {where['images.label'] = msgObj.images[0].label}
