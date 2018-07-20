@@ -145,7 +145,7 @@ if Meteor.isClient
           createdAt: new Date(),
           editorVersion: 'fullEditor'
          },(e) ->
-          if e.error
+          if e && e.error
             console.log 'insert SavedDrafts error:' + e.error
             SavedDrafts.update(
               {_id:draftId},
@@ -2164,8 +2164,8 @@ if Meteor.isClient
         obj = document.getElementById(currentTargetId)
         obj.innerHTML = '发表中...'
         obj.id = 'newbtnId'
-      if Session.get('isReviewMode') is '0' and currentTargetId is "publish" and Template.addPost.__helpers.get('hasAssocaitedUsers')()
-        return
+      #if Session.get('isReviewMode') is '0' and currentTargetId is "publish" and Template.addPost.__helpers.get('hasAssocaitedUsers')()
+      #  return
 
       Meteor.defer ()->
         $('.modal-backdrop.fade.in').remove()
@@ -2191,6 +2191,7 @@ if Meteor.isClient
         if Session.get('kgLink')
           publishKGPostHandle()
         else
+          $('#publish').attr("disabled","true")
           #get the images to be uploaded
           draftImageData = Drafts.find({type:'image'}).fetch()
           draftMusicData = Drafts.find({type:'music'}).fetch()
@@ -2221,6 +2222,7 @@ if Meteor.isClient
           Session.set("isDelayPublish",true)
           if draftToBeUploadedImageData.length > 0
             multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, (err, result)->
+              $('#publish').attr("disabled","false")
               unless result
                 window.plugins.toast.showShortBottom('上传失败，请稍后重试')
                 return
@@ -2261,6 +2263,7 @@ if Meteor.isClient
           else
             #post_id = Drafts.findOne({})._id
             publishPostHandle()
+            $('#publish').attr("disabled","false")
             # Meteor.subscribe('publicPosts', post_id, {
             #     onStop: ()->
             #       Router.go('/posts/'+post_id)
