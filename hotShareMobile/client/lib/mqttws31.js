@@ -1286,6 +1286,7 @@ var PahoMQTT = (function (global) {
 						// If this is a re flow of a PUBREL after we have restarted receivedMessage will not exist.
 						if (receivedMessage) {
 							this._receiveMessage(receivedMessage);
+							localStorage.removeItem("Received:"+this._localKey+receivedMessage.messageIdentifier);
 						}
 						
 					}
