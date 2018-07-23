@@ -23,7 +23,7 @@ if(Meteor.isServer){
           RePosts.insert(doc);
         });
     }
-    
+
     PeopleHis.allow({
         update: function (userId, doc, fields, modifier) {
             var user = Meteor.users.findOne({_id: userId})
@@ -192,7 +192,7 @@ if(Meteor.isServer){
                         }
                     }
                 }
-            }          
+            }
 
             if (!doc.publish) {
                 console.log('Insert a story with publish as false, skip...');
@@ -374,7 +374,7 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                         SimpleChat.upsertGroup(doc.owner + '_group', groupName, [doc.owner, userId], true, function(err){
                           if (err)
                             console.log('创建 '+groupName+' 时失败['+modifier.$set["ptype"]+']:', err);
-                          
+
                           // 生成 MQTT 消息
                           var group = {
                             _id: doc.owner + '_group',
@@ -383,7 +383,7 @@ console.log('fieldNames='+fieldNames+', fieldNames='+JSON.stringify(fieldNames)+
                           };
                           var formUser = Meteor.users.findOne({_id: userId});
                           var msgObj = {
-                            notifyId: new Mongo.ObjectID()._str, 
+                            _id: new Mongo.ObjectID()._str, 
                             form: {
                               id: formUser._id,
                               icon: formUser.profile.icon || '/userPicture.png',

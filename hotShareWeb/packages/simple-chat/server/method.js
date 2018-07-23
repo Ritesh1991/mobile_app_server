@@ -91,7 +91,7 @@ var sendMQTTMsg = function(users, group, callback){
   async.mapLimit(users, 10, function(user, re_cb){
     Fiber(function(){
       sendMqttGroupMessage(group._id, {
-        notifyId: new Mongo.ObjectID()._str,
+        _id: new Mongo.ObjectID()._str,
         form: {
           id: 'AsK6G8FvBn525bgEC',
           name: '故事贴小秘',
@@ -124,7 +124,6 @@ var addGroupUserMsg = function(users, group, callback){
       var msgSession = MsgSession.findOne({userId: user._id, toUserId: group._id, sessionType: 'group'});
       if (!msgSession){
         MsgSession.insert({
-          notifyId : new Mongo.ObjectID()._str,
           toUserId : group._id,
           toUserName : group.name,
           toUserIcon : group.icon,
