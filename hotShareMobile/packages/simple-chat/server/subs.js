@@ -105,12 +105,13 @@ Meteor.publish('get-msg-session', function(limit){
     }
   };
 
-   var where = {
-        $or: [
-          {userId: this.userId}, // 自己的
-          {app_user_id: this.userId}  // 关联的web账户的
-        ]
-      };
+  var where = {
+    $or: [
+      {userId: this.userId}, // 自己的
+      {app_user_id: this.userId}  // 关联的web账户的
+    ]
+  };
+
   var handle = MsgSession.find(where, {limit: limit, sort: {updateAt: -1}}).observeChanges({
     added: function(id, fields){
       fixGroupName(fields);
@@ -146,6 +147,7 @@ Meteor.publish('get-chat-message', function(toid){
 Meteor.publish('get-chat-message-by-id', function(id){
   return ChatMessage.find({'_id': id});
 });
+
 // Meteor.publish('get-user-group',function(userId){
 //   return GroupUsers.find({user_id: userId});
 // });

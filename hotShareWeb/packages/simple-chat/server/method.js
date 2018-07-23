@@ -203,7 +203,8 @@ var upsertGroup = function(id, name, ids, is_post_group, callback){
         user_id: user._id,
         user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
         user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-        create_time: new Date(Date.now() + MQTT_TIME_DIFF)
+        create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+        latest_active_time: new Date(Date.now() + MQTT_TIME_DIFF)
       };
       if (is_post_group)
         groupUser.is_post_group = true;
@@ -231,7 +232,7 @@ SimpleChat.upsertGroup = upsertGroup;
 
 Meteor.methods({
   'update_latest_active_time': function(group_id, user_id){
-    console.log('update_latest_active_time');
+    console.log('update_latest_active_time: group_id='+group_id+', user_id='+user_id);
     GroupUsers.update({
       group_id: group_id,
       user_id: user_id
@@ -318,7 +319,8 @@ Meteor.methods({
             user_id: user._id,
             user_name: user.profile && user.profile.fullname ? user.profile.fullname : user.username,
             user_icon: user.profile && user.profile.icon ? user.profile.icon : '/userPicture.png',
-            create_time: new Date(Date.now() + MQTT_TIME_DIFF)
+            create_time: new Date(Date.now() + MQTT_TIME_DIFF),
+            latest_active_time: new Date(Date.now() + MQTT_TIME_DIFF)
           };
           if (group.is_post_group)
             groupUser.is_post_group = true;

@@ -28,6 +28,7 @@ Package.onUse(function (api) {
     'images/image.png', 'images/back.png', 'images/account.png', 'images/sendingBmp.gif','images/groupsProfile.png'
   ], 'client');
   api.addFiles([
-    'client/upload.config.js', 'client/get_diff_time.js', 'client/to-chat/index.html', 'client/to-chat/label.html', 'client/app.less', 'client/massageLists/lists.html','client/router.js'
+    'client/upload.config.js', 'client/get_diff_time.js', 'client/to-chat/index.html', 'client/to-chat/label.html', 'client/app.less', 'client/massageLists/lists.html','client/router.js',
+    'client/guide/index.html', 'client/guide/index.js'
   ], 'client');
 });

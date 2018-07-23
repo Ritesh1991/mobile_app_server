@@ -1,4 +1,8 @@
 Meteor.publish('get-messages', function(type, to){
+  if (!this.userId)
+    return;
+  
+  console.log('======get-messages======', this.userId);
   var slef = this;
   var user = Meteor.users.findOne(slef.userId);
   var where = null;
@@ -34,6 +38,10 @@ Meteor.publish('get-messages', function(type, to){
 });
 
 Meteor.publish('get-messages-new', function(type, to){
+  if (!this.userId)
+    return;
+  
+  console.log('======get-messages-new======', this.userId);
   var slef = this;
   var user = Meteor.users.findOne(slef.userId);
   var where = null;
@@ -157,6 +165,7 @@ Meteor.publish("group-user-counter",function(id){
 });
 
 Meteor.publish('get-my-group', function(user_id){
+  console.log('pub get-my-group', GroupUsers.find({user_id: user_id}).count());
   return GroupUsers.find({user_id: user_id});
 });
 
