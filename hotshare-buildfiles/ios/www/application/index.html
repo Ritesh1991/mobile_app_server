@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height">
+  <meta name="msapplication-tap-highlight" content="no">
+      <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline' 'unsafe-eval' ws: wss:; style-src * 'unsafe-inline';">
+
+
+
+  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="/3f3a41dfaa6e390a72acbcd4245861c20afdf2a6.css?meteor_css_resource=true">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="/457980e95b598b9d54e9463f00c7d073943f8f2f.css?meteor_css_resource=true">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="/b06c5a47a4ef6c4ccdb78a86b8f26fbeb3bc3fb4.css?meteor_css_resource=true">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="/c6abe73b4df87c5862797aa12e07db7012a18089.css?meteor_css_resource=true">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="/3ba0ba2025133c55164dafaeea8792d4d6b7e034.css?meteor_css_resource=true">
+
+  <script type="text/javascript">
+    __meteor_runtime_config__ = JSON.parse(decodeURIComponent("%7B%22meteorRelease%22%3A%22METEOR%401.4.1.2%22%2C%22ROOT_URL%22%3A%22https%3A%2F%2Fhostgst.tiegushi.com%2F%22%2C%22ROOT_URL_PATH_PREFIX%22%3A%22%22%2C%22DDP_DEFAULT_CONNECTION_URL%22%3A%22https%3A%2F%2Fhostgst.tiegushi.com%2F%22%2C%22autoupdateVersionCordova%22%3A%22a7bd1dc3155b9ffa023376941dc135288022a404%22%2C%22appId%22%3A%2251rz211vh51oxlz5qm2%22%2C%22meteorEnv%22%3A%7B%22NODE_ENV%22%3A%22production%22%2C%22TEST_METADATA%22%3A%22%7B%7D%22%7D%7D"));
+
+    if (/Android/i.test(navigator.userAgent)) {
+      // When Android app is emulated, it cannot connect to localhost,
+      // instead it should connect to 10.0.2.2
+      // (unless we're using an http proxy; then it works!)
+      if (!__meteor_runtime_config__.httpProxyPort) {
+        __meteor_runtime_config__.ROOT_URL = (__meteor_runtime_config__.ROOT_URL || '').replace(/localhost/i, '10.0.2.2');
+        __meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = (__meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL || '').replace(/localhost/i, '10.0.2.2');
+      }
+    }
+  </script>
+
+  <script type="text/javascript" src="/cordova.js"></script>
+  <script type="text/javascript" src="/1d9231bbbe975faa970ddb6aafc8083fd7853255.js?meteor_js_resource=true"></script>
+
+
+  <!--<script type="text/javascript" src="/remote_server.js"></script>-->
+  <!--<script src="http://meteor.local/remote_server.js"></script>-->
+  <script>
+      console.log(__meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL);
+  </script>
+<!--  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: ws: wss: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://int.dpool.sina.com.cn *;">
+</head>
+
+<body>
+  
+</body>
+</html>
