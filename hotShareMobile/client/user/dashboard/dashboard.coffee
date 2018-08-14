@@ -219,7 +219,6 @@ if Meteor.isClient
       new_email = [{address: $('#my_edit_email').val(), verified: false}]
       Meteor.subscribe('allUsers');
       userExist = Users.find({emails: new_email}).fetch()[0]
-      #myRegExp = /[A-Za-z0-9-]{1,30}@[A-Za-z0-9-]{1,65}.[a-z]{2,6}/
       myRegExp = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}/
       email_s = $('#my_edit_email').val()
       if userExist isnt undefined
@@ -271,15 +270,23 @@ if Meteor.isClient
       old_pass = $("#my_old_password").val()
       new_pass = $("#my_edit_password").val()
       new_pass_confirm = $("#my_edit_password_confirm").val()
-      if new_pass != new_pass_confirm
+      testPssword = /[(?=.*\d/,)a-zA-Z\d_]{6,18}/ #此正则表达式只能有有特殊字符或字符或数字
+      if old_pass is ''
+        PUB.toast "请填写当前正在使用密码!"
+        return
+      else if new_pass != new_pass_confirm
         Session.set('changePasswordSaveBtnClicked', false)
         PUB.toast "两次填写的密码不一致!"
         return
       else if new_pass.length<6
         Session.set('changePasswordSaveBtnClicked', false)
-        PUB.toast "密码至少要6位";
+        PUB.toast "密码由6-18位数字或字母组成！"
         return
-      if new_pass
+      else if testPssword.test(new_pass) is false
+        Session.set('changePasswordSaveBtnClicked', false)
+        PUB.toast "您的新密码格式不正确！"
+        return
+      else if new_pass
         navigator.notification.confirm('', (r)->
           if r is 1
             console.log 'changePassword !!'
