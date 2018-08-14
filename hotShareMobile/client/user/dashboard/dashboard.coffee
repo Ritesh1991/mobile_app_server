@@ -219,17 +219,23 @@ if Meteor.isClient
       new_email = [{address: $('#my_edit_email').val(), verified: false}]
       Meteor.subscribe('allUsers');
       userExist = Users.find({emails: new_email}).fetch()[0]
-      if userExist != undefined
+      #myRegExp = /[A-Za-z0-9-]{1,30}@[A-Za-z0-9-]{1,65}.[a-z]{2,6}/
+      myRegExp = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}/
+      email_s = $('#my_edit_email').val()
+      if userExist isnt undefined
         PUB.toast "邮箱地址未修改！"
 #        PUB.toast "邮箱地址已存在！"
       else
-        Users.update {_id: Meteor.user()._id}, {$set: {emails: new_email}},  (error, result) ->
-          if error
-            PUB.toast "邮箱地址已存在！"
-            return
-          else
-            PUB.toast "邮箱修改成功！"
-            Router.go '/dashboard'
+        #Users.update {_id: Meteor.user()._id}, {$set: {emails: new_email}},  (error, result) ->
+        if email_s is ""
+          PUB.toast "邮箱不能为空！"
+        else if myRegExp.test(email_s) is false
+          PUB.toast "邮箱输入有误！"
+        else
+          Users.update {_id: Meteor.user()._id},{$set: {emails: new_email}},(error, result) ->
+          #提示
+          PUB.toast "邮箱修改成功！"        
+          Router.go '/dashboard'
 
     'click #btn_back' :->
       Router.go '/dashboard'

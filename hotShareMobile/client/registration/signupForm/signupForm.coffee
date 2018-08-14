@@ -70,7 +70,8 @@ Template.signupForm.events
     email = t.find('#signup-email').value.toLowerCase()
     Session.set 'userName',names
     pass1 = t.find('#signup-password').value
-    myRegExp = /[a-z0-9-]{1,30}@[a-z0-9-]{1,65}.[a-z]{2,6}/ ;
+    myRegExp = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}/;
+    #/[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}/
     if names is ''
       PUB.toast '请输入姓名！'
     else if myRegExp.test(email) is false
