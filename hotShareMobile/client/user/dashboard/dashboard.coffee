@@ -282,11 +282,11 @@ if Meteor.isClient
         return
       else if new_pass.length<6
         Session.set('changePasswordSaveBtnClicked', false)
-        PUB.toast "新密码输入有误，并且不能为空"
+        PUB.toast "新密码由6-18位数字或字母组成！"
         return
       else if testPssword.test(new_pass) is false
         Session.set('changePasswordSaveBtnClicked', false)
-        PUB.toast "新密码由6-18位数字或字母组成！！"
+        PUB.toast "您输入的新密码格式不正确！"
         return
       else if new_pass != new_pass_confirm
         Session.set('changePasswordSaveBtnClicked', false)
