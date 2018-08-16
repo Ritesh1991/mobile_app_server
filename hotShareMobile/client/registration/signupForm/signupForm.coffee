@@ -71,7 +71,7 @@ Template.signupForm.events
     Session.set 'userName',names
     pass1 = t.find('#signup-password').value
     myRegExp = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}/;
-    testPssword = /[(?=.*\d/,)a-zA-Z\d_]{6,18}/ #此正则表达式验证密码可以有特殊字符或字符或数字
+    testPssword = /[(?=.*\d/,)a-zA-Z\d_]{6,18}/ #此正则表达式只能有特殊字符或英文或数字
     if names is ''
       PUB.toast '请输入姓名！'
     else if myRegExp.test(email) is false
