@@ -301,10 +301,19 @@ Template.newEditor.events({
                 if (t.data.type === 'edit' || t.data.type === 'draft') {
                   Posts.findOne({ _id: t.data.id }).pub.find(function(ele, key)
                     { 
-                      if (ele.pid == item.pid && typeof(ele.pcomments) !== 'undefined') 
-                        { 
-                          pub[index].pcomments = ele.pcomments;
-                        } 
+                        if (ele.pid == item.pid){
+                            if(typeof(ele.pcomments) !== 'undefined'){ 
+                                pub[index].pcomments = ele.pcomments;
+                            }
+                            if(typeof(ele.likeUserId) !== 'undefined'){
+                                pub[index].likeUserId = ele.likeUserId;
+                                pub[index].likeSum = ele.likeSum;
+                            }
+                            if(typeof(ele.dislikeUserId) !== 'undefined'){
+                                pub[index].dislikeUserId = ele.dislikeUserId;
+                                pub[index].dislikeSum = ele.dislikeSum;
+                            }
+                        }
                     })
                 }
             });

@@ -233,6 +233,7 @@ Template.newEditorItem.events({
                 });
                 ablubImgLists.push({
                   isImage: false,
+                  pid: oldPid,
                   text: getText,
                   type: 'text'
                 });
@@ -273,6 +274,7 @@ Template.newEditorItem.events({
                       Template.newEditor.sortable().addImgText(pIndex,{
                         _id: newid,
                         type: 'image',
+                        pid: oldPid,
                         isImage:true,
                         imgUrl: result.smallImage,
                         filename: result.filename,
@@ -281,6 +283,7 @@ Template.newEditorItem.events({
                       if(hasText){
                         Template.newEditor.sortable().addImgText(pIndex+1,{
                           isImage: false,
+                          pid: oldPid,
                           text: getText,
                           type: 'text'
                         });
