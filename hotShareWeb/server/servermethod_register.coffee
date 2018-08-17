@@ -618,6 +618,8 @@ if Meteor.isServer
             createdAt: new Date()
           })
           # backup
+          if postId
+            BackUpPosts.remove({"_id":postId})
           BackUpPosts.insert(post)
           # remove
           RePosts.remove(postId)

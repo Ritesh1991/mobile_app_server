@@ -76,6 +76,7 @@ Template.loginForm.events
         PUB.toast '请输入密码！'
         return
       t.find('#sub-login').disabled = true
+      Session.set 'userPassword' ,pass
       t.find('#sub-login').value = '正在登录...'
       Meteor.loginWithPassword name, pass,(error)->
         if error

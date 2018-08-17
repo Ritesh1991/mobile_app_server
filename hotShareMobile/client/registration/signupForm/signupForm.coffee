@@ -70,13 +70,16 @@ Template.signupForm.events
     email = t.find('#signup-email').value.toLowerCase()
     Session.set 'userName',names
     pass1 = t.find('#signup-password').value
-    myRegExp = /[a-z0-9-]{1,30}@[a-z0-9-]{1,65}.[a-z]{2,6}/ ;
+    myRegExp = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}/;
+    testPssword = /[(?=.*\d/,)a-zA-Z\d_]{6,18}/ #此正则表达式只能有特殊字符或英文或数字
     if names is ''
       PUB.toast '请输入姓名！'
     else if myRegExp.test(email) is false
       PUB.toast '你的邮箱有误！'
     else if pass1.length < 6
-      PUB.toast '密码至少要6位！'
+      PUB.toast '密码由6-18位数字或字母组成！'
+    else if testPssword.test(pass1) is false
+      PUB.toast '您的密码格式不正确！'
     else
       t.find('#sub-registered').disabled = true
       t.find('#sub-registered').value = '正在提交信息...'
