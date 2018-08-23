@@ -163,8 +163,8 @@ if Meteor.isClient
     Router.route '/search',()->
       if Meteor.isCordova is true
         Session.set 'board', 'search'
-        this.render 'selectFrame'
-        #this.render 'search'
+        #this.render 'selectFrame'
+        this.render 'search'
         Session.set 'channel','search'
       return
     Router.route '/searchFollow',()->
@@ -204,8 +204,8 @@ if Meteor.isClient
     Router.route '/bell',()->
       if Meteor.isCordova is true
         Session.set 'board', 'bell'
-        this.render 'selectFrame'
-        #this.render 'bell'
+        #this.render 'selectFrame'
+        this.render 'bell'
         Session.set 'channel','bell'
       return
     Router.route '/bellcontent', {
@@ -231,8 +231,8 @@ if Meteor.isClient
     Router.route '/user',()->
       if Meteor.isCordova is true
         Session.set 'board', 'user'
-        this.render 'selectFrame'
-        #this.render 'user'
+        #this.render 'selectFrame'
+        this.render 'user'
         Session.set 'channel','user'
         return
     Router.route '/dashboard',()->
@@ -601,7 +601,7 @@ if Meteor.isClient
     Router.route '/topicPostsAll',()->
       if Meteor.isCordova is true
         this.render 'topicPostsAll'
-        Session.set 'channel','search'
+        Session.set 'channel','home'
         return
     Router.route '/addTopicComment',()->
       if Meteor.isCordova is true
