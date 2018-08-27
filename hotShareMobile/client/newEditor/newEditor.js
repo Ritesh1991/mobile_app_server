@@ -1,14 +1,19 @@
 var sortable = null;
 var pageData = new ReactiveVar({});
 
-Template.newEditor.sortable = function() { return sortable };
+Template.newEditor.sortable = function() {
+    return sortable
+};
 Template.newEditor.onRendered(function() {
     sortable && sortable.destroy();
     pageData.set(this.data);
-    console.log(this.data);
     var $ul = this.$('#postContainer');
     sortable = Sortable._create($ul[0], {
-        group: { name: 'postContainer', pull: false, put: false },
+        group: {
+            name: 'postContainer',
+            pull: false,
+            put: false
+        },
         delay: 500,
         animation: 300,
         draggable: 'li',
@@ -40,9 +45,15 @@ Template.newEditor.onRendered(function() {
     }
 
     if (this.data.type === 'edit' || this.data.type === 'draft') {
-        var post = this.data.type === 'edit' ? Posts.findOne({ _id: this.data.id }) : SavedDrafts.findOne({ _id: this.data.id });
+        var post = this.data.type === 'edit' ? Posts.findOne({
+            _id: this.data.id
+        }) : SavedDrafts.findOne({
+            _id: this.data.id
+        });
         if (!post) {
-            post = Posts.findOne({ _id: this.data.id })
+            post = Posts.findOne({
+                _id: this.data.id
+            })
             if (!post) {
                 history.go(-1);
                 return PUB.alert('没有找到此故事或草稿~');
@@ -135,7 +146,9 @@ Template.newEditor.helpers({
         return getImagePath(path, uri, id);
     },
     hasAssocaitedUsers: function() {
-        return (AssociatedUsers.find({}).count() > 0) || (UserRelation.find({ userId: Meteor.userId() }).count() > 0);
+        return (AssociatedUsers.find({}).count() > 0) || (UserRelation.find({
+            userId: Meteor.userId()
+        }).count() > 0);
     },
     showSimpleEditorFirstTip: function() {
         return !localStorage.getItem('hideSimpleEditorFirstTip')
@@ -146,12 +159,286 @@ Template.newEditor.helpers({
         } else {
             return false;
         }
+    },
+    handleSaveDraft: function() {
+        if (!Meteor.status().connected && Meteor.status().status != 'connecting')
+            Meteor.reconnect()
+        if (pageData.get().type === 'edit' && pageData.get().id) {
+            return;
+        }
+        var owner = Meteor.userId();
+        var ownerName = Meteor.user().profile && Meteor.user().profile.fullname ? Meteor.user().profile.fullname : Meteor.user().username;
+        var ownerIcon = Meteor.user().profile && Meteor.user().profile.icon ? Meteor.user().profile.icon : '/userPicture.png';
+        // title
+        var title = $('.title').val();
+        var addontitle = $('.addontitle').val();
+        var titleImg = $('.mainImage').data('imgurl');
+        if (!title || title === '[空标题]') {
+            Session.set('SavingDraftStatus', false);
+            return PUB.toast('请为您的故事加个标题');
+        }
+        var pub = sortable.getDocs();
+        pub.unshift({
+            _id: new Mongo.ObjectID()._str,
+            type: 'image',
+            imgUrl: titleImg,
+            filename: $('.mainImage').data('filename'),
+            URI: $('.mainImage').data('uri')
+        });
+        var publishPost = function() {
+            var mainImg = pub[0];
+            titleImg = pub[0].imgUrl;
+            pub.splice(0, 1);
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
+            // index
+            pub.map(function(item, index) {
+                pub[index].data_row = 1;
+                pub[index].data_col = 1;
+                pub[index].data_sizex = 6;
+
+                switch (item.type) {
+                    case 'text':
+                        pub[index].data_sizey = 1;
+                        break;
+                    case 'image':
+                        pub[index].data_sizey = 4;
+                        break;
+                    case 'iframe':
+                        pub[index].data_sizey = 4;
+                        break;
+                    case 'music':
+                        pub[index].data_sizey = 1;
+                        break;
+                    case 'video':
+                        pub[index].data_sizey = 4;
+                        break;
+                }
+
+                if (index > 0) {
+                    pub[index].data_row = pub[index - 1].data_row + pub[index - 1].data_sizey;
+                }
+                pub[index].index = index;
+                pub[index].owner = owner;
+                pub[index].data_wait_init = true;
+                // leon xu 修改文章 保留评论
+                if (pageData.get().type === 'edit' || pageData.get().type === 'draft') {
+                    var post_data = pageData.get().type === 'edit' ? Posts.findOne({
+                        _id: pageData.get().id
+                    }) : SavedDrafts.findOne({
+                        _id: pageData.get().id
+                    });
+                    post_data.pub.find(function(ele, key) {
+                        if (ele.pid == item.pid) {
+                            if (typeof(ele.pcomments) !== 'undefined') {
+                                pub[index].pcomments = ele.pcomments;
+                            }
+                            if (typeof(ele.likeUserId) !== 'undefined') {
+                                pub[index].likeUserId = ele.likeUserId;
+                                pub[index].likeSum = ele.likeSum;
+                            }
+                            if (typeof(ele.dislikeUserId) !== 'undefined') {
+                                pub[index].dislikeUserId = ele.dislikeUserId;
+                                pub[index].dislikeSum = ele.dislikeSum;
+                            }
+                        }
+                    })
+                }
+            });
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
+
+            // post
+            var post = {
+                _id: pageData.get().type === 'edit' ? pageData.get().id : new Mongo.ObjectID()._str,
+                title: title,
+                addontitle: addontitle,
+                mainImage: titleImg,
+                mainImageStyle: null,
+                mainText: '',
+                heart: [],
+                retweet: [],
+                comment: [],
+                owner: owner,
+                ownerName: ownerName,
+                ownerIcon: ownerIcon,
+                createdAt: new Date(),
+                browse: 0,
+                commentsCount: 0,
+                publish: true,
+                isReview: false,
+                // fromUrl: titleImg,
+                pub: pub,
+                editorVersion: 'simpleEditor'
+            };
+            console.log(post);
+
+            var fromUrl = Session.get('newEditorFormURL');
+            if (fromUrl) {
+                post.fromUrl = fromUrl;
+            }
+            Session.set('newEditorFormURL', null);
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
+            if (pageData.get().type === 'draft') {
+                post.pub.unshift({
+                    _id: pageData.get().id,
+                    type: "image",
+                    isImage: true,
+                    url: mainImg.imgUrl,
+                    owner: owner,
+                    imgUrl: mainImg.imgUrl,
+                    filename: mainImg.filename,
+                    URI: mainImg.URI,
+                    data_row: 1,
+                    pid: pageData.get().id,
+                    data_col: 1,
+                    data_sizex: 6,
+                    data_sizey: 4,
+                    index: 0,
+                    data_wait_init: true
+                });
+            }
+            if (pageData.get().id) {
+                SavedDrafts.update({
+                    _id: pageData.get().id
+                }, {
+                    $set: {
+                        title: post.title,
+                        addontitle: post.addontitle,
+                        mainImage: post.mainImage,
+                        pub: post.pub,
+                        owner: owner,
+                        createdAt: new Date(),
+                        editorVersion: 'simpleEditor'
+                    }
+                }, function(err, num) {
+                    Template.progressBar.__helpers.get('close')()
+                    if (err) {
+                        console.log(err);
+                        Session.set('SavingDraftStatus', false);
+                        return PUB.toast('存草稿失败，请重试~');
+                    }
+                    Session.set('SavingDraftStatus', false);
+                    Meteor.setTimeout(function() {
+                        var mySavedDrafts = SavedDrafts.find({
+                            owner: Meteor.userId()
+                        }, {
+                            sort: {
+                                createdAt: -1
+                            },
+                            limit: 2
+                        })
+                        if (mySavedDrafts.count() > 0) {
+                            Session.setPersistent('persistentMySavedDrafts', mySavedDrafts.fetch());
+                        }
+                    }, 50);
+                    PUB.toast('已为您自动保存草稿~');
+                    PUB.back();
+                });
+            } else {
+                SavedDrafts.insert({
+                    title: post.title,
+                    addontitle: post.addontitle,
+                    mainImage: post.mainImage,
+                    pub: post.pub,
+                    owner: owner,
+                    createdAt: new Date(),
+                    editorVersion: 'simpleEditor'
+                }, function(err, _id) {
+                    Template.progressBar.__helpers.get('close')()
+                    if (err || !_id) {
+                        console.log(err);
+                        Session.set('SavingDraftStatus', false);
+                        return PUB.toast('存草稿失败，请重试~');
+                    }
+                    Session.set('SavingDraftStatus', false);
+                    Meteor.setTimeout(function() {
+                        var mySavedDrafts = SavedDrafts.find({
+                            owner: Meteor.userId()
+                        }, {
+                            sort: {
+                                createdAt: -1
+                            },
+                            limit: 2
+                        })
+                        if (mySavedDrafts.count() > 0) {
+                            Session.setPersistent('persistentMySavedDrafts', mySavedDrafts.fetch());
+                        }
+                    }, 50);
+                    PUB.toast('已为您自动保存草稿~');
+                    PUB.back();
+                });
+            }
+        }
+        // upload file
+        var draftToBeUploadedImageData = [];
+        var draftImageData = [];
+        pub.map(function(item, index) {
+            switch (item.type) {
+                case 'image':
+                    if (!(!item.imgUrl || item.imgUrl.toLowerCase().indexOf("http://") >= 0 || item.imgUrl.toLowerCase().indexOf("https://") >= 0 || item.imgUrl.toLowerCase().indexOf("data:image/") >= 0))
+                        draftToBeUploadedImageData.push(item);
+                    draftImageData.push(item);
+                    break;
+                case 'music':
+                    if (!(item.musicInfo.playUrl.toLowerCase().indexOf("http://") >= 0 || item.musicInfo.playUrl.toLowerCase().indexOf("https://") >= 0))
+                        draftToBeUploadedImageData.push(item);
+                    break;
+                case 'video':
+                    if (!(!item.videoInfo.imageUrl || item.videoInfo.imageUrl.toLowerCase().indexOf("http://") >= 0 || item.videoInfo.imageUrl.toLowerCase().indexOf("https://") >= 0))
+                        draftToBeUploadedImageData.push(item);
+                    break;
+            }
+        });
+        if (Session.equals('terminateUpload', true)) {
+            return
+        }
+
+        if (draftToBeUploadedImageData.length > 0) {
+            console.log('draftToBeUploadedImageData', draftToBeUploadedImageData);
+            return multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, function(err, result) {
+                if (Session.equals('terminateUpload', true)) {
+                    return
+                }
+                if (err || !result || result.length <= 0)
+                    return PUB.toast('上传失败，请稍后重试');
+                result.map(function(item) {
+                    var index = _.pluck(pub, '_id').indexOf(item._id);
+                    if (index >= 0) {
+                        if (item.type === 'image' && item.imgUrl)
+                            pub[index].imgUrl = item.imgUrl;
+                        else if (item.type === 'music' && item.musicInfo && item.musicInfo.playUrl)
+                            pub[index].musicInfo.playUrl = item.musicInfo.playUrl;
+                        else if (item.type === 'video' && item.videoInfo && item.videoInfo.imageUrl)
+                            pub[index].videoInfo.imageUrl = item.videoInfo.imageUrl;
+                    }
+                });
+                try {
+                    removeImagesFromCache(draftImageData);
+                } catch (e) {}
+                if (Session.get('saveedBase64Images') && Session.get('saveedBase64Images').length > 0) {
+                    var imgPreRemoveLists = Session.get('saveedBase64Images');
+                    try {
+                        removeImagesFromCache(imgPreRemoveLists);
+                    } catch (e) {}
+                    Session.set('saveedBase64Images', null);
+                }
+                publishPost();
+            });
+        }
+        publishPost();
     }
 })
 
 Template.newEditor.events({
     'click #editHelp': function(e) {
-        return Tips.popPage('editorInstrucations', { editor: 'simple' });
+        return Tips.popPage('editorInstrucations', {
+            editor: 'simple'
+        });
     },
     'click .simpleEditorEditingTIP': function() {
         target = '#' + Session.get('targetBeforeEditorEditingTIP') + ' .text';
@@ -252,7 +539,9 @@ Template.newEditor.events({
         }
 
         // data
-        if (Session.equals('terminateUpload', true)) { return }
+        if (Session.equals('terminateUpload', true)) {
+            return
+        }
         var pub = sortable.getDocs();
         pub.unshift({
             _id: new Mongo.ObjectID()._str,
@@ -261,13 +550,17 @@ Template.newEditor.events({
             filename: t.$('.mainImage').data('filename'),
             URI: t.$('.mainImage').data('uri')
         });
-        if (Session.equals('terminateUpload', true)) { return }
+        if (Session.equals('terminateUpload', true)) {
+            return
+        }
 
         var publishPost = function() {
             var mainImg = pub[0];
             titleImg = pub[0].imgUrl;
             pub.splice(0, 1);
-            if (Session.equals('terminateUpload', true)) { return }
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
 
             // index
             pub.map(function(item, index) {
@@ -293,23 +586,29 @@ Template.newEditor.events({
                         break;
                 }
 
-                if (index > 0) { pub[index].data_row = pub[index - 1].data_row + pub[index - 1].data_sizey; }
+                if (index > 0) {
+                    pub[index].data_row = pub[index - 1].data_row + pub[index - 1].data_sizey;
+                }
                 pub[index].index = index;
                 pub[index].owner = owner;
                 pub[index].data_wait_init = true;
                 // leon xu 修改文章 保留评论
                 if (t.data.type === 'edit' || t.data.type === 'draft') {
-                  Posts.findOne({ _id: t.data.id }).pub.find(function(ele, key)
-                    { 
-                        if (ele.pid == item.pid){
-                            if(typeof(ele.pcomments) !== 'undefined'){ 
+                    var post_data = t.data.type === 'edit' ? Posts.findOne({
+                        _id: t.data.id
+                    }) : SavedDrafts.findOne({
+                        _id: t.data.id
+                    });
+                    post_data.pub.find(function(ele, key) {
+                        if (ele.pid == item.pid) {
+                            if (typeof(ele.pcomments) !== 'undefined') {
                                 pub[index].pcomments = ele.pcomments;
                             }
-                            if(typeof(ele.likeUserId) !== 'undefined'){
+                            if (typeof(ele.likeUserId) !== 'undefined') {
                                 pub[index].likeUserId = ele.likeUserId;
                                 pub[index].likeSum = ele.likeSum;
                             }
-                            if(typeof(ele.dislikeUserId) !== 'undefined'){
+                            if (typeof(ele.dislikeUserId) !== 'undefined') {
                                 pub[index].dislikeUserId = ele.dislikeUserId;
                                 pub[index].dislikeSum = ele.dislikeSum;
                             }
@@ -317,7 +616,9 @@ Template.newEditor.events({
                     })
                 }
             });
-            if (Session.equals('terminateUpload', true)) { return }
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
 
             // post
             var post = {
@@ -348,13 +649,17 @@ Template.newEditor.events({
                 post.fromUrl = fromUrl;
             }
             Session.set('newEditorFormURL', null);
-            console.log('post:', post);
-            if (Session.equals('terminateUpload', true)) { return }
+            if (Session.equals('terminateUpload', true)) {
+                return
+            }
 
             var updatePost = function() {
-                if (Session.equals('terminateUpload', true)) { return }
-                console.log(Posts.findOne({ _id: t.data.id }));
-                Posts.update({ _id: t.data.id }, {
+                if (Session.equals('terminateUpload', true)) {
+                    return
+                }
+                Posts.update({
+                    _id: t.data.id
+                }, {
                     $set: {
                         title: post.title,
                         addontitle: post.addontitle,
@@ -379,10 +684,18 @@ Template.newEditor.events({
 
                     // 删除草稿
                     if (t.data.type === 'draft')
-                        SavedDrafts.remove({ _id: t.data.id });
+                        SavedDrafts.remove({
+                            _id: t.data.id
+                        });
 
                     post._id = t.data.id;
-                    try { post.browse = Posts.findOne({ _id: t.data.id }).browse + 1; } catch (e) { post.browse = 1; }
+                    try {
+                        post.browse = Posts.findOne({
+                            _id: t.data.id
+                        }).browse + 1;
+                    } catch (e) {
+                        post.browse = 1;
+                    }
                     insertPostOnTheHomePage(t.data.id, post);
                     Session.set('newpostsdata', post);
 
@@ -397,7 +710,9 @@ Template.newEditor.events({
             if (t.data.type === 'edit') {
                 updatePost();
             } else {
-                if (Session.equals('terminateUpload', true)) { return }
+                if (Session.equals('terminateUpload', true)) {
+                    return
+                }
                 if (currentTargetId === 'drafts') {
                     post.pub.unshift({
                         _id: t.data.id,
@@ -417,11 +732,17 @@ Template.newEditor.events({
                         data_wait_init: true
                     });
                     post.pub.map(function(item, index) {
-                        if (index > 0) { post.pub[index].data_row = post.pub[index - 1].data_row + post.pub[index - 1].data_sizey; }
+                        if (index > 0) {
+                            post.pub[index].data_row = post.pub[index - 1].data_row + post.pub[index - 1].data_sizey;
+                        }
                     });
-                    if (Session.equals('terminateUpload', true)) { return }
+                    if (Session.equals('terminateUpload', true)) {
+                        return
+                    }
                     if (t.data.id) {
-                        SavedDrafts.update({ _id: t.data.id }, {
+                        SavedDrafts.update({
+                            _id: t.data.id
+                        }, {
                             $set: {
                                 title: post.title,
                                 addontitle: post.addontitle,
@@ -440,7 +761,14 @@ Template.newEditor.events({
                             }
                             Session.set('SavingDraftStatus', false);
                             Meteor.setTimeout(function() {
-                                var mySavedDrafts = SavedDrafts.find({ owner: Meteor.userId() }, { sort: { createdAt: -1 }, limit: 2 })
+                                var mySavedDrafts = SavedDrafts.find({
+                                    owner: Meteor.userId()
+                                }, {
+                                    sort: {
+                                        createdAt: -1
+                                    },
+                                    limit: 2
+                                })
                                 if (mySavedDrafts.count() > 0) {
                                     Session.setPersistent('persistentMySavedDrafts', mySavedDrafts.fetch());
                                 }
@@ -466,7 +794,14 @@ Template.newEditor.events({
                             }
                             Session.set('SavingDraftStatus', false);
                             Meteor.setTimeout(function() {
-                                var mySavedDrafts = SavedDrafts.find({ owner: Meteor.userId() }, { sort: { createdAt: -1 }, limit: 2 })
+                                var mySavedDrafts = SavedDrafts.find({
+                                    owner: Meteor.userId()
+                                }, {
+                                    sort: {
+                                        createdAt: -1
+                                    },
+                                    limit: 2
+                                })
                                 if (mySavedDrafts.count() > 0) {
                                     Session.setPersistent('persistentMySavedDrafts', mySavedDrafts.fetch());
                                 }
@@ -476,10 +811,14 @@ Template.newEditor.events({
                         });
                     }
                 } else {
-                    if (Posts.find({ _id: t.data.id }).count() > 0)
+                    if (Posts.find({
+                            _id: t.data.id
+                        }).count() > 0)
                         return updatePost();
 
-                    if (Session.equals('terminateUpload', true)) { return }
+                    if (Session.equals('terminateUpload', true)) {
+                        return
+                    }
                     post.owner = owner;
                     post.ownerName = ownerName;
                     post.ownerIcon = ownerIcon;
@@ -497,7 +836,9 @@ Template.newEditor.events({
 
                         // 删除草稿
                         if (t.data.type === 'draft')
-                            SavedDrafts.remove({ _id: t.data.id });
+                            SavedDrafts.remove({
+                                _id: t.data.id
+                            });
 
                         // to tags page
                         Session.set("TopicPostId", post._id);
@@ -531,12 +872,16 @@ Template.newEditor.events({
                     break;
             }
         });
-        if (Session.equals('terminateUpload', true)) { return }
+        if (Session.equals('terminateUpload', true)) {
+            return
+        }
 
         if (draftToBeUploadedImageData.length > 0) {
             console.log('draftToBeUploadedImageData', draftToBeUploadedImageData);
             return multiThreadUploadFileWhenPublishInCordova(draftToBeUploadedImageData, null, function(err, result) {
-                if (Session.equals('terminateUpload', true)) { return }
+                if (Session.equals('terminateUpload', true)) {
+                    return
+                }
                 if (err || !result || result.length <= 0)
                     return PUB.toast('上传失败，请稍后重试');
                 result.map(function(item) {
@@ -550,10 +895,14 @@ Template.newEditor.events({
                             pub[index].videoInfo.imageUrl = item.videoInfo.imageUrl;
                     }
                 });
-                try { removeImagesFromCache(draftImageData); } catch (e) {}
+                try {
+                    removeImagesFromCache(draftImageData);
+                } catch (e) {}
                 if (Session.get('saveedBase64Images') && Session.get('saveedBase64Images').length > 0) {
                     var imgPreRemoveLists = Session.get('saveedBase64Images');
-                    try { removeImagesFromCache(imgPreRemoveLists); } catch (e) {}
+                    try {
+                        removeImagesFromCache(imgPreRemoveLists);
+                    } catch (e) {}
                     Session.set('saveedBase64Images', null);
                 }
                 publishPost();
@@ -572,7 +921,9 @@ Template.newEditor.events({
             };
             pubImages.push(doc);
         });
-        Blaze.renderWithData(Template.eidtMainImagePage, { images: pubImages }, document.body)
+        Blaze.renderWithData(Template.eidtMainImagePage, {
+            images: pubImages
+        }, document.body)
         Meteor.setTimeout(function() {
             $('body').css('overflow', 'hidden');
             var mainImageSrc = $('img.mainImage').attr('src') || '/webbg.jpg';
@@ -738,7 +1089,10 @@ Template.newEditor.events({
                                         musicInfo: musicInfo,
                                     });
                                 }, item.image,
-                                64, 64, { imageDataType: ImageResizer.IMAGE_DATA_TYPE_BASE64, format: 'png' });
+                                64, 64, {
+                                    imageDataType: ImageResizer.IMAGE_DATA_TYPE_BASE64,
+                                    format: 'png'
+                                });
                         }
                     }
                 }
@@ -856,22 +1210,33 @@ Template.chooseAssociatedUserNewEditor.onRendered(function() {
     Meteor.subscribe('userRelation');
     var height = $(window).height() * 0.68;
     height = height + 'px';
-    $('.modal-dialog .modal-body').css({ 'max-height': height, 'overflow-y': 'auto' })
+    $('.modal-dialog .modal-body').css({
+        'max-height': height,
+        'overflow-y': 'auto'
+    })
     $('#chooseAssociatedUser').on('show.bs.modal', function() {
-        $('body,html').css({ 'overflow': 'hidden' });
+        $('body,html').css({
+            'overflow': 'hidden'
+        });
     });
     $('#chooseAssociatedUser').on('hide.bs.modal', function() {
-        $('body,html').css({ 'overflow': '' });
+        $('body,html').css({
+            'overflow': ''
+        });
     });
 });
 
 Template.chooseAssociatedUserNewEditor.onDestroyed(function() {
-    $('body,html').css({ 'overflow': '' });
+    $('body,html').css({
+        'overflow': ''
+    });
 })
 
 Template.chooseAssociatedUserNewEditor.helpers({
     accountList: function() {
-        return UserRelation.find({ userId: Meteor.userId() });
+        return UserRelation.find({
+            userId: Meteor.userId()
+        });
     }
 });
 

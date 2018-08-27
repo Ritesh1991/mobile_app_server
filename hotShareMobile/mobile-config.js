@@ -30,6 +30,7 @@ App.icons({
   'iphone_3x': 'resource/icon_180.png',
   'ipad': 'resource/icon_76.png',
   'ipad_2x': 'resource/icon_152.png',
+  'ipad_pro': 'resource/icon_167.png',
   'ios_settings': 'resource/icon_29.png',
   'ios_settings_2x': 'resource/icon_58.png',
   'ios_settings_3x': 'resource/icon_87.png',
