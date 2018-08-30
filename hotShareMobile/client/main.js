@@ -399,6 +399,9 @@ if (Meteor.isCordova) {
         if (location.pathname === '/add') {
           Template.addPost.__helpers.get('saveDraft')()
         }
+        if (location.pathname === '/newEditor') {
+          Template.newEditor.__helpers.get('handleSaveDraft')()
+        }
       }
     }
 
