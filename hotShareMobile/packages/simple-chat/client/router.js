@@ -1274,6 +1274,10 @@ var flag = true;
 Template._simpleChatToChatLayout.events({
   'click .ta div.icon': function(e){
     console.log('i clicked a chat userICON');
+    if (Session.get('chatTouching')) {
+      console.log('chatTouching is on, ignore click event');
+      return;
+    }
     var to_id = '';
     if (this.to_type === 'user') {
       to_id = this.form.id
@@ -1493,6 +1497,7 @@ Template._simpleChatToChatItem.onRendered(function(){
     touch.on(this.$('li .icon'),'hold',function(ev){
       ev.preventDefault();
       ev.stopPropagation();
+      Session.set('chatTouching', true);
       console.log('data is -----------')
       console.log(data)
       var username = data.form.name;
@@ -1507,10 +1512,15 @@ Template._simpleChatToChatItem.onRendered(function(){
       }
       userArr.push(userData)
       Session.set('pushNotiUsers',userArr);
+      
       $('.input-text').val($('.input-text').val() + '@' + username + ' ');
       Meteor.setTimeout(function(){
         $('#simple-chat-text').select();
       }, 100);
+      Meteor.setTimeout(function(){
+        console.log('release touch lock');
+        Session.set('chatTouching', false);
+      }, 5000);
     });
   }
   touch.on(this.$('li'),'hold',function(ev){
