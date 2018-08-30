@@ -109,7 +109,7 @@ if Meteor.isClient
           SimpleChat.MsgSession.update({userId: {$in: ids}}, {$set: {count: 0}}, {multi: true})
         else
           SimpleChat.MsgSession.update({userId: {$in: ids}, sessionType:'user'}, {$set: {count: 0}}, {multi: true})
-        Session.set('resetAllMsg', false)
+        Session.set('resetAllMsg', true)
   @prepareToEditorMode = ()->
     TempDrafts.remove({})
     $('body').removeClass('modal-open')

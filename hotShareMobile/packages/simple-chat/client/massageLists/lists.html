@@ -117,6 +117,13 @@
     touch.live('.simple-chat-medialist', 'swiperight swipeing','.swiperElem', function(ev){
       $(ev.target).parents('.swiperElem').animate({left: '0px'},100);
     });
+    //设置脚部消息的红点是否显示
+    var reddot = $("#reddot").val();
+    if(reddot == undefined){
+      Session.set('resetAllMsg', false)
+    }else{
+      Session.set('resetAllMsg', true)
+    }
   })
   </script>
 </template>
