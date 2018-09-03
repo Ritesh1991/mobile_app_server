@@ -15,7 +15,7 @@ cordova-plugin-file@4.1.1
 cordova-plugin-file-transfer@1.6.0
 cordova-plugin-http@1.2.0
 cordova-plugin-keyboard@1.1.5
-cordova-plugin-splashscreen@https://github.com/PluginCordova/cordova-plugin-splashscreen/tarball/96bfa12357ff7bdcf29a24bc1d34a999887b5e84
+cordova-plugin-splashscreen@https://github.com/PluginCordova/cordova-plugin-splashscreen/tarball/f4eb3e91345a08b8d1cbd6c7628ae1f6aa267345
 cordova-plugin-fastrde-mqtt@https://github.com/fastrde/cordova-plugin-fastrde-mqtt/tarball/1bd69e3b7db4515a5b787d93665414f4036937c2
 cordova-plugin-statusbar@https://github.com/PluginCordova/cordova-plugin-statusbar/tarball/995e4fdf9de78609ff0fb30bab2610b9e5293410
 cordova-plugin-camera@https://github.com/PluginCordova/cordova-plugin-camera/tarball/394a5b1dbf9de3a76f64127acaf8366e4cf82920
