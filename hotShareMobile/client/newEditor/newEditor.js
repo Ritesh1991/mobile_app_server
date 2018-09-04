@@ -949,7 +949,7 @@ Template.newEditor.events({
     //  弹出工具条
     'click .addNewBtn': function(e) {
         $(e.currentTarget).fadeOut("fast", function() {
-            $(e.currentTarget).next('.addElements').fadeIn();
+            $(e.currentTarget).next().next('.addElements').fadeIn();
         });
     },
 
@@ -972,7 +972,7 @@ Template.newEditor.events({
     },
     'click #addImage': function(e) {
         $(e.currentTarget).parent().fadeOut("fast", function() {
-            $(e.currentTarget).parent().prev().fadeIn();
+            $(e.currentTarget).parent().prev().prev().fadeIn();
         });
         var li = e.currentTarget.parentNode.parentNode.parentNode;
         var isMain = e.currentTarget.getAttribute('class').indexOf('main') >= 0;
@@ -984,6 +984,7 @@ Template.newEditor.events({
             addCancelButtonWithLabel: '取消',
             androidEnableCancelButton: true,
         };
+        console.log(sortable);
         window.footbarOppration = true;
         window.plugins.actionsheet.show(options, function(index) {
             if (index === 1) {
@@ -1164,6 +1165,104 @@ Template.newEditor.events({
                         '提示', ['导入', '取消']);
             }
         });
+    },
+    'click .addVoice': function(e, t) {
+        $('#voiceControl').modal('show');
+        var li = e.currentTarget.parentNode.parentNode;
+        var isMain = e.currentTarget.getAttribute('class').indexOf('main') >= 0;
+        voiceIndex = isMain ? 0 : (_.pluck(li.parentNode.children, 'id')).indexOf(li.id) + 1;
+    },
+    'click .voiceBtn': function(e,t) {
+        return;
+    },
+    'touchstart .voiceBtn': function(e,t) {
+        $('.modelRecord').show();
+        $(e.target).text("松开添加");
+        startY = e.originalEvent.changedTouches[0].screenY;
+        distanceY = 0;
+        var recName = Meteor.userId()+new Date().getTime() + ".mp3";
+        mediaRec = new Media(recName,
+            // success callback
+            function() {
+              console.log("recordAudio():Audio Success");
+              console.log("录音中:"+recName);
+            },
+            // error callback
+            function(err) {
+              console.log('录音失败');
+              console.log(err.code);
+              alert('请在手机的权限设置中允许故事贴使用麦克风');
+              $('#voiceControl').modal('hide');
+              $('.modelRecord').hide();
+              $('.cancelRecord').hide();
+            }
+        );
+        mediaRec.startRecord();
+        $(e.target).bind('touchmove', function(event){
+            endY = event.originalEvent.changedTouches[0].screenY;
+            //获取滑动距离
+            distanceY = endY-startY;
+            //判断滑动方向
+            if(Math.abs(distanceY) > 25){
+                console.log('往上滑动');
+                $('.modelRecord').hide();
+                $('.cancelRecord').show();
+                $(event.target).text("取消添加");
+            }else{
+                $('.modelRecord').show();
+                $('.cancelRecord').hide();
+                $(event.target).text("松开添加");
+            }
+        });
+    },
+    'touchend .voiceBtn': function(e,t) {
+        console.log(voiceIndex);        
+        if(Math.abs(distanceY) > 25){
+            $('#voiceControl').modal('hide');
+            $('.modelRecord').hide();
+            $('.cancelRecord').hide();
+            return
+        }else{
+            if(mediaRec !== null){
+                mediaRec.stopRecord();
+                console.log('停止录音');
+                console.log(mediaRec);
+                console.log(mediaRec.src);
+                var id = new Mongo.ObjectID()._str;
+                var filename = mediaRec.src;
+                var url = null;
+                if(device.platform == "Android"){
+                    url = cordova.file.externalRootDirectory + mediaRec.src;
+                }else if(device.platform == 'iOS'){
+                    url = cordova.file.tempDirectory + mediaRec.src;
+                }
+                window.uploadToAliyun_new(filename, url, function(status, result){
+                    console.log('result:' + result + ',status:' + status);
+                    if (status === 'done' && result){
+                      sortable.add(voiceIndex, {
+                            text: '<div class="voicePlay" controls="controls" "z-index=99999" data="'+result+'"><span class="line1"></span><span class="line2"></span><span class="line3"></span><span class="line4"></span><span class="line5"></span></div>',
+                            html: '',
+                            isVoice: true,
+                            type: 'voice'
+                        });
+                      console.log(result);
+                    }
+                });
+            }
+            $('#voiceControl').modal('hide');
+            $('.modelRecord').hide();
+            $('.cancelRecord').hide();
+        }
+        $(e.target).text("按住说话");
+        console.log("endrecord====="+distanceY);
+    },
+    'click .voicePlay':function(e,t) {
+        console.log(e);
+        console.log(e.stopPropagation());
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        alert('leon12345');
+        return false;
     },
     'click #add_hyperlink_btn': function() {
         trackEvent("addPost", "MobileHyperlink");

@@ -63,6 +63,7 @@ if Meteor.isClient
           PUB.page('/draftposts/'+savedDraftData._id)
           return
         else
+          console.log(savedDraftData)
           toastr.error('got wrong')
           return
 

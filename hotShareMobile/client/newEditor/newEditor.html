@@ -34,6 +34,7 @@
     <!-- 帖子内容编辑 START -->
     <div class="addTools firstAddTool">
       <span class="addNewBtn"><i class="fa fa-plus fa-fw"></i></span>
+      <span class="addVoice"><i class="fa fa-microphone"></i></span>
       <div class="addElements" style="display: none;">
         <span id="addText" class="main"> <i class="fa fa-file-text-o fa-fw"></i></span>
         <span id="addImage" class="main"><i class="fa fa-image fa-fw"></i></span>
@@ -109,6 +110,7 @@
     </div>
     {{/if}}
 {{/if}}
+{{> voiceModal}}
 </template>
 
 <template name="chooseAssociatedUserNewEditor">
@@ -145,4 +147,27 @@
     </div>
   </div>
 </div>
+</template>
+
+<template name="voiceModal">
+  <div class="modal fade" id="voiceControl" tabindex="-1" role="dialog">
+    <div class="modelRecord">
+      <div>
+        <i class="fa fa-microphone icon1"></i>
+        <span>正在录音中...</span>
+        <span class="cancalText">手指上滑，取消添加</span>
+      </div>
+    </div>
+    <div class="cancelRecord">
+      <div>
+        <i class="fa fa-undo icon1"></i>
+        <span class="cancalText">松开手指，取消添加</span>
+      </div>
+    </div>
+    <div class="voiceDiv">
+      <span class="voiceBtn">
+        按住讲话
+      </span>
+    </div>
+  </div>
 </template>

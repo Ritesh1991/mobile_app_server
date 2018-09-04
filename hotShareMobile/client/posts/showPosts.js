@@ -517,11 +517,36 @@ Template.showPosts.events({
               clickToLike(post, img_id);
            }
        e.stopPropagation();
+    },
+    'click .voicePlay':function(e,t) {
+      var $ele = $(e.currentTarget);
+      if($ele.hasClass('voicePlaying')){
+        $ele.removeClass('voicePlaying');
+        console.log(voiceMedia)
+        voiceMedia.pause();
+      }else{
+        voiceMedia = new Media($ele.attr('data'),
+            // success callback
+            function () {
+                console.log("playAudio():Audio Success");
+                $ele.removeClass('voicePlaying');
+            },
+            // error callback
+            function (err) {
+                console.log("playAudio():Audio Error: " + err);
+                $ele.removeClass('voicePlaying');
+            }
+        );
+        voiceMedia.play();
+        $ele.addClass('voicePlaying');
+      }
+      e.stopPropagation();
+      return;
     }
 });
 // Template.shareTheReadingRoom.events({
 //   'click .shareAlertBackground': function() {
-//     return $('.shareTheReadingRoom,.shareAlertBackground').fadeOut(300);
+//     return $('.shareTheReadingRoom,.shareAlertBackground').fadeOut(300);;
 //   },
 //   'click .btnNo': function() {
 //     return $('.shareTheReadingRoom,.shareAlertBackground').fadeOut(300);
