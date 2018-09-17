@@ -110,6 +110,33 @@ Template.newEditorItem.events({
       console.log('edit text Err = '+ error);
     });
   },
+  'click .voicePlay':function(e,t) {
+    var $ele = $(e.currentTarget);
+    if($ele.hasClass('voicePlaying')){
+      $ele.removeClass('voicePlaying');
+      console.log(voiceMedia)
+      voiceMedia.pause();
+    }else{
+      voiceMedia = new Media($ele.attr('data'),
+          // success callback
+          function () {
+              console.log("playAudio():Audio Success");
+              $ele.removeClass('voicePlaying');
+          },
+          // error callback
+          function (err) {
+              console.log("playAudio():Audio Error: " + err);
+              $ele.removeClass('voicePlaying');
+          }
+      );
+      voiceMedia.play();
+      $ele.addClass('voicePlaying');
+    }
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    return;
+  },
   // 更换或裁剪照片
   'click .editAbleImage':function(e,t){
     var $elemLI = $(e.currentTarget).parents("li");

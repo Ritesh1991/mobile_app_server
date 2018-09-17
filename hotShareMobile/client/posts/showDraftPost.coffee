@@ -573,6 +573,24 @@ if Meteor.isClient
           Router.go('/newposts/'+postId)
         Session.set 'showDraft', false
         return
+    'click .voicePlay':(e)->
+        $ele = $(e.currentTarget)
+        if $ele.hasClass('voicePlaying')
+          $ele.removeClass 'voicePlaying'
+          console.log voiceMedia
+        else
+          voiceMedia = new Media($ele.attr('data'), ()->
+            console.log 'playAudio():Audio Success'
+            $ele.removeClass 'voicePlaying'
+            return
+          , (err) ->
+            console.log 'playAudio():Audio Error: ' + err
+            $ele.removeClass 'voicePlaying'
+            return
+          )
+          voiceMedia.play()
+          $ele.addClass 'voicePlaying'
+        e.stopPropagation()
     'click .showDraftback' :->
       Session.set('fromDraftPost',false)
       Session.set 'showDraft', false

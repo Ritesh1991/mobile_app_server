@@ -1,6 +1,6 @@
 App.info({
   id: 'org.hotshare.everywhere',
-  version: '2.2.38',
+  version: '2.2.40',
   name: 'hotShare',
   description: 'Share everything with everyone',
   author: 'hotShare Design Team',
@@ -30,6 +30,7 @@ App.icons({
   'iphone_3x': 'resource/icon_180.png',
   'ipad': 'resource/icon_76.png',
   'ipad_2x': 'resource/icon_152.png',
+  'ipad_pro': 'resource/icon_167.png',
   'ios_settings': 'resource/icon_29.png',
   'ios_settings_2x': 'resource/icon_58.png',
   'ios_settings_3x': 'resource/icon_87.png',
@@ -79,7 +80,7 @@ App.configurePlugin('org.hotshare.baidutts', {
 });
 
 App.configurePlugin('jpush-phonegap-plugin', {
-  API_KEY: '50e8f00890be941f05784e6f',
+  APP_KEY: '50e8f00890be941f05784e6f',
   CHANNEL: 'developer-default'
 });
 App.configurePlugin('phonegap-plugin-push', {

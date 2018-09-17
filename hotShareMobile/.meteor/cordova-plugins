@@ -15,7 +15,7 @@ cordova-plugin-file@4.1.1
 cordova-plugin-file-transfer@1.6.0
 cordova-plugin-http@1.2.0
 cordova-plugin-keyboard@1.1.5
-cordova-plugin-splashscreen@https://github.com/PluginCordova/cordova-plugin-splashscreen/tarball/96bfa12357ff7bdcf29a24bc1d34a999887b5e84
+cordova-plugin-splashscreen@https://github.com/PluginCordova/cordova-plugin-splashscreen/tarball/f4eb3e91345a08b8d1cbd6c7628ae1f6aa267345
 cordova-plugin-fastrde-mqtt@https://github.com/fastrde/cordova-plugin-fastrde-mqtt/tarball/1bd69e3b7db4515a5b787d93665414f4036937c2
 cordova-plugin-statusbar@https://github.com/PluginCordova/cordova-plugin-statusbar/tarball/995e4fdf9de78609ff0fb30bab2610b9e5293410
 cordova-plugin-camera@https://github.com/PluginCordova/cordova-plugin-camera/tarball/394a5b1dbf9de3a76f64127acaf8366e4cf82920
@@ -28,7 +28,8 @@ cordova-plugin-themeablebrowser@https://github.com/PluginCordova/cordova-plugin-
 cordova-plugin-wkwebview-engine@1.1.0
 cordova-plugin-x-socialsharing@https://github.com/PluginCordova/SocialSharing-PhoneGap-Plugin/tarball/22a83973a1ca46265a96197e29195c899223c7d1
 ionic-plugin-keyboard@2.2.1
-jpush-phonegap-plugin@https://github.com/PluginCordova/jpush-phonegap-plugin/tarball/f34df83b9e62345161275c57b28349144ec64d2d
+cordova-plugin-jcore@1.1.12
+jpush-phonegap-plugin@3.3.2
 meteor-ios10-csp-fix@0.1.0
 nl.x-services.plugins.backgroundaudio@https://github.com/PluginCordova/backgroundaudio/tarball/5fbd1d623640980cd0adcafdaa5efcdae6e3b751
 nl.x-services.plugins.toast@2.5.2
