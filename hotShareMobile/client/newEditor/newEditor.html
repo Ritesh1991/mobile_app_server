@@ -16,9 +16,9 @@
         {{else}}
         <div id="drafts" class="rightButton drafts-btn" style="color: #fff;padding-top: 0;">存草稿</div>
           {{#if hasAssocaitedUsers}}
-          <div id="saveAssocaitedUsers" class="rightButton" style="color: #fff;padding-top: 0;">发表</div>
+          <div id="saveAssocaitedUsers" class="rightButton" style="color: #fff;padding-top: 0;">继续</div>
           {{else}}
-          <div id="save" class="rightButton" style="color: #fff;padding-top: 0;">发表</div>
+          <div id="save" class="rightButton" style="color: #fff;padding-top: 0;">继续</div>
           {{/if}}
         {{/if}}
     </div>
@@ -42,6 +42,50 @@
         <span id="addVideo" class="main"><i class="fa fa-youtube-play fa-fw"></i></span>
       </div>
     </div>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                <p><img src="/exit-cancel.jpg" width="6%" height="6%" class="img-responsive pull-right" data-dismiss="modal" /></p>
+                  <h5 class="modal-title center-block header-title" id="myModalLabel">给你的文章加上贴贴 o(≧▽≦)o</h5>
+              </div>
+              <div class="modal-body boby-label" id="boby-label">
+                <ul class="list-inline" id="label-top" style="margin-bottom: 5%;">
+                  <li>故事</li>
+                  <li>爱情</li>
+                  <li>诗文</li>
+                  <li>新闻</li>
+                  <li>游记</li>
+                  <li>记叙</li>
+                </ul>
+                <ul class="list-inline"  id="label-bootom">
+                  <li>随笔</li>
+                  <li>美食</li>
+                  <li>艺术</li>
+                  <li>养生</li>
+                  <li>心情</li>
+                  <li>电影</li>
+                </ul>
+                <p class="boby-prompt">最多选两个“贴贴”哦~</p>
+                <div>
+                  <button type="button" id="submit-tie" class="btn btn-primary btn-lg submit-release"  style="background-color: #43C4D2;width: 23%;font-size: 130%;color: #ffff; margin-left: 38%;padding-left: 5.5%;">
+                    发布
+                  </button>
+                </div>     	
+              </div>
+          </div>
+      </div>
+  </div>
+  <script>
+    $(function(){
+      $("#boby-label ul li").click(function(e){
+        $(this).toggleClass('The-selected');
+      })
+    })
+  </script>
+
     <ul id="postContainer">
         <!--<li>
           <div class="remove"><i class="fa fa-close fa-fw"></i></div>

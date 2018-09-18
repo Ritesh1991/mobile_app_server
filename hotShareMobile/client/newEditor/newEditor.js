@@ -1,5 +1,6 @@
 var sortable = null;
 var pageData = new ReactiveVar({});
+var type_stick = [];//存储选中的标签
 
 Template.newEditor.sortable = function() {
     return sortable
@@ -254,6 +255,7 @@ Template.newEditor.helpers({
             var post = {
                 _id: pageData.get().type === 'edit' ? pageData.get().id : new Mongo.ObjectID()._str,
                 title: title,
+                label: post.label,
                 addontitle: addontitle,
                 mainImage: titleImg,
                 mainImageStyle: null,
@@ -286,6 +288,7 @@ Template.newEditor.helpers({
             if (pageData.get().type === 'draft') {
                 post.pub.unshift({
                     _id: pageData.get().id,
+                    label: post.label,
                     type: "image",
                     isImage: true,
                     url: mainImg.imgUrl,
@@ -487,14 +490,32 @@ Template.newEditor.events({
         var title = t.$('.title').val();
         if (!title || title === '[空标题]') {
             //Template.progressBar.__helpers.get('close')();
+            $('#myModal').modal('hide');
             return PUB.toast('请为您的故事加个标题');
         }
-        $('#chooseAssociatedUser').modal('show');
+        $('#myModal').modal('show');
+        
+    },
+    'click #submit-tie':function(){
+        var index = $("#boby-label ul .The-selected").length
+        if(index > 2){
+            PUB.toast('最多选两个“贴贴”哦');
+            return
+        }else if(index < 1){
+            PUB.toast('您还没有选择“贴贴”哦');
+            return
+        }else{
+            $("#boby-label ul .The-selected").each(function(i,v){
+                type_stick[i] = $(this).html()
+            })
+            $('#myModal').modal('hide');
+            $('#chooseAssociatedUser').modal('show');
+        }
     },
     'click .save-post, click .drafts-btn': function(e) {
         Session.set('SavingDraftStatus', true);
     },
-    'click #save, click #drafts, click #modalPublish': function(e, t) {
+    'click #save ,click #drafts, click #modalPublish': function(e, t) {
         Session.set('terminateUpload', false);
         currentTargetId = e.currentTarget.id;
         if (currentTargetId === 'modalPublish') {
@@ -527,7 +548,7 @@ Template.newEditor.events({
         }
         if (!Meteor.status().connected && Meteor.status().status != 'connecting')
             Meteor.reconnect()
-
+        
         // title
         var title = t.$('.title').val();
         var addontitle = t.$('.addontitle').val();
@@ -624,6 +645,7 @@ Template.newEditor.events({
             var post = {
                 _id: t.data.type === 'edit' ? t.data.id : new Mongo.ObjectID()._str,
                 title: title,
+                label: type_stick,
                 addontitle: addontitle,
                 mainImage: titleImg,
                 mainImageStyle: null,
@@ -662,6 +684,7 @@ Template.newEditor.events({
                 }, {
                     $set: {
                         title: post.title,
+                        label: post.label,
                         addontitle: post.addontitle,
                         mainImage: titleImg,
                         heart: [],
@@ -909,6 +932,7 @@ Template.newEditor.events({
             });
         }
         publishPost();
+        
     },
     'click #editMainImage': function(e, t) {
         var pubImages = [];
