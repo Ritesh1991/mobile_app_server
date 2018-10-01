@@ -429,10 +429,11 @@ if Meteor.isServer
                 if type is "notify_knownPeople"
                   if ai_person_id
                     pushList = NotificationFollowList.findOne({_id:oneUser.user_id})
-                    if pushList and pushList.hasOwnProperty(ai_person_id) is false
-                      needPushToThisUser = false
-                      console.log(pushList)
-                      console.log('not send push notification for '+ai_person_id)
+                    if pushList and pushList.hasOwnProperty('followedOnly')
+                      if pushList.hasOwnProperty(ai_person_id) is false
+                        needPushToThisUser = false
+                        console.log(pushList)
+                        console.log('not send push notification for '+ai_person_id)
                 if needPushToThisUser is true
                   toUserToken = Meteor.users.findOne({_id: oneUser.user_id})
                   #console.log("toUserToken="+JSON.stringify(toUserToken))
