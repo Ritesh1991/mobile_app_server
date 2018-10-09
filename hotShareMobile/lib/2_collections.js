@@ -15,9 +15,6 @@ Viewers = new Meteor.Collection('viewers');
 RefComments = new Meteor.Collection("refcomments");
 ReComment = new Meteor.Collection('recomment');
 Reports = new Meteor.Collection('reports');
-//Messages = new Meteor.Collection('messages');
-//MsgSession = new Meteor.Collection('msgsession');
-//MsgGroup = new Meteor.Collection('msggroup');
 Meets = new Meteor.Collection('meets');
 Versions = new Meteor.Collection('versions');
 Moments = new Meteor.Collection('moments');
@@ -168,6 +165,7 @@ Clustering = new Meteor.Collection('clustering');
 }
 */
 
+
 //不可用的邮箱账号
 UnavailableEmails = new Meteor.Collection('unavailableEmails');
 /*
@@ -178,34 +176,43 @@ UnavailableEmails = new Meteor.Collection('unavailableEmails');
 }
  */
 Strangers = new Meteor.Collection('strangers')
-// Strangers.insert({
-//     imgs:[
-//         '/theme/theme1.jpg',
-//         '/theme/theme2.jpg',
-//         '/theme/theme3.jpg',
-//         '/theme/theme4.jpg'
-//     ],
-//     img_gif: '/theme/theme1.jpg',
-//     isStrange: true,
-//     createTime: new Date(),
-//     avatar: '/theme/theme1.jpg'
-// })
-// Strangers.insert({
-//     imgs:[
-//         '/theme/theme1.jpg',
-//         '/theme/theme2.jpg',
-//         '/theme/theme3.jpg',
-//         '/theme/theme4.jpg'
-//     ],
-//     img_gif: '/theme/theme2.jpg',
-//     isStrange: true,
-//     createTime: new Date(),
-//     avatar: '/theme/theme2.jpg'
-// })
+
+/*{
+	"_id": "hnmnvA4pn4jdZXDSe",
+	"imgs": [{
+		"faceid": "15330142402500000",
+		"url": "http://workaiossqn.tiegushi.com/fffc7fd4-9480-11e8-8abe-0242ac130006",
+		"img_type": "face",
+		"accuracy": 0,
+		"fuzziness": 92.90688987914469,
+		"sqlid": "0",
+		"style": "front"
+	}, {
+		"faceid": "15330142402500000",
+		"url": "http://workaiossqn.tiegushi.com/00744370-9481-11e8-8abe-0242ac130006",
+		"img_type": "face",
+		"accuracy": 0,
+		"fuzziness": 212.15898400936524,
+		"sqlid": "0",
+		"style": "front"
+	}],
+	"img_gif": "http://cdn.workaioss.tiegushi.com/Lorex_1_1533014240250.gif",
+	"group_id": "7e7013139ccafbbc369785d3",
+	"camera_id": "Lorex_1",
+	"uuid": "78c2c095d150",
+	"trackerId": 1533014240250,
+	"isStrange": true,
+	"createTime": ISODate("2018-07-31T05:17:25.007Z"),
+	"avatar": "http://workaiossqn.tiegushi.com/fffc7fd4-9480-11e8-8abe-0242ac130006"
+}*/
+
   //   陌生人
-
-
 NotificationFollowList = new Meteor.Collection('notification_follow_list');
+/*
+  _id : Meteor User ID
+  followed_to_user_id : 1
+  ...
+*/
 if (Meteor.isServer) {
   Meteor.methods({
       getStrangers: function(group_id){
@@ -218,41 +225,18 @@ if (Meteor.isServer) {
   })
 }
 
-// console.log(JSON.stringify(Local_data.find({}).fetch()))
-
-// Strangers.remove({})
-// Local_data.remove({})
-
-// console.log(JSON.stringify(Strangers.find({},{limit: 2}).fetch()))
-// console.log(JSON.stringify(Local_data.find({},{limit: 2}).fetch()))
-// var aaa = Meteor.call("getStrangers")
-// console.log(Strangers.find({}).fetch())
-// console.log(aaa)
 
 
+Cameras = new Meteor.Collection('cameras');
 
-// Date.prototype.Format = function (fmt) {
-//     var o = {
-//         "M+": this.getMonth() + 1,
-//         "d+": this.getDate(),
-//         "h+": this.getHours(),
-//         "m+": this.getMinutes(),
-//         "s+": this.getSeconds(),
-//         "q+": Math.floor((this.getMonth() + 3) / 3),
-//         "S": this.getMilliseconds()
-//     };
-//     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-//     for (var k in o)
-//     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-//     return fmt;s
-// }
 Faces = new Meteor.Collection('faces');
 
-// Stranger = new Meteor.collection('stranger')
+ModelParam = new Meteor.Collection('modelParam');
 
 
 
 if(Meteor.isServer){
+
   KnownUnknownAlertLimit = new Mongo.Collection("alertlimit_known_unknown");
 
   // 30分钟之内不要做重复的推送，什么是重复推送呢：
@@ -274,16 +258,28 @@ if(Meteor.isServer){
     }
   }
 
+  Cameras.allow({
+    insert: function(userId, doc){
+        return true;
+    },
+    update: function (userId, doc, fields, modifier) {
+        return true;
+    },
+    remove: function(userId, doc){
+        return true;
+    }
+  })
+
   Devices.allow({
       insert: function(userId, doc){
-          return userId == doc.userId;
+          return true;
       },
       update: function(userId,doc, fields, modifier) {
           //return userId == doc.userId;
           return true;
       },
       remove: function(userId, doc){
-          return userId == doc.userId;
+          return true;
       }
   });
 
@@ -340,7 +336,6 @@ if(Meteor.isServer){
         return true;
     }
   });
-
   Meteor.publish('getPushFollow', function () {
       if(!this.userId){
           return this.ready();
@@ -374,6 +369,7 @@ if(Meteor.isServer){
           Faces.find({group_id: {$in: groupIds}},{sort: {createdAt: -1}, limit: limit})
       ];
   })
+
   // 发布：纠错
   Meteor.publish('clusteringLists', function(group_id, faceId, limit){
     if(!this.userId || !group_id || !faceId){
@@ -397,8 +393,7 @@ if(Meteor.isServer){
       return this.ready();
     }
     var limit = limit || 50;
-    console.log("group_id="+group_id+", limit="+limit);
-    return ClusterPerson.find({group_id: group_id},{limit: limit,sort:{updateAt: -1}});
+    return ClusterPerson.find({group_id: group_id},{limit: limit,sort:{createAt: -1}});
   });
 
   Meteor.publish('cluster_person', function(group_id, limit){
@@ -513,7 +508,7 @@ if(Meteor.isServer){
         var d = date - (i * 24 * 60 * 60 * 1000);
         dates.push(d);
     };
-    return WorkStatus.find({group_id:group_id, date: {$in: dates}});
+    return WorkStatus.find({ group_id:group_id, date: {$in: dates} });
   });
 
   WorkStatus.allow({
@@ -541,12 +536,14 @@ if(Meteor.isServer){
     }
     return this.ready();
   });
+
  Meteor.publish('device_by_groupId', function(groupId) {
-     if (!this.userId || !groupId) {
-         return this.ready();
-     }
-     return Devices.find({groupId: groupId});
+    if (!this.userId || !groupId) {
+        return this.ready();
+    }
+    return Devices.find({groupId: groupId});
  });
+
  Meteor.publish('group_workstatus', function(group_id, date){
      if (!this.userId) {
          return this.ready();
@@ -633,7 +630,6 @@ if(Meteor.isServer){
     ];
   });
 
-
   Meteor.methods({
     getPeopleIdByName: function(name, uuid){
       var people = People.findOne({name: name, uuid: uuid}, {sort: {updateTime: -1}});
@@ -644,9 +640,9 @@ if(Meteor.isServer){
     },
     //获取group下的设备列表
     getDeviceListByGroupId:function(group_id){
-       var deviceList =  Devices.find({groupId: group_id}).fetch();
-       return deviceList;
-    }
+        var deviceList =  Devices.find({groupId: group_id}).fetch();
+        return deviceList;
+     }
   });
   var Fiber = Meteor.npmRequire('fibers');
   deferSetImmediate = function(func){
@@ -770,7 +766,6 @@ if(Meteor.isServer){
     addIds(getIds('丽江古城', 5));
     addIds(getIds('旅游', 5));
 
-    // console.log('makeOldTopicPosts ids:', JSON.stringify(ids));
     OldTopicPosts =  TopicPosts.find({_id: {$in: ids}}, {sort: {createdAt: -1}});
   };
   Meteor.startup(function(){
@@ -1332,6 +1327,7 @@ if(Meteor.isServer){
 
         });
     };
+
 
     var sendEmailToFollower = function(userEmail, subject, mailText){
         // console.log('给web关注者发送邮件')
@@ -2871,7 +2867,7 @@ if(Meteor.isServer){
     return UserRelation.find({userId: this.userId});
   });
 
-   Meteor.publish('workaiUserRelationsByGroup', function (group_id) {
+  Meteor.publish('workaiUserRelationsByGroup', function (group_id) {
     if(!this.userId || !group_id){
         return this.ready();
     }
@@ -2887,8 +2883,6 @@ if(Meteor.isServer){
         return this.ready();
     }
   });
-
-
 
 //   监控
   Meteor.publish('rpOwner', function(userId) {
@@ -3215,7 +3209,6 @@ if(Meteor.isServer){
     doc.isReview = true;
 
       var userIds = [];
-
       if(doc.owner != userId){
         Meteor.defer(function(){
           var me = Meteor.users.findOne({_id: userId});

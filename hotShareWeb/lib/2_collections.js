@@ -70,13 +70,13 @@ NLPTextClassName = {
 }
  */
 
-//点圈用户和平板识别出的人的关系表
+//来了吗用户和平板识别出的人的关系表
 WorkAIUserRelations = new Meteor.Collection('workaiUserRelations');
 
 /*
 WorkAIUserRelations = {
- app_user_id:<Integer> //点圈用户
- app_user_name:<String> //点圈用户名
+ app_user_id:<Integer> //来了吗用户
+ app_user_name:<String> //来了吗用户名
  ai_persons:[{id:}] //平板识别的人
  ai_in_time:<Date> //平板检测到这个人的进门时间
  ai_out_time:<Date> //平板检测到这个人的出门时间
@@ -93,8 +93,8 @@ WorkStatus = new Meteor.Collection('workStatus');
 ClusterWorkStatus = new Meteor.Collection('clusterWorkStatus');
 /*
 {
-    app_user_id:<Integer> //点圈用户
-    app_user_name:<String> //点圈用户名
+    app_user_id:<Integer> //来了吗用户
+    app_user_name:<String> //来了吗用户名
     group_id: <String>, // 组id
     date: <Integer>, // 20170810
     person_id: <String>, //
@@ -139,7 +139,9 @@ ClusterLableDadaSet = new Meteor.Collection('cluster_label_dataset');
   "name":"",
   "group_id":"",
   "url":'',
-  "createAt":''
+  "sqlId":"",
+  "style": "left_side", 侧脸 || 正脸
+  "createAt":'',
   "operator":[{
     user_name:操作的人的app名字
     user_id:app的userid，
@@ -151,7 +153,28 @@ ClusterLableDadaSet = new Meteor.Collection('cluster_label_dataset');
 }
 */
 
+Clustering = new Meteor.Collection('clustering');
+/*
+{
+    group_id: 'xx',
+    faceId: Id_xx,
+    totalFaces: 1,
+    url: 'http: //xx',
+    rawfilepath: '/dataset/A/1.png',
+    isOneSelf: true
+}
+*/
 
+
+//不可用的邮箱账号
+UnavailableEmails = new Meteor.Collection('unavailableEmails');
+/*
+{
+  address:'xx',
+  createAt:,
+  reason:'xx',
+}
+ */
 Strangers = new Meteor.Collection('strangers')
 
 /*{
@@ -184,6 +207,12 @@ Strangers = new Meteor.Collection('strangers')
 }*/
 
   //   陌生人
+NotificationFollowList = new Meteor.Collection('notification_follow_list');
+/*
+  _id : Meteor User ID
+  followed_to_user_id : 1
+  ...
+*/
 if (Meteor.isServer) {
   Meteor.methods({
       getStrangers: function(group_id){
@@ -196,27 +225,8 @@ if (Meteor.isServer) {
   })
 }
 
-Clustering = new Meteor.Collection('clustering');
-/*
-{
-    group_id: 'xx',
-    faceId: Id_xx,
-    totalFaces: 1,
-    url: 'http: //xx',
-    rawfilepath: '/dataset/A/1.png',
-    isOneSelf: true
-}
-*/
 
-//不可用的邮箱账号
-UnavailableEmails = new Meteor.Collection('unavailableEmails');
-/*
-{
-  address:'xx',
-  createAt:,
-  reason:'xx',
-}
- */
+
 Cameras = new Meteor.Collection('cameras');
 
 Faces = new Meteor.Collection('faces');
@@ -224,12 +234,7 @@ Faces = new Meteor.Collection('faces');
 ModelParam = new Meteor.Collection('modelParam');
 
 
-NotificationFollowList = new Meteor.Collection('notification_follow_list');
-/*
-  _id : Meteor User ID
-  followed_to_user_id : 1
-  ...
-*/
+
 if(Meteor.isServer){
 
   KnownUnknownAlertLimit = new Mongo.Collection("alertlimit_known_unknown");
@@ -318,18 +323,17 @@ if(Meteor.isServer){
       return false;
     }
   });
-
-  Strangers.allow({
-    remove: function(userId, doc) {
-        return true;
-    }
-  });
   NotificationFollowList.allow({
     update: function(userId, doc, fields, modifier){
       return userId === doc._id
     },
     insert: function(userId,doc){
       return userId === doc._id;
+    }
+  });
+  Strangers.allow({
+    remove: function(userId, doc) {
+        return true;
     }
   });
   Meteor.publish('getPushFollow', function () {
@@ -385,6 +389,14 @@ if(Meteor.isServer){
   });
 
   Meteor.publish('group_cluster_person', function(group_id, limit){
+    if(!this.userId || !group_id){
+      return this.ready();
+    }
+    var limit = limit || 50;
+    return ClusterPerson.find({group_id: group_id},{limit: limit,sort:{createAt: -1}});
+  });
+
+  Meteor.publish('cluster_person', function(group_id, limit){
     if(!this.userId || !group_id){
       return this.ready();
     }

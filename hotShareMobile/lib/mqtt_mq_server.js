@@ -27,7 +27,6 @@ if(Meteor.isServer){
             }
         });
         mqtt_connection.subscribe('/msg/autogroup/#');
-
         sendMqttMessage=function(topic,message){
             Meteor.defer(function(){
                 mqtt_connection.publish(topic,JSON.stringify(message),{qos:1})
