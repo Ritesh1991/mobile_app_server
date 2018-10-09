@@ -28,8 +28,8 @@ Meteor.methods({
         console.log(install_status);
         SimpleChat.Groups.update({_id:group_id},{$set:install_status});
     },
-    //自动标记
-    autolabel:function(condition,uuid){
+     //自动标记
+     autolabel:function(condition,uuid){
         console.log('autolabel',condition);
         console.log('autolabel',uuid);
         var device = Devices.findOne({uuid:uuid});
@@ -42,31 +42,25 @@ Meteor.methods({
         selector['hour'] = condition.start.hour;
         var dt = DeviceTimeLine.findOne(selector);
         var faceList = [];
-        console.log('lala',condition.start.hour.getTime());
         if(condition.start.hour.getTime() == condition.end.hour.getTime()){
             for(var i=condition.start.min;i<condition.end.min+1;i++){
                 var arr = dt['perMin'][i+''];
                 if(arr){
-                    console.log('perMin:',i);
                     faceList = _.union(faceList,arr);
                 }
             }
         }else{
-            console.log('start hour',condition.start.hour);
             for (var i = condition.start.min; i < 60; i++) {
                 var arr = dt['perMin'][i + ''];
                 if (arr) {
-                    console.log('perMin:',i);
                     faceList = _.union(faceList, arr);
                 }
             }
-            console.log('end hour',condition.end.hour);
             selector['hour'] = condition.end.hour;
             var dt2 = DeviceTimeLine.findOne(selector);
             for (var i = 0; i < condition.end.min + 1; i++) {
                 var arr = dt['perMin'][i + ''];
                 if (arr) {
-                    console.log('perMin:',i);
                     faceList = _.union(faceList, arr);
                 }
             }   

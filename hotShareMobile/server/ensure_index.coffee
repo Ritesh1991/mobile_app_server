@@ -76,4 +76,8 @@ if Meteor.isServer
     DeviceTimeLine._ensureIndex({uuid: 1})
     DeviceTimeLine._ensureIndex({uuid: 1, group_id: 1})
     DeviceTimeLine._ensureIndex({hour: 1})
+    ModelParam._ensureIndex({groupid: 1, uuid: 1})
     WorkStatus._ensureIndex({in_image:1,out_image:1})
+    Person._ensureIndex({group_id:1,'faces.id':1,createAt:1})
+    Person._ensureIndex({group_id: 1, name: 1,createAt: 1})
+    Devices._ensureIndex({uuid:1})
