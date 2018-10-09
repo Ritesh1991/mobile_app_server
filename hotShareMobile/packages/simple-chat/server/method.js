@@ -148,7 +148,7 @@ Set_perf_link = function(group_id,perf_info){
       console.log("companyId is: " + companyId)
       Groups.update({_id: group_id}, {$set: {perf_info: perf_info, companyId: companyId}});
       GroupUsers.update({group_id: group_id}, {$set: {perf_info: perf_info, companyId: companyId}}, {multi: true});
-      AI_system_register_devices(group_id,null);
+      //AI_system_register_devices(group_id,null);
   }
 }
 
@@ -330,7 +330,7 @@ Meteor.methods({
           });
         }
       }
-      // AI_system_register_company(id,user._id);
+      //AI_system_register_company(id,user._id);
     });
     return id;
   },
@@ -488,7 +488,7 @@ Meteor.methods({
   },
   'ai-system-register-devices':function(group_id,uuid){
     console.log("AI_system_register_devices group_id= " + group_id+'& uuid='+uuid)
-    AI_system_register_devices(group_id,uuid);
+    //AI_system_register_devices(group_id,uuid);
     return 'succ';
   },
   'ai-checkin-out':function(data){
@@ -496,7 +496,6 @@ Meteor.methods({
       if (this.userId) {
         data.operator = this.userId;
       }
-      // PERSON  在 person.js 里  server端
       return PERSON.aiCheckInOutHandle(data);
     } catch (err){
       return err;
@@ -547,7 +546,6 @@ Meteor.methods({
   },
   'updateGroupUserallowUnknowMember': function(group_id,user_id){
     var groupUser = SimpleChat.GroupUsers.findOne({group_id: group_id, user_id: user_id});
-    console.log('==sr==. groupUser is '+JSON.stringify(groupUser))
     if (groupUser){
       if (groupUser.allowUnknowMember){
         GroupUsers.update({_id: groupUser._id},{$set:{allowUnknowMember: false}});
