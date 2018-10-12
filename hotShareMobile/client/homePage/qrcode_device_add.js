@@ -39,10 +39,11 @@ window.QRCodeAddDevice = function() {
             });
             //toastr('已添加设备：'+result.text)
             window.SELECT_CREATE_GROUP.close()
-            return Router.go('/');
+            Router.go('/');
+
           });
       } else if (result.cancelled) {
-        Router.go(gotoPage);
+        //Router.go(gotoPage);
         return;
       } else if (result.alumTapped) {
         //DecodeImageFromAlum();
