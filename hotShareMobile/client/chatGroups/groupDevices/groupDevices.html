@@ -35,7 +35,7 @@
     <ul id="deviceList" class="set-up comFadeIn">
     {{#each lists}}
       {{#if uuid}}
-      <li id="" class="deviceItem swiperElem" style="height:60px;padding:10px 0;position:relative">
+      <li id="" class="deviceItem swiperElem" style="height:80px;padding:10px 0;position:relative">
         <div>
           <!-- <span class="goEdit"> -->
           <img class="usericon" src="/device.png" width="40" height="40" style="border-radius:4px;">
@@ -57,6 +57,10 @@
           <!-- </span> -->
           <div id="{{uuid}}" class="value goTimelime" style="float:right; margin:10px;">{{in_out}}<i class="fa fa-angle-right"></i></div>
           <div id="{{_id}}" class="delBtnContent" data-uuid="{{uuid}}">删除</div>
+        </div>
+        <div class="autoUpdateSelection">
+          <label style="position: relative;margin-top: 0px;">是否允许自动更新 当前版本 {{currentFWVer firmwareVersion}}</label>
+          <input id="switch_update" class="switch" style="margin-right:5px;outline:none;" type="checkbox"  {{isChecked autoUpdate}} >
         </div>
       </li>
       {{/if}}
