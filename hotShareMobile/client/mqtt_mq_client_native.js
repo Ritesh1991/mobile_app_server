@@ -10,33 +10,36 @@ if(Meteor.isClient && withNativeMQTTLIB){
     Session.set('history_message',false);
     var noMessageTimer = null;
     //mqtt_connected = false;
-    var onMessageArrived = function(message, msgKey,len, mqttCallback) {
-        console.log("onMessageArrived:"+message.payloadString);
-        console.log('message.destinationName= '+message.destinationName);
-        console.log('message= ', msgKey, JSON.stringify(message));
+    var onMessageArrived = function(message) {
+        console.log("onMessageArrived:"+message.message);
+        console.log('message.destinationName= '+message.topic);
+        //console.log('message= ', msgKey, JSON.stringify(message));
         var history = Session.get('history_message');
+        var msgKey = null
+        var mqttCallback = null
+
         if(noMessageTimer){
             Meteor.clearTimeout(noMessageTimer);
             noMessageTimer = null;
         }
-        if(history && len == 0){
+        /*if(history && len == 0){
             console.log('sync finish');
             Session.set('history_message',false);
-        }
+        }*/
         function reciveMsg(message, msgKey){
             try {
-                var topic = message.destinationName;
-                console.log('on mqtt message topic: ' + topic + ', message: ' + message.payloadString);
+                var topic = message.topic;
+                console.log('on mqtt message topic: ' + topic + ', message: ' + message.message);
                 if (topic.startsWith('/msg/g/') || topic.startsWith('/msg/u/'))
                 {
-                    SimpleChat.onMqttMessage(topic, message.payloadString, msgKey, mqttCallback);
+                    SimpleChat.onMqttMessage(topic, message.message, msgKey, mqttCallback);
                     var isTesting = Session.get('isStarting');
                     if(isTesting && (topic == '/msg/g/'+isTesting.group_id) && isTesting.isTesting){
-                        GroupInstallTest(message.payloadString);
+                        GroupInstallTest(message.message);
                     }
                 }
                 else if (topic.startsWith('/msg/l/'))
-                    SimpleChat.onMqttLabelMessage(topic, message.payloadString, msgKey, mqttCallback);
+                    SimpleChat.onMqttLabelMessage(topic, message.message, msgKey, mqttCallback);
             } catch (ex) {
                 console.log('exception onMqttMessage: ' + ex);
             }
@@ -98,6 +101,7 @@ if(Meteor.isClient && withNativeMQTTLIB){
         mqtt.on('publish', onMessageDelivered,function(errorMessage){
           console.log('publish failed, ', errorMessage)
         })
+        mqtt.on('message', onMessageArrived)
         function clearUndeliveredMessages() {
             console.log('clearUndeliveredMessages: undeliveredMessages.length='+undeliveredMessages.length);
             while (undeliveredMessages.length > 0) {
