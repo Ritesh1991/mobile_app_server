@@ -93,7 +93,10 @@ if(Meteor.isClient && withNativeMQTTLIB){
         //mqtt_connection.onMessageDelivered = onMessageDelivered;
         mqtt.on('init', function(){
           console.log('init success')
-          mqtt.connect();
+          mqtt.disconnect(function(){
+            // double call of connect will cause app crash, just disconnect then connect
+            mqtt.connect()
+          });
         }, function(){
           console.log('init failed')
         })
