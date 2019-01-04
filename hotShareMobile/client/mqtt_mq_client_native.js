@@ -95,7 +95,9 @@ if(Meteor.isClient && withNativeMQTTLIB){
           console.log('init success')
           mqtt.disconnect(function(){
             // double call of connect will cause app crash, just disconnect then connect
-            mqtt.connect()
+            setTimeout(function(){
+              mqtt.connect()
+            },2*1000)
           });
         }, function(){
           console.log('init failed')
