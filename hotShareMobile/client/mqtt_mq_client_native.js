@@ -2,6 +2,7 @@
  * Created by simba on 5/12/16.
  */
 if(Meteor.isClient && withNativeMQTTLIB){
+  Meteor.startup(function(){
     var undeliveredMessages = [];
     var unsendMessages = [];
     var uninsertMessages = [];
@@ -167,10 +168,12 @@ if(Meteor.isClient && withNativeMQTTLIB){
             }, 5*1000);
         };
         function onMessageDelivered(message) {
-            console.log('MQTT onMessageDelivered: "' + JSON.parse(JSON.parse(message).message) + '" delivered');
             try {
-
-                var messageObj = JSON.parse(JSON.parse(message).message);
+                if(!isJSON(message)){
+                  message = JSON.parse(message)
+                }
+                var messageObj = JSON.parse(message.message);
+                console.log('MQTT onMessageDelivered: "' + messageObj + '" delivered');
                 var msgId = messageObj.msgId;
                 for (var i=0; i<undeliveredMessages.length; i++) {
                     console.log(i+': '+JSON.stringify(undeliveredMessages[i]));
@@ -442,4 +445,5 @@ if(Meteor.isClient && withNativeMQTTLIB){
       console.log('device get online')
       startMQTT();
     }, false);
+  })
 }
