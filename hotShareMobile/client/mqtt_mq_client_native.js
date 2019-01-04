@@ -78,8 +78,7 @@ if(Meteor.isClient && withNativeMQTTLIB){
             keepAlive:10,
             cleanSession: false,
             qos: 1,
-            clientId: clientId,
-            reconnect: true
+            clientId: clientId
         };
         //mqtt_connection=new Paho.MQTT.Client('mq.tiegushi.com', Number(80), clientId);
 
