@@ -7,6 +7,7 @@ if(Meteor.isClient && withNativeMQTTLIB){
     var uninsertMessages = [];
     var uninsertMessages_msgKey = [];
     var init_timer = null;
+    var connected = false;
     Session.set('history_message',false);
     var noMessageTimer = null;
     //mqtt_connected = false;
@@ -69,6 +70,15 @@ if(Meteor.isClient && withNativeMQTTLIB){
         }
     };
     initMQTT = function(clientId){
+      if(mqtt.host){
+        console.log('already inited')
+        if(!connected){
+          setTimeout(function(){
+            mqtt.connect()
+          },1*1000)
+        }
+        return
+      }
         var mqttOptions = {
             username:clientId,
             password:localStorage.getItem('Meteor.loginToken'),
@@ -92,16 +102,18 @@ if(Meteor.isClient && withNativeMQTTLIB){
         //mqtt_connection.onMessageDelivered = onMessageDelivered;
         mqtt.on('init', function(){
           console.log('init success')
-          mqtt.disconnect(function(){
+          //mqtt.disconnect(function(){
             // double call of connect will cause app crash, just disconnect then connect
-            setTimeout(function(){
-              mqtt.connect()
-            },2*1000)
-          });
+          //});
         }, function(){
           console.log('init failed')
         })
-        mqtt.on('connect',onConnect)
+
+        setTimeout(function(){
+          mqtt.connect()
+        },1*1000)
+
+        mqtt.on('connect',onConnect,onFailure)
         mqtt.on('publish', onMessageDelivered,function(errorMessage){
           console.log('publish failed, ', errorMessage)
         })
@@ -121,6 +133,7 @@ if(Meteor.isClient && withNativeMQTTLIB){
         function onConnect() {
             // Once a connection has been made, make a subscription and send a message.
             console.log("mqtt onConnect");
+            connected = true
             // get MQTT_TIME_DIFF
             var url = 'http://'+server_domain_name+'/restapi/date/';
             $.get(url,function(data){
@@ -143,25 +156,15 @@ if(Meteor.isClient && withNativeMQTTLIB){
                 sendMqttMessage('/presence/'+Meteor.userId(),{online:true})
             }, 20*1000)
         };
-        function onFailure(msg) {
-            console.log('mqtt onFailure: errorCode='+msg.errorCode);
+        function onFailure() {
+            console.log('mqtt onFailure: errorCode=');
+            connected = false
             clearUndeliveredMessages();
-            // setTimeout(function(){
-                console.log('MQTT onFailure, reconnecting...');
+            setTimeout(function(){
+                //console.log('MQTT onFailure, reconnecting...');
                 //mqtt_connection.connect(pahoMqttOptions);
-            // }, 1000);
-        };
-        function onConnectionLost(responseObject) {
-            //mqtt_connected = false;
-            console.log('MQTT connection lost.')
-            clearUndeliveredMessages();
-            if (responseObject.errorCode !== 0) {
-                console.log("onConnectionLost: "+responseObject.errorMessage);
-            }
-            // setTimeout(function(){
-                console.log('MQTT onConnectionLost, reconnecting...');
-                //mqtt_connection.connect(pahoMqttOptions);
-            // }, 1000);
+                initMQTT();
+            }, 5*1000);
         };
         function onMessageDelivered(message) {
             console.log('MQTT onMessageDelivered: "' + JSON.parse(JSON.parse(message).message) + '" delivered');
@@ -350,9 +353,10 @@ if(Meteor.isClient && withNativeMQTTLIB){
         };
 
     }
-    uninitMQTT = function() {
+    MQTTDisconnect = function() {
       try {
         mqtt.disconnect()
+        connected = false
       } catch (error) {
         console.log(error)
       }
@@ -408,8 +412,6 @@ if(Meteor.isClient && withNativeMQTTLIB){
       console.log('##RDBG, mqttEventResume, reestablish mqtt connection');
       setTimeout(function() {
         if(Meteor.userId()){
-          //initMQTT(getMqttClientID());
-          //initMQTT(Meteor.userId());
           startMQTT();
         }
       }, 1000);
@@ -423,13 +425,21 @@ if(Meteor.isClient && withNativeMQTTLIB){
     };
     mqttEventPause = function() {
       console.log('##RDBG, mqttEventPause, disconnect mqtt');
-      uninitMQTT();
+      MQTTDisconnect();
     };
     Deps.autorun(function(){
         if(Meteor.userId()){
             startMQTT();
         } else {
-            uninitMQTT();
+            MQTTDisconnect();
         }
     });
+    document.addEventListener("offline", function(){
+      console.log('device get offline')
+      MQTTDisconnect();
+    }, false);
+    document.addEventListener("online", function(){
+      console.log('device get online')
+      startMQTT();
+    }, false);
 }

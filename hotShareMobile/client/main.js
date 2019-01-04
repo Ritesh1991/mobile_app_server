@@ -268,7 +268,7 @@ if (Meteor.isCordova) {
         }
     }
     function eventPause(){
-      //mqttEventPause();
+      mqttEventPause();
       lastPauseDate = new Date();
     }
 
@@ -362,7 +362,7 @@ if (Meteor.isCordova) {
 }
 
 if (Meteor.isClient) {
-  Session.set("DocumentTitle",'故事贴');
+  Session.set("DocumentTitle",'来了吗');
   Deps.autorun(function(){
     if(Meteor.userId()){
       //Meteor.subscribe("topics");
