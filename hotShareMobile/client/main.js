@@ -234,20 +234,23 @@ if (Meteor.isCordova) {
 
     function eventResume(){
         if ($('body').text().length === 0 || $('body').text().indexOf("Oops, looks like there's no route on the client or the server for url:") > -1 ) {
-          location.reload();
+          restartApplication();
+          //location.reload();
         }
         if (Meteor.status().connected !== true)
           Meteor.reconnect();
         //checkNewVersion2();
         if (Meteor.user()) {
-            console.log('Refresh Main Data Source when resume');
-            if (Meteor.isCordova) {
-                window.refreshMainDataSource();
-                window.checkNotificationServicesEnabled();
-                if(Meteor.user().profile.waitReadCount > 0){
-                  Meteor.users.update({_id: Meteor.user()._id}, {$set: {'profile.waitReadCount': 0}});
-                }
-            }
+            setTimeout(function(){
+              console.log('Refresh Main Data Source when resume');
+              if (Meteor.isCordova) {
+                  window.refreshMainDataSource();
+                  window.checkNotificationServicesEnabled();
+                  if(Meteor.user().profile.waitReadCount > 0){
+                    Meteor.users.update({_id: Meteor.user()._id}, {$set: {'profile.waitReadCount': 0}});
+                  }
+              }
+            },1*1000)
         }
         //mqttEventResume();
         if (lastPauseDate != null) {
