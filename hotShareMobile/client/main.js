@@ -375,9 +375,9 @@ if (Meteor.isClient) {
   });
 }
 
-Reload._onMigrate(function (retry) {
+/*Reload._onMigrate(function (retry) {
   if (Meteor.isCordova) {
     cordova.exec(callback, console.error, 'WebAppLocalServer', 'switchPendingVersion', []);
   }
   return [true, {}];
-});
+});*/
