@@ -243,21 +243,9 @@ if (Meteor.isCordova) {
             console.log('Refresh Main Data Source when resume');
             if (Meteor.isCordova) {
                 window.refreshMainDataSource();
-                checkShareUrl();
-                checkShareExtension();
                 window.checkNotificationServicesEnabled();
                 if(Meteor.user().profile.waitReadCount > 0){
                   Meteor.users.update({_id: Meteor.user()._id}, {$set: {'profile.waitReadCount': 0}});
-                }
-
-                if(device.platform === 'Android'){
-                  window.plugins.shareExtension.getShareData(function(data) {
-                    console.log("##RDBG getShareData: " + JSON.stringify(data));
-                      if(data){
-                         editFromShare(data);
-                      }
-                  }, function() {});
-                  window.plugins.shareExtension.emptyData(function(result) {}, function(err) {});
                 }
             }
         }
@@ -269,21 +257,14 @@ if (Meteor.isCordova) {
           }
         }
         try{
-          if(mqtt_connection){
-            console.log('try reconnect mqtt')
-            // mqtt_connection._reconnect();
-            mqttEventResume();
-          }
+          console.log('try reconnect mqtt')
+          // mqtt_connection._reconnect();
+          mqttEventResume();
         } catch (error) {
           console.log('mqtt reconnect Error=',error);
         }
     }
     function eventPause(){
-      if(withAutoSavedOnPaused) {
-          if (location.pathname === '/add') {
-              Template.addPost.__helpers.get('saveDraft')()
-          }
-      }
       //mqttEventPause();
       lastPauseDate = new Date();
     }
