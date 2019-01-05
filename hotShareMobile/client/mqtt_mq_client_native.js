@@ -74,9 +74,11 @@ if(Meteor.isClient && withNativeMQTTLIB){
       if(mqtt.host){
         console.log('already inited')
         if(!connected){
-          setTimeout(function(){
-            mqtt.connect()
-          },1*1000)
+          mqtt.disconnect(function(){
+            setTimeout(function(){
+              mqtt.connect()
+            },1*1000)
+          })
         }
         return
       }
