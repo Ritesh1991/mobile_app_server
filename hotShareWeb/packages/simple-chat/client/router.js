@@ -608,7 +608,7 @@ Template._simpleChatToChat.onRendered(function(){
 
       is_loading.set(false);
     });
-    
+
     $box.scroll(function () {
       console.log("$box.scrollTop()="+$box.scrollTop()+", is_loading.get()="+is_loading.get());
       if($box.scrollTop() === 0 && !is_loading.get()){
@@ -2435,7 +2435,7 @@ SimpleChat.onMqttMessage = function(topic, msg, msgKey, mqttCallback) {
     var isAdmin = false;
     var allowUnknowMember = false;
 
-    msgSideFaceAnalyze(group_id, msgObj);
+    //msgSideFaceAnalyze(group_id, msgObj);
 
     var user = Meteor.user();
     var group = SimpleChat.Groups.findOne({_id: group_id});
@@ -3319,7 +3319,7 @@ Template._simpleChatToChatLabelName.events({
           return true;
         }
       }
-      return false; 
+      return false;
     }
     if (!$('#label-input-name').val())
       return PUB.toast('请选择或输入名字~');
