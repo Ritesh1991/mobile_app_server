@@ -234,7 +234,7 @@ if (Meteor.isCordova) {
 
     function eventResume(){
         if ($('body').text().length === 0 || $('body').text().indexOf("Oops, looks like there's no route on the client or the server for url:") > -1 ) {
-          restartApplication();
+          //restartApplication();
           //location.reload();
         }
         if (Meteor.status().connected !== true)
@@ -256,7 +256,7 @@ if (Meteor.isCordova) {
         if (lastPauseDate != null) {
           var now = new Date();
           if (now.getTime() - lastPauseDate.getTime() > 5*60*1000) {
-            restartApplication();
+            //restartApplication();
           }
         }
         try{
