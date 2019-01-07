@@ -2,7 +2,7 @@
  * Created by simba on 5/12/16.
  */
 if(Meteor.isClient && withNativeMQTTLIB){
-
+  var network_status = ""
   function isJSON(message) {
       if(typeof(message) == "object" &&
           Object.prototype.toString.call(message).toLowerCase() == "[object object]" && !message.length){
@@ -30,13 +30,13 @@ if(Meteor.isClient && withNativeMQTTLIB){
     initMQTT = function(clientId){
       if(mqtt.host){
         console.log('already inited')
-        if(!connected){
+        //if(!connected){
           mqtt.disconnect(function(){
             setTimeout(function(){
               mqtt.connect()
             },1*1000)
           })
-        }
+        //}
         return
       }
         var mqttOptions = {
@@ -378,12 +378,13 @@ if(Meteor.isClient && withNativeMQTTLIB){
         };
 
     }
-    MQTTDisconnect = function() {
+    MQTTDisconnect = function(cb) {
       try {
-        mqtt.disconnect()
+        mqtt.disconnect(cb)
         connected = false
       } catch (error) {
         console.log(error)
+        cb && cb()
       }
     }
     subscribeMyChatGroups = function() {
@@ -462,10 +463,17 @@ if(Meteor.isClient && withNativeMQTTLIB){
     document.addEventListener("offline", function(){
       console.log('device get offline')
       MQTTDisconnect();
+      network_status = navigator.connection.type
     }, false);
     document.addEventListener("online", function(){
       console.log('device get online')
-      startMQTT();
+      //startMQTT()
+      if(network_status !== navigator.connection.type){
+        MQTTDisconnect(function(){
+          network_status = navigator.connection.type
+          startMQTT();
+        });
+      }
     }, false);
   })
 }
