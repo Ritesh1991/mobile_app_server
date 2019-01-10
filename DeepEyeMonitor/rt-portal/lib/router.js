@@ -11,7 +11,7 @@ LoginController = RouteController.extend({
     this.next();
   },
   onAfterAction: function(){
-    
+
   }
 });
 
@@ -91,6 +91,13 @@ Router.route('boxMonitorsAlive', {
     Session.set('currentPage','box-monitors-alive');
   }
 });
+Router.route('floorPlan', {
+  layoutTemplate: 'floorplanMain',
+  path:'/dashboard/floorplan',
+  waitOn: function() {
+    //Session.set('currentPage','box-monitors-alive');
+  }
+});
 Router.route('boxMonitorTraffic',{
   layoutTemplate: 'dashboard',
   path:'/dashboard/box-monitors/traffic',
@@ -126,4 +133,3 @@ Router.route('qoe', {
 //  });
 //  res.end('ok');
 //});
-

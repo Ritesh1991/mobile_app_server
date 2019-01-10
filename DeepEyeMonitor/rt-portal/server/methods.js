@@ -165,7 +165,7 @@ Meteor.methods({
 //    var thisHour = GetHour(ts);
 //    var lastHour = new Date(thisHour.getTime() - hourMillis);
 //    var thisDay = GetDay(ts);
-//    
+//
 //    var result={};
 //
 //    if(timeLine == 'h'){
@@ -174,7 +174,7 @@ Meteor.methods({
 //      var matrics = [];
 //      var matrics2 = [];
 //      var currentMinutes = ts.getMinutes();
-//      
+//
 //      for(var i=0;i<60;i++){
 //        var ts1 = new Date(lastHour.getTime())
 //        ts1.setMinutes(lastHour.getMinutes() +i);
@@ -184,19 +184,19 @@ Meteor.methods({
 //          time: ts1,
 //          cdn_downloaded:    (lastHourDoc && lastHourDoc.perMinSum && lastHourDoc.perMinSum[i] && lastHourDoc.perMinSum[i].cdn_downloaded)?Math.round(lastHourDoc.perMinSum[i].cdn_downloaded):0 ,
 //          p2p_downloaded:    (lastHourDoc && lastHourDoc.perMinSum && lastHourDoc.perMinSum[i] && lastHourDoc.perMinSum[i].p2p_downloaded)?Math.round(lastHourDoc.perMinSum[i].p2p_downloaded):0 ,
-//          uploaded: (lastHourDoc && lastHourDoc.perMinSum && lastHourDoc.perMinSum[i] && lastHourDoc.perMinSum[i].uploaded)?Math.round(lastHourDoc.perMinSum[i].uploaded):0 
+//          uploaded: (lastHourDoc && lastHourDoc.perMinSum && lastHourDoc.perMinSum[i] && lastHourDoc.perMinSum[i].uploaded)?Math.round(lastHourDoc.perMinSum[i].uploaded):0
 //        });
 //        if(i <= currentMinutes) {
 //          matrics2.push({
 //            time: ts2,
 //            cdn_downloaded:    (thisHourDoc && thisHourDoc.perMinSum && thisHourDoc.perMinSum[i] && thisHourDoc.perMinSum[i].cdn_downloaded)?Math.round(thisHourDoc.perMinSum[i].cdn_downloaded):0 ,
 //            p2p_downloaded:    (thisHourDoc && thisHourDoc.perMinSum && thisHourDoc.perMinSum[i] && thisHourDoc.perMinSum[i].p2p_downloaded)?Math.round(thisHourDoc.perMinSum[i].p2p_downloaded):0 ,
-//            uploaded: (thisHourDoc && thisHourDoc.perMinSum && thisHourDoc.perMinSum[i] && thisHourDoc.perMinSum[i].uploaded)?Math.round(thisHourDoc.perMinSum[i].uploaded):0 
+//            uploaded: (thisHourDoc && thisHourDoc.perMinSum && thisHourDoc.perMinSum[i] && thisHourDoc.perMinSum[i].uploaded)?Math.round(thisHourDoc.perMinSum[i].uploaded):0
 //          });
 //        }
 //      }
 //      matrics = matrics.concat(matrics2);
-//      
+//
 //      result = matrics.slice(-60);
 //    } else if(timeLine == 'd'){
 //      var nowDay = new Date(thisHour.getTime());
@@ -320,7 +320,7 @@ Meteor.methods({
 //        }
 //      }
 //      matrics = matrics.concat(matrics2);
-//      
+//
 //      result = matrics.slice(-60);
 //    } else if(timeLine == 'd'){
 //      var lastDay = new Date(thisHour.getTime());
@@ -336,7 +336,7 @@ Meteor.methods({
 //      for(var i=0; i<25;i++) {
 //        var lastHour = new Date(lastDay.getTime() + hourMillis*i);
 //        metrics[lastHour.getTime()] = {
-//            hour: lastHour, 
+//            hour: lastHour,
 //            samples: 1,
 //            hour_cdn_speed: 0,
 //            hour_p2p_speed: 0,
@@ -458,7 +458,7 @@ Meteor.methods({
 //      var matrics = [];
 //      var matrics2 = [];
 //      var currentMinutes = ts.getMinutes();
-//      
+//
 //      for(var i=0;i<60;i++){
 //        var ts1 = new Date(lastHour.getTime())
 //        ts1.setMinutes(lastHour.getMinutes() +i);
@@ -479,8 +479,8 @@ Meteor.methods({
 //          normal_starting_samples: (lastHourDoc.normal.starting && lastHourDoc.normal.starting.perMinSamples && lastHourDoc.normal.starting.perMinSamples[i]) ? lastHourDoc.normal.starting.perMinSamples[i]:0,
 //          normal_seeking_samples: (lastHourDoc.normal.seeking && lastHourDoc.normal.seeking.perMinSamples && lastHourDoc.normal.seeking.perMinSamples[i]) ? lastHourDoc.normal.seeking.perMinSamples[i]:0,
 //          normal_buffering_samples: (lastHourDoc.normal.buffering && lastHourDoc.normal.buffering.perMinSamples && lastHourDoc.normal.buffering.perMinSamples[i]) ? lastHourDoc.normal.buffering.perMinSamples[i]:0,
-//        });  
-//        if(i <= currentMinutes){  
+//        });
+//        if(i <= currentMinutes){
 //          matrics2.push({
 //            time: ts2,
 //            raid_starting: (thisHourDoc.raid.starting && thisHourDoc.raid.starting.perMinSum && thisHourDoc.raid.starting.perMinSum[i] && thisHourDoc.raid.starting.perMinSum[i].duration) ? thisHourDoc.raid.starting.perMinSum[i].duration/thisHourDoc.raid.starting.perMinSamples[i]:0,
@@ -706,7 +706,7 @@ Meteor.methods({
 //    var docId = ""
 //    var date = new Date();
 //    console.log(json);
-//    
+//
 //    if(doc){
 //      var docId = doc._id;
 //    }
@@ -747,6 +747,9 @@ Meteor.methods({
         return;
       }
       BoxVersion.update({}, {$set: res}, {upsert: true});
+    },
+    removeAllCameras: function(){
+        return Cameras.remove({});
     }
 });
 //

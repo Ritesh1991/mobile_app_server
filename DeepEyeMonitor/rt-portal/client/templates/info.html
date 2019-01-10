@@ -1,0 +1,15 @@
+<template name="info">
+    <div>
+        {{#with current_printer}}
+            Currently selected printer:
+            <p>Make: {{make}}</p>
+            <p>Model: {{model}}</p>
+            <p>Address: {{ip_address}}</p>
+            <p>work Address: {{network_address}}</p>
+            <p>Location: {{location}}</p>
+            <p>ID: {{_id}}</p>
+
+            <button class="btn" type="submit">Delete</button>
+        {{/with}}
+    </div>
+</template>
