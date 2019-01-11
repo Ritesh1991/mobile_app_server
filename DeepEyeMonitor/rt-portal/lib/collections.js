@@ -6,7 +6,8 @@ BoxVersion = new Meteor.Collection('boxversion');
 GroupUsers = new Mongo.Collection('simple_chat_groups_users');
 Cameras = new Mongo.Collection("Cameras");
 DeviceTimeLine = new Meteor.Collection('device_timeline');
-SimpleChatGroups = new Mongo.Collection('simple_chat_groups')
+SimpleChatGroups = new Mongo.Collection('simple_chat_groups');
+TimelineLists = new Mongo.Collection("timelinelists");
 
 if(Meteor.isClient) {
   inactiveClientCollection = new Meteor.Collection('inactive')
@@ -82,8 +83,8 @@ if(Meteor.isServer){
         }
         if(groupIds){
             return [
-                Devices.find({groupId: {$in:groupIds}}, {fields: {'_id': 1, 'uuid': 1, 'groupId': 1}}),
-                GroupUsers.find({user_id: this.userId}, {fields: {'_id': 1, 'group_id': 1, 'user_id': 1}})
+                Devices.find({groupId: {$in:groupIds}}),
+                GroupUsers.find({user_id: this.userId})
             ];
         }
     }
@@ -98,7 +99,9 @@ if(Meteor.isServer){
     return [
         DeviceTimeLine.find({uuid: uuid},{sort:{hour:-1},limit: limit}),
         Meteor.users.find({username: uuid}),
-        SimpleChatGroups.find({_id: device.groupId})
+        SimpleChatGroups.find({_id: device.groupId}),
+        GroupUsers.find({user_id: uuid}),
+        TimelineLists.find({uuid:uuid}, {sort:{createdAt:-1},limit:1})
     ];
   });
 }

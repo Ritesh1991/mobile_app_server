@@ -106,7 +106,7 @@ if(Meteor.isClient){
         })
     };
 
-    Template.form.events({
+    Template.devicesList.events({
         'submit': function(event){
             event.preventDefault();
             //console.log(event);
@@ -156,14 +156,26 @@ if(Meteor.isClient){
         }
     });
 
-    Template.form.onRendered(function(){
-        $('#make').autocomplete({
+    Template.devicesList.onRendered(function(){
+        /*$('#make').autocomplete({
             data: {
                 "Lexmark": null,
                 "HP": null,
                 "Ricoh": null
             }
-        })
+        })*/
+    });
+    Template.devicesList.helpers({
+        "devices": function(){
+            //console.log(selected_printer_id.get());
+            return Devices.find();
+        },
+        "groupName":function(groupId){
+          return SimpleChatGroups.findOne({_id:groupId}).name
+        },
+        "latestImage":function(uuid){
+          return TimelineLists.findOne({uuid:uuid}).img_url
+        }
     });
 
     Template.info.helpers({
