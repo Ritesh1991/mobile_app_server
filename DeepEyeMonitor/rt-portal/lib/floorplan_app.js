@@ -51,11 +51,9 @@ if(Meteor.isClient){
                 Tracker.autorun(function(){
                     if(map_ready.get()){
                         populate_map();
-
                     }
                 });
             });
-
         });
     });
     /*Template.floorplan.events({
@@ -73,11 +71,15 @@ if(Meteor.isClient){
         var cursor = Cameras.find();
         cursor.forEach(function(printer){
             //console.log("printer", printer);
-            svg.append("circle")
-                .attr("cx", printer.coordinates[0])
-                .attr("cy", printer.coordinates[1])
-                .attr("r", 16).style("fill", "purple")
+
+            svg.append("svg:image")
+                .attr("x", printer.coordinates[0])
+                .attr("y", printer.coordinates[1])
+                .attr('xlink:href', '/camera.png')
+                .attr('width', 120)
+                .attr('height', 120)
                 .attr("data-mongo-id", printer._id)
+                .attr("data-uuid", printer.uuid)
                 .on("click", function(d, i, nodes){
     //if something was selected, restore it
                     if(!!selected_circle){
@@ -98,11 +100,17 @@ if(Meteor.isClient){
                     //console.log(d3.select(d3.event.target).attr("data-mongo-id"));
                     selected_printer_id.set(related_printer);
 
-
                     //color the new one
-                    selected_circle.style("fill", "green");
+                    //selected_circle.style("fill", "green");
 
                 });
+
+            //svg.append('svg:image')
+            //  .attr('xlink:href', 'http://www.iconpng.com/png/beautiful_flat_color/computer.png')
+            //  .attr('x',printer.coordinates[0])
+            //  .attr('y',printer.coordinates[1])
+            //  .attr('width', 40)
+            //  .attr('height', 40)
         })
     };
 
@@ -111,23 +119,15 @@ if(Meteor.isClient){
             event.preventDefault();
             //console.log(event);
             var target = event.target;
-            var ip_address = target.ip_address.value;
-            var model = target.model.value;
-            var make = target.make.value;
-            var network_address = target.network_address.value;
-            var location = target.location.value;
+            var uuid = this.uuid;
+            var name = this.name;
             var printer = {
-                "make": make,
-                "model": model,
-                "ip_address": ip_address,
-                "network_address": network_address,
-                "location": location
+                uuid:uuid,
+                name:name
             };
 
             if(!selected_printer_id.get()) { //no printer selected
-
-                if (current_coords.get() && ip_address && model && make) {
-
+                if (current_coords.get()) {
                     //console.log(printer);
                     printer.coordinates = current_coords.get();
                     Cameras.insert(printer);
@@ -171,10 +171,16 @@ if(Meteor.isClient){
             return Devices.find();
         },
         "groupName":function(groupId){
-          return SimpleChatGroups.findOne({_id:groupId}).name
+          var group = SimpleChatGroups.findOne({_id:groupId})
+          if(group){
+            return group.name
+          }
         },
         "latestImage":function(uuid){
-          return TimelineLists.findOne({uuid:uuid}).img_url
+          var data = TimelineLists.findOne({uuid:uuid})
+          if(data){
+            return data.img_url
+          }
         }
     });
 
