@@ -28,7 +28,7 @@ if(Meteor.isClient){
                 current_coords.set(d3.mouse(this));
 
                 if(!!selected_circle){ //TODO: change this into a function or something
-                    selected_circle.style("fill", "purple");
+                    //selected_circle.style("fill", "purple");
                     selected_circle = null;
                     //selected_printer_id.set(null); //undo
                 }
@@ -49,7 +49,7 @@ if(Meteor.isClient){
             Tracker.autorun(function(){
                 if(map_ready.get()){
                     //populate_map();
-                    Meteor.subscribe('Cameras', function(){
+                    Meteor.subscribe('getCameras', function(){
                         console.log("stuff ready?");
                     });
                 }

@@ -77,7 +77,7 @@ Meteor.startup(function () {
 
 			return RaidInfoLogs.find(selector,{limit: limit,sort:{createdAt:-1}});
 		})
-    Meteor.publish('Cameras', function(limit){
+    Meteor.publish('getCameras', function(limit){
         console.log("published?");
         return Cameras.find({});
     })
