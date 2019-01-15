@@ -46,14 +46,20 @@ if(Meteor.isClient){
             });
             map_ready.set(true);
 
-            Meteor.subscribe('Cameras', function(){
-                console.log("stuff ready?");
-                Tracker.autorun(function(){
-                    if(map_ready.get()){
-                        populate_map();
-                    }
-                });
+            Tracker.autorun(function(){
+                if(map_ready.get()){
+                    //populate_map();
+                    Meteor.subscribe('Cameras', function(){
+                        console.log("stuff ready?");
+                    });
+                }
             });
+            Cameras.find().observe({
+              added:function(doc){
+                console.log('camera added ',doc)
+                cameraAdded(doc)
+              }
+            })
         });
     });
     /*Template.floorplan.events({
@@ -66,52 +72,52 @@ if(Meteor.isClient){
 
     Template.floorplan.onCreated(function(){
     });
+    function cameraAdded(printer){
+        //console.log("printer", printer);
 
+        svg.append("svg:image")
+            .attr("x", printer.coordinates[0])
+            .attr("y", printer.coordinates[1])
+            .attr('xlink:href', '/camera.png')
+            .attr('width', 120)
+            .attr('height', 120)
+            .attr("data-mongo-id", printer._id)
+            .attr("data-uuid", printer.uuid)
+            .on("click", function(d, i, nodes){
+//if something was selected, restore it
+                if(!!selected_circle){
+                    console.log(selected_circle.style("fill"));
+                    console.log(d3.color("red"));
+                    if(selected_circle.style("fill") == d3.color("red")){
+                        selected_circle.remove();
+                    }
+                    else {
+                        selected_circle.style("fill", "purple");
+                    }
+                }
+
+                d3.event.stopPropagation();
+                d3.event.preventDefault();
+                selected_circle = d3.select(d3.event.target);
+                var related_printer = selected_circle.attr("data-mongo-id");
+                //console.log(d3.select(d3.event.target).attr("data-mongo-id"));
+                selected_printer_id.set(related_printer);
+
+                //color the new one
+                //selected_circle.style("fill", "green");
+
+            });
+
+        //svg.append('svg:image')
+        //  .attr('xlink:href', 'http://www.iconpng.com/png/beautiful_flat_color/computer.png')
+        //  .attr('x',printer.coordinates[0])
+        //  .attr('y',printer.coordinates[1])
+        //  .attr('width', 40)
+        //  .attr('height', 40)
+    }
     var populate_map = function(){
         var cursor = Cameras.find();
-        cursor.forEach(function(printer){
-            //console.log("printer", printer);
-
-            svg.append("svg:image")
-                .attr("x", printer.coordinates[0])
-                .attr("y", printer.coordinates[1])
-                .attr('xlink:href', '/camera.png')
-                .attr('width', 120)
-                .attr('height', 120)
-                .attr("data-mongo-id", printer._id)
-                .attr("data-uuid", printer.uuid)
-                .on("click", function(d, i, nodes){
-    //if something was selected, restore it
-                    if(!!selected_circle){
-                        console.log(selected_circle.style("fill"));
-                        console.log(d3.color("red"));
-                        if(selected_circle.style("fill") == d3.color("red")){
-                            selected_circle.remove();
-                        }
-                        else {
-                            selected_circle.style("fill", "purple");
-                        }
-                    }
-
-                    d3.event.stopPropagation();
-                    d3.event.preventDefault();
-                    selected_circle = d3.select(d3.event.target);
-                    var related_printer = selected_circle.attr("data-mongo-id");
-                    //console.log(d3.select(d3.event.target).attr("data-mongo-id"));
-                    selected_printer_id.set(related_printer);
-
-                    //color the new one
-                    //selected_circle.style("fill", "green");
-
-                });
-
-            //svg.append('svg:image')
-            //  .attr('xlink:href', 'http://www.iconpng.com/png/beautiful_flat_color/computer.png')
-            //  .attr('x',printer.coordinates[0])
-            //  .attr('y',printer.coordinates[1])
-            //  .attr('width', 40)
-            //  .attr('height', 40)
-        })
+        cursor.forEach(cameraAdded)
     };
 
     Template.devicesList.events({
