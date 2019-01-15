@@ -38,7 +38,7 @@ if(Meteor.isClient){
         console.log('device added ',doc)
         Meteor.subscribe('device-timeline',doc.uuid,2)
       }
-    }),
+    })
     DeviceTimeLine.find().observeChanges({
       added:function(id,doc){
         var timeLineData=DeviceTimeLine.findOne({_id:id})
