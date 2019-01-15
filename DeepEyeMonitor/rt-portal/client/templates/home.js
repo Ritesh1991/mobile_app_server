@@ -3,7 +3,7 @@
  */
 Template.home.helpers({
     isLogging: function(){
-        return false
+        return Meteor.loggingIn()
     },
     gosignup: function(){
         return Session.get('gosignup')
