@@ -3,4 +3,5 @@
 *.iml
 .DS_Store
 .vscode
+.eslintrc.js
 node_modules

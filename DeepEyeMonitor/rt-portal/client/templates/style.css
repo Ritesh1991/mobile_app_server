@@ -71,3 +71,9 @@ h3 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
 }
+
+a.button-collapse.top-nav {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
