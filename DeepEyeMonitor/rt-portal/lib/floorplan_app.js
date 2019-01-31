@@ -12,65 +12,7 @@ if (Meteor.isClient) {
     selected_printer_id = new ReactiveVar();
     selected_circle = null;
 
-    Template.floorplan.onRendered(function () {
-      map_ready.set(false);
-      d3.select('htmlEmbed').classed('svg-container', true);
 
-      d3.xml('/floor2.svg', function (xml) {
-        document.getElementById('htmlEmbed').appendChild(xml.documentElement);
-        svg = d3.selectAll('svg');
-        //console.log(svg);
-        svg.attr('preserveAspectRatio', 'xMidYMid meet');
-        //.attr("viewBox", "0 0 1870 1210");
-
-        var current_circle;
-        svg.on('click', function () { //TODO: Move into meteor event? cant do that
-          current_coords.set(d3.mouse(this));
-
-          if (selected_circle) { //TODO: change this into a function or something
-            //selected_circle.style("fill", "purple");
-            selected_circle = null;
-            //selected_printer_id.set(null); //undo
-          }
-          if (current_circle) {
-            current_circle.remove();
-          }
-          //TODO: Remember not to delete it once we actually save it!
-          current_circle = svg.append('circle')
-            .attr('cx', d3.mouse(this)[0])
-            .attr('cy', d3.mouse(this)[1])
-            .attr('r', 16).style('fill', 'red');
-          selected_printer_id.set(null);
-          selected_circle = current_circle;
-
-        });
-        map_ready.set(true);
-
-        Tracker.autorun(function () {
-          if (map_ready.get()) {
-            //populate_map();
-            Meteor.subscribe('getCameras', function () {
-              console.log('stuff ready?');
-            });
-          }
-        });
-        Cameras.find().observe({
-          added: function (doc) {
-            console.log('camera added ', doc);
-            cameraAdded(doc);
-          }
-        });
-      });
-    });
-    /*Template.floorplan.events({
-            'click circle': function(event){
-                event.preventDefault();
-                event.stopPropagation();
-                console.log(event.target);
-            }
-        });*/
-
-    Template.floorplan.onCreated(function () {});
 
     function cameraAdded(printer) {
       //console.log("printer", printer);

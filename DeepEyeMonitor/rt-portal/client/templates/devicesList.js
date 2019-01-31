@@ -5,25 +5,6 @@ Template.devicesList.helpers({
   }
 });
 
-Template.deviceDetail.helpers({
-  'groupName': function (groupId) {
-    var group = SimpleChatGroups.findOne({
-      _id: groupId
-    });
-    if (group) {
-      return group.name;
-    }
-  },
-  'latestImage': function (uuid) {
-    var data = TimelineLists.findOne({
-      uuid: uuid
-    });
-    if (data) {
-      return data.img_url;
-    }
-  }
-});
-
 Template.devicesList.events({
   'submit': function (event) {
     event.preventDefault();
@@ -61,6 +42,25 @@ Template.devicesList.events({
       }, {
         $set: old_printer
       });
+    }
+  }
+});
+
+Template.deviceDetail.helpers({
+  'groupName': function (groupId) {
+    var group = SimpleChatGroups.findOne({
+      _id: groupId
+    });
+    if (group) {
+      return group.name;
+    }
+  },
+  'latestImage': function (uuid) {
+    var data = TimelineLists.findOne({
+      uuid: uuid
+    });
+    if (data) {
+      return data.img_url;
     }
   }
 });
