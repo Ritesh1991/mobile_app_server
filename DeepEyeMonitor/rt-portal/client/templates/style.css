@@ -1,6 +1,6 @@
 body {
   text-align: center;
-  margin-top: 150px;
+  margin-top: 0px;
 }
 
 h3 {
@@ -74,6 +74,21 @@ h3 {
 
 a.button-collapse.top-nav {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  text-align: center;
+  height: 48px;
+  width: 48px;
+  left: 3%;
+  top: 0;
+  float: none;
+  margin-left: 1.5rem;
+  font-size: 36px;
+}
+
+ul.side-nav li.user-details {
+  margin-bottom: 0px;
+  padding: 15px 0 0 15px;
+}
+
+.row.device-info {
+  margin-bottom: 0;
 }

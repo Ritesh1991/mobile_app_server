@@ -6,25 +6,39 @@
       </a>
     </div>
     <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0px);">
-      <li class="info">
-        <div class="row">
-          <div class="col s3">
-            <a href="#" class="username">{{username}}</a>
+      <li class="user-details">
+        <div class="row ">
+          <div class="col s2">
+            <img src="/avatar3@3x.png" alt="" class="user-avatar responsive-img">
+          </div>
+          <div class="class col s1">
+              <a href="#" class="username">{{username}}</a>
           </div>
           <div class="col s3 offset-s6">
               <a href="#" class="logout">退出</a>
           </div>
         </div>
       </li>
-      <li class="info">
-        <a href="#" class="name">{{username}}</a>
+      <li class="divider"></li>
+      <li class='devices-detail'>
+        {{> devicesList }}
       </li>
-      <li class="user">
-        <a href="#" class="name">{{username}}</a>
-      </li>	
     </ul>
   </header>
 
+  <main>
+    <div class="section" id="index-banner">
+      
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="floorplan col s12">
+            {{>floorplan}}
+          </div>
+      </div>
+    </div>
+  </main>
+<!-- 
   <div class="row">
     <div class="floorplan col s12 l9">
       {{>floorplan}}
@@ -37,5 +51,5 @@
         {{>info}}
       </div>
     </div>
-  </div>
+  </div> -->
 </template>

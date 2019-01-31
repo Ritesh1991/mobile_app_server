@@ -1,48 +1,77 @@
 <template name="devicesList">
   <div class="devicesList">
     {{#each devices}}
-      <div class="card-panel">
-        <div class="row">
-          <div class="col s6">
-            <div class="section">
-              <h5>UUID</h5>
-              <h5><span class="blue-text text-darken-2">{{uuid}}</span></h5>
-            </div>
-          </div>
-          <div class="col s6">
-            <div class="section">
-              <h5>设备名</h5>
-              <h5><span class="blue-text text-darken-2">{{name}}</span></h5>
-            </div>
-          </div>
-          <div class="col s12">
-            <div class="section">
-              <h5>所在组名</h5>
-              <h5><span class="blue-text text-darken-2"> {{groupName groupId}}</span></h5>
-            </div>
-          </div>
-          <div class="col s12">
-            <div class="section">
-              <h5>最近情况</h5>
-            </div>
-            <img src="{{latestImage uuid}}" alt="" class="responsive-img">
-          </div>
-          <!--
-          <form onsubmit="return false" class="col s6">
-              <div class="input-field">
-                  <label for="newname">新设备名</label>
-                  <input id="newname" type="text">
-              </div>
-
-              <button class="btn" type="submit">改设备名</button>
-          </form>
-          -->
-          <form onsubmit="return false" class="col s2 offset-s4">
-              <button class="btn" type="submit">设置</button>
-          </form>
-          <div class="divider"></div>
-        </div>
-      </div>
+      {{> deviceDetail}}
     {{/each}}
   </div>
+</template>
+
+<template name="deviceDetail">
+  <div class="card z-depth-3">
+    <div class="card-content">
+      <div class="row device-info">
+        <div class="col s6">
+          <span class='small'><b>设备名: </b><a href="#">{{name}}</a></span>
+        </div>
+        <div class="col s6">
+            <span class='small'><b>所在组: </b><a href="#">{{groupName groupId}}</a></span>
+        </div>
+      </div>
+    </div>
+    <div class="card-image">
+      <img src="{{latestImage uuid}}" alt="" class="responsive-img">
+      <!-- <span class="card-title">最近情况</span> -->
+    </div>
+    <div class="card-action">
+      <div class="row">
+        <div class="col s12">
+            <button class="waves-effect waves-light btn blue">添加此设备</button>
+        </div>
+      </div> 
+    </div>
+  </div>
+    <!-- </div>
+  </div> -->
+  <!-- <div class="card-panel">
+      <div class="row">
+        <div class="col s6">
+          <div class="section">
+            <h5>UUID</h5>
+            <h5><span class="blue-text text-darken-2">{{uuid}}</span></h5>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="section">
+            <h5>设备名</h5>
+            <h5><span class="blue-text text-darken-2">{{name}}</span></h5>
+          </div>
+        </div>
+        <div class="col s12">
+          <div class="section">
+            <h5>所在组名</h5>
+            <h5><span class="blue-text text-darken-2"> {{groupName groupId}}</span></h5>
+          </div>
+        </div>
+        <div class="col s12">
+          <div class="section">
+            <h5>最近情况</h5>
+          </div>
+          <img src="{{latestImage uuid}}" alt="" class="responsive-img">
+        </div> -->
+        <!--
+        <form onsubmit="return false" class="col s6">
+            <div class="input-field">
+                <label for="newname">新设备名</label>
+                <input id="newname" type="text">
+            </div>
+
+            <button class="btn" type="submit">改设备名</button>
+        </form>
+        -->
+        <!-- <form onsubmit="return false" class="col s2 offset-s4">
+            <button class="btn" type="submit">设置</button>
+        </form>
+        <div class="divider"></div>
+      </div>
+    </div> -->
 </template>
