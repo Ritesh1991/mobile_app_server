@@ -35,26 +35,26 @@ if(Meteor.isClient){
     }
     Devices.find().observe({
       added:function(doc){
-        console.log('device added ',doc)
-        Meteor.subscribe('device-timeline',doc.uuid,2)
+        console.log('device added ',doc);
+        Meteor.subscribe('device-timeline',doc.uuid,2);
       }
     })
     DeviceTimeLine.find().observeChanges({
       added:function(id,doc){
-        var timeLineData=DeviceTimeLine.findOne({_id:id})
-        var group_id = timeLineData.group_id
-        var uuid = timeLineData.uuid
-        var group=SimpleChatGroups.findOne({_id:group_id})
+        var timeLineData=DeviceTimeLine.findOne({_id:id});
+        var group_id = timeLineData.group_id;
+        var uuid = timeLineData.uuid;
+        var group=SimpleChatGroups.findOne({_id:group_id});
         //console.log('timeline added ',group,' ', doc)
-        processProcessDeviceTimeLineDate(doc,uuid)
+        processProcessDeviceTimeLineDate(doc,uuid);
       },
       changed:function(id, fields){
-        var timeLineData=DeviceTimeLine.findOne({_id:id})
-        var group_id = timeLineData.group_id
-        var uuid = timeLineData.uuid
-        var group=SimpleChatGroups.findOne({_id:group_id})
+        var timeLineData=DeviceTimeLine.findOne({_id:id});
+        var group_id = timeLineData.group_id;
+        var uuid = timeLineData.uuid;
+        var group=SimpleChatGroups.findOne({_id:group_id});
         //console.log('timeline changed ',group,' ', fields)
-        processProcessDeviceTimeLineDate(fields,uuid)
+        processProcessDeviceTimeLineDate(fields,uuid);
       }
     })
   })

@@ -1,9 +1,3 @@
-current_coords = new ReactiveVar([]);
-svg = null;
-map_ready = new ReactiveVar(false);
-selected_printer_id = new ReactiveVar();
-selected_circle = null;
-
 function cameraAdded(printer) {
   //console.log("printer", printer);
   var svg = d3.selectAll('svg');
@@ -17,37 +11,17 @@ function cameraAdded(printer) {
     .attr('width', 40)
     .attr('height', 40)
     .attr('data-mongo-id', printer._id)
-    .attr('data-uuid', printer.uuid);
-    // .on('click', function (d, i, nodes) {
-      //if something was selected, restore it
-      // if (selected_circle) {
-      //   console.log(selected_circle.style('fill'));
-      //   console.log(d3.color('red'));
-      //   if (selected_circle.style('fill') == d3.color('red')) {
-      //     selected_circle.remove();
-      //   } else {
-      //     selected_circle.style('fill', 'purple');
-      //   }
-      // }
+    .attr('data-uuid', printer.uuid)
+    .on('click', function() {
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
+ 
+      svg.select('.camera-checked').classed('camera-checked', false);
 
-      // d3.event.stopPropagation();
-      // d3.event.preventDefault();
-      // selected_circle = d3.select(d3.event.target);
-      // var related_printer = selected_circle.attr('data-mongo-id');
-      // //console.log(d3.select(d3.event.target).attr("data-mongo-id"));
-      // selected_printer_id.set(related_printer);
+      Session.set('curCameraId', printer._id);
 
-      //color the new one
-      //selected_circle.style("fill", "green");
-
-    // });
-
-  //svg.append('svg:image')
-  //  .attr('xlink:href', 'http://www.iconpng.com/png/beautiful_flat_color/computer.png')
-  //  .attr('x',printer.coordinates[0])
-  //  .attr('y',printer.coordinates[1])
-  //  .attr('width', 40)
-  //  .attr('height', 40)
+      svg.select("[data-mongo-id='" + printer._id + "']").classed('camera-checked', true);
+    });
 }
 
 Template.floorplan.onCreated(function () {
@@ -100,9 +74,11 @@ Template.floorplan.onRendered(function () {
 });
 
 Template.floorplan.events({
-  // 'click circle': function (event) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   console.log(event.target);
-  // }
+ 
+});
+
+Template.floorplan.helpers({
+  isShow: function() {
+    return Session.get('curCameraId');
+  }
 });

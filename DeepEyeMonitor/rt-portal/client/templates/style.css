@@ -92,3 +92,36 @@ ul.side-nav li.user-details {
 .row.device-info {
   margin-bottom: 0;
 }
+
+#htmlEmbed  .card.info {
+  bottom: 0;
+  right: 0;
+  width: 20%;
+  height: 150px;
+  position: fixed;
+  border: 1px solid #bbdefb;
+}
+
+#htmlEmbed .card.info img {
+  width: 100px;
+  height: 100px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+#htmlEmbed .card-content {
+  padding: 0 5px;
+}
+
+#htmlEmbed .collection-item {
+  padding: 5px 5px;
+}
+
+#htmlEmbed .card, .reset-camera {
+  font-size: 10px;
+}
+
+#htmlEmbed .camera-checked {
+  width: 60px;
+  height: 60px;
+}
