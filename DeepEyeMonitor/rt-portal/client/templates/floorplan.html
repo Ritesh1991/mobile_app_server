@@ -1,7 +1,7 @@
 <template name="floorplan">
   <div id="htmlEmbed">
-    {{#if isShow}}
-      {{> cameraInfo}}
+    {{#if cameraId}}
+      {{> cameraInfo cameraId=cameraId}}
     {{/if}}
   </div>
 </template>

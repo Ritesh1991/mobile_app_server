@@ -1,52 +1,59 @@
-Template.cameraInfo.onRendered(function() {
-  Tracker.autorun(function() { 
-    var cameraId = Session.get('curCameraId');
-    if (cameraId) {
-      var camera = Cameras.findOne(cameraId);
-      this.uuid = camera.uuid;
-      var group = SimpleChatGroups.findOne({_id: camera.groupId});
-      if (group) {
-        this.groupName =  group.name;
-      }
-    }
-  });
-}) 
+Template.cameraInfo.onRendered(function() {}); 
 
 Template.cameraInfo.helpers({
   uuid: function() {
-    console.log('neo+++');
-    console.log(Template.instance());
-    var cameraId = Session.get('curCameraId');
-    return Cameras.findOne(cameraId).uuid;
+    if (this.cameraId) {
+      var imageData = $('image[data-mongo-id=\'' + this.cameraId + '\']').data();
+      return imageData ? imageData.uuid : '';
+    }
   },
   groupName: function() {
+    var groupId = Cameras.findOne(this.cameraId).groupId;
+    var group = SimpleChatGroups.findOne({ _id: groupId });
 
+    return group ? group.name : '';
+  },
+  personName: function () {
+    if (this.cameraId) {
+      var imageData = $('image[data-mongo-id=\'' + this.cameraId + '\']').data();
+      return imageData ? imageData.name : '';
+    }
+  },
+  occuredAt: function() {
+    if (this.cameraId) {
+      var imageData = $('image[data-mongo-id=\'' + this.cameraId + '\']').data();
+      return imageData ? '出现时间: ' + moment(new Date(imageData.ts)).fromNow() : '';
+    }
+  },
+  avatarUrl: function() {
+    if (this.cameraId) {
+      return $('image[data-mongo-id=\'' + this.cameraId + '\']').attr('href');
+    }
   }
 });
 
 Template.cameraInfo.events({ 
   'click .info-close': function(e, t) { 
     e.preventDefault();
-    var curCheckedCamera = d3.select("[data-mongo-id='" + Session.get('curCameraId') + "']");
+    
+    Session.set('cameraId', null);
+    var curCheckedCamera = d3.select('[data-mongo-id=\'' + this.cameraId + '\']');
     if (!curCheckedCamera.empty()) {
       curCheckedCamera.classed('camera-checked', false);
     }
-
-    Session.set('curCameraId', null);
   },
   'click .reset-camera': function (e, t) {
     e.preventDefault();
-    var cameraId = Session.get('curCameraId');
-    if (cameraId) {
+    if (this.cameraId) {
       Cameras.remove({
-        _id: cameraId
+        _id: this.cameraId
       });
     }
 
-    var d3Item = d3.select("[data-mongo-id='"+cameraId+"']");
+    Session.set('cameraId', null);
+    var d3Item = d3.select('[data-mongo-id=\'' + this.cameraId + '\']');
     if (!d3Item.empty()) {
       d3Item.remove();
-      Session.set('curCameraId', null);
     }
   }
 });

@@ -3,7 +3,7 @@ Template.floorplanMain.onRendered(function() {
 });
 
 Template.floorplanMain.helpers({ 
-  username: function () {
+  'username': function () {
     return Meteor.user().username;
   }
 }); 

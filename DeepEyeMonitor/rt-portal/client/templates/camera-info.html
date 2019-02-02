@@ -1,15 +1,15 @@
 <template name="cameraInfo">
   <div class="card horizontal info green lighten-5">
     <div class="card-image">
-      <img src="/camera@3x.png" class="uuid-{{uuid}}">
+      <img src="{{avatarUrl}}" class="uuid-{{uuid}}">
     </div>
     <div class="card-stacked">
         <span class="card-title grey-text text-darken-4"><i class="small material-icons right info-close">close</i></span>
       <div class="card-content">
         <ul class="collection info-collection" style="position: relative">
-          <li class="collection-item green lighten-5 name-uuid-{{uuid}}">未发现</li>
-          <li class="collection-item green lighten-5">所在组: </li>
-          <li class="collection-item green lighten-5 time-uuid-{{uuid}}">出现时间:</li>
+          <li class="collection-item green lighten-5 name uuid-{{uuid}}">{{personName}}</li>
+          <li class="collection-item green lighten-5">所在组: {{groupName}}</li>
+          <li class="collection-item green lighten-5 occur-at uuid-{{uuid}}">{{occuredAt}}</li>
           <li class="collection-item green lighten-5"><a href="#" class="reset-camera">重置摄像头</a></li>
         </ul>
       </div>

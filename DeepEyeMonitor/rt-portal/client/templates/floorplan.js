@@ -2,8 +2,8 @@ function cameraAdded(printer) {
   //console.log("printer", printer);
   var svg = d3.selectAll('svg');
   //console.log(svg);
-  svg.attr('preserveAspectRatio', 'xMidYMid meet'); 
-  
+  svg.attr('preserveAspectRatio', 'xMidYMid meet');
+
   svg.append('svg:image')
     .attr('x', printer.coordinates[0])
     .attr('y', printer.coordinates[1])
@@ -12,22 +12,22 @@ function cameraAdded(printer) {
     .attr('height', 40)
     .attr('data-mongo-id', printer._id)
     .attr('data-uuid', printer.uuid)
-    .on('click', function() {
+    .on('click', function () {
       d3.event.stopPropagation();
       d3.event.preventDefault();
- 
+
       svg.select('.camera-checked').classed('camera-checked', false);
 
-      Session.set('curCameraId', printer._id);
+      Session.set('cameraId', printer._id);
 
-      svg.select("[data-mongo-id='" + printer._id + "']").classed('camera-checked', true);
+      svg.select('[data-mongo-id=\'' + printer._id + '\']').classed('camera-checked', true);
     });
 }
 
 Template.floorplan.onCreated(function () {
   var template = this;
   template.isMapReady = new ReactiveVar(false);
-  template.current_coords = new ReactiveVar();
+  template.currentCoords = new ReactiveVar();
   template.currentCircile = null;
 });
 
@@ -42,15 +42,15 @@ Template.floorplan.onRendered(function () {
     //.attr("viewBox", "0 0 1870 1210");
 
     svg.on('click', function () { //TODO: Move into meteor event? cant do that
-      self.current_coords.set(d3.mouse(this));
+      self.currentCoords.set(d3.mouse(this));
 
       if (self.current_circle) {
         self.current_circle.remove();
       }
       //TODO: Remember not to delete it once we actually save it!
       self.current_circle = svg.append('circle')
-        .attr('cx', self.current_coords.get()[0])
-        .attr('cy', self.current_coords.get()[1])
+        .attr('cx', self.currentCoords.get()[0])
+        .attr('cy', self.currentCoords.get()[1])
         .attr('r', 8)
         .style('fill', 'red');
     });
@@ -73,12 +73,12 @@ Template.floorplan.onRendered(function () {
   });
 });
 
-Template.floorplan.events({
- 
+Template.floorplan.onDestroyed(function() { 
+  Session.set('cameraId', null);
 });
 
 Template.floorplan.helpers({
-  isShow: function() {
-    return Session.get('curCameraId');
+  cameraId: function () {
+    return Session.get('cameraId');
   }
 });

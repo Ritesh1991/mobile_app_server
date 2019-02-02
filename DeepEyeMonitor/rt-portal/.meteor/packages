@@ -38,9 +38,9 @@ reactive-var
 sewdn:highlightjs
 yasinuslu:json-view
 dangrossman:bootstrap-daterangepicker
-momentjs:moment
 jparker:crypto-md5
 jparker:crypto-sha256
 jparker:crypto-hmac
 vsivsi:job-collection
 materialize:materialize
+rzymek:moment-locale-zh-cn
