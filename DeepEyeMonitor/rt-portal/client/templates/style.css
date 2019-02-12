@@ -1,5 +1,5 @@
 body {
-  text-align: center;
+  /* text-align: center; */
   margin-top: 0px;
 }
 
@@ -84,13 +84,44 @@ a.button-collapse.top-nav {
   font-size: 36px;
 }
 
-ul.side-nav li.user-details {
-  margin-bottom: 0px;
-  padding: 15px 0 0 15px;
+.user-profile {
+  position: relative;
+  min-height: 60px;
+  padding-left: 70px !important;
+}
+.user-avatar {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  left: 15px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
 }
 
-.row.device-info {
-  margin-bottom: 0;
+.user-profile .user-name {
+  top: 20px;
+  left: 70px;
+  position: absolute;
+}
+
+.collection .collection-item.user-profile .secondary-content {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+ul.side-nav.fixed ul.collapsible-accordion {
+  background-color: #FFF
+}
+
+ul.side-nav.fixed ul.collapsible-accordion a.collapsible-header {
+  padding: 0 30px
+}
+
+ul.side-nav.fixed ul.collapsible-accordion .collapsible-body li a {
+  font-weight: 400;
+  padding: 0 37.5px 0 45px
 }
 
 #htmlEmbed  .card.info {

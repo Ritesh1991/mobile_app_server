@@ -7,22 +7,35 @@
     </div>
     <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0px);">
       <li class="user-details">
-        <div class="row ">
-          <div class="col s2">
-            <img src="/avatar3@3x.png" alt="" class="user-avatar responsive-img">
-          </div>
-          <div class="class col s1">
-              <a href="#" class="username">{{username}}</a>
-          </div>
-          <div class="col s3 offset-s6">
-              <a href="#" class="logout">退出</a>
-          </div>
-        </div>
+        <ul class="collection">
+          <li class="collection-item user-profile">
+                <img src="/avatar3@3x.png" alt="" class="user-avatar">
+                <!-- <span class="username">Neo</span> -->
+                <span class="user-name">{{username}}</span>
+                <a href="#!" class="secondary-content">退出</a>
+          </li>
+        </ul>
       </li>
-      <li class="divider"></li>
-      <li class='devices-detail'>
+      <li class="no-padding organizations">
+        <ul class="collapsible collapsible-accordion">
+          {{#each organizations}}
+            <li class="bold">
+              <a class="collapsible-header waves-effect waves-teal">{{group_name}}</a>
+              <div class="collapsible-body">
+                <ul>
+                  <li><a href="">camera1</a></li>
+                  <li><a href="">camera2</a></li>
+                  <li><a href="">camera3</a></li>
+                  <li><a href="">camera4</a></li>
+                </ul>
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+      </li>
+      <!-- <li class='devices-detail'>
         {{> devicesList }}
-      </li>
+      </li> -->
     </ul>
   </header>
 
